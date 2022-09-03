@@ -1,16 +1,16 @@
 ---
-name: Tails Azimuth
-avatar: /static/images/avatar.png
-occupation: Professor of Atmospheric Science
-company: Stanford University
-email: address@yoursite.com
-twitter: https://twitter.com/Twitter
-linkedin: https://www.linkedin.com
-github: https://github.com
+name: Donovan
+avatar: /static/images/donovanR.jpeg
+occupation: Globetrotter at
+company: Amazing
+email: dnvn@duck.com
+twitter: https://twitter.com/riano_donovan
+linkedin: https://www.linkedin.com/in/driano7/
+github: https://github.com/driano7
 ---
 
-Tails Azimuth is a professor of atmospheric sciences at the Stanford AI Lab. His research interests includes complexity modelling of tailwinds, headwinds and crosswinds.
+Hi my name is Donovan Riaño, I'm the main ambassador of Mexico, and my purpouse is everyone falls in love with my country ❤️ 🇲🇽.
 
-He leads the clean energy group which develops 3D air pollution-climate models, writes differential equation solvers, and manufactures titanium plated air ballons. In his free time he bakes raspberry pi.
+As for me, I am close to obtaining my bachelor's degree in Computer Engineering at UNAM. I am interested in AI, the crypto world (Web3, Blockchain, NFTs & metaverse) and mkt.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.
+My hobbies are playing basketball, riding a bike through the great city of Mexico. He used to practice men's artistic gymnastics in his early levels.
