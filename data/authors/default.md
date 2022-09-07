@@ -2,7 +2,7 @@
 name: Donovan
 avatar: /static/images/donovanR.jpeg
 occupation: Globetrotter at
-company: Amazing
+company: Amaxing
 email: dnvn@duck.com
 twitter: https://twitter.com/riano_donovan
 linkedin: https://www.linkedin.com/in/driano7/
