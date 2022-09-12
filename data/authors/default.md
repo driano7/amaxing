@@ -4,9 +4,9 @@ avatar: /static/images/donovanR.jpeg
 occupation: Globetrotter at
 company: Amaxing
 email: dnvn@duck.com
-twitter: https://twitter.com/riano_donovan
-linkedin: https://www.linkedin.com/in/driano7/
-github: https://github.com/driano7
+tiktok: 'https://www.tiktok.com/@donovan_amx'
+twitter: 'https://twitter.com/Twitter'
+telegram: 'https://t.me/driano7'
 ---
 
 Hi my name is Donovan Riaño, I'm the main ambassador of Mexico, and my purpouse is everyone falls in love with my country ❤️ 🇲🇽.

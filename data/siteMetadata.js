@@ -1,8 +1,8 @@
 const siteMetadata = {
-  title: 'Next.js Starter Blog',
-  author: 'Tails Azimuth',
-  headerTitle: 'TailwindBlog',
-  description: 'A blog created with Next.js and Tailwind.css',
+  title: "Mexico's Amaxing",
+  author: 'Donovan Riaño',
+  headerTitle: 'Amaxing',
+  description: 'The blog that brings the best from Mexico to the world',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
@@ -10,12 +10,14 @@ const siteMetadata = {
   siteLogo: '/static/images/logo.png',
   image: '/static/images/avatar.png',
   socialBanner: '/static/images/twitter-card.png',
-  email: 'address@yoursite.com',
-  github: 'https://github.com',
+  email: 'dnvn@duck.com',
+  github: 'https://github.com/driano7',
+  instagram: 'https://www.instagram.com/donovan_amx/',
+  youtube: 'https://www.youtube.com/channel/UC1e6px1jwLN_0alayCCgd7A',
+  tiktok: 'https://www.tiktok.com/@donovan_amx',
   twitter: 'https://twitter.com/Twitter',
   facebook: 'https://facebook.com',
-  youtube: 'https://youtube.com',
-  linkedin: 'https://www.linkedin.com',
+  linkedin: 'https://www.linkedin.com/in/driano7/',
   locale: 'en-US',
   analytics: {
     // If you want to use an analytics provider you have to add it to the
