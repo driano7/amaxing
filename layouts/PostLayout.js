@@ -72,7 +72,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                               href={author.tiktok}
                               className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                             >
-                              {author.tiktok.replace('https://www.tiktok.com/', '@')}
+                              {author.tiktok.replace('https://www.tiktok.com/', ' ')}
                             </Link>
                           )}
                         </dd>
