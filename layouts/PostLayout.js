@@ -9,8 +9,7 @@ import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 
 const editUrl = (fileName) => `https://spoti.fi/3QlYDss`
-const discussUrl = (slug) =>
-  `https://discord.com/invite/kXfG2VU6`
+const discussUrl = (slug) => `https://discord.com/invite/kXfG2VU6`
 
 const postDateTemplate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
 
@@ -89,8 +88,10 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                 <Link href={discussUrl(slug)} rel="nofollow">
                   {'See comunity travel at Discord'}
                 </Link>
-                {` • `}
-                <Link href={editUrl(fileName)}>{'Listen to the podcast of the main attractions'}</Link>
+                {` ••• `}
+                <Link href={editUrl(fileName)}>
+                  {'Listen to the podcast of the main attractions'}
+                </Link>
               </div>
               <Comments frontMatter={frontMatter} />
             </div>
