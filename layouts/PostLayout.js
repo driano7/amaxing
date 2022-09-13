@@ -8,11 +8,8 @@ import siteMetadata from '@/data/siteMetadata'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 
-const editUrl = (fileName) => `${siteMetadata.siteRepo}/blob/master/data/blog/${fileName}`
-const discussUrl = (slug) =>
-  `https://mobile.twitter.com/search?q=${encodeURIComponent(
-    `${siteMetadata.siteUrl}/blog/${slug}`
-  )}`
+const editUrl = (fileName) => `https://spoti.fi/3QlYDss`
+const discussUrl = (slug) => `https://discord.com/invite/kXfG2VU6`
 
 const postDateTemplate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
 
@@ -68,14 +65,14 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                       <dl className="whitespace-nowrap text-sm font-medium leading-5">
                         <dt className="sr-only">Name</dt>
                         <dd className="text-gray-900 dark:text-gray-100">{author.name}</dd>
-                        <dt className="sr-only">Twitter</dt>
+                        <dt className="sr-only">Tiktok</dt>
                         <dd>
-                          {author.twitter && (
+                          {author.tiktok && (
                             <Link
-                              href={author.twitter}
+                              href={author.tiktok}
                               className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                             >
-                              {author.twitter.replace('https://twitter.com/', '@')}
+                              {author.tiktok.replace('https://www.tiktok.com/', '@')}
                             </Link>
                           )}
                         </dd>
@@ -89,10 +86,12 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
               <div className="prose max-w-none pt-10 pb-8 dark:prose-dark">{children}</div>
               <div className="pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300">
                 <Link href={discussUrl(slug)} rel="nofollow">
-                  {'Discuss on Twitter'}
+                  {'See comunity travel at Discord'}
                 </Link>
                 {` • `}
-                <Link href={editUrl(fileName)}>{'View on GitHub'}</Link>
+                <Link href={editUrl(fileName)}>
+                  {'Listen to the podcast of the main attractions'}
+                </Link>
               </div>
               <Comments frontMatter={frontMatter} />
             </div>
