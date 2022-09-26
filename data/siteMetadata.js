@@ -14,7 +14,7 @@ const siteMetadata = {
   github: 'https://github.com/driano7',
   instagram: 'https://www.instagram.com/donovan_amx/',
   youtube: 'https://www.youtube.com/channel/UC1e6px1jwLN_0alayCCgd7A',
-  tiktok: 'https://www.tiktok.com/donovan_amx',
+  tiktok: 'https://www.tiktok.com/@donovan_amx',
   twitter: 'https://twitter.com/Twitter',
   facebook: 'https://facebook.com',
   linkedin: 'https://www.linkedin.com/in/driano7/',

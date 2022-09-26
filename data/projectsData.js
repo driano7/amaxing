@@ -23,6 +23,18 @@ const projectsData = [
     imgSrc: '/static/images/bellas.jpeg',
     href: '/blog/Info/tourist',
   },
+  {
+    title: 'Most Dangerous Zones in Mexico City',
+    description: `It contains information related with the zones don't visit at the city`,
+    imgSrc: '/static/images/map.png',
+    href: '/blog/Info/dangerous',
+  },
+  {
+    title: 'what to do in case of earthquake',
+    description: `It contains information related with the zones don't visit at the city`,
+    imgSrc: '/static/images/chapu.jpeg',
+    href: '/blog/Info/earthquakes',
+  },
 ]
 
 export default projectsData
