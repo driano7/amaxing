@@ -30,7 +30,7 @@ const projectsData = [
     href: '/blog/Info/dangerous',
   },
   {
-    title: 'what to do in case of earthquake',
+    title: 'What to do in case of earthquake',
     description: `It contains information related with the zones don't visit at the city`,
     imgSrc: '/static/images/chapu.jpeg',
     href: '/blog/Info/earthquakes',
