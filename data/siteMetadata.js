@@ -7,9 +7,9 @@ const siteMetadata = {
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
   siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
-  siteLogo: '/static/images/logo.png',
+  siteLogo: '/static/images/jaguarBaja.png',
   image: '/static/images/avatar.png',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/static/images/jaguarDALLE.png',
   email: 'dnvn@duck.com',
   github: 'https://github.com/driano7',
   instagram: 'https://www.instagram.com/donovan_amx/',
