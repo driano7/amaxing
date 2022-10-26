@@ -1,11 +1,12 @@
 import Link from '@/components/Link'
 import { PageSEO } from '@/components/SEO'
 import Tag from '@/components/Tag'
+import { RoughNotation } from 'react-rough-notation' //npm install your package --legacy-peer-deps forzas instalación de cualquier paquete
 import siteMetadata from '@/data/siteMetadata'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import formatDate from '@/lib/utils/formatDate'
 
-import NewsletterForm from '@/components/NewsletterForm'
+//import NewsletterForm from '@/components/NewsletterForm'
 
 const MAX_DISPLAY = 5
 
@@ -16,17 +17,37 @@ export async function getStaticProps() {
 }
 
 export default function Home({ posts }) {
+  //Md text es el que cambia el tamaño de las letras en el ClassName; El roughtNotation es para la animación dinámica del subrayado
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="space-y-2 pt-36 pb-8 md:space-y-5">
+          <h1 className="pb-6 text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+            Hi, I am{' '}
+            <span className="text-primary-color-500 dark:text-primary-color-dark-500">Donovan</span>
+          </h1>
+        </div>
+        The blog that brings{' '}
+        <RoughNotation
+          animate="true"
+          type="highlight"
+          show={true}
+          color="#DE1D8D"
+          animationDelay={1000}
+          animationDuration={2500}
+          className="text-slate-200"
+        >
+          the best from Mexico&nbsp;
+        </RoughNotation>
+        to the world. Have a good read!
+      </div>
+
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             Latest
           </h1>
-          <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            {siteMetadata.description}
-          </p>
         </div>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {!posts.length && 'No posts found.'}
@@ -89,11 +110,6 @@ export default function Home({ posts }) {
           >
             All Posts &rarr;
           </Link>
-        </div>
-      )}
-      {siteMetadata.newsletter.provider !== '' && (
-        <div className="flex items-center justify-center pt-4">
-          <NewsletterForm />
         </div>
       )}
     </>
