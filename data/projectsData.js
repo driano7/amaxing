@@ -1,9 +1,9 @@
 const projectsData = [
   {
-    title: 'FAQs in spanish',
-    description: `The main phrases used in spanish.`,
-    imgSrc: '/static/images/FAQs.png',
-    href: '/blog/Info/faqs',
+    title: 'White paper',
+    description: `Describe the new functionalities`,
+    imgSrc: '/static/images/twitter-card.png',
+    href: '/blog/Info/WhitePaper',
   },
   {
     title: 'Policies can help you',
@@ -34,6 +34,12 @@ const projectsData = [
     description: `It contains information related with the zones don't visit at the city`,
     imgSrc: '/static/images/chapu.jpeg',
     href: '/blog/Info/earthquakes',
+  },
+  {
+    title: 'FAQs in spanish',
+    description: `The main phrases used in spanish.`,
+    imgSrc: '/static/images/FAQs.png',
+    href: '/blog/Info/faqs',
   },
 ]
 
