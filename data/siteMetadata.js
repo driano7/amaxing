@@ -15,8 +15,8 @@ const siteMetadata = {
   instagram: 'https://www.instagram.com/donovan_amx/',
   youtube: 'https://www.youtube.com/channel/UC1e6px1jwLN_0alayCCgd7A',
   tiktok: 'https://www.tiktok.com/@donovan_amx',
-  twitter: 'https://twitter.com/Twitter',
-  facebook: 'https://facebook.com',
+  twitter: 'https://twitter.com/Donovan_amx',
+  facebook: 'https://www.facebook.com/donovan.amx',
   linkedin: 'https://www.linkedin.com/in/driano7/',
   locale: 'en-US',
   analytics: {

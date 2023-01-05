@@ -6,7 +6,7 @@ const projectsData = [
     href: '/blog/Info/WhitePaper',
   },
   {
-    title: 'Policies can help you',
+    title: 'Police can help you',
     description: `In the most touristic areas of Mexico City you can find police officers who can help you with confidence`,
     imgSrc: '/static/images/policies.jpeg',
     href: '/blog/Info/policies',
