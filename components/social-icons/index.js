@@ -6,6 +6,8 @@ import Linkedin from './linkedin.svg'
 import Twitter from './twitter.svg'
 import Tiktok from './tiktok.svg'
 import Instagram from './instagram.svg'
+import Telegram from './telegram.svg'
+import Whatsapp from './whatsapp.svg'
 
 // Icons taken from: https://simpleicons.org/
 
@@ -18,6 +20,8 @@ const components = {
   twitter: Twitter,
   tiktok: Tiktok,
   instagram: Instagram,
+  telegram: Telegram,
+  whatsapp: Whatsapp,
 }
 
 const SocialIcon = ({ kind, href, size = 8 }) => {

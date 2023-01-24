@@ -18,6 +18,8 @@ const siteMetadata = {
   twitter: 'https://twitter.com/Donovan_amx',
   facebook: 'https://www.facebook.com/donovan.amx',
   linkedin: 'https://www.linkedin.com/in/driano7/',
+  telegram: 'https://t.me/donovan_amx',
+  whatsapp: 'https://wa.me/523344789565',
   locale: 'en-US',
   analytics: {
     // If you want to use an analytics provider you have to add it to the

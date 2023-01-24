@@ -6,7 +6,8 @@ company: Amaxing
 email: dnvn@duck.com
 tiktok: 'https://www.tiktok.com/@donovan_amx'
 twitter: 'https://twitter.com/Twitter'
-telegram: 'https://t.me/driano7'
+telegram: 'https://t.me/donovan_amx'
+whatsapp: 'https://wa.me/523344789565'
 ---
 
 Hi my name is Donovan Riaño, yes with the letter ñ. Born in Oaxaca but living in Mexico City. I'm the main ambassador of Mexico. Amaxing's purpose is everyone falls in love with our country ❤️ 🇲🇽.
