@@ -8,6 +8,8 @@ import Tiktok from './tiktok.svg'
 import Instagram from './instagram.svg'
 import Telegram from './telegram.svg'
 import Whatsapp from './whatsapp.svg'
+import Ethereum from './ethereum.svg'
+import Bitcoin from './bitcoin.svg'
 
 // Icons taken from: https://simpleicons.org/
 
@@ -22,6 +24,8 @@ const components = {
   instagram: Instagram,
   telegram: Telegram,
   whatsapp: Whatsapp,
+  ethereum: Ethereum,
+  bitcoin: Bitcoin,
 }
 
 const SocialIcon = ({ kind, href, size = 8 }) => {

@@ -6,6 +6,10 @@ export default function Footer() {
   return (
     <footer>
       <div className="mt-16 flex flex-col items-center">
+        <div className="mb-1 flex space-x-4">
+          <SocialIcon kind="ethereum" href={siteMetadata.ethereum} size="6" />
+          <SocialIcon kind="bitcoin" href={siteMetadata.bitcoin} size="6" />
+        </div>
         <div className="mb-3 flex space-x-4">
           <SocialIcon kind="telegram" href={siteMetadata.telegram} size="6" />
           <SocialIcon kind="whatsapp" href={siteMetadata.whatsapp} size="6" />
