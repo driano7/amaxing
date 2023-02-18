@@ -8,7 +8,7 @@ const siteMetadata = {
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
   siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
   siteLogo: '/static/images/jaguarBaja.png',
-  image: '/static/images/avatar.png',
+  image: '/static/images/twitter-card.png',
   socialBanner: '/static/images/jaguarDALLE.png',
   email: 'dnvn@duck.com',
   github: 'https://github.com/driano7',

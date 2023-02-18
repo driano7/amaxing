@@ -6,6 +6,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import formatDate from '@/lib/utils/formatDate'
 
+import Image from '@/components/Image'
 //import NewsletterForm from '@/components/NewsletterForm'
 
 const MAX_DISPLAY = 5
@@ -41,6 +42,12 @@ export default function Home({ posts }) {
           the best from Mexico&nbsp;
         </RoughNotation>
         to the world. Have a good read!
+      </div>
+
+      <div className="flex items-center justify-center">
+        <div className="my-2 flex flex-col items-center space-x-2 pt-8">
+          <Image src={siteMetadata.image} alt="avatar" width="800px" height="400px" />
+        </div>
       </div>
 
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
