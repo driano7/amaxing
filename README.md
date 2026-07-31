@@ -1,255 +1,703 @@
-![tailwind-nextjs-banner](/public/static/images/twitter-card.png)
+# Amaxing - Luxury Tourism Agency
 
-# Tailwind Nextjs Starter Blog
+Amaxing is a premium digital platform for luxury tourism experiences in Mexico, designed for discerning travelers seeking authentic cultural immersion beyond the tourist trail.
 
-[![GitHub Repo stars](https://img.shields.io/github/stars/timlrx/tailwind-nextjs-starter-blog?style=social)](https://GitHub.com/timlrx/tailwind-nextjs-starter-blog/stargazers/)
-[![GitHub forks](https://img.shields.io/github/forks/timlrx/tailwind-nextjs-starter-blog?style=social)](https://GitHub.com/timlrx/tailwind-nextjs-starter-blog/network/)
-[![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Ftimlrxx)](https://twitter.com/timlrxx)
-[![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/timlrx)](https://github.com/sponsors/timlrx)
+## 🚀 Features
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/timlrx/tailwind-nextjs-starter-blog)
+- **Exclusive Experiences**: Curated luxury tours and activities
+- **Three.js 3D Visualization**: Interactive 3D models of archaeological sites
+- **Advanced Authentication**: Secure user management with email verification
+- **Internationalization**: Native English and Spanish support
+- **Real-time Booking**: Seamless reservation system with payment integration
+- **Mobile-First Design**: Responsive design optimized for all devices
+- **SEO Optimized**: Search engine optimized for global reach
+- **Social Authentication**: Google, Facebook, Apple login options
+- **Advanced Security**: 2FA, trusted devices, security monitoring
+- **Analytics Dashboard**: Comprehensive booking and revenue insights
 
-This is a [Next.js](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/) blogging starter template. Probably the most feature-rich Next.js markdown blogging template out there. Comes out of the box configured with the latest technologies to make technical writing a breeze. Easily configurable and customizable. Perfect as a replacement to existing Jekyll and Hugo individual blogs.
+## 🌐 Internationalization
 
-Check out the documentation below to get started.
+Amaxing supports both English (default) and Spanish, ensuring accessibility for international and local travelers.
 
-Facing issues? Check the [FAQ page](https://github.com/timlrx/tailwind-nextjs-starter-blog/wiki) and do a search on past issues. Feel free to open a new issue if none has been posted previously.
+### Language Switching
 
-Feature request? Check the past discussions to see if it has been brought up previously. Otherwise, feel free to start a new discussion thread. All ideas are welcomed!
+Languages can be switched via:
+- **URL**: `/{lang}/experiences` (en/experiences, es/experiencias)
+- **Header**: Language selector in the navigation bar
+- **Browser**: Automatic detection based on Accept-Language header
+- **Cookie**: Persistent language preference
 
-## Examples
+### Translations
 
-- [Demo Blog](https://tailwind-nextjs-starter-blog.vercel.app/) - this repo
-- [My personal blog](https://www.timlrx.com) - modified to auto-generate blog posts with dates
-- [Aloisdg's cookbook](https://tambouille.vercel.app/) - with pictures and recipes!
-- [GautierArcin's demo with next translate](https://tailwind-nextjs-starter-blog-seven.vercel.app/) - includes translation of mdx posts, [source code](https://github.com/GautierArcin/tailwind-nextjs-starter-blog/tree/demo/next-translate)
-- [David Levai's digital garden](https://davidlevai.com/) - customized design and added email subscriptions
-- [Thinh's Corner](https://thinhcorner.com/) - [customized layout](https://github.com/Th1nhNg0/th1nhng0.vercel.app/blob/5e73a420828d82f01e7147512a2c3273c4ec19f8/layouts/PostLayout.js) with sticky side table of contents
-- [Leo's Blog](https://leohuynh.dev) - Tuan Anh Huynh's personal site. Add Snippets Page, Author Profile Card, Image Lightbox, ...
-- [thvu.dev](https://thvu.dev) - Added `mdx-embed`, view count, reading minutes and more.
-- [fiqrychoerudin.dev](https://www.fiqrychoerudin.dev/) - simple portfolio.
-- [irvin.dev](https://www.irvin.dev/) - Irvin Lin's personal site. Added YouTube embedding.
-- [KirillSo.com](https://www.kirillso.com/) - Personal blog & website.
-- [ghali.dev](https://ghali.dev) - Cyril's Blog
-- [DevBoy Blog](https://devboy.vercel.app/) - M.Reza's personal blog
-- [slightlysharpe.com](https://slightlysharpe.com) - [Tincre's](https://tincre.com) main company blog
-- [blog.b00st.com](https://blog.b00st.com) - [b00st.com's](https://b00st.com) main music promotion blog
-- [astrosaurus.me](https://astrosaurus.me/) - Ephraim Atta-Duncan's Personal Blog
-- [dhanrajsp.me](https://dhanrajsp.me/) - Dhanraj's personal site and blog.
-- [blog.r00ks.io](https://blog.r00ks.io/) - Austin Rooks's personal blog ([source code](https://github.com/Austionian/blog.r00ks)).
-- [honghong.me](https://honghong.me) - Tszhong's personal website ([source code](https://github.com/tszhong0411/home))
-- [alfoncode.com](https://alfoncode.com) - Alfonso García's personar website. Customized design ([source code](https://github.com/alfoncode/personal-web))
-- [marceloformentao.dev](https://marceloformentao.dev) - Marcelo Formentão personal website ([source code](https://github.com/marceloavf/marceloformentao.dev)).
-- [abiraja.com](https://www.abiraja.com/) - with a [runnable JS code snippet component!](https://www.abiraja.com/blog/querying-solana-blockchain)
-- [einargudni.com](https://www.einargudni.com) - with a customized theme, command pallette and more ([source code](https://github.com/einargudnig/einargudni.com))
-- [bpiggin.com](https://www.bpiggin.com) - Ben Piggin's personal blog
-- [maqib.cn](https://maqib.cn) - A blog of Chinese front-end developers 狂奔小马的博客 ([源码](https://github.com/maqi1520/nextjs-tailwind-blog))
-- [ambilena.com](https://ambilena.com/) - Electronic Music Blog & imprint for upcoming musicians.
-- [kittan.ru](https://www.kittan.ru/) - Kittanb's personal blog about linux ([source code](https://github.com/kittanb/blog))
-- [nchristopher.me](https://nchristopher.me) - Nicholas Christopher's personal website and blog ([source code](https://github.com/nchristopher/blog))
-- [dalelarroder.com](https://dalelarroder.com) - Dale Larroder's personal website and blog ([source code](https://github.com/dlarroder/dalelarroder))
-- [devahoy.com](https://devahoy.com) - Chai's personal blog (Thai language)
-- [0xchai.io](https://0xchai.io) - Chai's personal blog
-- [techipedia](https://techipedia.vercel.app) - Simple blogging progressive web app with custom installation button and top progress bar
-- [reubence.com](https://reubence.com) - Reuben Rapose's Digital Garden
-- [axolo.co/blog](https://axolo.co/blog) - Engineering management news & axolo.co updates (with image preview for article in the home page)
-- [musing.vercel.app](https://musing.vercel.app/) - Parth Desai's personal blog ([source code](https://github.com/pycoder2000/blog))
-- [onyourmental.com](https://www.onyourmental.com/) - [Curtis Warcup's](https://github.com/Cwarcup) website for the On Your Mental Podcast ([source code](https://github.com/Cwarcup/on-your-mental))
-- [cwarcup.com](https://www.cwarcup.com/) - Curtis Warcup's personal website and blog ([source code](https://github.com/Cwarcup/personal-blog).
-- [ondiek-elijah.me](https://www.ondiek-elijah.me/) - Ondiek Elijah's website and blog ([source code](https://github.com/Dev-Elie/ondiek-elijah)).
-- [jmalvarez.dev](https://www.jmalvarez.dev/) - José Miguel Álvarez's personal blog ([source code](https://github.com/josemiguel-alvarez/nextjs-blog))
-- [justingosses.com](https://justingosses.com/) - Justin Gosses's personal website and blog ([source code](https://github.com/JustinGOSSES/justingosses-website))
-- [sabare.me](https://sabare.me/) - Victor Sabare's personal website and blog ([source code](https://github.com/Sabareh/blog)
-- [https://bitoflearning-9a57.fly.dev/](https://bitoflearning-9a57.fly.dev/) - Sangeet Agarwal's personal blog, replatformed to [remix](https://remix.run/remix) using the [indie stack](https://github.com/remix-run/indie-stack) ([source code](https://github.com/SangeetAgarwal/bitoflearning)) WIP
-- [raphaelchelly.com](https://www.raphaelchelly.com/) - Raphaël Chelly's personal website and blog ([source code](https://github.com/raphaelchelly/raph_www))
+All user interface text, error messages, and content are fully translated into both languages, ensuring a consistent and localized experience for users worldwide.
 
-Using the template? Feel free to create a PR and add your blog to this list.
+## 🛠 Technology Stack
 
-## Motivation
+### Frontend
+- Next.js 14 (App Router)
+- React 19 with Server Components
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- @react-three/fiber (3D Visualization)
+- @react-three/drei (3D Controls)
+- React Day-Picker (Date Selection)
+- Zustand (State Management)
 
-I wanted to port my existing blog to Nextjs and Tailwind CSS but there was no easy out of the box template to use so I decided to create one. Design is adapted from [Tailwindlabs blog](https://github.com/tailwindlabs/blog.tailwindcss.com).
+### Backend
+- PostgreSQL with Supabase
+- Next.js API Routes
+- JWT Authentication
+- bcrypt Password Hashing
+- Rate Limiting & Security
+- Webhook Integration
 
-I wanted it to be nearly as feature-rich as popular blogging templates like [beautiful-jekyll](https://github.com/daattali/beautiful-jekyll) and [Hugo Academic](https://github.com/wowchemy/wowchemy-hugo-modules) but with the best of React's ecosystem and current web development's best practices.
+### Authentication & Security
+- Email Verification
+- Password Reset Tokens
+- Social Auth (Google, Facebook, Apple)
+- 2-Factor Authentication
+- Trusted Devices
+- Security Monitoring
+- Audit Trails
 
-## Features
+## 📊 Database Schema
 
-- Easy styling customization with [Tailwind 3.0](https://tailwindcss.com/blog/tailwindcss-v3) and primary color attribute
-- Near perfect lighthouse score - [Lighthouse report](https://www.webpagetest.org/result/210111_DiC1_08f3670c3430bf4a9b76fc3b927716c5/)
-- Lightweight, 45kB first load JS, uses Preact in production build
-- Mobile-friendly view
-- Light and dark theme
-- Self-hosted font with [Fontsource](https://fontsource.org/)
-- Supports [plausible](https://plausible.io/), [simple analytics](https://simpleanalytics.com/) and google analytics
-- [MDX - write JSX in markdown documents!](https://mdxjs.com/)
-- Server-side syntax highlighting with line numbers and line highlighting via [rehype-prism-plus](https://github.com/timlrx/rehype-prism-plus)
-- Math display supported via [KaTeX](https://katex.org/)
-- Citation and bibliography support via [rehype-citation](https://github.com/timlrx/rehype-citation)
-- Automatic image optimization via [next/image](https://nextjs.org/docs/basic-features/image-optimization)
-- Flexible data retrieval with [mdx-bundler](https://github.com/kentcdodds/mdx-bundler)
-- Support for tags - each unique tag will be its own page
-- Support for multiple authors
-- Blog templates
-- TOC component
-- Support for nested routing of blog posts
-- Newsletter component with support for mailchimp, buttondown, convertkit, klaviyo, revue, and emailoctopus
-- Supports [giscus](https://github.com/laymonage/giscus), [utterances](https://github.com/utterance/utterances) or disqus
-- Projects page
-- Preconfigured security headers
-- SEO friendly with RSS feed, sitemaps and more!
+The application features a comprehensive database schema including:
 
-## Sample posts
+### Core Tables
+- **users**: Authentication and user profiles
+- **profiles**: Extended user information and preferences
+- **experiences**: Luxury tour catalog
+- **bookings**: Reservation management
+- **payments**: Transaction processing
+- **reviews**: Customer feedback and ratings
+- **analytics**: Booking and revenue tracking
 
-- [A markdown guide](https://tailwind-nextjs-starter-blog.vercel.app/blog/github-markdown-guide)
-- [Learn more about images in Next.js](https://tailwind-nextjs-starter-blog.vercel.app/blog/guide-to-using-images-in-nextjs)
-- [A tour of math typesetting](https://tailwind-nextjs-starter-blog.vercel.app/blog/deriving-ols-estimator)
-- [Simple MDX image grid](https://tailwind-nextjs-starter-blog.vercel.app/blog/pictures-of-canada)
-- [Example of long prose](https://tailwind-nextjs-starter-blog.vercel.app/blog/the-time-machine)
-- [Example of Nested Route Post](https://tailwind-nextjs-starter-blog.vercel.app/blog/nested-route/introducing-multi-part-posts-with-nested-routing)
+### Security Tables
+- **login_attempts**: Security event tracking
+- **password_reset_tokens**: Password recovery management
+- **email_verification_tokens**: Email confirmation
+- **social_auth_accounts**: OAuth provider integration
+- **trusted_devices**: Device management
+- **user_activity_logs**: Audit trail and compliance
 
-## Quick Start Guide
+## 🚀 Getting Started
 
-1. Try installing the starter using the new [Pliny project CLI](https://github.com/timlrx/pliny):
+### Quick Start
 
 ```bash
-npm i -g @pliny/cli
-pliny new --template=starter-blog my-blog
-```
+# Clone the repository
+git clone <repository-url>
+cd amaxing
 
-It supports the updated version of the blog with Contentlayer, optional choice of TS/JS and different package managers as well as more modularized components which will be the basis of the template going forward.
-
-Alternatively to stick with the current version, TypeScript and Contentlayer:
-
-```bash
-npx degit 'timlrx/tailwind-nextjs-starter-blog#contentlayer'
-```
-
-or JS (official support)
-
-```bash
-npx degit https://github.com/timlrx/tailwind-nextjs-starter-blog.git
-```
-
-2. Personalize `siteMetadata.js` (site related information)
-3. Modify the content security policy in `next.config.js` if you want to use
-   any analytics provider or a commenting solution other than giscus.
-4. Personalize `authors/default.md` (main author)
-5. Modify `projectsData.js`
-6. Modify `headerNavLinks.js` to customize navigation links
-7. Add blog posts
-8. Deploy on Vercel
-
-## Installation
-
-```bash
+# Install dependencies
 npm install
-```
 
-## Development
+# Set up environment variables
+cp .env.example .env
 
-First, run the development server:
+# Configure database
+# Run the schema.sql file in your PostgreSQL database
 
-```bash
-npm start
-```
-
-or
-
-```bash
+# Start development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+```env
+# Database
+DATABASE_URL=your-postgresql-connection-string
 
-## Extend / Customize
+# Authentication
+JWT_SECRET=your-jwt-secret-key
+BCRYPT_ROUNDS=12
 
-`data/siteMetadata.js` - contains most of the site related information which should be modified for a user's need.
+# External Services
+STRIPE_SECRET_KEY=your-stripe-secret-key
+# ... other service keys
 
-`data/authors/default.md` - default author information (required). Additional authors can be added as files in `data/authors`.
-
-`data/projectsData.js` - data used to generate styled card on the projects page.
-
-`data/headerNavLinks.js` - navigation links.
-
-`data/logo.svg` - replace with your own logo.
-
-`data/blog` - replace with your own blog posts.
-
-`public/static` - store assets such as images and favicons.
-
-`tailwind.config.js` and `css/tailwind.css` - contain the tailwind stylesheet which can be modified to change the overall look and feel of the site.
-
-`css/prism.css` - controls the styles associated with the code blocks. Feel free to customize it and use your preferred prismjs theme e.g. [prism themes](https://github.com/PrismJS/prism-themes).
-
-`components/social-icons` - to add other icons, simply copy an svg file from [Simple Icons](https://simpleicons.org/) and map them in `index.js`. Other icons use [heroicons](https://heroicons.com/).
-
-`components/MDXComponents.js` - pass your own JSX code or React component by specifying it over here. You can then call them directly in the `.mdx` or `.md` file. By default, a custom link and image component is passed.
-
-`layouts` - main templates used in pages.
-
-`pages` - pages to route to. Read the [Next.js documentation](https://nextjs.org/docs) for more information.
-
-`next.config.js` - configuration related to Next.js. You need to adapt the Content Security Policy if you want to load scripts, images etc. from other domains.
-
-## Post
-
-### Frontmatter
-
-Frontmatter follows [Hugo's standards](https://gohugo.io/content-management/front-matter/).
-
-Currently 7 fields are supported.
-
-```
-title (required)
-date (required)
-tags (required, can be empty array)
-lastmod (optional)
-draft (optional)
-summary (optional)
-images (optional, if none provided defaults to socialBanner in siteMetadata config)
-authors (optional list which should correspond to the file names in `data/authors`. Uses `default` if none is specified)
-layout (optional list which should correspond to the file names in `data/layouts`)
-canonicalUrl (optional, canonical url for the post for SEO)
+# Security
+NODE_ENV=development
+ALLOWED_ORIGINS=https://your-domain.com
 ```
 
-Here's an example of a post's frontmatter:
+## 🏗️ Project Structure
 
 ```
+amaxing/
+├── app/
+│   ├── api/              # API routes
+│   │   ├── auth/         # Authentication endpoints
+│   │   ├── experiences/ # Experience management
+│   │   ├── bookings/    # Booking endpoints
+│   │   └── payments/    # Payment processing
+│   ├── components/      # UI components
+│   ├── hooks/          # Custom hooks
+│   └── lib/            # Libraries and utilities
+├── components/          # Shared components
+│   ├── ui/             # UI components
+│   ├── auth/           # Authentication components
+│   ├── booking/        # Booking components
+│   └── experiences/   # Experience components
+├── lib/                # Application libraries
+│   ├── auth/          # Authentication logic
+│   ├── db/            # Database utilities
+│   └── i18n/          # Internationalization
+├── public/             # Static assets
+├── schemas/            # Database schema files
+├── scripts/            # Deployment and setup scripts
+└── types/             # TypeScript definitions
+```
+
+## 🔧 Development Scripts
+
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "node scripts/db-migrate.js",
+    "db:seed": "node scripts/db-seed.js",
+    "db:reset": "node scripts/db-reset.js",
+    "test": "jest",
+    "test:auth": "jest tests/auth/",
+    "test:integrations": "jest tests/integrations/"
+  }
+}
+```
+
+## 🌍 Localization
+
+Amaxing is fully internationalized with support for:
+
+### Language Detection
+1. **Cookie Persistence**: Language preference stored in NEXT_LOCALE cookie
+2. **Browser Headers**: Automatic detection from Accept-Language header
+3. **Manual Selection**: Language switcher in the navigation
+4. **Default**: English for international users, Spanish for Mexican users
+
+### Translation Examples
+
+#### Navigation
+- **en**: "Experiences" → **es**: "Experiencias"
+- **en**: "Book Now" → **es**: "Reservar Ahora"
+- **en**: "Contact" → **es**: "Contacto"
+
+#### Hero Section
+- **en**: "Discover the Mexico They Never Show You." → **es**: "Descubre el México que Nunca Te Enseñan."
+
+#### Booking Flow
+- **en**: "Select Date" → **es**: "Seleccionar Fecha"
+- **en**: "Proceed to Payment" → **es**: "Proceder al Pago"
+
+## 📈 Analytics and Monitoring
+
+The application includes comprehensive analytics and monitoring:
+
+### User Analytics
+- Booking patterns and preferences
+- User engagement and retention
+- Conversion rates by language and device
+- Revenue tracking and forecasting
+
+### Security Analytics
+- Login attempt patterns
+- Suspicious activity detection
+- Failed authentication tracking
+- Account security status
+
+## 🔐 Security Features
+
+### Authentication Security
+- **Password Hashing**: bcrypt with configurable work factor
+- **Session Management**: Secure JWT tokens with expiration
+- **Email Verification**: Double opt-in email confirmation
+- **Password Reset**: Time-limited reset tokens
+- **Account Lockout**: Protection against brute force attacks
+
+### Advanced Security
+- **2-Factor Authentication**: SMS, email, and authenticator app support
+- **Trusted Devices**: Manage and secure devices
+- **Social Auth Integration**: Secure OAuth provider integration
+- **Security Monitoring**: Real-time threat detection
+- **Audit Trail**: Complete activity logging
+- **Rate Limiting**: API and authentication endpoint protection
+
+## 📱 Mobile Experience
+
+### Responsive Design
+- **Desktop**: Full-featured experience with sidebars and expanded views
+- **Tablet**: Optimized layout with adaptive navigation
+- **Mobile**: Touch-friendly interface with simplified flows
+
+### Mobile Features
+- **Push Notifications**: Booking confirmations and reminders
+- **Offline Support**: Basic functionality with background sync
+- **Biometric Auth**: Face ID and fingerprint support
+- **App-like Experience**: Progressive Web App capabilities
+
+## 🚀 Deployment
+
+### Production Deployment
+```bash
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Database migrations
+npm run db:migrate
+
+# Seed initial data
+npm run db:seed
+
+# Monitor logs
+tail -f /var/log/amaxing/app.log
+```
+
+### Docker Deployment
+```dockerfile
+# Dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+FROM node:18-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## 🤝 Contributing
+
+### Code Standards
+- ESLint for linting
+- Prettier for formatting
+- TypeScript for type safety
+- Jest for testing
+
+### Pull Request Process
+1. Fork the repository
+2. Create a feature branch
+3. Follow conventional commit messages
+4. Add tests for new functionality
+5. Update documentation
+6. Request review from maintainers
+
+## 📞 Support
+
+### Issues and Bug Reports
+Please report issues through the GitHub issue tracker:
+[https://github.com/driano7/amaxing/issues](https://github.com/driano7/amaxing/issues)
+
+### Feature Requests
+Submit feature requests through the GitHub issue tracker:
+[https://github.com/driano7/amaxing/issues](https://github.com/driano7/amaxing/issues)
+
+### Documentation
+For questions about usage, configuration, or development, please refer to:
+- [Documentation](https://github.com/driano7/amaxing/blob/main/AGENTS.md)
+- [Codebase Readme](https://github.com/driano7/amaxing/blob/main/README.md)
+
+## 📊 Performance Metrics
+
+### Core Web Vitals
+- **Largest Contentful Paint (LCP)**: < 2.5s
+- **First Input Delay (FID)**: < 100ms
+- **Cumulative Layout Shift (CLS)**: < 0.1
+- **Time to First Byte (TTFB)**: < 600ms
+
+### API Performance
+- **Database Query Optimization**: Indexed queries for fast lookups
+- **Caching Strategy**: Redis for session and API response caching
+- **CDN Integration**: Static asset optimization
+- **Compression**: Gzip and Brotli for efficient data transfer
+
+## 🎨 Design System
+
+### Typography
+- **Headings**: Inter with Playfair Display for hero text
+- **Body Copy**: Inter for readability
+- **UI Text**: Inter for consistency
+
+### Color Scheme
+- **Primary**: Orange (#ea580c) for CTAs and accents
+- **Background**: Dark theme (zinc-950) for luxury feel
+- **Text**: White with gray-300 for readability
+- **Borders**: White/10 with subtle transparency
+
+### Spacing System
+- **Component**: 4px, 8px, 16px, 24px, 32px, 48px, 64px, 96px, 128px
+- **Layout**: Consistent margins and padding
+- **Grid**: 12-column responsive grid
+
+## 🔄 License
+
+This project is licensed under the MIT License. See `LICENSE` for more information.
+
 ---
-title: 'Introducing Tailwind Nexjs Starter Blog'
-date: '2021-01-12'
-lastmod: '2021-01-18'
-tags: ['next-js', 'tailwind', 'guide']
-draft: false
-summary: 'Looking for a performant, out of the box template, with all the best in web technology to support your blogging needs? Checkout the Tailwind Nextjs Starter Blog template.'
-images: ['/static/images/canada/mountains.jpg', '/static/images/canada/toronto.jpg']
-authors: ['default', 'sparrowhawk']
-layout: PostLayout
-canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/introducing-tailwind-nextjs-starter-blog
----
+
+### Español (Español)
+
+# Amaxing - Agencia de Turismo de Lujo
+
+Amaxing es una plataforma digital premium para experiencias de turismo de lujo en México, diseñada para viajeros exigentes que buscan inmersión cultural auténtica más allá de la ruta turística.
+
+## 🚀 Características
+
+- **Experiencias Exclusivas**: Tours y actividades de lujo cuidadosamente seleccionados
+- **Visualización 3D con Three.js**: Modelos interactivos en 3D de sitios arqueológicos
+- **Autenticación Avanzada**: Gestión segura de usuarios con verificación de email
+- **Internacionalización**: Soporte nativo en inglés y español
+- **Reserva en Tiempo Real**: Sistema de reservación fluido con integración de pagos
+- **Diseño Mobile-First**: Diseño responsivo optimizado para todos los dispositivos
+- **Optimización SEO**: Optimizado para motores de búsqueda global
+- **Autenticación Social**: Login con Google, Facebook, Apple
+- **Seguridad Avanzada**: 2FA, dispositivos confiables, monitoreo de seguridad
+- **Dashboard de Analytics**: Analisis comprehensivo de reservas y revenue
+
+## 🌐 Internacionalización
+
+Amaxing soporta tanto inglés (default) como español, asegurando accesibilidad para viajeros internacionales y locales.
+
+### Selección de Idioma
+
+Los idiomas se pueden cambiar mediante:
+- **URL**: `/{lang}/experiences` (en/experiences, es/experiencias)
+- **Header**: Selector de idioma en la barra de navegación
+- **Browser**: Detección automática desde el header Accept-Language
+- **Cookie**: Preferencia de idioma persistente
+
+### Traducciones
+
+Todo el texto de la interfaz de usuario, mensajes de error y contenido están completamente traducidos a ambos idiomas, asegurando una experiencia consistente y localizada para usuarios globales.
+
+## 🛠 Stack Tecnológico
+
+### Frontend
+- Next.js 14 (App Router)
+- React 19 con Components del lado del servidor
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- @react-three/fiber (Visualización 3D)
+- @react-three/drei (Controles 3D)
+- React Day-Picker (Selección de Fecha)
+- Zustand (Gestión de Estado)
+
+### Backend
+- PostgreSQL con Supabase
+- Rutas API de Next.js
+- Autenticación JWT
+- bcrypt Cifrado de Contraseñas
+- Rate Limiting y Seguridad
+- Integración de Webhooks
+
+### Autenticación y Seguridad
+- Verificación de Email
+- Tokens de Reseteo de Contraseña
+- Autenticación Social (Google, Facebook, Apple)
+- Autenticación de Dos Factores
+- Dispositivos Confiables
+- Monitoreo de Seguridad
+- Trazas de Auditoría
+
+## 📊 Esquema de Base de Datos
+
+La aplicación cuenta con un esquema de base de datos comprehensivo incluyendo:
+
+### Tablas Principales
+- **users**: Autenticación y perfiles de usuario
+- **profiles**: Información extendida del usuario y preferencias
+- **experiences**: Catálogo de tours de lujo
+- **bookings**: Gestión de reservaciones
+- **payments**: Procesamiento de transacciones
+- **reviews**: Comentarios y calificaciones de clientes
+- **analytics**: Analisis de reservas y revenue
+
+### Tablas de Seguridad
+- **login_attempts**: Seguimiento de eventos de seguridad
+- **password_reset_tokens**: Gestión de reseteo de contraseña
+- **email_verification_tokens**: Confirmación de email
+- **social_auth_accounts**: Integración de OAuth provider
+- **trusted_devices**: Gestión de dispositivos
+- **user_activity_logs**: Traza de auditoría y cumplimiento
+
+## 🚀 Empezando
+
+### Inicio Rápido
+
+```bash
+# Clonar el repositorio
+git clone <repository-url>
+cd amaxing
+
+# Instalar dependencias
+npm install
+
+# Configurar variables de entorno
+cp .env.example .env
+
+# Configurar base de datos
+# Ejecutar el archivo schema.sql en su PostgreSQL
+
+# Iniciar servidor de desarrollo
+npm run dev
 ```
 
-### Compose
+### Variables de Entorno
 
-Run `node ./scripts/compose.js` to bootstrap a new post.
+```env
+# Base de datos
+DATABASE_URL=su-conexion-postgresql
 
-Follow the interactive prompt to generate a post with pre-filled front matter.
+# Autenticación
+JWT_SECRET=su-secreto-jwt
+BCRYPT_ROUNDS=12
 
-## Deploy
+# Servicios externos
+STRIPE_SECRET_KEY=su-secreto-stripe
+# ... otras claves de servicio
 
-**Vercel**  
-The easiest way to deploy the template is to use the [Vercel Platform](https://vercel.com) from the creators of Next.js. Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Seguridad
+NODE_ENV=development
+ALLOWED_ORIGINS=https://su-dominio.com
+```
 
-**Netlify / GitHub Pages / Firebase etc.**  
-As the template uses `next/image` for image optimization, additional configurations have to be made to deploy on other popular static hosting websites like [Netlify](https://www.netlify.com/) or [GitHub Pages](https://pages.github.com/). An alternative image optimization provider such as Imgix, Cloudinary or Akamai has to be used. Alternatively, replace the `next/image` component with a standard `<img>` tag. See [`next/image` documentation](https://nextjs.org/docs/basic-features/image-optimization) for more details.
+## 🏗️ Estructura del Proyecto
 
-The API routes used in the newsletter component cannot be used in a static site export. You will need to use a form API endpoint provider and substitute the route in the newsletter component accordingly. Other hosting platforms such as Netlify also offer alternative solutions - please refer to their docs for more information.
+```
+amaxing/
+├── app/
+│   ├── api/              # Rutas API
+│   │   ├── auth/         # Endpoints de autenticación
+│   │   ├── experiences/ # Gestión de experiencias
+│   │   ├── bookings/    # Endpoints de reservas
+│   │   └── payments/    # Procesamiento de pagos
+│   ├── components/      # Componentes de UI
+│   ├── hooks/          # Custom hooks
+│   └── lib/            # Librerías y utilidades
+├── components/          # Componentes compartidos
+│   ├── ui/             # Componentes de UI
+│   ├── auth/           # Componentes de autenticación
+│   ├── booking/        # Componentes de reserva
+│   └── experiences/   # Componentes de experiencias
+├── lib/                # Librerías de aplicación
+│   ├── auth/          # Lógica de autenticación
+│   ├── db/            # Utilerías de base de datos
+│   └── i18n/          # Internacionalización
+├── public/             # Assets estáticos
+├── schemas/            # Archivos de esquema de base de datos
+├── scripts/            # Scripts de despliegue y setup
+└── types/             # Definiciones TypeScript
+```
 
-## Support
+## 🔧 Scripts de Desarrollo
 
-Using the template? Support this effort by giving a star on GitHub, sharing your own blog and giving a shoutout on Twitter or becoming a project [sponsor](https://github.com/sponsors/timlrx).
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "node scripts/db-migrate.js",
+    "db:seed": "node scripts/db-seed.js",
+    "db:reset": "node scripts/db-reset.js",
+    "test": "jest",
+    "test:auth": "jest tests/auth/",
+    "test:integrations": "jest tests/integrations/"
+  }
+}
+```
 
-## Licence
+## 🌍 Localización
 
-[MIT](https://github.com/timlrx/tailwind-nextjs-starter-blog/blob/master/LICENSE) © [Timothy Lin](https://www.timlrx.com)
+Amaxing está completamente internacionalizado con soporte para:
+
+### Detección de Idioma
+1. **Persistencia de Cookie**: Preferencia de idioma almacenada en cookie NEXT_LOCALE
+2. **Headers del Browser**: Detección automática desde header Accept-Language
+3. **Selección Manual**: Selector de idioma en la barra de navegación
+4. **Default**: Inglés para usuarios internacionales, español para usuarios mexicanos
+
+### Ejemplos de Traducción
+
+#### Navegación
+- **en**: "Experiences" → **es**: "Experiencias"
+- **en**: "Book Now" → **es**: "Reservar Ahora"
+- **en**: "Contact" → **es**: "Contacto"
+
+#### Sección Hero
+- **en**: "Discover the Mexico They Never Show You." → **es**: "Descubre el México que Nunca Te Enseñan."
+
+#### Flujo de Reserva
+- **en**: "Select Date" → **es**: "Seleccionar Fecha"
+- **en**: "Proceed to Payment" → **es**: "Proceder al Pago"
+
+## 📈 Analíticas y Monitoreo
+
+La aplicación incluye analíticas y monitoreo comprehensivos:
+
+### Analíticas de Usuario
+- Patrones de reservación y preferencias
+- Engagement y retención de usuarios
+- Tasas de conversión por idioma y dispositivo
+- Seguimiento de revenue y proyecciones
+
+### Analíticas de Seguridad
+- Patrones de intentos de login
+- Detección de actividad sospechosa
+- Seguimiento de autenticaciones fallidas
+- Estado de seguridad de cuentas
+
+## 🔐 Características de Seguridad
+
+### Seguridad de Autenticación
+- **Cifrado de Contraseñas**: bcrypt con work factor configurable
+- **Gestión de Sesiones**: Tokens JWT seguros con expiración
+- **Verificación de Email**: Doble opt-in para confirmación de email
+- **Reseteo de Contraseña**: Tokens de reseteo con expiración limitada
+- **Bloqueo de Cuenta**: Protección contra ataques de fuerza bruta
+
+### Seguridad Avanzada
+- **Autenticación de Dos Factores**: Soporte para SMS, email y authenticator apps
+- **Dispositivos Confiables**: Gestión y seguridad de dispositivos
+- **Integración de Autenticación Social**: OAuth seguro con providers
+- **Monitoreo de Seguridad**: Detección en tiempo real de amenazas
+- **Traza de Auditoría**: Registro completo de todas las acciones de usuario
+- **Rate Limiting**: Protección de endpoints de API y autenticación
+
+## 📱 Experiencia Móvil
+
+### Diseño Responsivo
+- **Desktop**: Experiencia completa con sidebars y vistas expandidas
+- **Tablet**: Layout optimizado con navegación adaptable
+- **Móvil**: Interfaz táctil-friendly con flujos simplificados
+
+### Características Móviles
+- **Notificaciones Push**: Confirmaciones de reserva y recordatorios
+- **Soporte Offline**: Funcionalidad básica con sincronización en background
+- **Autenticación Biométrica**: Soporte para Face ID y huella digital
+- **Experiencia tipo App**: Capacidades Progressive Web App
+
+## 🚀 Despliegue
+
+### Despliegue en Producción
+```bash
+# Construir para producción
+npm run build
+
+# Iniciar servidor de producción
+npm start
+
+# Migraciones de base de datos
+npm run db:migrate
+
+# Sembrar datos iniciales
+npm run db:seed
+
+# Monitorear logs
+tail -f /var/log/amaxing/app.log
+```
+
+### Despliegue con Docker
+```dockerfile
+# Dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+FROM node:18-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## 🤝 Contribuyendo
+
+### Estándares de Código
+- ESLint para linting
+- Prettier para formateo
+- TypeScript para tipado seguro
+- Jest para testing
+
+### Proceso de Pull Request
+1. Fork el repositorio
+2. Crear una branch de feature
+3. Seguir mensajes de commit convencionales
+4. Agregar tests para nueva funcionalidad
+5. Actualizar documentación
+6. Solicitar review de maintainers
+
+## 📞 Soporte
+
+### Reportes de Errores y Issues
+Por favor, reporte issues a través del tracker de GitHub:
+[https://github.com/driano7/amaxing/issues](https://github.com/driano7/amaxing/issues)
+
+### Solicitudes de Features
+Envíe solicitudes de features a través del tracker de GitHub:
+[https://github.com/driano7/amaxing/issues](https://github.com/driano7/amaxing/issues)
+
+### Documentación
+Para preguntas sobre uso, configuración o desarrollo, por favor refiérase a:
+- [Documentación](https://github.com/driano7/amaxing/blob/main/AGENTS.md)
+- [README del Código](https://github.com/driano7/amaxing/blob/main/README.md)
+
+## 📊 Métricas de Performance
+
+### Core Web Vitals
+- **Largest Contentful Paint (LCP)**: < 2.5s
+- **First Input Delay (FID)**: < 100ms
+- **Cumulative Layout Shift (CLS)**: < 0.1
+- **Time to First Byte (TTFB)**: < 600ms
+
+### Performance de API
+- **Optimización de Consultas en Base de Datos**: Consultas indexadas para lookups rápidas
+- **Estrategia de Caching**: Redis para sesiones y respuestas de API
+- **Integración CDN**: Optimización de assets estáticos
+- **Compresión**: Gzip y Brotli para transferencia eficiente de datos
+
+## 🎨 Sistema de Diseño
+
+### Tipografía
+- **Titulares**: Inter con Playfair Display para texto hero
+- **Cuerpo**: Inter para legibilidad
+- **Texto UI**: Inter para consistencia
+
+### Esquemaa de Colores
+- **Primario**: Naranja (#ea580c) para CTAs y acentos
+- **Fondo**: Tema oscuro (zinc-950) para feel de lujo
+- **Texto**: Blanco con gray-300 para legibilidad
+- **Bordes**: White/10 con transparencia sutil
+
+### Sistema de Espaciado
+- **Componente**: 4px, 8px, 16px, 24px, 32px, 48px, 64px, 96px, 128px
+- **Layout**: Márgenes y padding consistentes
+- **Grid**: Grid de 12 columnas responsivo
+
+## 🔄 Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT. Ver `LICENSE` para más información.
+
+---
+
+¡Gracias por tu interés en Amaxing! Este proyecto combina el más alto nivel de tecnología con diseño premium para crear experiencias de turismo inigualables en México.
+
+Si tienes alguna pregunta o necesitas ayuda con el setup o desarrollo, no dudes en contactarme a través de los canales de GitHub soportados.
+
+¡Happy coding! 🚀
