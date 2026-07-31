@@ -5,7 +5,8 @@
       "experiences": "Experiences",
       "stories": "Stories",
       "pricing": "Pricing",
-      "contact": "Contact"
+      "contact": "Contact",
+      "news": "News"
     },
     "bookNow": "Book Now",
     "booking": "Booking",
@@ -160,5 +161,13 @@
     "friday": "Friday",
     "saturday": "Saturday",
     "sunday": "Sunday"
+  },
+  "news": {
+    "title": "Travel News & Insights",
+    "subtitle": "Latest updates on Mexico tourism from the last 3 months",
+    "readMore": "Read Full Article",
+    "noArticles": "No news available at the moment. Check back soon!",
+    "popularTopics": "Popular Topics",
+    "trending": "Trending"
   }
 }
