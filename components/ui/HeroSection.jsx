@@ -1,12 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Playfair_Display } from 'next/font/google'
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-})
 
 export function HeroSection() {
   return (
@@ -27,17 +21,49 @@ export function HeroSection() {
               initial={{ y: 60, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: false, margin: '-50px' }}
-              transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1.0], staggerChildren: 0.15 }}
+              transition={{
+                duration: 1,
+                ease: [0.25, 0.1, 0.25, 1.0],
+                staggerChildren: 0.15,
+              }}
               className="text-5xl font-bold leading-tight tracking-tight text-white md:text-7xl lg:text-[8rem]"
             >
-              <motion.span className="${playfair.className} mb-4 block">Discover the</motion.span>
+              <motion.span className="mb-4 block font-serif">Discover the</motion.span>
               <motion.span
-                className="${playfair.className} text-orange-500"
+                className={`font-serif text-orange-500`}
                 style={{ willChange: 'transform, opacity' }}
               >
                 Mexico They Never Show You.
               </motion.span>
             </motion.h1>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="mx-auto mt-8 max-w-3xl"
+          >
+            <p className="text-lg text-gray-300 md:text-xl">
+              Exclusive luxury tours and experiences crafted for discerning travelers seeking
+              authentic Mexican culture beyond the tourist trail.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.8 }}
+            className="mt-12 flex justify-center"
+          >
+            <motion.a
+              href="https://wa.me/525512291607"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="rounded-full border border-orange-500/30 bg-orange-500/20 px-8 py-4 font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-white"
+            >
+              Book a Trip
+            </motion.a>
           </motion.div>
         </div>
       </div>

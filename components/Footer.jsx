@@ -1,8 +1,10 @@
 import Link from './Link'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
+import { useTranslation } from '@/lib/hooks/useTranslationClient'
 
 export default function Footer() {
+  const { t } = useTranslation()
   return (
     <footer className="mt-24 border-t border-white/10">
       <div className="container mx-auto px-4 py-8">
