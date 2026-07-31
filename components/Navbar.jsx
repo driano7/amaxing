@@ -4,8 +4,9 @@ import Link from '@/components/Link'
 import Image from 'next/image'
 import { ThemeToggle } from './theme-toggle'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useTranslation } from '@/lib/hooks/useTranslationClient'
+import { NavigationMenu } from '@/components/ui/NavigationMenu'
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,6 +15,8 @@ export function Navbar() {
   const [isMobile, setIsMobile] = useState(false)
   const [mobileDelayElapsed, setMobileDelayElapsed] = useState(true)
   const [compact, setCompact] = useState(false)
+  const [megaMenuOpen, setMegaMenuOpen] = useState(false)
+  const megaMenuTimerRef = useRef(null)
   const timerRef = useRef(null)
   const { scrollY } = useScroll()
   const { t, locale, setLocale } = useTranslation()
@@ -31,6 +34,16 @@ export function Navbar() {
     { label: t('header.nav.pricing'), href: '/pricing' },
     { label: t('header.nav.contact'), href: '/contact' },
   ]
+
+  const closeMegaMenu = useCallback(() => {
+    if (megaMenuTimerRef.current) clearTimeout(megaMenuTimerRef.current)
+    megaMenuTimerRef.current = setTimeout(() => setMegaMenuOpen(false), 150)
+  }, [megaMenuTimerRef])
+
+  const openMegaMenu = useCallback(() => {
+    if (megaMenuTimerRef.current) clearTimeout(megaMenuTimerRef.current)
+    setMegaMenuOpen(true)
+  }, [megaMenuTimerRef])
 
   // Compact timer for mobile drawer (like EarningsAI)
   useEffect(() => {
@@ -128,12 +141,48 @@ export function Navbar() {
               </span>
             </Link>
             <div className="hidden items-center gap-6 lg:flex">
-              {navItems.map((item, index) => (
+              {navItems.slice(0, 1).map((item, index) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className="relative text-sm font-medium tracking-wide text-gray-300 transition-all duration-200 hover:text-orange-500"
                   style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
+                  <span className="relative">{item.label}</span>
+                </Link>
+              ))}
+              <div className="relative" onMouseEnter={openMegaMenu} onMouseLeave={closeMegaMenu}>
+                <button
+                  className="group relative flex items-center gap-1 text-sm font-medium tracking-wide text-gray-300 transition-all duration-200 hover:text-orange-500"
+                  aria-haspopup="true"
+                  aria-expanded={megaMenuOpen}
+                >
+                  <span className="relative">{t('header.nav.tours') || 'Tours'}</span>
+                  <svg
+                    className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                  <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
+                </button>
+                <NavigationMenu isOpen={megaMenuOpen} onClose={closeMegaMenu} />
+              </div>
+              {navItems.slice(1).map((item, index) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="relative text-sm font-medium tracking-wide text-gray-300 transition-all duration-200 hover:text-orange-500"
+                  style={{ animationDelay: `${(index + 2) * 0.1}s` }}
                 >
                   <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
                   <span className="relative">{item.label}</span>
@@ -245,7 +294,11 @@ export function Navbar() {
               </div>
 
               <nav className="flex-1 space-y-1 px-6 pt-6">
-                {navItems.map((item) => (
+                {[
+                  navItems[0],
+                  { label: t('header.nav.tours') || 'Tours', href: '/experiences' },
+                  ...navItems.slice(1),
+                ].map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}

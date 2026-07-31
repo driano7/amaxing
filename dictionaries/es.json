@@ -3,6 +3,7 @@
     "nav": {
       "home": "Inicio",
       "experiences": "Experiencias",
+      "tours": "Tours",
       "stories": "Historias",
       "pricing": "Precios",
       "contact": "Contacto",
@@ -169,5 +170,13 @@
     "noArticles": "No hay noticias disponibles en este momento. ¡Vuelve pronto!",
     "popularTopics": "Temas Populares",
     "trending": "Tendencias"
+  },
+  "tours": {
+    "title": "Experiencias Curadas",
+    "description": "Descubre viajes seleccionados a mano que trascienden lo ordinario y revelan el corazón auténtico de México.",
+    "heroTitle": "Experiencias Curadas. Zero Tourist Traps.",
+    "heroSubtitle": "Viajes cuidadosamente seleccionados que trascienden lo ordinario y revelan el corazón auténtico de México.",
+    "noResults": "No se encontraron tours en esta categoría",
+    "tryAnotherCategory": "Intenta seleccionar otra categoría"
   }
 }

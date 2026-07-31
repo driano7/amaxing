@@ -3,6 +3,7 @@
     "nav": {
       "home": "Home",
       "experiences": "Experiences",
+      "tours": "Tours",
       "stories": "Stories",
       "pricing": "Pricing",
       "contact": "Contact",
@@ -169,5 +170,13 @@
     "noArticles": "No news available at the moment. Check back soon!",
     "popularTopics": "Popular Topics",
     "trending": "Trending"
+  },
+  "tours": {
+    "title": "Curated Experiences",
+    "description": "Discover handpicked journeys that transcend the ordinary and reveal the authentic heart of Mexico.",
+    "heroTitle": "Curated Experiences. Zero Tourist Traps.",
+    "heroSubtitle": "Handpicked journeys that transcend the ordinary and reveal the authentic heart of Mexico.",
+    "noResults": "No tours found in this category",
+    "tryAnotherCategory": "Try selecting another category"
   }
 }
