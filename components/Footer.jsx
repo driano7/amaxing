@@ -20,7 +20,7 @@ export default function Footer() {
             <p className="text-center text-sm text-gray-600 dark:text-gray-300">
               Hecho con <span className="text-red-500">❤</span> por:{' '}
               <a
-                href="https://linkedin.com/in/donovanriano"
+                href="https://riano.netlify.app"
                 target="_blank"
                 rel="noreferrer"
                 className="font-semibold text-orange-500 underline-offset-4 hover:underline"
@@ -31,8 +31,7 @@ export default function Footer() {
           </div>
 
           <div className="flex space-x-4">
-            <SocialIcon kind="ethereum" href={siteMetadata.ethereum} size="6" />
-            <SocialIcon kind="bitcoin" href={siteMetadata.bitcoin} size="6" />
+            <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size="6" />
             <SocialIcon kind="telegram" href={siteMetadata.telegram} size="6" />
             <SocialIcon kind="whatsapp" href={siteMetadata.whatsapp} size="6" />
             <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size="6" />

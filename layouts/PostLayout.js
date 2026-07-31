@@ -4,149 +4,161 @@ import SectionContainer from '@/components/SectionContainer'
 import { BlogSEO } from '@/components/SEO'
 import Image from '@/components/Image'
 import Tag from '@/components/Tag'
-import siteMetadata from '@/data/siteMetadata'
-//import Giscus from '@giscus/react';
+import TOCInline from '@/components/TOCInline'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
+import siteMetadata from '@/data/siteMetadata'
 
-const editUrl = (fileName) => `https://spoti.fi/3QlYDss`
-const discussUrl = (slug) => `https://discord.com/invite/kXfG2VU6`
+const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
 
-const postDateTemplate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-
-export default function PostLayout({ frontMatter, authorDetails, next, prev, children }) {
-  const { slug, fileName, date, title, images, tags } = frontMatter
+export default function PostLayout({ frontMatter, authorDetails, next, prev, toc, children }) {
+  const { slug, date, title, summary, tags, images, readingTime } = frontMatter
+  const cover = Array.isArray(images) ? images[0] : images
+  const author = authorDetails?.[0] || {}
 
   return (
-    <SectionContainer>
-      <BlogSEO
-        url={`${siteMetadata.siteUrl}/blog/${slug}`}
-        authorDetails={authorDetails}
-        {...frontMatter}
-      />
-      <ScrollTopAndComment />
-      <article>
-        <div className="xl:divide-y xl:divide-gray-200 xl:dark:divide-gray-700">
-          <header className="pt-6 xl:pb-6">
-            <div className="space-y-1 text-center">
-              <dl className="space-y-10">
-                <div>
-                  <dt className="sr-only">Published on</dt>
-                  <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                    <time dateTime={date}>
-                      {new Date(date).toLocaleDateString(siteMetadata.locale, postDateTemplate)}
-                    </time>
-                  </dd>
-                </div>
-              </dl>
-              <div>
-                <PageTitle>{title}</PageTitle>
+    <div className="bg-zinc-950 text-gray-100">
+      <SectionContainer>
+        <BlogSEO
+          url={`${siteMetadata.siteUrl}/blog/${slug}`}
+          authorDetails={authorDetails}
+          {...frontMatter}
+        />
+        <ScrollTopAndComment />
+        <article>
+          <header className="pt-8 pb-6 text-center">
+            <Link
+              href="/blog"
+              className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-gray-400 transition-colors hover:text-orange-400"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-4 w-4"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {siteMetadata.headerTitle}
+            </Link>
+
+            {tags && tags.length > 0 && (
+              <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
+                {tags.map((tag) => (
+                  <Tag key={tag} text={tag} />
+                ))}
               </div>
+            )}
+
+            <PageTitle>{title}</PageTitle>
+
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-gray-400">
+              {author.name && (
+                <span className="inline-flex items-center gap-2">
+                  {author.avatar && (
+                    <Image
+                      src={author.avatar}
+                      alt={author.name}
+                      width="28px"
+                      height="28px"
+                      className="h-7 w-7 rounded-full object-cover"
+                    />
+                  )}
+                  <span className="font-medium text-gray-200">{author.name}</span>
+                </span>
+              )}
+              {date && (
+                <time dateTime={date}>
+                  {new Date(date).toLocaleDateString(siteMetadata.locale, postDateTemplate)}
+                </time>
+              )}
+              {readingTime?.text && (
+                <span className="inline-flex items-center gap-1.5">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="h-4 w-4 text-orange-500"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {readingTime.text}
+                </span>
+              )}
             </div>
           </header>
-          <div
-            className="divide-y divide-gray-200 pb-8 dark:divide-gray-700 xl:grid xl:grid-cols-4 xl:gap-x-6 xl:divide-y-0"
-            style={{ gridTemplateRows: 'auto 1fr' }}
-          >
-            <dl className="pt-6 pb-10 xl:border-b xl:border-gray-200 xl:pt-11 xl:dark:border-gray-700">
-              <dt className="sr-only">Authors</dt>
-              <dd>
-                <ul className="flex justify-center space-x-8 sm:space-x-12 xl:block xl:space-x-0 xl:space-y-8">
-                  {authorDetails.map((author) => (
-                    <li className="flex items-center space-x-2" key={author.name}>
-                      {author.avatar && (
-                        <Image
-                          src={author.avatar}
-                          width="38px"
-                          height="38px"
-                          alt="avatar"
-                          className="h-10 w-10 rounded-full"
-                        />
-                      )}
-                      <dl className="whitespace-nowrap text-sm font-medium leading-5">
-                        <dt className="sr-only">Name</dt>
-                        <dd className="text-gray-900 dark:text-gray-100">{author.name}</dd>
-                        <dt className="sr-only">Tiktok</dt>
-                        <dd>
-                          {author.tiktok && (
-                            <Link
-                              href={author.tiktok}
-                              className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            >
-                              {author.tiktok.replace('https://www.tiktok.com/', ' ')}
-                            </Link>
-                          )}
-                        </dd>
-                      </dl>
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </dl>
-            <div className="divide-y divide-gray-200 dark:divide-gray-700 xl:col-span-3 xl:row-span-2 xl:pb-0">
-              <div className="prose max-w-none pt-10 pb-8 dark:prose-dark">{children}</div>
-              <div className="pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300">
-                <Link href={discussUrl(slug)} rel="nofollow">
-                  {'See comunity travel at Discord'}
-                </Link>
-                {` ••• `}
-                <Link href={editUrl(fileName)}>
-                  {'Listen to the podcast of the main attractions'}
-                </Link>
-              </div>
-              <Comments frontMatter={frontMatter} />
+
+          {cover && (
+            <div className="relative mb-8 h-64 w-full overflow-hidden rounded-xl border border-white/10 md:h-96">
+              <Image src={cover} alt={title} fill sizes="100vw" className="object-cover" />
             </div>
-            <footer>
-              <div className="divide-gray-200 text-sm font-medium leading-5 dark:divide-gray-700 xl:col-start-1 xl:row-start-2 xl:divide-y">
-                {tags && (
-                  <div className="py-4 xl:py-8">
-                    <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      Tags
-                    </h2>
-                    <div className="flex flex-wrap">
-                      {tags.map((tag) => (
-                        <Tag key={tag} text={tag} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {(next || prev) && (
-                  <div className="flex justify-between py-4 xl:block xl:space-y-8 xl:py-8">
-                    {prev && (
-                      <div>
-                        <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Previous Article
-                        </h2>
-                        <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
-                          <Link href={`/blog/${prev.slug}`}>{prev.title}</Link>
-                        </div>
-                      </div>
-                    )}
-                    {next && (
-                      <div>
-                        <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Next Article
-                        </h2>
-                        <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
-                          <Link href={`/blog/${next.slug}`}>{next.title}</Link>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="pt-4 xl:pt-8">
+          )}
+
+          {toc && toc.length > 0 && (
+            <div className="mb-8">
+              <details className="rounded-xl border border-white/10 bg-zinc-900/60 p-4" open>
+                <summary className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-gray-300">
+                  Table of contents
+                </summary>
+                <div className="mt-3 border-t border-white/10 pt-3">
+                  <TOCInline toc={toc} />
+                </div>
+              </details>
+            </div>
+          )}
+
+          {summary && (
+            <p className="mb-8 rounded-xl border border-orange-500/20 bg-orange-500/5 p-4 text-lg leading-relaxed text-gray-200">
+              {summary}
+            </p>
+          )}
+
+          <div className="prose prose-invert max-w-none pb-8">{children}</div>
+
+          {(next || prev) && (
+            <div className="grid grid-cols-1 gap-4 border-t border-white/10 pt-8 sm:grid-cols-2">
+              {prev && (
                 <Link
-                  href="/blog"
-                  className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  href={`/blog/${prev.slug}`}
+                  className="group flex flex-col rounded-xl border border-white/10 bg-zinc-900 p-5 transition-all duration-300 hover:border-orange-500/40"
                 >
-                  &larr; Back to the blog
+                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    &larr; Previous
+                  </span>
+                  <span className="mt-2 font-semibold text-gray-100 group-hover:text-orange-400">
+                    {prev.title}
+                  </span>
                 </Link>
-              </div>
-            </footer>
+              )}
+              {next && (
+                <Link
+                  href={`/blog/${next.slug}`}
+                  className="group flex flex-col rounded-xl border border-white/10 bg-zinc-900 p-5 text-right transition-all duration-300 hover:border-orange-500/40 sm:col-start-2"
+                >
+                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    Next &rarr;
+                  </span>
+                  <span className="mt-2 font-semibold text-gray-100 group-hover:text-orange-400">
+                    {next.title}
+                  </span>
+                </Link>
+              )}
+            </div>
+          )}
+
+          <div className="pt-8">
+            <Comments frontMatter={frontMatter} />
           </div>
-        </div>
-      </article>
-    </SectionContainer>
+        </article>
+      </SectionContainer>
+    </div>
   )
 }

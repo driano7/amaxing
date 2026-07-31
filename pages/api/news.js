@@ -51,7 +51,7 @@ const FALLBACK_ARTICLES = {
       title: 'Discover the Hidden Gems of Mexico Beyond the Tourist Trail',
       description:
         'Explore lesser-known destinations in Mexico where authentic culture and natural beauty await the adventurous traveler.',
-      url: 'https://amaxing.mx/blog/hidden-gems-mexico',
+      url: 'https://www.google.com/search?q=mexico+hidden+gems+tourism',
       publishedAt: new Date().toISOString(),
       source: { name: 'Amaxing Travel' },
       sentiment: 'positive',
@@ -60,7 +60,7 @@ const FALLBACK_ARTICLES = {
       title: 'Sustainable Tourism Initiatives in Riviera Maya',
       description:
         "New eco-resorts and conservation programs are transforming how we experience Mexico's Caribbean coast.",
-      url: 'https://amaxing.mx/blog/sustainable-riviera-maya',
+      url: 'https://www.google.com/search?q=sustainable+tourism+riviera+maya',
       publishedAt: new Date(Date.now() - 86400000).toISOString(),
       source: { name: 'Amaxing Travel' },
       sentiment: 'positive',
@@ -69,7 +69,7 @@ const FALLBACK_ARTICLES = {
       title: "Oaxaca's Culinary Revolution: From Street Food to Fine Dining",
       description:
         'Oaxaca continues to redefine Mexican cuisine with innovative chefs and traditional cooking techniques.',
-      url: 'https://amaxing.mx/blog/oaxaca-culinary-revolution',
+      url: 'https://www.google.com/search?q=oaxaca+culinary+tourism',
       publishedAt: new Date(Date.now() - 172800000).toISOString(),
       source: { name: 'Amaxing Travel' },
       sentiment: 'positive',
@@ -78,7 +78,7 @@ const FALLBACK_ARTICLES = {
       title: 'What NOT to Do When Visiting Mexico City',
       description:
         'Avoid these common tourist mistakes to fully enjoy the vibrant culture and rich history of Mexico City.',
-      url: 'https://amaxing.mx/blog/mexico-city-mistakes',
+      url: 'https://www.google.com/search?q=mexico+city+tourist+mistakes',
       publishedAt: new Date(Date.now() - 259200000).toISOString(),
       source: { name: 'Amaxing Travel' },
       sentiment: 'neutral',
@@ -89,7 +89,7 @@ const FALLBACK_ARTICLES = {
       title: 'Descubre los Tesoros Ocultos de México Más Allá de la Ruta Turística',
       description:
         'Explora destinos menos conocidos en México donde la cultura auténtica y la belleza natural te esperan.',
-      url: 'https://amaxing.mx/blog/tesoros-ocultos-mexico',
+      url: 'https://www.google.com/search?q=tesoros+ocultos+mexico+turismo',
       publishedAt: new Date().toISOString(),
       source: { name: 'Amaxing Travel' },
       sentiment: 'positive',
@@ -98,7 +98,7 @@ const FALLBACK_ARTICLES = {
       title: 'Iniciativas de Turismo Sostenible en Riviera Maya',
       description:
         'Nuevos eco-resorts y programas de conservación están transformando la experiencia en la costa carreña de México.',
-      url: 'https://amaxing.mx/blog/turismo-sostenible-riviera-maya',
+      url: 'https://www.google.com/search?q=turismo+sostenible+riviera+maya',
       publishedAt: new Date(Date.now() - 86400000).toISOString(),
       source: { name: 'Amaxing Travel' },
       sentiment: 'positive',
@@ -107,7 +107,7 @@ const FALLBACK_ARTICLES = {
       title: 'La Revolución Gastronómica de Oaxaca: De la Calle a la Alta Cocina',
       description:
         'Oaxaca sigue redefiniendo la cocina mexicana con chefs innovadores y técnicas tradicionales.',
-      url: 'https://amaxing.mx/blog/revolucion-gastronomica-oaxaca',
+      url: 'https://www.google.com/search?q=revolucion+gastronomica+oaxaca',
       publishedAt: new Date(Date.now() - 172800000).toISOString(),
       source: { name: 'Amaxing Travel' },
       sentiment: 'positive',
@@ -116,7 +116,7 @@ const FALLBACK_ARTICLES = {
       title: 'Lo Que NO Debes Hacer Cuando Visitas la Ciudad de México',
       description:
         'Evita estos errores comunes de turistas para disfrutar plenamente de la cultura y riqueza histórica de la CDMX.',
-      url: 'https://amaxing.mx/blog/errores-cdmx',
+      url: 'https://www.google.com/search?q=errores+turistas+cdmx',
       publishedAt: new Date(Date.now() - 259200000).toISOString(),
       source: { name: 'Amaxing Travel' },
       sentiment: 'neutral',

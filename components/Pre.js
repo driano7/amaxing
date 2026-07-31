@@ -2,16 +2,8 @@ import { useState, useRef } from 'react'
 
 const Pre = (props) => {
   const textInput = useRef(null)
-  const [hovered, setHovered] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const onEnter = () => {
-    setHovered(true)
-  }
-  const onExit = () => {
-    setHovered(false)
-    setCopied(false)
-  }
   const onCopy = () => {
     setCopied(true)
     navigator.clipboard.writeText(textInput.current.textContent)
@@ -21,49 +13,61 @@ const Pre = (props) => {
   }
 
   return (
-    <div ref={textInput} onMouseEnter={onEnter} onMouseLeave={onExit} className="relative">
-      {hovered && (
+    <div className="group my-6 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-900 shadow-lg shadow-black/10 dark:border-zinc-800">
+      <div className="flex items-center justify-between border-b border-white/10 bg-zinc-900/95 px-4 py-2.5">
+        <div className="flex items-center gap-1.5">
+          <span className="h-3 w-3 rounded-full bg-red-400/90" />
+          <span className="h-3 w-3 rounded-full bg-yellow-400/90" />
+          <span className="h-3 w-3 rounded-full bg-green-400/90" />
+          <span className="ml-3 text-xs font-medium uppercase tracking-wide text-zinc-400">
+            Code
+          </span>
+        </div>
         <button
           aria-label="Copy code"
           type="button"
-          className={`absolute right-2 top-2 h-8 w-8 rounded border-2 bg-gray-700 p-1 dark:bg-gray-800 ${
-            copied
-              ? 'border-green-400 focus:border-green-400 focus:outline-none'
-              : 'border-gray-300'
-          }`}
           onClick={onCopy}
+          className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-all ${
+            copied
+              ? 'border-green-400/60 bg-green-400/10 text-green-400'
+              : 'border-white/10 bg-white/5 text-zinc-300 hover:border-orange-500/50 hover:text-orange-400'
+          }`}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            fill="none"
-            className={copied ? 'text-green-400' : 'text-gray-300'}
-          >
-            {copied ? (
-              <>
+          {copied ? (
+            <>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-3.5 w-3.5"
+              >
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  fillRule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clipRule="evenodd"
                 />
-              </>
-            ) : (
-              <>
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </>
-            )}
-          </svg>
+              </svg>
+              Copied
+            </>
+          ) : (
+            <>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-3.5 w-3.5"
+              >
+                <path d="M7 3.5A1.5 1.5 0 018.5 2h3.879a1.5 1.5 0 011.06.44l3.122 3.12A1.5 1.5 0 0117 6.622V12.5a1.5 1.5 0 01-1.5 1.5h-1v-3.379a3 3 0 00-.879-2.121L10.5 5.379A3 3 0 008.379 4.5H7v-1z" />
+                <path d="M4.5 6A1.5 1.5 0 003 7.5v9A1.5 1.5 0 004.5 18h7a1.5 1.5 0 001.5-1.5v-5.879a1.5 1.5 0 00-.44-1.06L9.44 6.439A1.5 1.5 0 008.378 6H4.5z" />
+              </svg>
+              Copy
+            </>
+          )}
         </button>
-      )}
-
-      <pre>{props.children}</pre>
+      </div>
+      <pre ref={textInput} className="overflow-x-auto p-4 text-sm leading-relaxed text-zinc-100">
+        {props.children}
+      </pre>
     </div>
   )
 }

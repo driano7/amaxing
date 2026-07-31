@@ -8,6 +8,7 @@
     "build": "next build",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
+    "news:generate": "node scripts/generate-news-notes.js",
     "lint": "next lint",
     "prepare": "husky install"
   },
@@ -30,7 +31,7 @@
     "framer-motion": "^6.5.1",
     "giscus": "^1.2.0",
     "github-slugger": "^1.3.0",
-    "gray-matter": "^4.0.2",
+    "gray-matter": "^4.0.3",
     "i": "^0.3.7",
     "image-size": "1.0.0",
     "lucide-react": "^1.28.0",
