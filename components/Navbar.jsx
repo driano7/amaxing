@@ -28,6 +28,7 @@ export function Navbar() {
 
   const navItems = [
     { label: t('header.nav.home'), href: '/' },
+    { label: t('header.nav.tours') || 'Tours', href: '/tours', isMegaMenu: true },
     { label: t('header.nav.experiences'), href: '/experiences' },
     { label: t('header.nav.stories'), href: '/stories' },
     { label: t('header.nav.news'), href: '/news' },
@@ -140,54 +141,54 @@ export function Navbar() {
                 Amaxing
               </span>
             </Link>
-            <div className="hidden items-center gap-6 lg:flex">
-              {navItems.slice(0, 1).map((item, index) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="relative text-sm font-medium tracking-wide text-gray-300 transition-all duration-200 hover:text-orange-500"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
-                  <span className="relative">{item.label}</span>
-                </Link>
-              ))}
-              <div className="relative" onMouseEnter={openMegaMenu} onMouseLeave={closeMegaMenu}>
-                <button
-                  className="group relative flex items-center gap-1 text-sm font-medium tracking-wide text-gray-300 transition-all duration-200 hover:text-orange-500"
-                  aria-haspopup="true"
-                  aria-expanded={megaMenuOpen}
-                >
-                  <span className="relative">{t('header.nav.tours') || 'Tours'}</span>
-                  <svg
-                    className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
+            <div className="hidden flex-1 items-center justify-center gap-6 lg:flex">
+              {navItems.map((item, index) => {
+                if (item.isMegaMenu) {
+                  return (
+                    <div
+                      key={item.href}
+                      className="relative"
+                      onMouseEnter={openMegaMenu}
+                      onMouseLeave={closeMegaMenu}
+                    >
+                      <button
+                        className="group relative flex items-center gap-1 text-sm font-medium tracking-wide text-gray-300 transition-all duration-200 hover:text-orange-500"
+                        aria-haspopup="true"
+                        aria-expanded={megaMenuOpen}
+                      >
+                        <span className="relative">{item.label}</span>
+                        <svg
+                          className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                        <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
+                      </button>
+                      <NavigationMenu isOpen={megaMenuOpen} onClose={closeMegaMenu} />
+                    </div>
+                  )
+                }
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="relative text-sm font-medium tracking-wide text-gray-300 transition-all duration-200 hover:text-orange-500"
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                  <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
-                </button>
-                <NavigationMenu isOpen={megaMenuOpen} onClose={closeMegaMenu} />
-              </div>
-              {navItems.slice(1).map((item, index) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="relative text-sm font-medium tracking-wide text-gray-300 transition-all duration-200 hover:text-orange-500"
-                  style={{ animationDelay: `${(index + 2) * 0.1}s` }}
-                >
-                  <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
-                  <span className="relative">{item.label}</span>
-                </Link>
-              ))}
+                    <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
+                    <span className="relative">{item.label}</span>
+                  </Link>
+                )
+              })}
             </div>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
@@ -294,11 +295,7 @@ export function Navbar() {
               </div>
 
               <nav className="flex-1 space-y-1 px-6 pt-6">
-                {[
-                  navItems[0],
-                  { label: t('header.nav.tours') || 'Tours', href: '/experiences' },
-                  ...navItems.slice(1),
-                ].map((item) => (
+                {navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
