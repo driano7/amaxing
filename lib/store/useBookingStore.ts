@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import type { DayPicker } from "react-day-picker"
+import { create } from 'zustand'
+import type { DayPicker } from 'react-day-picker'
 
 interface BookingStore {
   experienceId: string | null

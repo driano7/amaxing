@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import type { Locale } from "@/lib/locale"
+import { create } from 'zustand'
+import type { Locale } from '@/lib/locale'
 
 interface I18nStore {
   locale: Locale
@@ -9,6 +9,6 @@ interface I18nStore {
 }
 
 export const useI18nStore = create<I18nStore>((set) => ({
-  locale: "en",
+  locale: 'en',
   setLocale: (locale) => set({ locale }),
 }))
