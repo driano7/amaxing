@@ -8,6 +8,7 @@ import { ExperienceCard } from '@/components/experiences/ExperienceCard'
 import { useTranslation } from '@/lib/hooks/useTranslationClient'
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
+import { AnimatedSection } from '@/components/AnimatedSection.tsx'
 
 export default function Tours() {
   const { t, locale } = useTranslation()
@@ -129,23 +130,20 @@ export default function Tours() {
                     aria-label="Available tours"
                   >
                     {filteredTours.map((tour, index) => (
-                      <motion.div
+                      <AnimatedSection
                         key={tour.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                        transition={{ duration: 0.4, delay: index * 0.05, ease: [0.4, 0, 0.2, 1] }}
-                        role="listitem"
+                        delay={index * 0.08}
+                        direction="up"
+                        className="w-full"
                       >
                         <ExperienceCard
                           experience={tour}
                           onSelect={(experience) => {
-                            // Navigate to booking or detail page
-                            window.location.href = `/experiences/${experience.id}`
+                            window.location.href = `/tours/${experience.id}`
                           }}
                           locale={locale}
                         />
-                      </motion.div>
+                      </AnimatedSection>
                     ))}
                   </motion.div>
                 )}

@@ -5,6 +5,7 @@ import { BlogSEO } from '@/components/SEO'
 import Image from '@/components/Image'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
+import { HeadingTypewriter } from '@/components/HeadingTypewriter.tsx'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
 
@@ -64,7 +65,10 @@ export default function NewsLayout({ frontMatter, children }) {
           </div>
         )}
 
-        <div className="prose max-w-none pb-8 dark:prose-dark">{children}</div>
+        <div className="prose max-w-none pb-8 dark:prose-dark">
+          <HeadingTypewriter scopeSelector=".prose" />
+          {children}
+        </div>
 
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 border-t border-white/10 pt-6">

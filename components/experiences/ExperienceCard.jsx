@@ -53,17 +53,20 @@ export function ExperienceCard({ experience, onSelect, locale }) {
   }
 
   return (
-    <motion.div
-      whileHover={{ y: -8, scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 transition-all duration-300 hover:border-orange-500/50"
+    <article
+      className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${
+        experience.isFeatured
+          ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-zinc-900 hover:border-orange-500/50 hover:from-orange-500/10'
+          : 'border-white/10 bg-zinc-900/50 hover:border-orange-500/30 hover:bg-zinc-900/70'
+      }`}
       onClick={() => onSelect(experience)}
     >
       <div className="relative h-48 overflow-hidden">
-        <img
+        <motion.img
           src={experience.imageUrl}
           alt={experience.title}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          whileHover={{ scale: 1.03 }}
         />
         {experience.isFeatured && (
           <div className="absolute top-4 left-4">
@@ -85,9 +88,9 @@ export function ExperienceCard({ experience, onSelect, locale }) {
           {experience.title}
         </h3>
 
-        <p className="line-clamp-2 mb-4 text-sm text-gray-400">{experience.location}</p>
+        <p className="line-clamp-2 mb-4 text-sm text-zinc-400">{experience.location}</p>
 
-        <div className="mb-4 flex items-center gap-4 text-sm text-gray-300">
+        <div className="mb-4 flex items-center gap-4 text-sm text-zinc-300">
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
             <span>{formatDuration(experience.duration)}</span>
@@ -118,9 +121,9 @@ export function ExperienceCard({ experience, onSelect, locale }) {
 
         <div className="flex items-center justify-between">
           <div>
-            <div className="mb-1 text-xs text-gray-400">{locale === 'es' ? 'Desde' : 'From'}</div>
+            <div className="mb-1 text-xs text-zinc-400">{locale === 'es' ? 'Desde' : 'From'}</div>
             <div className="text-2xl font-bold text-white">${experience.price}</div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-zinc-400">
               {locale === 'es' ? '/ persona' : '/ person'}
             </div>
           </div>
@@ -138,6 +141,6 @@ export function ExperienceCard({ experience, onSelect, locale }) {
           </motion.button>
         </div>
       </div>
-    </motion.div>
+    </article>
   )
 }

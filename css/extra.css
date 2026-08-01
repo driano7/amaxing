@@ -258,3 +258,80 @@ input:-webkit-autofill:focus {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
 }
+
+/* ============================================================================
+   Typewriter Animation (HeadingTypewriter)
+   ============================================================================ */
+
+/* Initial state - invisible characters */
+.title-typewriter-ready .title-typing-char {
+  opacity: 0;
+  transform: translateY(0.5em);
+}
+
+/* Active state - animate in */
+.title-typewriter-active .title-typing-char {
+  animation: typing-char-in var(--title-typing-total-duration) cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: calc(var(--typing-char-index) * var(--title-typing-char-delay));
+}
+
+@keyframes typing-char-in {
+  0% {
+    opacity: 0;
+    transform: translateY(0.5em) scale(0.8);
+    filter: blur(2px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(0) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Caret animation */
+.title-typing-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background: #e03a1e;
+  margin-left: 2px;
+  animation: caret-blink 1s ease-in-out infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Hide caret after typing completes */
+.title-typewriter-active .title-typing-caret {
+  display: none;
+}
+
+/* Word-level stagger for more natural feel */
+.title-typing-word {
+  display: inline-block;
+  will-change: opacity, transform;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .title-typewriter-ready .title-typing-char {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  .title-typing-caret {
+    display: none;
+  }
+}

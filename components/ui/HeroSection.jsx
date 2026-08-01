@@ -1,6 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { HeadingTypewriter } from '@/components/HeadingTypewriter.tsx'
+import { ElementAnimation } from '@/components/ElementAnimation.tsx'
 
 export function HeroSection() {
   return (
@@ -8,19 +10,23 @@ export function HeroSection() {
       <div className="from-zinc-950/50 via-zinc-950 to-zinc-950 absolute inset-0 z-0 bg-gradient-to-b" />
       <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,rgba(251,146,60,0.03),transparent_50%),linear-gradient(to_bottom,rgba(251,146,60,0.03),transparent_50%)]" />
 
+      {/* Typewriter effect for headings */}
+      <HeadingTypewriter scopeSelector=".hero-content" />
+
+      {/* Floating elements animation on scroll */}
+      <ElementAnimation />
+
       <div className="container relative z-10 mx-auto flex min-h-[100dvh] items-center justify-center px-6">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="hero-content mx-auto max-w-5xl text-center">
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: false, margin: '-50px' }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 1.2, ease: 'easeOut' }}
             className="overflow-hidden"
           >
             <motion.h1
               initial={{ y: 60, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: false, margin: '-50px' }}
+              animate={{ y: 0, opacity: 1 }}
               transition={{
                 duration: 1,
                 ease: [0.25, 0.1, 0.25, 1.0],
@@ -30,7 +36,7 @@ export function HeroSection() {
             >
               <motion.span className="mb-4 block font-serif">Discover the</motion.span>
               <motion.span
-                className={`font-serif text-orange-500`}
+                className="font-serif text-orange-500"
                 style={{ willChange: 'transform, opacity' }}
               >
                 Mexico They Never Show You.

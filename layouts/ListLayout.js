@@ -1,3 +1,5 @@
+'use client'
+
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
@@ -5,6 +7,7 @@ import { useState } from 'react'
 import Pagination from '@/components/Pagination'
 import formatDate from '@/lib/utils/formatDate'
 import Image from 'next/image'
+import { AnimatedSection } from '@/components/AnimatedSection.tsx'
 
 const FALLBACK_COVER = '/static/images/jaguarBaja.png'
 
@@ -15,7 +18,6 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
     return searchContent.toLowerCase().includes(searchValue.toLowerCase())
   })
 
-  // If initialDisplayPosts exist, display it if no searchValue is specified
   const displayPosts =
     initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredBlogPosts
 
@@ -54,47 +56,56 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
         )}
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {displayPosts.map((frontMatter) => {
+          {displayPosts.map((frontMatter, index) => {
             const { slug, date, title, summary, tags, images } = frontMatter
             const cover = Array.isArray(images) ? images[0] : images || FALLBACK_COVER
 
             return (
-              <article
-                key={slug}
-                className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-zinc-900 transition-all duration-300 hover:scale-[1.02] hover:border-orange-500/40"
-              >
-                <Link href={`/blog/${slug}`} className="relative block h-44 w-full overflow-hidden">
-                  <Image
-                    src={cover}
-                    alt={title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </Link>
+              <AnimatedSection key={slug} delay={index * 0.08} direction="up" className="w-full">
+                <article className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 transition-all duration-300 hover:border-orange-500/30 hover:bg-zinc-900/70 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+                  <Link
+                    href={`/blog/${slug}`}
+                    className="relative block h-44 w-full overflow-hidden rounded-t-2xl"
+                  >
+                    <Image
+                      src={cover}
+                      alt={title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  </Link>
 
-                <div className="flex flex-1 flex-col p-6">
-                  <div className="mb-2 text-sm text-gray-500">
-                    <time dateTime={date}>{formatDate(date)}</time>
-                  </div>
-
-                  <h3 className="mb-3 text-xl font-bold leading-snug text-white transition-colors group-hover:text-orange-400">
-                    <Link href={`/blog/${slug}`}>{title}</Link>
-                  </h3>
-
-                  {summary && (
-                    <p className="line-clamp-3 text-sm leading-relaxed text-gray-300">{summary}</p>
-                  )}
-
-                  {tags && tags.length > 0 && (
-                    <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4">
-                      {tags.map((tag) => (
-                        <Tag key={tag} text={tag} />
-                      ))}
+                  <div className="flex flex-1 flex-col p-6">
+                    <div className="mb-2 text-sm text-zinc-500">
+                      <time dateTime={date}>{formatDate(date)}</time>
                     </div>
-                  )}
-                </div>
-              </article>
+
+                    <h3 className="mb-3 text-xl font-bold leading-snug text-white transition-colors group-hover:text-orange-400">
+                      <Link href={`/blog/${slug}`}>{title}</Link>
+                    </h3>
+
+                    {summary && (
+                      <p className="line-clamp-3 text-sm leading-relaxed text-zinc-300">
+                        {summary}
+                      </p>
+                    )}
+
+                    {tags && tags.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+                        {tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full bg-white/5 px-2.5 py-0.5 text-xs text-gray-400 transition-colors hover:bg-orange-500/10 hover:text-orange-500"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              </AnimatedSection>
             )
           })}
         </div>

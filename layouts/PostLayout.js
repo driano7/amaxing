@@ -8,6 +8,7 @@ import TOCInline from '@/components/TOCInline'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import siteMetadata from '@/data/siteMetadata'
+import { HeadingTypewriter } from '@/components/HeadingTypewriter.tsx'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
 
@@ -39,7 +40,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
               >
                 <path
                   fillRule="evenodd"
-                  d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z"
+                  d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 011.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z"
                   clipRule="evenodd"
                 />
               </svg>
@@ -121,7 +122,10 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
             </p>
           )}
 
-          <div className="prose prose-invert max-w-none pb-8">{children}</div>
+          <div className="prose prose-invert max-w-none pb-8">
+            <HeadingTypewriter scopeSelector=".prose" />
+            {children}
+          </div>
 
           {(next || prev) && (
             <div className="grid grid-cols-1 gap-4 border-t border-white/10 pt-8 sm:grid-cols-2">

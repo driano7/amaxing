@@ -72,6 +72,9 @@ module.exports = withBundleAnalyzer({
       use: ['@svgr/webpack'],
     })
 
+    // Ensure hooks folder is resolvable
+    config.resolve.modules = ['node_modules', 'lib', 'components', 'pages', 'layouts']
+
     if (!dev && !isServer) {
       // Replace React with Preact only in client production build
       Object.assign(config.resolve.alias, {
@@ -79,6 +82,9 @@ module.exports = withBundleAnalyzer({
         react: 'preact/compat',
         'react-dom/test-utils': 'preact/test-utils',
         'react-dom': 'preact/compat',
+        // Ensure next/navigation is not affected by Preact alias
+        'next/navigation': 'next/navigation',
+        next: 'next',
       })
     }
 
