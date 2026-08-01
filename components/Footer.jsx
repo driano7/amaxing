@@ -1,23 +1,23 @@
 import Link from './Link'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
-import { useTranslation } from '@/lib/hooks/useTranslationClient'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 export default function Footer() {
-  const { t } = useTranslation()
+  const { t } = useLanguage()
   return (
-    <footer className="mt-24 border-t border-white/10">
+    <footer className="mt-24 border-t border-zinc-200/50 dark:border-zinc-800/50">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            <div className="flex items-center space-x-2">
+        <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
+          <div className="text-center text-sm text-zinc-600 dark:text-zinc-400 sm:text-left">
+            <div className="flex items-center justify-center space-x-2 sm:justify-start">
               <span>© {new Date().getFullYear()}</span>
               <span>•</span>
               <Link href="/" className="hover:text-orange-500">
                 {siteMetadata.title}
               </Link>
             </div>
-            <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
               Hecho con <span className="text-red-500">❤</span> por:{' '}
               <a
                 href="https://riano.netlify.app"
