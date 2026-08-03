@@ -5,7 +5,7 @@ import siteMetadata from '@/data/siteMetadata'
 import Image from '@/components/Image'
 import { ExperienceCard } from '@/components/experiences/ExperienceCard'
 import { tours } from '@/data/toursData'
-import { AnimatedSection } from '@/components/AnimatedSection.tsx'
+import { AnimatedSection } from '@/components/AnimatedSection'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 
 export default function Experiences() {

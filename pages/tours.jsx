@@ -8,7 +8,7 @@ import { ExperienceCard } from '@/components/experiences/ExperienceCard'
 import { useTranslation } from '@/lib/hooks/useTranslationClient'
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
-import { AnimatedSection } from '@/components/AnimatedSection.tsx'
+import { AnimatedSection } from '@/components/AnimatedSection'
 
 export default function Tours() {
   const { t, locale } = useTranslation()

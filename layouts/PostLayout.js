@@ -8,7 +8,7 @@ import TOCInline from '@/components/TOCInline'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import siteMetadata from '@/data/siteMetadata'
-import { HeadingTypewriter } from '@/components/HeadingTypewriter.tsx'
+import { HeadingTypewriter } from '@/components/HeadingTypewriter'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
 

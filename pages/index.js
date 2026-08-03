@@ -2,10 +2,12 @@ import Link from '@/components/Link'
 import { PageSEO } from '@/components/SEO'
 import Tag from '@/components/Tag'
 import { HeroSection } from '@/components/ui/HeroSection'
+import { AnimatedSection } from '@/components/AnimatedSection'
 import siteMetadata from '@/data/siteMetadata'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import formatDate from '@/lib/utils/formatDate'
 import Image from '@/components/Image'
+import projectsData from '@/data/projectsData'
 
 const MAX_DISPLAY = 5
 
@@ -92,6 +94,56 @@ export default function Home({ posts }) {
               </ul>
             </div>
           )}
+        </div>
+
+        {/* Safety & Help Section */}
+        <div className="mb-16">
+          <div className="mb-8 text-center">
+            <h2 className="mb-2 text-3xl font-bold text-white">Safety & Help</h2>
+            <p className="text-gray-400">
+              Essential information every traveler should have at hand for their stay in 🇲🇽
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {projectsData.slice(1).map((project, index) => (
+              <AnimatedSection
+                key={project.title}
+                delay={index * 0.08}
+                direction="up"
+                className="w-full"
+              >
+                <Link
+                  href={project.href}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 transition-all duration-300 hover:border-orange-500/30 hover:bg-zinc-900/70 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+                >
+                  <div className="relative h-40 overflow-hidden">
+                    <Image
+                      src={project.imgSrc}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="mb-1 text-lg font-bold text-white group-hover:text-orange-400">
+                      {project.title}
+                    </h3>
+                    <p className="line-clamp-2 text-sm text-gray-400">{project.description}</p>
+                  </div>
+                </Link>
+              </AnimatedSection>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Link
+              href="/projects"
+              className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/20 px-6 py-2 font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-white"
+            >
+              View All Info →
+            </Link>
+          </div>
         </div>
       </div>
     </>

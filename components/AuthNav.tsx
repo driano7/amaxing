@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/hooks/useAuth.tsx'
+import { useAuth } from '@/lib/hooks/useAuth'
 import Link from '@/components/Link'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 

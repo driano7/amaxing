@@ -1,6 +1,6 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from '@/lib/utils/useSyncExternalStoreCompat'
 import type { Locale } from '@/lib/locale'
 
 interface TranslationStore {

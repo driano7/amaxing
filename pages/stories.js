@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
 import { useLanguage } from '@/lib/hooks/useLanguage'
-import { AnimatedSection } from '@/components/AnimatedSection.tsx'
+import { AnimatedSection } from '@/components/AnimatedSection'
 
 const stories = [
   {

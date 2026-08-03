@@ -2,7 +2,8 @@
 
 import Link from '@/components/Link'
 import Image from 'next/image'
-import AuthNav from './AuthNav.tsx'
+import AuthNav from './AuthNav'
+import { CartIcon } from './cart/CartIcon'
 import {
   motion,
   AnimatePresence,
@@ -329,6 +330,8 @@ export function Navbar() {
               </button>
 
               <AuthNav />
+
+              <CartIcon />
 
               <Link
                 href="https://wa.me/525512291607"

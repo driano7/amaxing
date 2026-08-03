@@ -7,7 +7,7 @@ import { useState } from 'react'
 import Pagination from '@/components/Pagination'
 import formatDate from '@/lib/utils/formatDate'
 import Image from 'next/image'
-import { AnimatedSection } from '@/components/AnimatedSection.tsx'
+import { AnimatedSection } from '@/components/AnimatedSection'
 
 const FALLBACK_COVER = '/static/images/jaguarBaja.png'
 

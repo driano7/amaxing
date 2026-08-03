@@ -1,9 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calendar, Clock, Users, MapPin, Star, Check } from 'lucide-react'
+import { Calendar, Clock, Users, MapPin, Star, Check, ShoppingBag } from 'lucide-react'
+import { useCartStore } from '@/lib/store/useCartStore'
 
 export function ExperienceCard({ experience, onSelect, locale }) {
+  const { addItem } = useCartStore()
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -128,17 +130,41 @@ export function ExperienceCard({ experience, onSelect, locale }) {
             </div>
           </div>
 
-          <motion.button
-            onClick={(e) => {
-              e.stopPropagation()
-              onSelect(experience)
-            }}
-            className="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {locale === 'es' ? 'Reservar Ahora' : 'Book Now'}
-          </motion.button>
+          <div className="flex items-center gap-2">
+            <motion.button
+              onClick={(e) => {
+                e.stopPropagation()
+                addItem({
+                  experienceId: experience.id,
+                  title: experience.title,
+                  imageUrl: experience.imageUrl,
+                  price: experience.price,
+                  currency: 'USD',
+                  location: experience.location,
+                  maxGuests: experience.maxGuests,
+                  highlights: experience.highlights,
+                })
+              }}
+              className="flex items-center gap-1.5 rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 font-semibold text-orange-500 transition-colors hover:bg-orange-500/20"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label={locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
+            >
+              <ShoppingBag className="h-4 w-4" />
+            </motion.button>
+
+            <motion.button
+              onClick={(e) => {
+                e.stopPropagation()
+                onSelect(experience)
+              }}
+              className="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {locale === 'es' ? 'Reservar Ahora' : 'Book Now'}
+            </motion.button>
+          </div>
         </div>
       </div>
     </article>

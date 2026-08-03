@@ -1,14 +1,18 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { HeadingTypewriter } from '@/components/HeadingTypewriter.tsx'
-import { ElementAnimation } from '@/components/ElementAnimation.tsx'
+import { HeadingTypewriter } from '@/components/HeadingTypewriter'
+import { ElementAnimation } from '@/components/ElementAnimation'
+import { HeroMouseBackground } from '@/components/HeroMouseBackground'
 
 export function HeroSection() {
   return (
     <section className="bg-zinc-950 relative min-h-[100dvh] w-full overflow-hidden">
       <div className="from-zinc-950/50 via-zinc-950 to-zinc-950 absolute inset-0 z-0 bg-gradient-to-b" />
       <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,rgba(251,146,60,0.03),transparent_50%),linear-gradient(to_bottom,rgba(251,146,60,0.03),transparent_50%)]" />
+
+      {/* Color waves background (from Criptec) */}
+      <HeroMouseBackground />
 
       {/* Typewriter effect for headings */}
       <HeadingTypewriter scopeSelector=".hero-content" />
