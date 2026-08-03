@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Image from '@/components/Image'
 import Link from '@/components/Link'
@@ -133,7 +134,8 @@ const experienceMap = {
   },
 }
 
-export default function BookingPage({ params }) {
+export default function BookingPage() {
+  const params = useParams()
   const { user, token, isLoading: authLoading } = useAuth()
   const { t, locale } = useTranslation()
   const { addItem } = useCartStore()
@@ -145,7 +147,7 @@ export default function BookingPage({ params }) {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
 
-  const experience = experienceMap[params.slug || params.id]
+  const experience = experienceMap[params?.slug || params?.id]
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', {
@@ -207,7 +209,7 @@ export default function BookingPage({ params }) {
           Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({
-          experienceId: params.slug || params.id,
+          experienceId: params?.slug || params?.id,
           date: selectedDate,
           time: selectedTime,
           peopleCount,
