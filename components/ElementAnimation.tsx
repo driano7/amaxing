@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
 // Travel-themed elements for amaxing
 const elements = [
-  { name: 'Jaguar', emoji: '🐆', bg: '#E03A1E', delay: 0 },
+  { name: 'Jaguar', emoji: '🐆', bg: '#DE1D8D', delay: 0 },
   { name: 'Compass', emoji: '🧭', bg: '#2775CA', delay: 0.1 },
   { name: 'Plane', emoji: '✈️', bg: '#26A17B', delay: 0.2 },
   { name: 'Sun', emoji: '☀️', bg: '#F5AC37', delay: 0.3 },

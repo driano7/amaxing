@@ -26,14 +26,16 @@ export default function Home({ posts }) {
         <div className="container mx-auto px-4 py-16">
           {/* News Preview */}
           <div className="mb-16 rounded-xl border border-white/10 bg-zinc-900 p-8">
-            <h2 className="mb-4 text-3xl font-bold text-white">Travel News & Insights</h2>
+            <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
+              Travel News & Insights
+            </h2>
             <p className="mb-6 text-gray-300">
               Latest updates on Mexico tourism from the last 3 months
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/news"
-                className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/20 px-6 py-2 font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/20 px-6 py-2 font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-gray-900 dark:text-white"
               >
                 View All News
               </Link>
@@ -43,7 +45,9 @@ export default function Home({ posts }) {
           {/* Blog Posts */}
           {posts.length > 0 && (
             <div className="mb-16">
-              <h2 className="mb-6 text-3xl font-bold text-white">Latest Stories</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
+                Latest Stories
+              </h2>
               <ul className="divide-y divide-gray-700">
                 {posts.slice(0, MAX_DISPLAY).map((frontMatter) => {
                   const { slug, date, title, summary, tags } = frontMatter
@@ -99,7 +103,7 @@ export default function Home({ posts }) {
         {/* Safety & Help Section */}
         <div className="mb-16">
           <div className="mb-8 text-center">
-            <h2 className="mb-2 text-3xl font-bold text-white">Safety & Help</h2>
+            <h2 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Safety & Help</h2>
             <p className="text-gray-400">
               Essential information every traveler should have at hand for their stay in 🇲🇽
             </p>
@@ -127,7 +131,7 @@ export default function Home({ posts }) {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   </div>
                   <div className="p-4">
-                    <h3 className="mb-1 text-lg font-bold text-white group-hover:text-orange-400">
+                    <h3 className="mb-1 text-lg font-bold text-gray-900 group-hover:text-orange-400 dark:text-white">
                       {project.title}
                     </h3>
                     <p className="line-clamp-2 text-sm text-gray-400">{project.description}</p>
@@ -139,7 +143,7 @@ export default function Home({ posts }) {
           <div className="mt-6 text-center">
             <Link
               href="/projects"
-              className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/20 px-6 py-2 font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/20 px-6 py-2 font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-gray-900 dark:text-white"
             >
               View All Info →
             </Link>

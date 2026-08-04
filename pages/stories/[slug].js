@@ -57,7 +57,7 @@ export default function StoryDetail({ story, locale }) {
                     {locale === 'es' ? 'Historia' : 'Story'}
                   </span>
                 </div>
-                <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+                <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-4xl lg:text-5xl">
                   {story.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-4 text-gray-300">

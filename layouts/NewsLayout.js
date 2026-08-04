@@ -5,7 +5,6 @@ import { BlogSEO } from '@/components/SEO'
 import Image from '@/components/Image'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
-import { HeadingTypewriter } from '@/components/HeadingTypewriter'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
 
@@ -41,7 +40,7 @@ export default function NewsLayout({ frontMatter, children }) {
             <div className="flex items-center justify-center gap-3">
               <Link
                 href={`/news/${slug}?lang=${otherLocale}`}
-                className="rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1 text-sm font-medium text-orange-500 transition-colors hover:bg-orange-500 hover:text-white"
+                className="rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1 text-sm font-medium text-orange-500 transition-colors hover:bg-orange-500 hover:text-gray-900 dark:text-white"
               >
                 {otherLabel}
               </Link>
@@ -65,10 +64,7 @@ export default function NewsLayout({ frontMatter, children }) {
           </div>
         )}
 
-        <div className="prose max-w-none pb-8 dark:prose-dark">
-          <HeadingTypewriter scopeSelector=".prose" />
-          {children}
-        </div>
+        <div className="prose max-w-none pb-8 dark:prose-dark">{children}</div>
 
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 border-t border-white/10 pt-6">

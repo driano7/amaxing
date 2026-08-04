@@ -34,6 +34,20 @@ module.exports = {
         'gradient-3-end': '#2D00F7',
       },
       colors: {
+        // Rosa mexicano: orange is remapped to the brand pink palette so all
+        // existing orange-* utility classes render as Mexican pink.
+        orange: {
+          50: '#FDF0F6',
+          100: '#FDD1D9',
+          200: '#FBA4BC',
+          300: '#F575A5',
+          400: '#EB519B',
+          500: '#DE1D8D',
+          600: '#BE1588',
+          700: '#9F0E7F',
+          800: '#800972',
+          900: '#6A0568',
+        },
         primary: {
           100: '#FDD1D9',
           200: '#FBA4BC',
@@ -80,7 +94,7 @@ module.exports = {
               fontWeight: '500',
               textDecoration: 'underline',
               textUnderlineOffset: '2px',
-              textDecorationColor: 'rgba(234, 88, 12, 0.3)',
+              textDecorationColor: 'rgba(190, 21, 136, 0.3)',
               '&:hover': {
                 color: theme('colors.orange.500'),
                 textDecorationColor: theme('colors.orange.500'),
@@ -164,7 +178,7 @@ module.exports = {
               fontWeight: '500',
               textDecoration: 'underline',
               textUnderlineOffset: '2px',
-              textDecorationColor: 'rgba(251, 146, 60, 0.3)',
+              textDecorationColor: 'rgba(235, 81, 155, 0.3)',
               '&:hover': {
                 color: theme('colors.orange.300'),
                 textDecorationColor: theme('colors.orange.300'),

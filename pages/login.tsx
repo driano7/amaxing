@@ -96,9 +96,11 @@ export default function Login() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="font-serif text-2xl font-bold tracking-tight text-white">Amaxing</span>
+            <span className="font-serif text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Amaxing
+            </span>
           </Link>
-          <h1 className="mb-2 text-3xl font-bold text-white">
+          <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
             {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
           </h1>
           <p className="text-gray-400">
@@ -135,7 +137,7 @@ export default function Login() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
                     placeholder="Juan"
                   />
                 </div>
@@ -152,7 +154,7 @@ export default function Login() {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
                     placeholder="Pérez"
                   />
                 </div>
@@ -169,7 +171,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
                 placeholder="tu@email.com"
               />
             </div>
@@ -185,7 +187,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
                 placeholder="••••••••"
               />
             </div>
@@ -195,7 +197,7 @@ export default function Login() {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+              className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 disabled:opacity-50 dark:text-white"
             >
               {isLoading ? (
                 <svg className="-ml-1 mr-2 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -239,7 +241,7 @@ export default function Login() {
           <div className="mt-6 border-t border-white/10 pt-6">
             <p className="mb-4 text-center text-sm text-gray-400">O continúa con</p>
             <div className="grid grid-cols-2 gap-3">
-              <button className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition-colors hover:bg-zinc-800">
+              <button className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 transition-colors hover:bg-zinc-800 dark:text-white">
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
@@ -260,7 +262,7 @@ export default function Login() {
                 </svg>
                 <span className="font-medium">Google</span>
               </button>
-              <button className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition-colors hover:bg-zinc-800">
+              <button className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 transition-colors hover:bg-zinc-800 dark:text-white">
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.814 2.807 1.36 3.494 1.36.987 0 1.878-.138 2.777-.41 1.11-.636 1.947-1.72 1.947-3.225 0-.708-.276-1.342-.778-1.845C6.135 8.97 4.084 8 3.376 8c-2.857 0-5.18 2.325-5.18 5.18 0 4.07 2.97 7.432 6.936 7.432 4.367 0 7.811-3.01 7.811-6.78 0-.534-.093-1.055-.26-1.543.91-.572 1.713-1.703 2.15-3.23C19.448 12.09 21.5 8.895 21.5 12c0-6.627-5.373-12-12-12z" />
                 </svg>
@@ -273,5 +275,3 @@ export default function Login() {
     </div>
   )
 }
-
-export default Login

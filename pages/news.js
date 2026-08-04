@@ -67,7 +67,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
       <div className="bg-zinc-950 min-h-screen">
         <div className="container mx-auto px-4 py-16">
           <div className="mb-12 text-center">
-            <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+            <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
               {t.title}
             </h1>
             <p className="text-lg text-gray-300">{t.subtitle}</p>
@@ -77,7 +77,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
           {notes.length > 0 && (
             <section className="mb-16">
               <div className="mb-8 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {currentLanguage === 'es' ? 'Notas Generadas' : 'Generated Notes'}
                 </h2>
                 <Link
@@ -118,7 +118,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                           <time dateTime={note.date}>{formatDate(note.date, locale)}</time>
                         </div>
 
-                        <h3 className="line-clamp-2 mb-3 text-xl font-bold text-white group-hover:text-orange-500">
+                        <h3 className="line-clamp-2 mb-3 text-xl font-bold text-gray-900 group-hover:text-orange-500 dark:text-white">
                           {note.title}
                         </h3>
 
@@ -149,7 +149,9 @@ export default function NewsPage({ notes, locale, newsArticles }) {
           {/* NewsAPI Articles Section */}
           {newsArticles.length > 0 && (
             <section>
-              <h2 className="mb-8 text-2xl font-bold text-white">{t.latestNews}</h2>
+              <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">
+                {t.latestNews}
+              </h2>
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {newsArticles.slice(0, 9).map((article, index) => (
                   <AnimatedSection
@@ -180,7 +182,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                           </time>
                         </div>
 
-                        <h3 className="line-clamp-2 mb-3 text-xl font-bold text-white group-hover:text-orange-500">
+                        <h3 className="line-clamp-2 mb-3 text-xl font-bold text-gray-900 group-hover:text-orange-500 dark:text-white">
                           {article.title}
                         </h3>
 

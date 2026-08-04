@@ -13,7 +13,7 @@ const Image = ({ src, alt, fill, width, height, layout, ...rest }) => {
       fill={shouldFill}
       width={shouldFill ? undefined : width}
       height={shouldFill ? undefined : height}
-      layout={layout}
+      layout={shouldFill ? 'fill' : layout}
       {...rest}
     />
   )

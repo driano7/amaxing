@@ -28,7 +28,7 @@ export default function Pricing() {
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
-      <div className="bg-black py-20 text-white">
+      <div className="bg-black py-20 text-gray-900 dark:text-white">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <h1 className="text-4xl font-bold md:text-5xl">Experience Pricing</h1>
@@ -49,7 +49,7 @@ export default function Pricing() {
                 }`}
               >
                 <div className="p-8">
-                  <h3 className="text-2xl font-bold text-white">{tier.name}</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{tier.name}</h3>
                   <div className="mt-4 text-4xl font-extrabold text-orange-500">{tier.price}</div>
                   <p className="mt-4 text-gray-400">{tier.description}</p>
                   <ul className="mt-6 space-y-3">
@@ -61,7 +61,7 @@ export default function Pricing() {
                   </ul>
                   <Link
                     href="https://wa.me/525512291607"
-                    className="mt-6 block w-full rounded-full bg-orange-500 py-3 text-center font-medium text-white transition-colors hover:bg-orange-600"
+                    className="mt-6 block w-full rounded-full bg-orange-500 py-3 text-center font-medium text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
                   >
                     Book Now
                   </Link>

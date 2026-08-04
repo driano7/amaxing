@@ -80,11 +80,11 @@ export default function BookingsPage() {
     return (
       <div className="bg-zinc-950 flex min-h-screen items-center justify-center px-4">
         <div className="max-w-md text-center">
-          <h1 className="mb-4 text-3xl font-bold text-white">Inicia sesión</h1>
+          <h1 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">Inicia sesión</h1>
           <p className="mb-6 text-gray-400">Inicia sesión para ver tus reservaciones</p>
           <Link
             href="/login"
-            className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+            className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
           >
             Iniciar sesión
           </Link>
@@ -103,7 +103,7 @@ export default function BookingsPage() {
           className="mx-auto max-w-4xl"
         >
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-white">Mis Reservaciones</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Mis Reservaciones</h2>
             <Link
               href="/tours"
               className="text-sm font-medium text-orange-500 hover:text-orange-400"
@@ -145,13 +145,15 @@ export default function BookingsPage() {
                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <h3 className="mt-4 text-xl font-semibold text-white">No tienes reservaciones aún</h3>
+              <h3 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
+                No tienes reservaciones aún
+              </h3>
               <p className="mt-2 text-gray-400">
                 Explora nuestras experiencias y reserva tu próxima aventura
               </p>
               <Link
                 href="/tours"
-                className="mt-6 inline-flex items-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
+                className="mt-6 inline-flex items-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
               >
                 Explorar experiencias
               </Link>
@@ -189,7 +191,7 @@ export default function BookingsPage() {
                       </div>
                     </div>
                     <div className="flex flex-1 flex-col p-4">
-                      <h3 className="line-clamp-1 mb-1 text-lg font-bold text-white">
+                      <h3 className="line-clamp-1 mb-1 text-lg font-bold text-gray-900 dark:text-white">
                         {booking.experienceTitle}
                       </h3>
                       <div className="mb-2 flex items-center gap-2 text-sm text-gray-400">
@@ -225,12 +227,12 @@ export default function BookingsPage() {
                         <span>{booking.time}</span>
                       </div>
                       <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-3">
-                        <span className="text-2xl font-bold text-white">
+                        <span className="text-2xl font-bold text-gray-900 dark:text-white">
                           {formatPrice(booking.totalPrice)}
                         </span>
                         <button
                           onClick={() => setShowTicket(booking)}
-                          className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+                          className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
                         >
                           Ver Ticket
                         </button>

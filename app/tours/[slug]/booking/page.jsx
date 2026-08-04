@@ -10,6 +10,8 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useTranslation } from '@/lib/hooks/useTranslationClient'
 import { PageSEO } from '@/components/SEO'
 import { useCartStore } from '@/lib/store/useCartStore'
+import { Navbar } from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 const experienceMap = {
   1: {
@@ -269,229 +271,241 @@ export default function BookingPage() {
   return (
     <>
       <PageSEO title={`${experience.title} | Amaxing`} description={experience.description} />
-      <div className="bg-zinc-950 min-h-screen">
-        {/* Hero */}
-        <section className="relative h-[60vh] min-h-[400px]">
-          <Image
-            src={experience.imageUrl}
-            alt={experience.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="from-zinc-950/90 via-zinc-950/20 absolute inset-0 bg-gradient-to-t to-transparent" />
-          <div className="absolute inset-0 flex items-end">
-            <div className="container mx-auto px-6 pb-12">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-                className="max-w-3xl"
-              >
-                <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
-                  {experience.title}
-                </h1>
-                <div className="flex flex-wrap items-center gap-6 text-gray-300">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-orange-500" />
-                    <span>
-                      {experience.duration} {experience.duration === 1 ? 'hora' : 'horas'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-orange-500" />
-                    <span>Hasta {experience.maxGuests} personas</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-orange-500" />
-                    <span>{experience.location}</span>
-                  </div>
+      <div className="relative flex min-h-screen flex-col justify-between">
+        <Navbar />
+        <main className="mb-auto pt-20">
+          <div className="bg-zinc-950 min-h-screen">
+            {/* Hero */}
+            <section className="relative h-[60vh] min-h-[400px]">
+              <Image
+                src={experience.imageUrl}
+                alt={experience.title}
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+              <div className="from-zinc-950/90 via-zinc-950/20 absolute inset-0 bg-gradient-to-t to-transparent" />
+              <div className="absolute inset-0 flex items-end">
+                <div className="container mx-auto px-6 pb-12">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+                    className="max-w-3xl"
+                  >
+                    <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+                      {experience.title}
+                    </h1>
+                    <div className="flex flex-wrap items-center gap-6 text-gray-300">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-5 w-5 text-orange-500" />
+                        <span>
+                          {experience.duration} {experience.duration === 1 ? 'hora' : 'horas'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-5 w-5 text-orange-500" />
+                        <span>Hasta {experience.maxGuests} personas</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-orange-500" />
+                        <span>{experience.location}</span>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
+              </div>
+            </section>
 
-        {/* Booking Form */}
-        <section className="py-16 px-6 lg:py-24">
-          <div className="container mx-auto max-w-4xl">
-            <div className="grid gap-8 lg:grid-cols-3 lg:gap-12">
-              {/* Booking Form */}
-              <div className="lg:col-span-2">
-                <div className="rounded-2xl border border-white/10 bg-zinc-900/50 p-6 lg:p-8">
-                  <h2 className="mb-6 text-2xl font-bold text-white">Reservar experiencia</h2>
+            {/* Booking Form */}
+            <section className="py-16 px-6 lg:py-24">
+              <div className="container mx-auto max-w-4xl">
+                <div className="grid gap-8 lg:grid-cols-3 lg:gap-12">
+                  {/* Booking Form */}
+                  <div className="lg:col-span-2">
+                    <div className="rounded-2xl border border-white/10 bg-zinc-900/50 p-6 lg:p-8">
+                      <h2 className="mb-6 text-2xl font-bold text-white">Reservar experiencia</h2>
 
-                  {error && (
-                    <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-red-300">
-                      {error}
+                      {error && (
+                        <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-red-300">
+                          {error}
+                        </div>
+                      )}
+
+                      {success && (
+                        <div className="mb-6 rounded-xl border border-emerald-500/30 bg-emerald-500/20 p-4 text-emerald-300">
+                          {success}
+                        </div>
+                      )}
+
+                      <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid gap-6 md:grid-cols-2">
+                          <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-300">
+                              Fecha
+                            </label>
+                            <input
+                              type="date"
+                              value={selectedDate}
+                              onChange={(e) => setSelectedDate(e.target.value)}
+                              min={today}
+                              max={maxDateStr}
+                              required
+                              className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                            />
+                          </div>
+                          <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-300">
+                              Hora
+                            </label>
+                            <select
+                              value={selectedTime}
+                              onChange={(e) => setSelectedTime(e.target.value)}
+                              disabled={!selectedDate}
+                              required
+                              className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                            >
+                              <option value="">Selecciona una fecha primero</option>
+                              {selectedDate &&
+                                timeSlots.map((slot) => (
+                                  <option key={slot} value={slot}>
+                                    {slot}
+                                  </option>
+                                ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="mb-2 block text-sm font-medium text-gray-300">
+                            Número de personas
+                          </label>
+                          <select
+                            value={peopleCount}
+                            onChange={(e) => setPeopleCount(Number(e.target.value))}
+                            className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                          >
+                            {Array.from({ length: experience.maxGuests }, (_, i) => i + 1).map(
+                              (num) => (
+                                <option key={num} value={num}>
+                                  {num} {num === 1 ? 'persona' : 'personas'}
+                                </option>
+                              )
+                            )}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="mb-2 block text-sm font-medium text-gray-300">
+                            Mensaje especial (opcional)
+                          </label>
+                          <textarea
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            rows={3}
+                            className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                            placeholder="Algo que quisiéramos saber..."
+                          />
+                        </div>
+
+                        <div className="border-t border-white/10 pt-4">
+                          <div className="mb-4 flex items-center justify-between">
+                            <div>
+                              <div className="mb-1 text-xs text-gray-400">Total</div>
+                              <div className="text-3xl font-bold text-white">
+                                {formatPrice(experience.price * peopleCount)}
+                              </div>
+                              <div className="text-sm text-gray-400">
+                                Incluye impuestos y tarifas
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-3">
+                            <button
+                              type="button"
+                              onClick={handleAddToCart}
+                              className="flex-1 rounded-xl border border-orange-500/30 bg-orange-500/10 py-4 font-semibold text-orange-500 transition-colors hover:bg-orange-500/20"
+                            >
+                              Agregar al carrito
+                            </button>
+                            <motion.button
+                              type="submit"
+                              disabled={isSubmitting}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              className="flex-1 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                            >
+                              {isSubmitting ? 'Reservando...' : 'Reservar ahora'}
+                            </motion.button>
+                          </div>
+                        </div>
+                      </form>
                     </div>
-                  )}
+                  </div>
 
-                  {success && (
-                    <div className="mb-6 rounded-xl border border-emerald-500/30 bg-emerald-500/20 p-4 text-emerald-300">
-                      {success}
-                    </div>
-                  )}
-
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">
-                          Fecha
-                        </label>
-                        <input
-                          type="date"
-                          value={selectedDate}
-                          onChange={(e) => setSelectedDate(e.target.value)}
-                          min={today}
-                          max={maxDateStr}
-                          required
-                          className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                  {/* Experience Details */}
+                  <div className="lg:col-span-1">
+                    <div className="sticky top-24 rounded-2xl border border-white/10 bg-zinc-900/50 p-6">
+                      <div className="relative mb-6 h-48 overflow-hidden rounded-xl">
+                        <Image
+                          src={experience.imageUrl}
+                          alt={experience.title}
+                          fill
+                          sizes="100vw"
+                          className="object-cover"
                         />
                       </div>
-                      <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-300">Hora</label>
-                        <select
-                          value={selectedTime}
-                          onChange={(e) => setSelectedTime(e.target.value)}
-                          disabled={!selectedDate}
-                          required
-                          className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
-                        >
-                          <option value="">Selecciona una fecha primero</option>
-                          {selectedDate &&
-                            timeSlots.map((slot) => (
-                              <option key={slot} value={slot}>
-                                {slot}
-                              </option>
-                            ))}
-                        </select>
-                      </div>
-                    </div>
 
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-300">
-                        Número de personas
-                      </label>
-                      <select
-                        value={peopleCount}
-                        onChange={(e) => setPeopleCount(Number(e.target.value))}
-                        className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
-                      >
-                        {Array.from({ length: experience.maxGuests }, (_, i) => i + 1).map(
-                          (num) => (
-                            <option key={num} value={num}>
-                              {num} {num === 1 ? 'persona' : 'personas'}
-                            </option>
-                          )
-                        )}
-                      </select>
-                    </div>
+                      <h3 className="mb-2 text-xl font-bold text-white">{experience.title}</h3>
+                      <p className="mb-4 text-gray-300">{experience.description}</p>
 
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-300">
-                        Mensaje especial (opcional)
-                      </label>
-                      <textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        rows={3}
-                        className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
-                        placeholder="Algo que quisiéramos saber..."
-                      />
-                    </div>
-
-                    <div className="border-t border-white/10 pt-4">
-                      <div className="mb-4 flex items-center justify-between">
-                        <div>
-                          <div className="mb-1 text-xs text-gray-400">Total</div>
-                          <div className="text-3xl font-bold text-white">
-                            {formatPrice(experience.price * peopleCount)}
-                          </div>
-                          <div className="text-sm text-gray-400">Incluye impuestos y tarifas</div>
+                      <div className="mb-6 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-5 w-5 text-orange-500" />
+                          <span className="text-gray-300">
+                            {experience.duration} {experience.duration === 1 ? 'hora' : 'horas'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Users className="h-5 w-5 text-orange-500" />
+                          <span className="text-gray-300">
+                            Máx. {experience.maxGuests} personas
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-5 w-5 text-orange-500" />
+                          <span className="text-gray-300">{experience.location}</span>
                         </div>
                       </div>
-                      <div className="flex gap-3">
-                        <button
-                          type="button"
-                          onClick={handleAddToCart}
-                          className="flex-1 rounded-xl border border-orange-500/30 bg-orange-500/10 py-4 font-semibold text-orange-500 transition-colors hover:bg-orange-500/20"
-                        >
-                          Agregar al carrito
-                        </button>
-                        <motion.button
-                          type="submit"
-                          disabled={isSubmitting}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="flex-1 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
-                        >
-                          {isSubmitting ? 'Reservando...' : 'Reservar ahora'}
-                        </motion.button>
+
+                      <div className="mb-4 border-t border-white/10 pt-4">
+                        <h4 className="mb-3 font-semibold text-white">Qué incluye</h4>
+                        <ul className="space-y-2">
+                          {experience.highlights.map((highlight, i) => (
+                            <li key={i} className="flex items-center gap-2 text-gray-300">
+                              <Check className="h-5 w-5 flex-shrink-0 text-orange-500" />
+                              <span>{highlight}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 p-4">
+                        <p className="mb-2 text-sm text-orange-300">Política de cancelación</p>
+                        <p className="text-sm text-orange-200">
+                          Cancela hasta 48 horas antes para reembolso completo. Consulta términos
+                          completos al reservar.
+                        </p>
                       </div>
                     </div>
-                  </form>
-                </div>
-              </div>
-
-              {/* Experience Details */}
-              <div className="lg:col-span-1">
-                <div className="sticky top-24 rounded-2xl border border-white/10 bg-zinc-900/50 p-6">
-                  <div className="relative mb-6 h-48 overflow-hidden rounded-xl">
-                    <Image
-                      src={experience.imageUrl}
-                      alt={experience.title}
-                      fill
-                      sizes="100vw"
-                      className="object-cover"
-                    />
-                  </div>
-
-                  <h3 className="mb-2 text-xl font-bold text-white">{experience.title}</h3>
-                  <p className="mb-4 text-gray-300">{experience.description}</p>
-
-                  <div className="mb-6 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-orange-500" />
-                      <span className="text-gray-300">
-                        {experience.duration} {experience.duration === 1 ? 'hora' : 'horas'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-orange-500" />
-                      <span className="text-gray-300">Máx. {experience.maxGuests} personas</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-orange-500" />
-                      <span className="text-gray-300">{experience.location}</span>
-                    </div>
-                  </div>
-
-                  <div className="mb-4 border-t border-white/10 pt-4">
-                    <h4 className="mb-3 font-semibold text-white">Qué incluye</h4>
-                    <ul className="space-y-2">
-                      {experience.highlights.map((highlight, i) => (
-                        <li key={i} className="flex items-center gap-2 text-gray-300">
-                          <Check className="h-5 w-5 flex-shrink-0 text-orange-500" />
-                          <span>{highlight}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 p-4">
-                    <p className="mb-2 text-sm text-orange-300">Política de cancelación</p>
-                    <p className="text-sm text-orange-200">
-                      Cancela hasta 48 horas antes para reembolso completo. Consulta términos
-                      completos al reservar.
-                    </p>
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
-        </section>
+        </main>
+        <Footer />
       </div>
     </>
   )

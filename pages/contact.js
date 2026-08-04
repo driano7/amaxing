@@ -30,7 +30,9 @@ export default function Contact() {
       <div className="bg-zinc-950 py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl">
-            <h1 className="text-4xl font-bold text-white md:text-5xl">Contact Us</h1>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white md:text-5xl">
+              Contact Us
+            </h1>
             <p className="mt-4 text-lg text-gray-300">
               Ready to plan your luxury Mexican adventure? Reach out to us and we'll craft the
               perfect itinerary for you.
@@ -45,7 +47,7 @@ export default function Contact() {
                 >
                   <div className="text-3xl">{method.icon}</div>
                   <div>
-                    <h3 className="font-bold text-white">{method.title}</h3>
+                    <h3 className="font-bold text-gray-900 dark:text-white">{method.title}</h3>
                     <p className="text-gray-400">{method.description}</p>
                   </div>
                 </Link>
@@ -53,7 +55,9 @@ export default function Contact() {
             </div>
 
             <div className="mt-12">
-              <h2 className="mb-4 text-2xl font-bold text-white">Office Hours</h2>
+              <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+                Office Hours
+              </h2>
               <div className="text-gray-300">
                 <p>Monday - Friday: 9:00 AM - 7:00 PM (CST)</p>
                 <p>Saturday: 10:00 AM - 4:00 PM (CST)</p>

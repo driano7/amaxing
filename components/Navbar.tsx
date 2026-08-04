@@ -4,10 +4,10 @@ import Link from '@/components/Link'
 import Image from 'next/image'
 import AuthNav from './AuthNav'
 import { CartIcon } from './cart/CartIcon'
+import { ThemeToggle } from './theme-toggle'
 import {
   motion,
   AnimatePresence,
-  useDrag,
   useMotionValue,
   useSpring,
   useTransform,
@@ -20,8 +20,12 @@ type DivRef = RefObject<HTMLDivElement | null>
 import classNames from 'classnames'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { Utensils, Skull, MapPin, Palette } from 'lucide-react'
+import { navItemsConfig, drawerItemsConfig } from '@/data/hubMenuLinks'
 import enDict from '@/dictionaries/en.json'
 import esDict from '@/dictionaries/es.json'
+
+// Map icon names from config to actual icon components
+const iconComponents = { Utensils, Skull, MapPin, Palette }
 
 const dictionaries = { en: enDict, es: esDict }
 
@@ -45,7 +49,7 @@ export function Navbar() {
   const [isMobile, setIsMobile] = useState(false)
   const [mobileDelayElapsed, setMobileDelayElapsed] = useState(true)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [dragDirection, setDragDirection] = useState<'up' | 'down' | null>(null)
+  const [showLabels, setShowLabels] = useState(true)
   const { scrollY } = useScroll()
   const { currentLanguage, setLanguage, isChanging, t } = useLanguage()
 
@@ -66,35 +70,18 @@ export function Navbar() {
     }
   }
 
-  // All nav items including former mega menu categories
-  const navItems = [
-    { label: getLabel('header.nav.home', 'Home'), href: '/' },
-    { label: getLabel('header.nav.tours', 'Tours'), href: '/tours' },
-    { label: 'Culinary Underworld', href: '/tours?category=gastronomy', icon: Utensils },
-    { label: 'Uncensored History', href: '/tours?category=history', icon: Skull },
-    { label: 'Neighborhood Deep Dives', href: '/tours?category=neighborhoods', icon: MapPin },
-    { label: 'Art & Museums', href: '/tours?category=museums', icon: Palette },
-    { label: getLabel('header.nav.experiences', 'Experiences'), href: '/experiences' },
-    { label: getLabel('header.nav.stories', 'Stories'), href: '/stories' },
-    { label: getLabel('header.nav.news', 'News'), href: '/news' },
-    { label: getLabel('header.nav.pricing', 'Pricing'), href: '/pricing' },
-    { label: getLabel('header.nav.contact', 'Contact'), href: '/contact' },
-  ]
+  // All nav items - loaded from centralized config (data/hubMenuLinks.js)
+  const navItems = navItemsConfig.map((item) => ({
+    ...item,
+    label: item.labelKey ? getLabel(item.labelKey, item.fallback) : item.label,
+    icon: item.icon ? iconComponents[item.icon] : undefined,
+  }))
 
-  // Mobile drawer items (all nav items)
-  const drawerItems = [
-    { label: getLabel('header.nav.home', 'Home'), href: '/' },
-    { label: getLabel('header.nav.tours', 'Tours'), href: '/tours' },
-    { label: 'Culinary Underworld', href: '/tours?category=gastronomy' },
-    { label: 'Uncensored History', href: '/tours?category=history' },
-    { label: 'Neighborhood Deep Dives', href: '/tours?category=neighborhoods' },
-    { label: 'Art & Museums', href: '/tours?category=museums' },
-    { label: getLabel('header.nav.experiences', 'Experiences'), href: '/experiences' },
-    { label: getLabel('header.nav.stories', 'Stories'), href: '/stories' },
-    { label: getLabel('header.nav.news', 'News'), href: '/news' },
-    { label: getLabel('header.nav.pricing', 'Pricing'), href: '/pricing' },
-    { label: getLabel('header.nav.contact', 'Contact'), href: '/contact' },
-  ]
+  // Mobile drawer items - loaded from centralized config (data/hubMenuLinks.js)
+  const drawerItems = drawerItemsConfig.map((item) => ({
+    ...item,
+    label: item.labelKey ? getLabel(item.labelKey, item.fallback) : item.label,
+  }))
 
   const closeMegaMenu = useCallback(() => {}, [])
   const openMegaMenu = useCallback(() => {}, [])
@@ -105,12 +92,7 @@ export function Navbar() {
   const drawerHeight = useRef(0)
   const isDragging = useRef(false)
 
-  const handleDragStart = () => {
-    isDragging.current = true
-    setDragDirection(null)
-  }
-
-  const handleDragEnd = (event, info) => {
+  const handleDragEnd = (_event, info) => {
     isDragging.current = false
     const velocity = info.velocity
     const offset = dragY.get()
@@ -122,12 +104,10 @@ export function Navbar() {
     } else {
       dragY.set(0)
     }
-    setDragDirection(null)
   }
 
-  const handleDrag = (event, info) => {
+  const handleDrag = (_event, info) => {
     const offset = info.offset.y
-    setDragDirection(offset > 0 ? 'down' : 'up')
     // Only allow dragging down to close
     if (offset > 0) {
       dragY.set(offset)
@@ -146,11 +126,29 @@ export function Navbar() {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 640px)').matches)
+      const isMobileView = window.matchMedia('(max-width: 640px)').matches
+      setIsMobile(isMobileView)
+      setShowLabels(!isMobileView)
     }
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Hide labels on scroll down, show on scroll up
+  useEffect(() => {
+    let lastScrollY = window.scrollY
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowLabels(false)
+      } else if (currentScrollY < lastScrollY) {
+        setShowLabels(true)
+      }
+      lastScrollY = currentScrollY
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
@@ -253,7 +251,7 @@ export function Navbar() {
           </div>
 
           <div className="flex flex-1 items-center justify-end gap-4">
-            <nav className="hidden items-center gap-2 sm:flex lg:gap-3">
+            <nav className="hidden items-center gap-1 sm:flex lg:gap-2">
               {navItems.map((item, index) => {
                 const isCategory = !!item.icon
                 return (
@@ -261,7 +259,7 @@ export function Navbar() {
                     key={item.href}
                     href={item.href}
                     className={classNames(
-                      'group relative inline-flex items-center gap-1.5 text-sm font-semibold tracking-wide transition duration-300',
+                      'group relative flex flex-col items-center gap-1 text-sm font-semibold tracking-wide transition duration-300',
                       'text-zinc-900 hover:text-orange-500 dark:text-white',
                       isCategory && 'rounded-full bg-zinc-100/50 px-3 py-1.5 dark:bg-zinc-800/50'
                     )}
@@ -270,13 +268,18 @@ export function Navbar() {
                     {item.icon && (
                       <item.icon
                         className={classNames(
-                          'h-4 w-4 transition-transform duration-200',
+                          'h-5 w-5 transition-transform duration-200',
                           'text-orange-500 group-hover:scale-110'
                         )}
                         aria-hidden="true"
                       />
                     )}
-                    <span className="transition-transform duration-200 group-hover:-translate-y-0.5">
+                    <span
+                      className={classNames(
+                        'transition-all duration-300',
+                        showLabels ? 'max-h-6 opacity-100' : 'hidden max-h-0 opacity-0'
+                      )}
+                    >
                       {item.label}
                     </span>
                     <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
@@ -286,6 +289,27 @@ export function Navbar() {
             </nav>
 
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
+              {/* Label visibility toggle */}
+              <button
+                type="button"
+                onClick={() => setShowLabels(!showLabels)}
+                className="hidden rounded-full p-2 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:block"
+                aria-label={showLabels ? 'Ocultar etiquetas' : 'Mostrar etiquetas'}
+                title={showLabels ? 'Ocultar etiquetas' : 'Mostrar etiquetas'}
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+
               {/* Language Toggle */}
               <button
                 type="button"
@@ -403,7 +427,9 @@ export function Navbar() {
               dragConstraints={{ top: 0, bottom: 0 }}
               dragMomentum={false}
               dragElastic={0.2}
-              onDragStart={handleDragStart}
+              onDragStart={() => {
+                isDragging.current = true
+              }}
               onDrag={handleDrag}
               onDragEnd={handleDragEnd}
               style={{ y: dragYSpring }}

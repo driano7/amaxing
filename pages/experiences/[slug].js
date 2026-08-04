@@ -85,7 +85,7 @@ export default function ExperienceDetail({ experience, locale }) {
                     {experience.category.name}
                   </span>
                 )}
-                <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+                <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
                   {experience.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-6 text-gray-300">
@@ -125,7 +125,7 @@ export default function ExperienceDetail({ experience, locale }) {
               <div className="space-y-12 lg:col-span-2">
                 {/* Description */}
                 <div>
-                  <h2 className="mb-4 text-2xl font-bold text-white">
+                  <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
                     {locale === 'es' ? 'Descripción' : 'Description'}
                   </h2>
                   <div className="prose prose-invert max-w-none leading-relaxed text-gray-300">
@@ -135,7 +135,7 @@ export default function ExperienceDetail({ experience, locale }) {
 
                 {/* Highlights */}
                 <div>
-                  <h2 className="mb-6 text-2xl font-bold text-white">
+                  <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
                     {locale === 'es' ? 'Lo que incluye' : "What's Included"}
                   </h2>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -159,7 +159,7 @@ export default function ExperienceDetail({ experience, locale }) {
 
                 {/* Location */}
                 <div>
-                  <h2 className="mb-4 text-2xl font-bold text-white">
+                  <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
                     {locale === 'es' ? 'Ubicación' : 'Location'}
                   </h2>
                   <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
@@ -185,7 +185,7 @@ export default function ExperienceDetail({ experience, locale }) {
                       <div className="mb-1 text-xs uppercase tracking-wider text-gray-400">
                         {locale === 'es' ? 'Desde' : 'From'}
                       </div>
-                      <div className="text-4xl font-bold text-white">
+                      <div className="text-4xl font-bold text-gray-900 dark:text-white">
                         {formatPrice(experience.price)}
                       </div>
                       <div className="text-sm text-gray-400">
@@ -195,7 +195,9 @@ export default function ExperienceDetail({ experience, locale }) {
 
                     <div className="mb-4 flex items-center gap-2 rounded-lg bg-orange-500/10 p-3">
                       <Star className="h-5 w-5 fill-current text-orange-500" />
-                      <span className="font-semibold text-white">{experience.rating}</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {experience.rating}
+                      </span>
                       <span className="text-gray-400">
                         ({experience.reviewCount} {locale === 'es' ? 'reseñas' : 'reviews'})
                       </span>
@@ -204,23 +206,25 @@ export default function ExperienceDetail({ experience, locale }) {
                     <div className="mb-6 space-y-3">
                       <div className="flex items-center justify-between text-sm text-gray-300">
                         <span>{locale === 'es' ? 'Duración' : 'Duration'}</span>
-                        <span className="font-medium text-white">
+                        <span className="font-medium text-gray-900 dark:text-white">
                           {formatDuration(experience.duration)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-300">
                         <span>{locale === 'es' ? 'Grupo máx.' : 'Max group'}</span>
-                        <span className="font-medium text-white">{experience.maxGuests}</span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {experience.maxGuests}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-300">
                         <span>{locale === 'es' ? 'Ubicación' : 'Location'}</span>
-                        <span className="font-medium text-white">
+                        <span className="font-medium text-gray-900 dark:text-white">
                           {experience.location.split(',')[0]}
                         </span>
                       </div>
                     </div>
 
-                    <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600">
+                    <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white">
                       {locale === 'es' ? 'Reservar Ahora' : 'Book Now'}
                       <ChevronRight className="h-5 w-5" />
                     </button>
@@ -228,11 +232,11 @@ export default function ExperienceDetail({ experience, locale }) {
 
                   {/* Featured Badge */}
                   {experience.isFeatured && (
-                    <div className="rounded-xl border border-orange-500/30 bg-gradient-to-r from-orange-500/20 to-amber-500/20 p-4">
+                    <div className="rounded-xl border border-orange-500/30 bg-gradient-to-r from-orange-500/20 to-orange-500/20 p-4">
                       <div className="flex items-center gap-3">
                         <Star className="h-6 w-6 fill-current text-orange-500" />
                         <div>
-                          <div className="text-sm font-semibold text-white">
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white">
                             {locale === 'es' ? 'Experiencia Destacada' : 'Featured Experience'}
                           </div>
                           <div className="text-xs text-gray-400">

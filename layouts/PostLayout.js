@@ -8,7 +8,6 @@ import TOCInline from '@/components/TOCInline'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import siteMetadata from '@/data/siteMetadata'
-import { HeadingTypewriter } from '@/components/HeadingTypewriter'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
 
@@ -122,10 +121,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
             </p>
           )}
 
-          <div className="prose prose-invert max-w-none pb-8">
-            <HeadingTypewriter scopeSelector=".prose" />
-            {children}
-          </div>
+          <div className="prose prose-invert max-w-none pb-8">{children}</div>
 
           {(next || prev) && (
             <div className="grid grid-cols-1 gap-4 border-t border-white/10 pt-8 sm:grid-cols-2">

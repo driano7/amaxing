@@ -114,7 +114,7 @@ export default function CheckoutPage() {
             className="mx-auto max-w-2xl text-center"
           >
             <CheckCircle2 className="mx-auto h-20 w-20 text-emerald-500" />
-            <h1 className="mt-6 text-3xl font-bold text-white md:text-4xl">
+            <h1 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white md:text-4xl">
               ¡Reservas confirmadas!
             </h1>
             <p className="mt-3 text-gray-300">
@@ -132,7 +132,9 @@ export default function CheckoutPage() {
                   <div className="flex items-center gap-3">
                     <TicketIcon className="h-5 w-5 text-orange-500" />
                     <div>
-                      <p className="font-semibold text-white">{booking.experienceTitle}</p>
+                      <p className="font-semibold text-gray-900 dark:text-white">
+                        {booking.experienceTitle}
+                      </p>
                       <p className="text-sm text-gray-400">
                         {booking.date} • {booking.time} • {booking.peopleCount}{' '}
                         {booking.peopleCount === 1 ? 'persona' : 'personas'}
@@ -141,7 +143,7 @@ export default function CheckoutPage() {
                   </div>
                   <button
                     onClick={() => setSelectedTicket(booking)}
-                    className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+                    className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
                   >
                     Ver Ticket
                   </button>
@@ -152,13 +154,13 @@ export default function CheckoutPage() {
             <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
               <Link
                 href="/profile"
-                className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
+                className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-3 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
               >
                 Ir a mi perfil
               </Link>
               <Link
                 href="/tours"
-                className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-zinc-900 px-8 py-3 font-semibold text-white transition-colors hover:border-orange-500/30"
+                className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-zinc-900 px-8 py-3 font-semibold text-gray-900 transition-colors hover:border-orange-500/30 dark:text-white"
               >
                 Explorar más tours
               </Link>
@@ -177,11 +179,13 @@ export default function CheckoutPage() {
     return (
       <div className="bg-zinc-950 flex min-h-screen items-center justify-center px-4">
         <div className="max-w-md text-center">
-          <h1 className="mb-4 text-3xl font-bold text-white">Tu carrito está vacío</h1>
+          <h1 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
+            Tu carrito está vacío
+          </h1>
           <p className="mb-6 text-gray-400">Agrega experiencias antes de hacer checkout.</p>
           <Link
             href="/tours"
-            className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+            className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
           >
             Explorar experiencias
           </Link>
@@ -206,7 +210,7 @@ export default function CheckoutPage() {
             <ArrowLeft className="h-4 w-4" /> Volver al carrito
           </Link>
 
-          <h1 className="mb-8 text-3xl font-bold text-white">Checkout</h1>
+          <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">Checkout</h1>
 
           {error && (
             <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-red-300">
@@ -217,7 +221,9 @@ export default function CheckoutPage() {
           <div className="grid gap-8 lg:grid-cols-2">
             {/* Summary */}
             <div className="rounded-2xl border border-white/10 bg-zinc-900/50 p-6">
-              <h2 className="mb-4 text-xl font-bold text-white">Resumen de tu compra</h2>
+              <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+                Resumen de tu compra
+              </h2>
               <div className="space-y-3">
                 {items.map((item) => (
                   <div
@@ -235,14 +241,16 @@ export default function CheckoutPage() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate font-semibold text-white">{item.title}</p>
+                        <p className="truncate font-semibold text-gray-900 dark:text-white">
+                          {item.title}
+                        </p>
                         <p className="text-xs text-gray-400">
                           {item.date} • {item.time || 'Sin hora'} • {item.peopleCount}{' '}
                           {item.peopleCount === 1 ? 'persona' : 'personas'}
                         </p>
                       </div>
                     </div>
-                    <span className="flex-shrink-0 font-medium text-white">
+                    <span className="flex-shrink-0 font-medium text-gray-900 dark:text-white">
                       {formatPrice((item.price || 0) * (item.peopleCount || 1))}
                     </span>
                   </div>
@@ -252,28 +260,30 @@ export default function CheckoutPage() {
               <div className="mt-6 border-t border-white/10 pt-4">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-300">Total ({itemCount} experiencias)</span>
-                  <span className="text-2xl font-bold text-white">{formatPrice(subtotal)}</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {formatPrice(subtotal)}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Payment */}
             <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-6">
-              <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-white">
+              <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
                 <CreditCard className="h-5 w-5 text-orange-500" />
                 Confirmar reservas
               </h2>
 
               <div className="rounded-xl border border-white/10 bg-zinc-900/80 p-4 text-sm text-gray-300">
                 <p>
-                  <strong className="text-white">Cliente:</strong>{' '}
+                  <strong className="text-gray-900 dark:text-white">Cliente:</strong>{' '}
                   {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.email}
                 </p>
                 <p className="mt-1">
-                  <strong className="text-white">Email:</strong> {user.email}
+                  <strong className="text-gray-900 dark:text-white">Email:</strong> {user.email}
                 </p>
                 <p className="mt-1">
-                  <strong className="text-white">Moneda:</strong> USD
+                  <strong className="text-gray-900 dark:text-white">Moneda:</strong> USD
                 </p>
               </div>
 
@@ -285,7 +295,7 @@ export default function CheckoutPage() {
               <button
                 onClick={handleCheckout}
                 disabled={isSubmitting}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 disabled:opacity-50 dark:text-white"
               >
                 {isSubmitting ? (
                   <>

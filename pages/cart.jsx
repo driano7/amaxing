@@ -67,7 +67,7 @@ export default function CartPage() {
           className="mx-auto max-w-4xl"
         >
           <div className="mb-8 flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-white">Tu Carrito</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Tu Carrito</h1>
             <Link
               href="/tours"
               className="text-sm font-medium text-orange-500 hover:text-orange-400"
@@ -79,13 +79,15 @@ export default function CartPage() {
           {items.length === 0 ? (
             <div className="rounded-2xl border border-white/10 bg-zinc-900/50 py-20 text-center">
               <ShoppingBag className="mx-auto h-16 w-16 text-gray-600" />
-              <h2 className="mt-4 text-xl font-semibold text-white">Tu carrito está vacío</h2>
+              <h2 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
+                Tu carrito está vacío
+              </h2>
               <p className="mt-2 text-gray-400">
                 Agrega experiencias para reservar tu próxima aventura
               </p>
               <Link
                 href="/tours"
-                className="mt-6 inline-flex items-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
+                className="mt-6 inline-flex items-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
               >
                 Explorar experiencias
               </Link>
@@ -116,7 +118,7 @@ export default function CartPage() {
                       <div className="flex flex-1 flex-col gap-3">
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <h3 className="line-clamp-1 text-lg font-bold text-white">
+                            <h3 className="line-clamp-1 text-lg font-bold text-gray-900 dark:text-white">
                               {item.title}
                             </h3>
                             <p className="text-sm text-gray-400">{item.location}</p>
@@ -141,7 +143,7 @@ export default function CartPage() {
                                 min={today}
                                 max={maxDateStr}
                                 onChange={(e) => updateItem(item.lineId, { date: e.target.value })}
-                                className="w-full rounded-lg border border-white/10 bg-zinc-900 py-1.5 pl-8 pr-2 text-sm text-white focus:border-orange-500 focus:outline-none"
+                                className="w-full rounded-lg border border-white/10 bg-zinc-900 py-1.5 pl-8 pr-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:text-white"
                               />
                             </div>
                           </div>
@@ -153,7 +155,7 @@ export default function CartPage() {
                                 value={item.time || ''}
                                 onChange={(e) => updateItem(item.lineId, { time: e.target.value })}
                                 disabled={!item.date}
-                                className="w-full rounded-lg border border-white/10 bg-zinc-900 py-1.5 pl-8 pr-2 text-sm text-white focus:border-orange-500 focus:outline-none disabled:opacity-50"
+                                className="w-full rounded-lg border border-white/10 bg-zinc-900 py-1.5 pl-8 pr-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none disabled:opacity-50 dark:text-white"
                               >
                                 <option value="">Selecciona</option>
                                 {timeSlots.map((slot) => (
@@ -173,24 +175,24 @@ export default function CartPage() {
                               <button
                                 onClick={() => handleQuantityChange(item.lineId, -1)}
                                 disabled={(item.peopleCount || 1) <= 1}
-                                className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-sm text-white transition-colors hover:bg-orange-500/20 disabled:opacity-40"
+                                className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-sm text-gray-900 transition-colors hover:bg-orange-500/20 disabled:opacity-40 dark:text-white"
                               >
                                 -
                               </button>
-                              <span className="w-6 text-center text-sm font-medium text-white">
+                              <span className="w-6 text-center text-sm font-medium text-gray-900 dark:text-white">
                                 {item.peopleCount || 1}
                               </span>
                               <button
                                 onClick={() => handleQuantityChange(item.lineId, 1)}
                                 disabled={(item.peopleCount || 1) >= item.maxGuests}
-                                className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-sm text-white transition-colors hover:bg-orange-500/20 disabled:opacity-40"
+                                className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-sm text-gray-900 transition-colors hover:bg-orange-500/20 disabled:opacity-40 dark:text-white"
                               >
                                 +
                               </button>
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-lg font-bold text-white">
+                            <div className="text-lg font-bold text-gray-900 dark:text-white">
                               {formatPrice((item.price || 0) * (item.peopleCount || 1))}
                             </div>
                             <div className="text-xs text-gray-500">
@@ -207,15 +209,19 @@ export default function CartPage() {
               <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-6">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-gray-300">Experiencias ({itemCount})</span>
-                  <span className="font-medium text-white">{itemCount}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{itemCount}</span>
                 </div>
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-gray-300">Personas totales</span>
-                  <span className="font-medium text-white">{totalItemCount}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    {totalItemCount}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between border-t border-white/10 pt-3">
                   <span className="text-lg text-gray-300">Total</span>
-                  <span className="text-3xl font-bold text-white">{formatPrice(subtotal)}</span>
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {formatPrice(subtotal)}
+                  </span>
                 </div>
                 {!allItemsReady && (
                   <p className="mt-3 text-xs text-orange-400">
@@ -231,7 +237,7 @@ export default function CartPage() {
                       setTimeout(() => setIsCheckingOut(false), 2500)
                     }
                   }}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
                 >
                   Proceder al Checkout
                   <ArrowRight className="h-4 w-4" />

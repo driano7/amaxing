@@ -42,7 +42,7 @@ export default function Tours() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-              className="text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl"
+              className="text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl"
             >
               {t('tours.heroTitle') || 'Curated Experiences. Zero Tourist Traps.'}
             </motion.h1>
@@ -82,8 +82,8 @@ export default function Tours() {
                     id={`tab-${category.id}`}
                     className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
-                        : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
+                        ? 'bg-orange-500 text-gray-900 shadow-lg shadow-orange-500/25 dark:text-white'
+                        : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-gray-900 dark:text-white'
                     }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -115,7 +115,7 @@ export default function Tours() {
                     className="py-20 text-center"
                   >
                     <Grid className="mx-auto mb-4 h-16 w-16 text-gray-600" />
-                    <h3 className="mb-2 text-xl font-semibold text-white">
+                    <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
                       {t('tours.noResults') || 'No tours found in this category'}
                     </h3>
                     <p className="text-gray-400">

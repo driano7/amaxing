@@ -70,9 +70,11 @@ export default function Register() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="font-serif text-2xl font-bold tracking-tight text-white">Amaxing</span>
+            <span className="font-serif text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Amaxing
+            </span>
           </Link>
-          <h1 className="mb-2 text-3xl font-bold text-white">Crear cuenta</h1>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Crear cuenta</h1>
           <p className="text-gray-400">Únete a la comunidad de viajeros</p>
         </div>
 
@@ -99,7 +101,7 @@ export default function Register() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                  className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
                   placeholder="Juan"
                 />
               </div>
@@ -113,7 +115,7 @@ export default function Register() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                  className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
                   placeholder="Pérez"
                 />
               </div>
@@ -129,7 +131,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
                 placeholder="tu@email.com"
               />
             </div>
@@ -145,7 +147,7 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
                 placeholder="••••••••"
               />
             </div>
@@ -155,7 +157,7 @@ export default function Register() {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+              className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 disabled:opacity-50 dark:text-white"
             >
               {isLoading ? (
                 <svg className="-ml-1 mr-2 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -192,5 +194,3 @@ export default function Register() {
     </div>
   )
 }
-
-export default Register
