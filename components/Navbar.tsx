@@ -19,8 +19,8 @@ import { useEffect, useState, useRef, useCallback, type RefObject } from 'react'
 type DivRef = RefObject<HTMLDivElement | null>
 import classNames from 'classnames'
 import { useLanguage } from '@/lib/hooks/useLanguage'
-import { Utensils, Skull, MapPin, Palette } from 'lucide-react'
-import { navItemsConfig, drawerItemsConfig } from '@/data/hubMenuLinks'
+import { Utensils, Skull, MapPin, Palette, ChevronDown, LayoutGrid } from 'lucide-react'
+import { navItemsConfig, drawerItemsConfig, tourCategoriesConfig } from '@/data/hubMenuLinks'
 import enDict from '@/dictionaries/en.json'
 import esDict from '@/dictionaries/es.json'
 
@@ -82,6 +82,13 @@ export function Navbar() {
     ...item,
     label: item.labelKey ? getLabel(item.labelKey, item.fallback) : item.label,
   }))
+
+  // Tour category dropdown - loaded from centralized config (data/hubMenuLinks.js)
+  const tourCategories = tourCategoriesConfig.map((item) => ({
+    ...item,
+    icon: iconComponents[item.icon],
+  }))
+  const [categoriesOpen, setCategoriesOpen] = useState(false)
 
   const closeMegaMenu = useCallback(() => {}, [])
   const openMegaMenu = useCallback(() => {}, [])
@@ -252,40 +259,87 @@ export function Navbar() {
 
           <div className="flex flex-1 items-center justify-end gap-4">
             <nav className="hidden items-center gap-1 sm:flex lg:gap-2">
-              {navItems.map((item, index) => {
-                const isCategory = !!item.icon
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
+              {navItems.map((item, index) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={classNames(
+                    'group relative flex flex-col items-center gap-1 text-sm font-semibold tracking-wide transition duration-300',
+                    'text-zinc-900 hover:text-orange-500 dark:text-white'
+                  )}
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <span
                     className={classNames(
-                      'group relative flex flex-col items-center gap-1 text-sm font-semibold tracking-wide transition duration-300',
-                      'text-zinc-900 hover:text-orange-500 dark:text-white',
-                      isCategory && 'rounded-full bg-zinc-100/50 px-3 py-1.5 dark:bg-zinc-800/50'
+                      'transition-all duration-300',
+                      showLabels ? 'max-h-6 opacity-100' : 'hidden max-h-0 opacity-0'
                     )}
-                    style={{ animationDelay: `${index * 0.05}s` }}
                   >
-                    {item.icon && (
-                      <item.icon
-                        className={classNames(
-                          'h-5 w-5 transition-transform duration-200',
-                          'text-orange-500 group-hover:scale-110'
-                        )}
-                        aria-hidden="true"
-                      />
+                    {item.label}
+                  </span>
+                  <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
+                </Link>
+              ))}
+
+              {/* Categories dropdown - hover to reveal the 4 tour categories in a column */}
+              <div
+                className="relative"
+                onMouseEnter={() => setCategoriesOpen(true)}
+                onMouseLeave={() => setCategoriesOpen(false)}
+              >
+                <button
+                  type="button"
+                  className={classNames(
+                    'group flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-semibold tracking-wide transition duration-300',
+                    'text-zinc-900 hover:text-orange-500 dark:text-white',
+                    'bg-zinc-100/50 dark:bg-zinc-800/50'
+                  )}
+                  aria-haspopup="true"
+                  aria-expanded={categoriesOpen}
+                >
+                  <LayoutGrid className="h-4 w-4 text-orange-500" aria-hidden="true" />
+                  <span>{getLabel('header.categories', 'Categories')}</span>
+                  <ChevronDown
+                    className={classNames(
+                      'h-3.5 w-3.5 text-orange-500 transition-transform duration-200',
+                      categoriesOpen && 'rotate-180'
                     )}
-                    <span
-                      className={classNames(
-                        'transition-all duration-300',
-                        showLabels ? 'max-h-6 opacity-100' : 'hidden max-h-0 opacity-0'
-                      )}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {categoriesOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                      transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+                      className="absolute left-1/2 top-full z-50 mt-2 w-64 -translate-x-1/2"
                     >
-                      {item.label}
-                    </span>
-                    <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
-                  </Link>
-                )
-              })}
+                      <div className="bg-zinc-950/95 dark:bg-zinc-950/95 overflow-hidden rounded-2xl border border-orange-500/20 p-2 shadow-2xl backdrop-blur-xl">
+                        {tourCategories.map((category) => {
+                          const CategoryIcon = category.icon
+                          return (
+                            <Link
+                              key={category.href}
+                              href={category.href}
+                              className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-orange-500/10 dark:text-white"
+                            >
+                              {CategoryIcon && (
+                                <span className="bg-orange-500/15 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-orange-500 transition-transform duration-200 group-hover:scale-110">
+                                  <CategoryIcon className="h-4 w-4" />
+                                </span>
+                              )}
+                              <span className="group-hover:text-orange-400">{category.label}</span>
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </nav>
 
             <div className="flex items-center gap-2 sm:gap-3">

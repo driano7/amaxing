@@ -4,6 +4,7 @@ import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AnimatedSection } from '@/components/AnimatedSection'
+import { Waves, CookingPot, Landmark } from 'lucide-react'
 
 const stories = [
   {
@@ -14,6 +15,7 @@ const stories = [
     author: 'Sarah Mitchell',
     publishedAt: '2024-01-15',
     readTime: '8 min read',
+    icon: Waves,
   },
   {
     id: 'oaxaca-night-markets',
@@ -23,6 +25,7 @@ const stories = [
     author: 'Carlos Mendoza',
     publishedAt: '2024-02-20',
     readTime: '10 min read',
+    icon: CookingPot,
   },
   {
     id: 'lost-temples-palenque',
@@ -32,6 +35,7 @@ const stories = [
     author: 'Dr. Elena Ruiz',
     publishedAt: '2024-03-10',
     readTime: '12 min read',
+    icon: Landmark,
   },
 ]
 
@@ -93,6 +97,11 @@ export default function Stories() {
 
                   <div className="p-6">
                     <div className="mb-3 flex items-center gap-2 text-sm text-zinc-500">
+                      {story.icon && (
+                        <span className="bg-orange-500/15 flex h-6 w-6 items-center justify-center rounded-full text-orange-500">
+                          <story.icon className="h-3.5 w-3.5" />
+                        </span>
+                      )}
                       <time dateTime={story.publishedAt}>{formatDate(story.publishedAt)}</time>
                       <span>•</span>
                       <span>{story.readTime}</span>

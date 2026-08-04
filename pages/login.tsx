@@ -86,19 +86,21 @@ export default function Login() {
         className="w-full max-w-md"
       >
         <div className="mb-8 text-center">
-          <Link href="/" className="mb-6 inline-flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ring-2 ring-orange-500/60">
-              <Image
-                src="/static/images/jaguarBaja.png"
-                alt="Amaxing"
-                width={32}
-                height={32}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <span className="font-serif text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Amaxing
-            </span>
+          <Link href="/" passHref>
+            <a className="mb-6 inline-flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ring-2 ring-orange-500/60">
+                <Image
+                  src="/static/images/jaguarBaja.png"
+                  alt="Amaxing"
+                  width={32}
+                  height={32}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <span className="font-serif text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Amaxing
+              </span>
+            </a>
           </Link>
           <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
             {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}

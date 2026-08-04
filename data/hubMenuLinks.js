@@ -26,25 +26,21 @@
 const navItemsConfig = [
   { labelKey: 'header.nav.home', fallback: 'Home', href: '/' },
   { labelKey: 'header.nav.tours', fallback: 'Tours', href: '/tours' },
-  {
-    label: 'Culinary Underworld',
-    href: '/tours?category=gastronomy',
-    icon: 'Utensils',
-    isCategory: true,
-  },
-  { label: 'Uncensored History', href: '/tours?category=history', icon: 'Skull', isCategory: true },
-  {
-    label: 'Neighborhood Deep Dives',
-    href: '/tours?category=neighborhoods',
-    icon: 'MapPin',
-    isCategory: true,
-  },
-  { label: 'Art & Museums', href: '/tours?category=museums', icon: 'Palette', isCategory: true },
   { labelKey: 'header.nav.experiences', fallback: 'Experiences', href: '/experiences' },
   { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories' },
   { labelKey: 'header.nav.news', fallback: 'News', href: '/news' },
   { labelKey: 'header.nav.pricing', fallback: 'Pricing', href: '/pricing' },
   { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact' },
+]
+
+// Tour categories grouped into a single "Categories" dropdown (desktop).
+// These are rendered as one hover trigger in the navbar and as a column
+// of options so the header stays compact.
+const tourCategoriesConfig = [
+  { label: 'Culinary Underworld', href: '/tours?category=gastronomy', icon: 'Utensils' },
+  { label: 'Uncensored History', href: '/tours?category=history', icon: 'Skull' },
+  { label: 'Neighborhood Deep Dives', href: '/tours?category=neighborhoods', icon: 'MapPin' },
+  { label: 'Art & Museums', href: '/tours?category=museums', icon: 'Palette' },
 ]
 
 // Mobile drawer items (same as desktop but without icons)
@@ -73,5 +69,6 @@ const iconMap = {
 module.exports = {
   navItemsConfig,
   drawerItemsConfig,
+  tourCategoriesConfig,
   iconMap,
 }

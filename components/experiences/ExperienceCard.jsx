@@ -1,11 +1,37 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calendar, Clock, Users, MapPin, Star, Check, ShoppingBag } from 'lucide-react'
+import {
+  Calendar,
+  Clock,
+  Users,
+  MapPin,
+  Star,
+  Check,
+  ShoppingBag,
+  Utensils,
+  Skull,
+  Palette,
+} from 'lucide-react'
 import { useCartStore } from '@/lib/store/useCartStore'
+
+const categoryIconMap = {
+  gastronomy: Utensils,
+  history: Skull,
+  neighborhoods: MapPin,
+  museums: Palette,
+}
+
+const categoryLabelMap = {
+  gastronomy: 'Culinary Underworld',
+  history: 'Uncensored History',
+  neighborhoods: 'Neighborhood Deep Dives',
+  museums: 'Art & Museums',
+}
 
 export function ExperienceCard({ experience, onSelect, locale }) {
   const { addItem } = useCartStore()
+  const CategoryIcon = categoryIconMap[experience.category] || MapPin
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -86,6 +112,15 @@ export function ExperienceCard({ experience, onSelect, locale }) {
       </div>
 
       <div className="p-6">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="bg-orange-500/15 flex h-7 w-7 items-center justify-center rounded-full text-orange-500">
+            <CategoryIcon className="h-3.5 w-3.5" />
+          </span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-orange-400">
+            {categoryLabelMap[experience.category] || experience.category}
+          </span>
+        </div>
+
         <h3 className="mb-2 text-xl font-bold text-white transition-colors group-hover:text-orange-500">
           {experience.title}
         </h3>

@@ -1,26 +1,53 @@
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
 import Link from '@/components/Link'
+import {
+  Clock,
+  Users,
+  Gem,
+  Compass,
+  Star,
+  Sparkles,
+  MapPin,
+  Wine,
+  Crown,
+  ConciergeBell,
+} from 'lucide-react'
 
 const pricingTiers = [
   {
     name: 'Basic Experience',
     price: '$250',
     description: 'Perfect for short cultural encounters',
-    features: ['Duration: 2-3 hours', '1-2 guests', 'Basic amenities', 'Local guide'],
+    features: [
+      { icon: Clock, text: 'Duration: 2-3 hours' },
+      { icon: Users, text: '1-2 guests' },
+      { icon: Gem, text: 'Basic amenities' },
+      { icon: Compass, text: 'Local guide' },
+    ],
   },
   {
     name: 'Premium Experience',
     price: '$450',
     description: 'Our most popular luxury tour option',
-    features: ['Duration: 4-6 hours', 'Up to 4 guests', 'Premium amenities', 'Expert local guide'],
+    features: [
+      { icon: Clock, text: 'Duration: 4-6 hours' },
+      { icon: Users, text: 'Up to 4 guests' },
+      { icon: Star, text: 'Premium amenities' },
+      { icon: Sparkles, text: 'Expert local guide' },
+    ],
     featured: true,
   },
   {
     name: 'Private Experience',
     price: '$850',
     description: 'Fully customized private tour',
-    features: ['Duration: Full day', 'Up to 6 guests', 'VIP amenities', 'Personal concierge'],
+    features: [
+      { icon: MapPin, text: 'Duration: Full day' },
+      { icon: Users, text: 'Up to 6 guests' },
+      { icon: Crown, text: 'VIP amenities' },
+      { icon: ConciergeBell, text: 'Personal concierge' },
+    ],
   },
 ]
 
@@ -53,11 +80,15 @@ export default function Pricing() {
                   <div className="mt-4 text-4xl font-extrabold text-orange-500">{tier.price}</div>
                   <p className="mt-4 text-gray-400">{tier.description}</p>
                   <ul className="mt-6 space-y-3">
-                    {tier.features.map((feature) => (
-                      <li key={feature} className="flex items-center text-gray-300">
-                        ✓ {feature}
-                      </li>
-                    ))}
+                    {tier.features.map((feature) => {
+                      const Icon = feature.icon
+                      return (
+                        <li key={feature.text} className="flex items-start gap-2 text-gray-300">
+                          <Icon className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+                          <span>{feature.text}</span>
+                        </li>
+                      )
+                    })}
                   </ul>
                   <Link
                     href="https://wa.me/525512291607"
