@@ -46,17 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem('authToken')
-    if (savedToken) {
-      setToken(savedToken)
-      verifyToken(savedToken)
-    } else {
-      setIsLoading(false)
-    }
-  }, [])
-
-  const verifyToken = async (tokenToVerify: string) => {
+  const verifyToken = useCallback(async (tokenToVerify: string) => {
     try {
       const response = await fetch('/api/auth/me', {
         method: 'POST',
@@ -71,24 +61,74 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(result.user)
         setToken(tokenToVerify)
       } else {
-        localStorage.removeItem('authToken')
-        setToken(null)
-        setUser(null)
+        // Fall back to the locally stored user (demo auth)
+        const savedUser = localStorage.getItem('authUser')
+        if (savedUser) {
+          try {
+            setUser(JSON.parse(savedUser) as AuthUser)
+          } catch {
+            localStorage.removeItem('authToken')
+            setToken(null)
+            setUser(null)
+          }
+        } else {
+          localStorage.removeItem('authToken')
+          setToken(null)
+          setUser(null)
+        }
       }
     } catch (error) {
       console.error('Error verifying token:', error)
-      localStorage.removeItem('authToken')
-      setToken(null)
-      setUser(null)
+      // Endpoint unavailable — restore from localStorage instead of logging out
+      const savedUser = localStorage.getItem('authUser')
+      if (savedUser) {
+        try {
+          setUser(JSON.parse(savedUser) as AuthUser)
+        } catch {
+          setUser(null)
+        }
+      } else {
+        setUser(null)
+      }
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
+
+  const restoreSession = useCallback(() => {
+    const savedToken = localStorage.getItem('authToken')
+    const savedUser = localStorage.getItem('authUser')
+    if (savedToken && savedUser) {
+      try {
+        setToken(savedToken)
+        setUser(JSON.parse(savedUser) as AuthUser)
+        setIsLoading(false)
+      } catch {
+        setUser(null)
+        setIsLoading(false)
+      }
+    } else if (savedToken) {
+      setToken(savedToken)
+      verifyToken(savedToken)
+    } else {
+      setToken(null)
+      setUser(null)
+      setIsLoading(false)
+    }
+  }, [verifyToken])
+
+  useEffect(() => {
+    restoreSession()
+    // Login/register pages dispatch 'authChange' after writing localStorage
+    window.addEventListener('authChange', restoreSession)
+    return () => window.removeEventListener('authChange', restoreSession)
+  }, [restoreSession])
 
   const login = (newToken: string, newUser: AuthUser) => {
     setToken(newToken)
     setUser(newUser)
     localStorage.setItem('authToken', newToken)
+    localStorage.setItem('authUser', JSON.stringify(newUser))
   }
 
   const logout = useCallback(async () => {
@@ -107,6 +147,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setToken(null)
       setUser(null)
       localStorage.removeItem('authToken')
+      localStorage.removeItem('authUser')
       router.push('/')
     }
   }, [router, token])

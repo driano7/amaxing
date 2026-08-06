@@ -16,7 +16,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import {
   Sparkle,
   Send,
@@ -114,18 +114,26 @@ export default function ChatbotAssistant() {
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState([])
   const bottomRef = useRef(null)
+  const reducedMotion = useReducedMotion()
 
   const t = (es, en) => (isEs ? es : en)
+
+  // Open/close from the header trigger (single instance, single state)
+  useEffect(() => {
+    const handleOpen = () => setOpen(true)
+    window.addEventListener('open-amaxing-chatbot', handleOpen)
+    return () => window.removeEventListener('open-amaxing-chatbot', handleOpen)
+  }, [])
 
   // Auto-open once after a short, non-intrusive delay (only the first time)
   useEffect(() => {
     if (typeof window === 'undefined') return
     const alreadyShown = window.localStorage.getItem('amaxing_assistant_shown')
-    if (!alreadyShown) {
+    if (!alreadyShown && !reducedMotion) {
       const timer = window.setTimeout(() => setOpen(true), 1500)
       return () => window.clearTimeout(timer)
     }
-  }, [])
+  }, [reducedMotion])
 
   // Sync onboarding step with persisted state
   useEffect(() => {
@@ -362,11 +370,11 @@ export default function ChatbotAssistant() {
         {!open && (
           <motion.button
             key="trigger"
-            initial={{ scale: 0, opacity: 0 }}
+            initial={reducedMotion ? false : { scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.9 }}
+            exit={reducedMotion ? false : { scale: 0, opacity: 0 }}
+            whileHover={reducedMotion ? undefined : { scale: 1.08 }}
+            whileTap={reducedMotion ? undefined : { scale: 0.9 }}
             onClick={() => {
               window.localStorage.setItem('amaxing_assistant_shown', 'true')
               setOpen(true)
@@ -384,10 +392,10 @@ export default function ChatbotAssistant() {
         {open && (
           <motion.div
             key="panel"
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.96 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            exit={reducedMotion ? false : { opacity: 0, y: 24, scale: 0.96 }}
+            transition={{ duration: reducedMotion ? 0 : 0.25, ease: 'easeOut' }}
             className="dark:bg-zinc-950 fixed inset-x-4 bottom-[72px] z-[100] mx-auto mb-6 w-full max-w-md rounded-2xl border border-zinc-200/50 bg-white shadow-2xl dark:border-zinc-800 sm:inset-auto sm:bottom-auto sm:right-6 sm:max-w-sm"
           >
             {/* Header */}

@@ -4,7 +4,6 @@ import Link from './Link'
 import SectionContainer from './SectionContainer'
 import Footer from './Footer'
 import { Navbar } from './Navbar'
-import MobileNav from './MobileNav'
 
 const LayoutWrapper = ({ children }) => {
   return (

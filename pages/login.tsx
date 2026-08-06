@@ -78,7 +78,7 @@ export default function Login() {
   }
 
   return (
-    <div className="bg-zinc-950 flex min-h-screen items-center justify-center px-4 py-12">
+    <div className="dark:bg-zinc-950 flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -97,27 +97,27 @@ export default function Login() {
                   className="h-full w-full object-cover"
                 />
               </div>
-              <span className="font-serif text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <span className="font-serif text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
                 Amaxing
               </span>
             </a>
           </Link>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">
             {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
           </h1>
-          <p className="text-gray-400">
+          <p className="text-zinc-500 dark:text-gray-400">
             {mode === 'login'
               ? 'Bienvenido de nuevo a Amaxing'
               : 'Únete a la comunidad de viajeros'}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-zinc-900/50 p-8 backdrop-blur-sm">
+        <div className="rounded-2xl border border-zinc-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/50">
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-sm text-red-300"
+              className="mb-6 rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-sm text-red-600 dark:text-red-300"
             >
               {error}
             </motion.div>
@@ -129,7 +129,7 @@ export default function Login() {
                 <div>
                   <label
                     htmlFor="firstName"
-                    className="mb-1 block text-sm font-medium text-gray-300"
+                    className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
                   >
                     Nombre
                   </label>
@@ -139,14 +139,14 @@ export default function Login() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
+                    className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
                     placeholder="Juan"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="lastName"
-                    className="mb-1 block text-sm font-medium text-gray-300"
+                    className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
                   >
                     Apellido
                   </label>
@@ -156,7 +156,7 @@ export default function Login() {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
+                    className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
                     placeholder="Pérez"
                   />
                 </div>
@@ -164,7 +164,10 @@ export default function Login() {
             )}
 
             <div>
-              <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-300">
+              <label
+                htmlFor="email"
+                className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
+              >
                 Email
               </label>
               <input
@@ -173,13 +176,16 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
                 placeholder="tu@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-300">
+              <label
+                htmlFor="password"
+                className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
+              >
                 Contraseña
               </label>
               <input
@@ -189,7 +195,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
                 placeholder="••••••••"
               />
             </div>
@@ -199,7 +205,7 @@ export default function Login() {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 disabled:opacity-50 dark:text-white"
+              className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
             >
               {isLoading ? (
                 <svg className="-ml-1 mr-2 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -226,7 +232,7 @@ export default function Login() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-zinc-500 dark:text-gray-400">
               {mode === 'login' ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}{' '}
               <button
                 onClick={() => {
@@ -240,10 +246,12 @@ export default function Login() {
             </p>
           </div>
 
-          <div className="mt-6 border-t border-white/10 pt-6">
-            <p className="mb-4 text-center text-sm text-gray-400">O continúa con</p>
+          <div className="mt-6 border-t border-zinc-200 pt-6 dark:border-white/10">
+            <p className="mb-4 text-center text-sm text-zinc-500 dark:text-gray-400">
+              O continúa con
+            </p>
             <div className="grid grid-cols-2 gap-3">
-              <button className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 transition-colors hover:bg-zinc-800 dark:text-white">
+              <button className="flex items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800">
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
@@ -264,7 +272,7 @@ export default function Login() {
                 </svg>
                 <span className="font-medium">Google</span>
               </button>
-              <button className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 transition-colors hover:bg-zinc-800 dark:text-white">
+              <button className="flex items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800">
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.814 2.807 1.36 3.494 1.36.987 0 1.878-.138 2.777-.41 1.11-.636 1.947-1.72 1.947-3.225 0-.708-.276-1.342-.778-1.845C6.135 8.97 4.084 8 3.376 8c-2.857 0-5.18 2.325-5.18 5.18 0 4.07 2.97 7.432 6.936 7.432 4.367 0 7.811-3.01 7.811-6.78 0-.534-.093-1.055-.26-1.543.91-.572 1.713-1.703 2.15-3.23C19.448 12.09 21.5 8.895 21.5 12c0-6.627-5.373-12-12-12z" />
                 </svg>

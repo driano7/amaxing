@@ -52,7 +52,7 @@ export default function Register() {
   }
 
   return (
-    <div className="bg-zinc-950 flex min-h-screen items-center justify-center px-4 py-12">
+    <div className="dark:bg-zinc-950 flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -71,21 +71,21 @@ export default function Register() {
                   className="h-full w-full object-cover"
                 />
               </div>
-              <span className="font-serif text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <span className="font-serif text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
                 Amaxing
               </span>
             </a>
           </Link>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Crear cuenta</h1>
-          <p className="text-gray-400">Únete a la comunidad de viajeros</p>
+          <h1 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">Crear cuenta</h1>
+          <p className="text-zinc-500 dark:text-gray-400">Únete a la comunidad de viajeros</p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-zinc-900/50 p-8 backdrop-blur-sm">
+        <div className="rounded-2xl border border-zinc-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/50">
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-sm text-red-300"
+              className="mb-6 rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-sm text-red-600 dark:text-red-300"
             >
               {error}
             </motion.div>
@@ -94,7 +94,10 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="mb-1 block text-sm font-medium text-gray-300">
+                <label
+                  htmlFor="firstName"
+                  className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
+                >
                   Nombre
                 </label>
                 <input
@@ -103,12 +106,15 @@ export default function Register() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
                   placeholder="Juan"
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="mb-1 block text-sm font-medium text-gray-300">
+                <label
+                  htmlFor="lastName"
+                  className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
+                >
                   Apellido
                 </label>
                 <input
@@ -117,14 +123,17 @@ export default function Register() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
                   placeholder="Pérez"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-300">
+              <label
+                htmlFor="email"
+                className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
+              >
                 Email
               </label>
               <input
@@ -133,13 +142,16 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
                 placeholder="tu@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-300">
+              <label
+                htmlFor="password"
+                className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
+              >
                 Contraseña
               </label>
               <input
@@ -149,7 +161,7 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-white"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
                 placeholder="••••••••"
               />
             </div>
@@ -159,7 +171,7 @@ export default function Register() {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 disabled:opacity-50 dark:text-white"
+              className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
             >
               {isLoading ? (
                 <svg className="-ml-1 mr-2 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -184,7 +196,7 @@ export default function Register() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-zinc-500 dark:text-gray-400">
               ¿Ya tienes cuenta?{' '}
               <Link href="/login" passHref>
                 <a className="font-medium text-orange-500 hover:text-orange-400">Inicia sesión</a>

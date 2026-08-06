@@ -5,22 +5,13 @@ import Image from 'next/image'
 import AuthNav from './AuthNav'
 import { CartIcon } from './cart/CartIcon'
 import { ThemeToggle } from './theme-toggle'
-import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  useScroll,
-} from 'framer-motion'
-import { useEffect, useState, useRef, useCallback, type RefObject } from 'react'
-
-// Use a type that works both server and client
-type DivRef = RefObject<HTMLDivElement | null>
+import { HubMenu } from './HubMenu'
+import { motion, AnimatePresence, useTransform, useScroll } from 'framer-motion'
+import { useEffect, useState, useCallback } from 'react'
 import classNames from 'classnames'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { Utensils, Skull, MapPin, Palette, ChevronDown, LayoutGrid } from 'lucide-react'
-import { navItemsConfig, drawerItemsConfig, tourCategoriesConfig } from '@/data/hubMenuLinks'
+import { navItemsConfig, tourCategoriesConfig } from '@/data/hubMenuLinks'
 import enDict from '@/dictionaries/en.json'
 import esDict from '@/dictionaries/es.json'
 
@@ -43,12 +34,10 @@ const localT = (key, locale = 'en') => {
 }
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [forceVisible, setForceVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [mobileDelayElapsed, setMobileDelayElapsed] = useState(true)
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [showLabels, setShowLabels] = useState(true)
   const { scrollY } = useScroll()
   const { currentLanguage, setLanguage, isChanging, t } = useLanguage()
@@ -56,7 +45,6 @@ export function Navbar() {
   // Ensure currentLanguage is always a valid string
   const locale =
     typeof currentLanguage === 'string' && currentLanguage.length > 0 ? currentLanguage : 'en'
-  const drawerContentRef: DivRef = useRef(null)
 
   // Helper to get translation with fallback - defensive for SSR/SSG
   const getLabel = (key, fallback) => {
@@ -77,49 +65,12 @@ export function Navbar() {
     icon: item.icon ? iconComponents[item.icon] : undefined,
   }))
 
-  // Mobile drawer items - loaded from centralized config (data/hubMenuLinks.js)
-  const drawerItems = drawerItemsConfig.map((item) => ({
-    ...item,
-    label: item.labelKey ? getLabel(item.labelKey, item.fallback) : item.label,
-  }))
-
   // Tour category dropdown - loaded from centralized config (data/hubMenuLinks.js)
   const tourCategories = tourCategoriesConfig.map((item) => ({
     ...item,
     icon: iconComponents[item.icon],
   }))
   const [categoriesOpen, setCategoriesOpen] = useState(false)
-
-  const closeMegaMenu = useCallback(() => {}, [])
-  const openMegaMenu = useCallback(() => {}, [])
-
-  // Framer Motion drag for bottom drawer
-  const dragY = useMotionValue(0)
-  const dragYSpring = useSpring(dragY, { stiffness: 500, damping: 30 })
-  const drawerHeight = useRef(0)
-  const isDragging = useRef(false)
-
-  const handleDragEnd = (_event, info) => {
-    isDragging.current = false
-    const velocity = info.velocity
-    const offset = dragY.get()
-
-    // Close if dragged down more than 30% of height or fast downward swipe
-    if (offset > drawerHeight.current * 0.3 || velocity > 500) {
-      setDrawerOpen(false)
-      dragY.set(0)
-    } else {
-      dragY.set(0)
-    }
-  }
-
-  const handleDrag = (_event, info) => {
-    const offset = info.offset.y
-    // Only allow dragging down to close
-    if (offset > 0) {
-      dragY.set(offset)
-    }
-  }
 
   useEffect(() => {
     const updateForceVisible = () => {
@@ -192,26 +143,6 @@ export function Navbar() {
   )
 
   const backdropBlur = useTransform(scrollY, [0, 50], ['blur-none', 'blur-xl'])
-
-  // Toggle drawer
-  const toggleDrawer = useCallback(() => {
-    setDrawerOpen(!drawerOpen)
-    if (drawerOpen) {
-      dragY.set(0)
-    }
-  }, [drawerOpen, dragY])
-
-  const closeDrawer = useCallback(() => {
-    setDrawerOpen(false)
-    dragY.set(0)
-  }, [dragY])
-
-  // Measure drawer height
-  useEffect(() => {
-    if (drawerContentRef.current) {
-      drawerHeight.current = drawerContentRef.current.offsetHeight
-    }
-  }, [drawerOpen])
 
   return (
     <>
@@ -317,7 +248,7 @@ export function Navbar() {
                       transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
                       className="absolute left-1/2 top-full z-50 mt-2 w-64 -translate-x-1/2"
                     >
-                      <div className="bg-zinc-950/95 dark:bg-zinc-950/95 overflow-hidden rounded-2xl border border-orange-500/20 p-2 shadow-2xl backdrop-blur-xl">
+                      <div className="dark:bg-zinc-950/95 overflow-hidden rounded-2xl border border-zinc-200/60 bg-white/95 p-2 shadow-2xl backdrop-blur-xl dark:border-orange-500/20">
                         {tourCategories.map((category) => {
                           const CategoryIcon = category.icon
                           return (
@@ -443,157 +374,12 @@ export function Navbar() {
                 </svg>
               </button>
 
-              {/* Mobile Drawer Button */}
-              <button
-                onClick={toggleDrawer}
-                className="relative flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95 lg:hidden"
-                aria-label={drawerOpen ? 'Close menu' : 'Open menu'}
-                aria-expanded={drawerOpen}
-              >
-                {drawerOpen ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="h-5 w-5"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    stroke="currentColor"
-                    fill="none"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    height="1.25em"
-                    width="1.25em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                )}
-              </button>
+              {/* Hub Menu — doc icon, single open state, works on mobile and desktop */}
+              <HubMenu />
             </div>
           </div>
         </header>
       </motion.div>
-
-      {/* Mobile Bottom Drawer with Drag Gesture */}
-      <AnimatePresence>
-        {drawerOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/40 dark:bg-black/60 lg:hidden"
-              onClick={closeDrawer}
-              aria-hidden="true"
-            />
-            {/* Drawer */}
-            <motion.div
-              ref={drawerContentRef}
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragMomentum={false}
-              dragElastic={0.2}
-              onDragStart={() => {
-                isDragging.current = true
-              }}
-              onDrag={handleDrag}
-              onDragEnd={handleDragEnd}
-              style={{ y: dragYSpring }}
-              className="fixed inset-x-0 bottom-0 z-50 lg:hidden"
-            >
-              <motion.div
-                initial={{ opacity: 0, y: '100%' }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: '100%' }}
-                transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                className="dark:bg-zinc-950 relative flex max-h-[85vh] min-h-[200px] flex-col overflow-hidden rounded-t-3xl border border-zinc-200/50 bg-white shadow-[0_-20px_60px_rgba(15,23,42,0.14)] dark:border-zinc-800/50 dark:shadow-[0_-24px_80px_rgba(0,0,0,0.5)]"
-              >
-                {/* Drag Handle */}
-                <div className="flex h-14 items-center justify-center border-b border-zinc-200/50 px-4 dark:border-zinc-800/50">
-                  <div
-                    className="mx-auto h-1.5 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700"
-                    aria-hidden="true"
-                  />
-                </div>
-
-                {/* Nav Items */}
-                <nav className="flex-1 space-y-1 overflow-y-auto px-6 py-4">
-                  {drawerItems.map((item, index) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={closeDrawer}
-                      className={classNames(
-                        'group relative flex items-center gap-3 rounded-2xl px-4 py-3.5 text-base font-semibold transition-all duration-200',
-                        'text-zinc-900 dark:text-white',
-                        'hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'
-                      )}
-                    >
-                      <span className="transition-transform duration-200 group-hover:-translate-x-0.5">
-                        {item.label}
-                      </span>
-                      <span className="absolute bottom-0 left-4 right-4 h-px origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
-                    </Link>
-                  ))}
-
-                  {/* Categories section */}
-                  <div className="mt-4">
-                    <p className="px-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Categories
-                    </p>
-                    <div className="mt-2 space-y-1">
-                      {tourCategoriesConfig.map((category) => {
-                        const CategoryIcon = iconComponents[category.icon]
-                        return (
-                          <Link
-                            key={category.href}
-                            href={category.href}
-                            onClick={closeDrawer}
-                            className="flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-semibold text-zinc-900 transition-colors hover:bg-orange-500/10 dark:text-white"
-                          >
-                            {CategoryIcon && (
-                              <span className="bg-orange-500/15 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-orange-500">
-                                <CategoryIcon className="h-4 w-4" />
-                              </span>
-                            )}
-                            <span className="hover:text-orange-600 dark:hover:text-orange-400">
-                              {category.label}
-                            </span>
-                          </Link>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </nav>
-
-                {/* Book Now CTA */}
-                <div className="border-t border-zinc-200/50 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-                  <Link
-                    href="https://wa.me/525512291607"
-                    onClick={closeDrawer}
-                    className="block w-full rounded-full border border-orange-500/30 bg-orange-500/20 py-3 text-center text-sm font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-white"
-                  >
-                    {t('header.bookNow')}
-                  </Link>
-                </div>
-              </motion.div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   )
 }
