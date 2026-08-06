@@ -418,6 +418,31 @@ export function Navbar() {
                 {t('header.bookNow')}
               </Link>
 
+              {/* Chatbot trigger */}
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('open-amaxing-chatbot'))}
+                className="relative flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+                aria-label="Open assistant"
+                title="Amaxing AI"
+              >
+                <svg
+                  stroke="currentColor"
+                  fill="none"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  height="1.25em"
+                  width="1.25em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+                  />
+                </svg>
+              </button>
+
               {/* Mobile Drawer Button */}
               <button
                 onClick={toggleDrawer}
@@ -523,6 +548,35 @@ export function Navbar() {
                       <span className="absolute bottom-0 left-4 right-4 h-px origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
                     </Link>
                   ))}
+
+                  {/* Categories section */}
+                  <div className="mt-4">
+                    <p className="px-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                      Categories
+                    </p>
+                    <div className="mt-2 space-y-1">
+                      {tourCategoriesConfig.map((category) => {
+                        const CategoryIcon = iconComponents[category.icon]
+                        return (
+                          <Link
+                            key={category.href}
+                            href={category.href}
+                            onClick={closeDrawer}
+                            className="flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-semibold text-zinc-900 transition-colors hover:bg-orange-500/10 dark:text-white"
+                          >
+                            {CategoryIcon && (
+                              <span className="bg-orange-500/15 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-orange-500">
+                                <CategoryIcon className="h-4 w-4" />
+                              </span>
+                            )}
+                            <span className="hover:text-orange-600 dark:hover:text-orange-400">
+                              {category.label}
+                            </span>
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  </div>
                 </nav>
 
                 {/* Book Now CTA */}
