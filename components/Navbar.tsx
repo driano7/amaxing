@@ -167,7 +167,7 @@ export function Navbar() {
           className={classNames(
             'pointer-events-auto flex w-[min(1100px,100%)] items-center gap-4 rounded-3xl border px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur-md transition-all duration-500',
             // Light mode: white bg, dark text. Dark mode: dark bg, white text
-            'dark:bg-zinc-950/80 border-zinc-200/50 bg-white/80 text-zinc-900 dark:border-zinc-800/50 dark:text-white',
+            'border-zinc-200/50 bg-white/80 text-zinc-900 dark:border-zinc-800/50 dark:bg-zinc-950/80 dark:text-white',
             isVisible ? 'shadow-2xl' : 'border-transparent bg-transparent shadow-none'
           )}
         >
@@ -248,7 +248,7 @@ export function Navbar() {
                       transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
                       className="absolute left-1/2 top-full z-50 mt-2 w-64 -translate-x-1/2"
                     >
-                      <div className="dark:bg-zinc-950/95 overflow-hidden rounded-2xl border border-zinc-200/60 bg-white/95 p-2 shadow-2xl backdrop-blur-xl dark:border-orange-500/20">
+                      <div className="overflow-hidden rounded-2xl border border-zinc-200/60 bg-white/95 p-2 shadow-2xl backdrop-blur-xl dark:border-orange-500/20 dark:bg-zinc-950/95">
                         {tourCategories.map((category) => {
                           const CategoryIcon = category.icon
                           return (

@@ -164,7 +164,7 @@ export function HubMenu() {
                   damping: 40,
                   duration: reducedMotion ? 0 : undefined,
                 }}
-                className="dark:bg-zinc-950 relative flex max-h-[80vh] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-zinc-200/50 bg-white text-zinc-900 shadow-[0_-20px_60px_rgba(15,23,42,0.14)] dark:border-zinc-800/50 dark:text-white dark:shadow-[0_-24px_80px_rgba(0,0,0,0.5)]"
+                className="relative flex max-h-[80vh] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-zinc-200/50 bg-white text-zinc-900 shadow-[0_-20px_60px_rgba(15,23,42,0.14)] dark:border-zinc-800/50 dark:bg-zinc-950 dark:text-white dark:shadow-[0_-24px_80px_rgba(0,0,0,0.5)]"
               >
                 {/* Drag Handle */}
                 <div className="flex h-14 items-center justify-center border-b border-zinc-200/50 px-4 dark:border-zinc-800/50">

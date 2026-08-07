@@ -396,7 +396,7 @@ export default function ChatbotAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reducedMotion ? false : { opacity: 0, y: 24, scale: 0.96 }}
             transition={{ duration: reducedMotion ? 0 : 0.25, ease: 'easeOut' }}
-            className="dark:bg-zinc-950 fixed inset-x-4 bottom-[72px] z-[100] mx-auto mb-6 w-full max-w-md rounded-2xl border border-zinc-200/50 bg-white shadow-2xl dark:border-zinc-800 sm:inset-auto sm:bottom-auto sm:right-6 sm:max-w-sm"
+            className="fixed inset-x-4 bottom-[72px] z-[100] mx-auto mb-6 w-[calc(100%-2rem)] max-w-md rounded-2xl border border-zinc-200/50 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-950 sm:inset-auto sm:bottom-auto sm:right-6 sm:max-w-sm"
           >
             {/* Header */}
             <div className="flex items-center justify-between rounded-t-2xl border-b border-zinc-200/50 bg-zinc-50/70 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/70">

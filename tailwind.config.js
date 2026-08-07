@@ -3,11 +3,12 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
   content: [
-    './pages/**/*.js',
-    './components/**/*.js',
-    './layouts/**/*.js',
-    './lib/**/*.js',
-    './data/**/*.mdx',
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './layouts/**/*.{js,ts,jsx,tsx}',
+    './lib/**/*.{js,ts,jsx,tsx}',
+    './hooks/**/*.{js,ts,jsx,tsx}',
+    './data/**/*.{mdx,js,ts,jsx,tsx}',
   ],
   darkMode: 'class',
   theme: {
@@ -34,6 +35,11 @@ module.exports = {
         'gradient-3-end': '#2D00F7',
       },
       colors: {
+        // zinc-950 was added in Tailwind 3.3; this project runs Tailwind 3.2.4,
+        // so it is defined here to keep dark surfaces (bg-zinc-950) working.
+        zinc: {
+          950: '#09090b',
+        },
         // Rosa mexicano: orange is remapped to the brand pink palette so all
         // existing orange-* utility classes render as Mexican pink.
         orange: {
