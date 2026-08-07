@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Bitcoin, Landmark, Check, Copy, HeartHandshake } from 'lucide-react'
 import siteMetadata from '@/data/siteMetadata'
@@ -90,11 +90,48 @@ function DonationQR({ value, size = 92 }) {
   )
 }
 
+// Revela cada hijo uno a uno cuando entra al viewport
+function useStepReveal(itemCount) {
+  const [visibleCount, setVisibleCount] = useState(1)
+  const refsRef = useRef([])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = Number(entry.target.dataset.step)
+            setVisibleCount((prev) => Math.max(prev, idx + 1))
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.2 }
+    )
+
+    refsRef.current.forEach((node) => {
+      if (node) observer.observe(node)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  const registerRef = useCallback((node) => {
+    if (node && !refsRef.current.includes(node)) {
+      refsRef.current.push(node)
+    }
+  }, [])
+
+  return { registerRef, visibleCount }
+}
+
 export default function SupportBanner() {
   const [copied, setCopied] = useState(null)
+  const totalSteps = 1 + DONATION_METHODS.length + 1
+  const { registerRef, visibleCount } = useStepReveal(totalSteps)
 
   const handleCopy = useCallback(async (id, value) => {
-    const persist = (ok) => {
+    const persist = () => {
       setCopied(id)
       window.setTimeout(() => {
         setCopied((prev) => (prev === id ? null : prev))
@@ -103,7 +140,7 @@ export default function SupportBanner() {
     try {
       if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         await navigator.clipboard.writeText(value)
-        persist(true)
+        persist()
         return
       }
       const textarea = document.createElement('textarea')
@@ -121,16 +158,30 @@ export default function SupportBanner() {
         selection.removeAllRanges()
         selection.addRange(range)
       }
-      persist(true)
+      persist()
     } catch {
-      persist(false)
+      persist()
     }
   }, [])
 
   return (
-    <section className="not-prose mt-12 overflow-hidden rounded-3xl bg-gradient-to-br from-[#DE1D8D] via-[#9F0E7F] to-[#6A0568] px-6 py-10 text-white shadow-2xl">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-        <div className="flex flex-col items-center gap-3 text-center">
+    <section
+      className="not-prose relative mt-12 overflow-hidden rounded-3xl px-6 py-10 text-white shadow-2xl"
+      style={{
+        background:
+          'linear-gradient(135deg, #DE1D8D 0%, #BE1588 25%, #9F0E7F 50%, #7B2BD9 75%, #6A0568 100%)',
+      }}
+    >
+      <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-8">
+        <div
+          ref={registerRef}
+          data-step={0}
+          className="flex flex-col items-center gap-3 text-center transition-all duration-700"
+          style={{
+            opacity: visibleCount > 0 ? 1 : 0,
+            transform: visibleCount > 0 ? 'translateY(0)' : 'translateY(24px)',
+          }}
+        >
           <span className="bg-white/15 flex h-14 w-14 items-center justify-center rounded-full text-3xl backdrop-blur-sm">
             <HeartHandshake className="h-7 w-7" aria-hidden />
           </span>
@@ -146,54 +197,67 @@ export default function SupportBanner() {
           </p>
         </div>
 
-        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {DONATION_METHODS.map((method) => (
-            <div
-              key={method.id}
-              className="bg-black/15 flex flex-col items-center gap-4 rounded-2xl p-5 text-center backdrop-blur-sm transition hover:bg-black/20"
-            >
-              <div className="flex items-center gap-2.5">
-                <span
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-black/25 text-xl"
-                  style={{ color: method.accent }}
-                >
-                  <MethodIcon id={method.id} className="h-5 w-5" style={{ color: method.accent }} />
-                </span>
-                <span className="text-sm font-semibold uppercase tracking-[0.25em] text-white/80">
-                  {method.label}
-                </span>
-              </div>
-
-              <DonationQR value={method.value} size={104} />
-
-              <div className="flex w-full flex-col gap-2">
-                <span
-                  className="w-full truncate rounded-lg border border-white/20 bg-white/10 px-3 py-2 font-mono text-xs font-bold text-white"
-                  title={method.value}
-                >
-                  {method.value}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleCopy(method.id, method.value)}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-white/20 px-3 py-2 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-white hover:text-[#9F0E7F]"
-                >
-                  {copied === method.id ? (
-                    <>
-                      <Check className="h-3.5 w-3.5" aria-hidden /> Copiado
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5" aria-hidden /> Copiar
-                    </>
-                  )}
-                </button>
-              </div>
+        {DONATION_METHODS.map((method, index) => (
+          <div
+            key={method.id}
+            ref={registerRef}
+            data-step={index + 1}
+            className="bg-black/15 flex flex-col items-center gap-4 rounded-2xl p-5 text-center backdrop-blur-sm transition-all duration-700 hover:bg-black/20"
+            style={{
+              opacity: visibleCount > index + 1 ? 1 : 0,
+              transform: visibleCount > index + 1 ? 'translateY(0)' : 'translateY(24px)',
+            }}
+          >
+            <div className="flex items-center gap-2.5">
+              <span
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-black/25 text-xl"
+                style={{ color: method.accent }}
+              >
+                <MethodIcon id={method.id} className="h-5 w-5" style={{ color: method.accent }} />
+              </span>
+              <span className="text-sm font-semibold uppercase tracking-[0.25em] text-white/80">
+                {method.label}
+              </span>
             </div>
-          ))}
-        </div>
 
-        <div className="flex items-center justify-center gap-2 text-center text-xs text-white/70">
+            <DonationQR value={method.value} size={104} />
+
+            <div className="flex w-full flex-col gap-2">
+              <span
+                className="w-full truncate rounded-lg border border-white/20 bg-white/10 px-3 py-2 font-mono text-xs font-bold text-white"
+                title={method.value}
+              >
+                {method.value}
+              </span>
+              <button
+                type="button"
+                onClick={() => handleCopy(method.id, method.value)}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white/20 px-3 py-2 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-white hover:text-[#9F0E7F]"
+              >
+                {copied === method.id ? (
+                  <>
+                    <Check className="h-3.5 w-3.5" aria-hidden /> Copiado
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3.5 w-3.5" aria-hidden /> Copiar
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        ))}
+
+        <div
+          ref={registerRef}
+          data-step={1 + DONATION_METHODS.length}
+          className="flex items-center justify-center gap-2 text-center text-xs text-white/70 transition-all duration-700"
+          style={{
+            opacity: visibleCount > 1 + DONATION_METHODS.length ? 1 : 0,
+            transform:
+              visibleCount > 1 + DONATION_METHODS.length ? 'translateY(0)' : 'translateY(24px)',
+          }}
+        >
           <span>¿Prefieres donar con otra red o tu país usa transferencia bancaria?</span>
           <Link
             href="/contact"

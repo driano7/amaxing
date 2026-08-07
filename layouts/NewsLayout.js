@@ -5,6 +5,7 @@ import { BlogSEO } from '@/components/SEO'
 import Image from '@/components/Image'
 import Tag from '@/components/Tag'
 import SupportBanner from '@/components/SupportBanner'
+import ProseReveal from '@/components/ProseReveal'
 import siteMetadata from '@/data/siteMetadata'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
@@ -69,7 +70,9 @@ export default function NewsLayout({ frontMatter, children }) {
           </div>
         )}
 
-        <div className="prose prose-zinc max-w-none pb-8 dark:prose-dark">{children}</div>
+        <ProseReveal className="prose prose-zinc max-w-none pb-8 dark:prose-dark">
+          {children}
+        </ProseReveal>
 
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 border-t border-zinc-200 pt-6 dark:border-white/10">

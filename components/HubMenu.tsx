@@ -13,7 +13,11 @@ type DivRef = RefObject<HTMLDivElement | null>
 
 const iconComponents = { Utensils, Skull, MapPin, Palette }
 
-const getLabel = (item) => {
+const getLabel = (item, t) => {
+  if (item.labelKey) {
+    const val = t(item.labelKey)
+    return val === item.labelKey ? item.fallback : val
+  }
   if (item.label) return item.label
   return item.fallback || item.href
 }
@@ -197,7 +201,7 @@ export function HubMenu({ showTrigger = true }) {
                       )}
                     >
                       <span className="transition-transform duration-200 group-hover:-translate-x-0.5">
-                        {getLabel(item)}
+                        {getLabel(item, t)}
                       </span>
                       <span className="absolute bottom-0 left-4 right-4 h-px origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
                     </Link>
@@ -215,6 +219,7 @@ export function HubMenu({ showTrigger = true }) {
                   <div className="mt-2 space-y-1">
                     {tourCategoriesConfig.map((category) => {
                       const CategoryIcon = iconComponents[category.icon]
+                      const categoryLabel = getLabel(category, t)
                       return (
                         <Link
                           key={category.href}
@@ -228,7 +233,7 @@ export function HubMenu({ showTrigger = true }) {
                             </span>
                           )}
                           <span className="hover:text-orange-600 dark:hover:text-orange-400">
-                            {category.label}
+                            {categoryLabel}
                           </span>
                         </Link>
                       )

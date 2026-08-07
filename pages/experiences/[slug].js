@@ -5,6 +5,7 @@ import { Calendar, Clock, Users, MapPin, Star, Check, ArrowLeft, ChevronRight } 
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { PageSEO } from '@/components/SEO'
 import { tours } from '@/data/toursData'
+import ProseReveal from '@/components/ProseReveal'
 
 export default function ExperienceDetail({ experience, locale }) {
   const { t, currentLanguage } = useLanguage()
@@ -128,9 +129,9 @@ export default function ExperienceDetail({ experience, locale }) {
                   <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
                     {locale === 'es' ? 'Descripción' : 'Description'}
                   </h2>
-                  <div className="prose prose-zinc max-w-none leading-relaxed text-gray-600 dark:text-gray-300 dark:prose-dark">
-                    <p>{experience.description}</p>
-                  </div>
+                  <ProseReveal className="prose prose-zinc max-w-none leading-relaxed text-gray-600 dark:text-gray-300 dark:prose-dark">
+                    {experience.description}
+                  </ProseReveal>
                 </div>
 
                 {/* Highlights */}

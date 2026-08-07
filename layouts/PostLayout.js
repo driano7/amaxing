@@ -8,6 +8,7 @@ import TOCInline from '@/components/TOCInline'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import SupportBanner from '@/components/SupportBanner'
+import ProseReveal from '@/components/ProseReveal'
 import siteMetadata from '@/data/siteMetadata'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
@@ -127,7 +128,9 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
             </p>
           )}
 
-          <div className="prose prose-zinc max-w-none pb-8 dark:prose-dark">{children}</div>
+          <ProseReveal className="prose prose-zinc max-w-none pb-8 dark:prose-dark">
+            {children}
+          </ProseReveal>
 
           {(next || prev) && (
             <div className="grid grid-cols-1 gap-4 border-t border-zinc-200 pt-8 dark:border-white/10 sm:grid-cols-2">

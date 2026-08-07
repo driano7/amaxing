@@ -5,6 +5,7 @@ import Image from 'next/image'
 import AuthNav from './AuthNav'
 import { CartIcon } from './cart/CartIcon'
 import { ThemeToggle } from './theme-toggle'
+import { useAuth } from '@/lib/hooks/useAuth'
 import { motion, AnimatePresence, useTransform, useScroll } from 'framer-motion'
 import { useEffect, useState, useCallback } from 'react'
 import classNames from 'classnames'
@@ -33,6 +34,7 @@ const localT = (key, locale = 'en') => {
 }
 
 export function Navbar() {
+  const { user, isLoading: authLoading } = useAuth()
   const [isVisible, setIsVisible] = useState(false)
   const [forceVisible, setForceVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -67,6 +69,7 @@ export function Navbar() {
   // Tour category dropdown - loaded from centralized config (data/hubMenuLinks.js)
   const tourCategories = tourCategoriesConfig.map((item) => ({
     ...item,
+    label: item.labelKey ? getLabel(item.labelKey, item.fallback) : item.label,
     icon: iconComponents[item.icon],
   }))
   const [categoriesOpen, setCategoriesOpen] = useState(false)
@@ -171,19 +174,16 @@ export function Navbar() {
           )}
         >
           <div className="shrink-0">
-            <Link href="/" className="group flex items-center">
-              <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full ring-2 ring-orange-500/60 transition-transform group-hover:rotate-6">
+            <Link href="/" className="group flex items-center" aria-label="Amaxing">
+              <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full ring-2 ring-orange-500/60 transition-transform group-hover:rotate-6">
                 <Image
                   src="/static/images/jaguarBaja.png"
                   alt="Amaxing"
-                  width={32}
-                  height={32}
+                  width={36}
+                  height={36}
                   className="h-full w-full object-cover"
                 />
               </div>
-              <span className="ml-2 font-serif text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
-                Amaxing
-              </span>
             </Link>
           </div>
 
@@ -273,27 +273,6 @@ export function Navbar() {
             </nav>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Theme Toggle */}
-              <ThemeToggle />
-
-              {/* Label visibility toggle */}
-              <button
-                type="button"
-                onClick={() => setShowLabels(!showLabels)}
-                className="hidden rounded-full p-2 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:block"
-                aria-label={showLabels ? 'Ocultar etiquetas' : 'Mostrar etiquetas'}
-                title={showLabels ? 'Ocultar etiquetas' : 'Mostrar etiquetas'}
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
-
               {/* Language Toggle */}
               <button
                 type="button"
@@ -339,7 +318,7 @@ export function Navbar() {
 
               <AuthNav />
 
-              <CartIcon />
+              {user && !authLoading && <CartIcon />}
 
               <Link
                 href="https://wa.me/525512291607"
@@ -347,6 +326,9 @@ export function Navbar() {
               >
                 {t('header.bookNow')}
               </Link>
+
+              {/* Theme Toggle — rightmost icon */}
+              <ThemeToggle />
             </div>
           </div>
         </header>

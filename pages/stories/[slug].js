@@ -1,5 +1,6 @@
 import Link from '@/components/Link'
 import Image from '@/components/Image'
+import ProseReveal from '@/components/ProseReveal'
 import { motion } from 'framer-motion'
 import {
   Calendar,
@@ -94,14 +95,9 @@ export default function StoryDetail({ story, locale }) {
         {/* Content */}
         <section className="py-16 px-6 lg:py-24">
           <div className="container mx-auto max-w-3xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="prose prose-zinc max-w-none leading-relaxed text-gray-700 dark:text-gray-300 dark:prose-dark"
-            >
+            <ProseReveal className="prose prose-zinc max-w-none leading-relaxed text-gray-700 dark:text-gray-300 dark:prose-dark">
               <div dangerouslySetInnerHTML={{ __html: story.content }} />
-            </motion.div>
+            </ProseReveal>
 
             {story.tags && story.tags.length > 0 && (
               <motion.div

@@ -49,7 +49,7 @@ export function MobileDock() {
     if (collapseTimer.current) clearTimeout(collapseTimer.current)
     collapseTimer.current = setTimeout(() => {
       setIsCollapsed(true)
-    }, 30000)
+    }, 15 * 60 * 1000)
   }, [])
 
   useEffect(() => {
@@ -82,17 +82,14 @@ export function MobileDock() {
     handleDockInteraction()
   }, [handleDockInteraction])
 
-  // Colapsar al llegar al fondo, restaurar al subir (punteros finos)
+  // Colapsar al scrollear un poco, restaurar al volver arriba (punteros finos y gruesos)
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
-    const prefersCoarsePointer = window.matchMedia('(pointer: coarse)').matches
-    if (prefersCoarsePointer) return undefined
 
     const handleScroll = () => {
-      const nearBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 24
-      const nearTop = window.scrollY <= 24
-      if (nearBottom) handleAutoCollapse(true)
+      const scrolled = window.scrollY
+      const nearTop = scrolled <= 24
+      if (scrolled > 120) handleAutoCollapse(true)
       else if (nearTop) handleAutoCollapse(false)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })

@@ -179,5 +179,12 @@
     "heroSubtitle": "Viajes cuidadosamente seleccionados que trascienden lo ordinario y revelan el corazón auténtico de México.",
     "noResults": "No se encontraron tours en esta categoría",
     "tryAnotherCategory": "Intenta seleccionar otra categoría"
+  },
+  "tourCategories": {
+    "all": "Todos los Tours",
+    "culinary": "Submundo Culinario",
+    "history": "Historia Sin Censura",
+    "neighborhoods": "Inmersiones en Barrios",
+    "museums": "Arte y Museos"
   }
 }

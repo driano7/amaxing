@@ -3,7 +3,11 @@ import '@/css/prism.css'
 import '@/css/extra.css'
 import 'katex/dist/katex.css'
 
-import '@fontsource/inter/variable.css'
+import '@fontsource/lato/100.css'
+import '@fontsource/lato/300.css'
+import '@fontsource/lato/400.css'
+import '@fontsource/lato/700.css'
+import '@fontsource/lato/900.css'
 
 import { ThemeProvider } from 'next-themes'
 import Head from 'next/head'

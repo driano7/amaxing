@@ -179,5 +179,12 @@
     "heroSubtitle": "Handpicked journeys that transcend the ordinary and reveal the authentic heart of Mexico.",
     "noResults": "No tours found in this category",
     "tryAnotherCategory": "Try selecting another category"
+  },
+  "tourCategories": {
+    "all": "All Tours",
+    "culinary": "Culinary Underworld",
+    "history": "Uncensored History",
+    "neighborhoods": "Neighborhood Deep Dives",
+    "museums": "Art & Museums"
   }
 }

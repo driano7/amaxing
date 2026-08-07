@@ -1,46 +1,92 @@
 import Link from './Link'
 import siteMetadata from '@/data/siteMetadata'
-import SocialIcon from '@/components/social-icons'
+import { Send, MessageCircle, Mail } from 'lucide-react'
+import InstagramIcon from '@/components/social-icons/instagram.svg'
+import YoutubeIcon from '@/components/social-icons/youtube.svg'
+import TiktokIcon from '@/components/social-icons/tiktok.svg'
+import GithubIcon from '@/components/social-icons/github.svg'
 import { useLanguage } from '@/lib/hooks/useLanguage'
+
+const footerLinks = [
+  {
+    href: siteMetadata.github,
+    label: 'GitHub',
+    icon: GithubIcon,
+  },
+  {
+    href: siteMetadata.whatsapp,
+    label: 'WhatsApp',
+    icon: MessageCircle,
+  },
+  {
+    href: siteMetadata.telegram,
+    label: 'Telegram',
+    icon: Send,
+  },
+  {
+    href: `mailto:${siteMetadata.email}`,
+    label: 'Email',
+    icon: Mail,
+  },
+  {
+    href: siteMetadata.tiktok,
+    label: 'TikTok',
+    icon: TiktokIcon,
+  },
+  {
+    href: siteMetadata.instagram,
+    label: 'Instagram',
+    icon: InstagramIcon,
+  },
+  {
+    href: siteMetadata.youtube,
+    label: 'YouTube',
+    icon: YoutubeIcon,
+  },
+]
 
 export default function Footer() {
   const { t } = useLanguage()
   return (
-    <footer className="mt-24 border-t border-zinc-200/50 dark:border-zinc-800/50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
-          <div className="text-center text-sm text-zinc-600 dark:text-zinc-400 sm:text-left">
-            <div className="flex items-center justify-center space-x-2 sm:justify-start">
-              <span>© {new Date().getFullYear()}</span>
-              <span>•</span>
-              <Link href="/" className="hover:text-orange-500">
-                {siteMetadata.title}
-              </Link>
-            </div>
-            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-              Hecho con <span className="text-red-500">❤</span> por:{' '}
-              <a
-                href="https://riano.netlify.app"
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold text-orange-500 underline-offset-4 hover:underline"
-              >
-                Donovan Riaño
-              </a>
-            </p>
+    <footer className="relative z-10 mt-24 border-t border-zinc-200/50 dark:border-zinc-800/50">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6">
+        <div className="text-center">
+          <div className="flex items-center justify-center space-x-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <span>© {new Date().getFullYear()}</span>
+            <span>•</span>
+            <Link href="/" className="hover:text-orange-500">
+              {siteMetadata.headerTitle}
+            </Link>
           </div>
+          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+            Hecho con <span className="text-orange-500">❤</span> por{' '}
+            <a
+              href="https://riano.netlify.app"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-orange-500 underline-offset-4 hover:underline"
+            >
+              Donovan Riaño
+            </a>
+          </p>
+        </div>
 
-          <div className="flex space-x-4">
-            <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size="6" />
-            <SocialIcon kind="telegram" href={siteMetadata.telegram} size="6" />
-            <SocialIcon kind="whatsapp" href={siteMetadata.whatsapp} size="6" />
-            <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size="6" />
-            <SocialIcon kind="tiktok" href={siteMetadata.tiktok} size="6" />
-            <SocialIcon kind="instagram" href={siteMetadata.instagram} size="6" />
-            <SocialIcon kind="facebook" href={siteMetadata.facebook} size="6" />
-            <SocialIcon kind="twitter" href={siteMetadata.twitter} size="6" />
-            <SocialIcon kind="youtube" href={siteMetadata.youtube} size="6" />
-          </div>
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+          {footerLinks.map((item) => {
+            const Icon = item.icon
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-zinc-100/60 px-3 py-2 text-xs font-medium text-zinc-700 transition-colors hover:border-orange-500/50 hover:text-orange-500 dark:border-zinc-700 dark:bg-zinc-900/60 dark:text-zinc-200 dark:hover:border-orange-400/50 dark:hover:text-white"
+              >
+                <Icon className="h-3.5 w-3.5 text-orange-500" />
+                <span className="font-medium">{item.label}</span>
+              </a>
+            )
+          })}
         </div>
       </div>
     </footer>

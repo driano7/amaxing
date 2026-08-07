@@ -35,21 +35,57 @@ const navItemsConfig = [
 // These are rendered as one hover trigger in the navbar and as a column
 // of options so the header stays compact.
 const tourCategoriesConfig = [
-  { label: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
-  { label: 'Culinary Underworld', href: '/tours?category=gastronomy', icon: 'Utensils' },
-  { label: 'Uncensored History', href: '/tours?category=history', icon: 'Skull' },
-  { label: 'Neighborhood Deep Dives', href: '/tours?category=neighborhoods', icon: 'MapPin' },
-  { label: 'Art & Museums', href: '/tours?category=museums', icon: 'Palette' },
+  { labelKey: 'tourCategories.all', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
+  {
+    labelKey: 'tourCategories.culinary',
+    fallback: 'Culinary Underworld',
+    href: '/tours?category=gastronomy',
+    icon: 'Utensils',
+  },
+  {
+    labelKey: 'tourCategories.history',
+    fallback: 'Uncensored History',
+    href: '/tours?category=history',
+    icon: 'Skull',
+  },
+  {
+    labelKey: 'tourCategories.neighborhoods',
+    fallback: 'Neighborhood Deep Dives',
+    href: '/tours?category=neighborhoods',
+    icon: 'MapPin',
+  },
+  {
+    labelKey: 'tourCategories.museums',
+    fallback: 'Art & Museums',
+    href: '/tours?category=museums',
+    icon: 'Palette',
+  },
 ]
 
 // Mobile drawer items (same as desktop but without icons)
 const drawerItemsConfig = [
   { labelKey: 'header.nav.home', fallback: 'Home', href: '/' },
   { labelKey: 'header.nav.tours', fallback: 'Tours', href: '/tours' },
-  { label: 'Culinary Underworld', href: '/tours?category=gastronomy' },
-  { label: 'Uncensored History', href: '/tours?category=history' },
-  { label: 'Neighborhood Deep Dives', href: '/tours?category=neighborhoods' },
-  { label: 'Art & Museums', href: '/tours?category=museums' },
+  {
+    labelKey: 'tourCategories.culinary',
+    fallback: 'Culinary Underworld',
+    href: '/tours?category=gastronomy',
+  },
+  {
+    labelKey: 'tourCategories.history',
+    fallback: 'Uncensored History',
+    href: '/tours?category=history',
+  },
+  {
+    labelKey: 'tourCategories.neighborhoods',
+    fallback: 'Neighborhood Deep Dives',
+    href: '/tours?category=neighborhoods',
+  },
+  {
+    labelKey: 'tourCategories.museums',
+    fallback: 'Art & Museums',
+    href: '/tours?category=museums',
+  },
   { labelKey: 'header.nav.experiences', fallback: 'Experiences', href: '/experiences' },
   { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories' },
   { labelKey: 'header.nav.news', fallback: 'News', href: '/news' },

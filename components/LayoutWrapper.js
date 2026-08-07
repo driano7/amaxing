@@ -17,6 +17,11 @@ const HubMenu = dynamic(() => import('./HubMenu').then((m) => m.HubMenu), {
   loading: () => null,
 })
 
+const Background = dynamic(() => import('./Background').then((m) => m.Background), {
+  ssr: false,
+  loading: () => null,
+})
+
 const LayoutWrapper = ({ children }) => {
   return (
     <SectionContainer>
@@ -29,6 +34,7 @@ const LayoutWrapper = ({ children }) => {
       </div>
       <MobileDock />
       <HubMenu showTrigger={false} />
+      <Background />
     </SectionContainer>
   )
 }

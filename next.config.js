@@ -90,6 +90,11 @@ module.exports = withBundleAnalyzer({
     // Ensure hooks folder is resolvable
     config.resolve.modules = ['node_modules', 'lib', 'components', 'pages', 'layouts']
 
+    // @fontsource/lato's package.json uses an "exports" map with sass/default
+    // conditions + wildcard patterns that Next 12.1.4's resolver can't handle.
+    // Fall back to classic file resolution (works like @fontsource/inter).
+    config.resolve.exportsFields = []
+
     if (!dev && !isServer) {
       // Replace React with Preact only in client production build
       Object.assign(config.resolve.alias, {
