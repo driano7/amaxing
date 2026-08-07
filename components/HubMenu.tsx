@@ -35,6 +35,13 @@ export function HubMenu() {
     dragY.set(0)
   }, [dragY])
 
+  // Permitir que el MobileDock abra el hubmenu (evento global, estado único)
+  useEffect(() => {
+    const handleOpen = () => openMenu()
+    window.addEventListener('open-amaxing-hubmenu', handleOpen)
+    return () => window.removeEventListener('open-amaxing-hubmenu', handleOpen)
+  }, [openMenu])
+
   const closeMenu = useCallback(() => {
     setIsOpen(false)
     dragY.set(0)

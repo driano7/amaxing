@@ -114,14 +114,29 @@ export function useChatbot() {
     }
   }, [prefs])
 
-  const savePrefs = useCallback((newPrefs: UserPref[]) => {
-    setPrefs(newPrefs)
-    lsSet(PREFS_COOKIE, newPrefs)
-    setCookie(PREFS_COOKIE, JSON.stringify(newPrefs))
-    setCookie(ONBOARDING_DONE_COOKIE, 'true')
-    lsSet(ONBOARDING_DONE_COOKIE, 'true')
-    setOnboardingDone(true)
-  }, [])
+  const savePrefs = useCallback(
+    (newPrefs: UserPref[]) => {
+      setPrefs(newPrefs)
+      lsSet(PREFS_COOKIE, newPrefs)
+      setCookie(PREFS_COOKIE, JSON.stringify(newPrefs))
+      setCookie(ONBOARDING_DONE_COOKIE, 'true')
+      lsSet(ONBOARDING_DONE_COOKIE, 'true')
+      setOnboardingDone(true)
+
+      // Persistir también en Supabase como registro público (sin login)
+      const id = chatId || getCookie(CHAT_ID_COOKIE) || lsGet(CHAT_ID_COOKIE, '')
+      if (typeof fetch !== 'undefined' && id) {
+        fetch('/api/chatbot/prefs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chatId: id, prefs: newPrefs, locale }),
+        }).catch(() => {
+          // No bloquea el onboarding si la BD falla
+        })
+      }
+    },
+    [chatId, locale]
+  )
 
   const resetOnboarding = useCallback(() => {
     setPrefs([])

@@ -113,8 +113,17 @@ export default function ChatbotAssistant() {
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState([])
+  const [isMobile, setIsMobile] = useState(false)
   const bottomRef = useRef(null)
   const reducedMotion = useReducedMotion()
+
+  // Detectar móvil para mover el panel sobre el MobileDock
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const t = (es, en) => (isEs ? es : en)
 
@@ -125,15 +134,15 @@ export default function ChatbotAssistant() {
     return () => window.removeEventListener('open-amaxing-chatbot', handleOpen)
   }, [])
 
-  // Auto-open once after a short, non-intrusive delay (only the first time)
+  // Auto-open una vez después de un pequeño retraso (primeras visitas, móvil y desktop)
   useEffect(() => {
     if (typeof window === 'undefined') return
     const alreadyShown = window.localStorage.getItem('amaxing_assistant_shown')
-    if (!alreadyShown && !reducedMotion) {
+    if (!alreadyShown) {
       const timer = window.setTimeout(() => setOpen(true), 1500)
       return () => window.clearTimeout(timer)
     }
-  }, [reducedMotion])
+  }, [])
 
   // Sync onboarding step with persisted state
   useEffect(() => {
@@ -365,9 +374,9 @@ export default function ChatbotAssistant() {
 
   return (
     <>
-      {/* Floating trigger */}
+      {/* Floating trigger (solo desktop; en móvil el botón de IA está en el MobileDock) */}
       <AnimatePresence>
-        {!open && (
+        {!open && !isMobile && (
           <motion.button
             key="trigger"
             initial={reducedMotion ? false : { scale: 0, opacity: 0 }}
@@ -396,7 +405,7 @@ export default function ChatbotAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reducedMotion ? false : { opacity: 0, y: 24, scale: 0.96 }}
             transition={{ duration: reducedMotion ? 0 : 0.25, ease: 'easeOut' }}
-            className="fixed inset-x-4 bottom-[72px] z-[100] mx-auto mb-6 w-[calc(100%-2rem)] max-w-md rounded-2xl border border-zinc-200/50 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-950 sm:inset-auto sm:bottom-auto sm:right-6 sm:max-w-sm"
+            className="fixed inset-x-4 bottom-[calc(5.5rem+env(safe-area-inset-bottom)+1rem)] z-[100] mx-auto w-[calc(100%-2rem)] max-w-md rounded-2xl border border-zinc-200/50 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-950 md:inset-auto md:bottom-6 md:right-6 md:w-auto md:max-w-sm"
           >
             {/* Header */}
             <div className="flex items-center justify-between rounded-t-2xl border-b border-zinc-200/50 bg-zinc-50/70 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/70">
