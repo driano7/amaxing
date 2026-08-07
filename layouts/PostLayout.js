@@ -7,6 +7,7 @@ import Tag from '@/components/Tag'
 import TOCInline from '@/components/TOCInline'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
+import SupportBanner from '@/components/SupportBanner'
 import siteMetadata from '@/data/siteMetadata'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
@@ -126,7 +127,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
             </p>
           )}
 
-          <div className="prose prose-zinc max-w-none pb-8 dark:prose-invert">{children}</div>
+          <div className="prose prose-zinc max-w-none pb-8 dark:prose-dark">{children}</div>
 
           {(next || prev) && (
             <div className="grid grid-cols-1 gap-4 border-t border-zinc-200 pt-8 dark:border-white/10 sm:grid-cols-2">
@@ -161,6 +162,10 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
 
           <div className="pt-8">
             <Comments frontMatter={frontMatter} />
+          </div>
+
+          <div className="pt-12">
+            <SupportBanner />
           </div>
         </article>
       </SectionContainer>

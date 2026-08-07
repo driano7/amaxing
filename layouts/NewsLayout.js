@@ -4,6 +4,7 @@ import SectionContainer from '@/components/SectionContainer'
 import { BlogSEO } from '@/components/SEO'
 import Image from '@/components/Image'
 import Tag from '@/components/Tag'
+import SupportBanner from '@/components/SupportBanner'
 import siteMetadata from '@/data/siteMetadata'
 
 const postDateTemplate = { year: 'numeric', month: 'long', day: 'numeric' }
@@ -68,7 +69,7 @@ export default function NewsLayout({ frontMatter, children }) {
           </div>
         )}
 
-        <div className="prose prose-zinc max-w-none pb-8 dark:prose-invert">{children}</div>
+        <div className="prose prose-zinc max-w-none pb-8 dark:prose-dark">{children}</div>
 
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 border-t border-zinc-200 pt-6 dark:border-white/10">
@@ -82,6 +83,10 @@ export default function NewsLayout({ frontMatter, children }) {
           <Link href="/news" className="text-orange-500 hover:text-orange-400">
             &larr; {lang === 'es' ? 'Volver a noticias' : 'Back to news'}
           </Link>
+        </div>
+
+        <div className="pt-12">
+          <SupportBanner />
         </div>
       </article>
     </SectionContainer>

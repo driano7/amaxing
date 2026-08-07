@@ -66,7 +66,7 @@ export function NavigationMenu({ isOpen, onClose }) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="bg-zinc-950 border-b border-white/10 shadow-2xl"
+              className="border-b border-white/10 bg-zinc-950 shadow-2xl"
             >
               <div className="container mx-auto px-6 py-8 lg:py-12">
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">

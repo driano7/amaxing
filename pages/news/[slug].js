@@ -18,10 +18,10 @@ export async function getServerSideProps({ params, req, query }) {
     frontMatter.slug = frontMatter.slug.replace(/\.(en|es)$/, '')
     frontMatter.lang = locale
 
-    const mdxSource = await bundleMdxSource(content, frontMatter.slug, `${frontMatter.slug}.mdx`)
+    const bundled = await bundleMdxSource(content, frontMatter.slug, `${frontMatter.slug}.mdx`)
 
     return {
-      props: { post: { mdxSource, frontMatter }, locale },
+      props: { post: { mdxSource: bundled.mdxSource, toc: bundled.toc, frontMatter }, locale },
     }
   }
 

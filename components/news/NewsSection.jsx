@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import Image from '@/components/Image'
 import { motion } from 'framer-motion'
 import Link from '../Link'
 

@@ -6,8 +6,8 @@ import { HeroMouseBackground } from '@/components/HeroMouseBackground'
 
 export function HeroSection() {
   return (
-    <section className="bg-zinc-950 relative min-h-[100dvh] w-full overflow-hidden">
-      <div className="from-zinc-950/50 via-zinc-950 to-zinc-950 absolute inset-0 z-0 bg-gradient-to-b" />
+    <section className="relative min-h-[100dvh] w-full overflow-hidden bg-zinc-950">
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-zinc-950/50 via-zinc-950 to-zinc-950" />
       <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,rgba(222,29,141,0.03),transparent_50%),linear-gradient(to_bottom,rgba(222,29,141,0.03),transparent_50%)]" />
 
       {/* Color waves background (from Criptec) */}

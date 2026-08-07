@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from '@/components/Image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { VirtualTicket } from '@/components/tickets/VirtualTicket'
@@ -72,7 +72,7 @@ export default function Profile() {
 
   if (isLoading) {
     return (
-      <div className="dark:bg-zinc-950 flex min-h-screen items-center justify-center bg-zinc-50">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
         <div className="text-center text-zinc-500 dark:text-gray-400">Cargando...</div>
       </div>
     )
@@ -80,7 +80,7 @@ export default function Profile() {
 
   if (!user) {
     return (
-      <div className="dark:bg-zinc-950 flex min-h-screen items-center justify-center bg-zinc-50 px-4">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 dark:bg-zinc-950">
         <div className="max-w-md text-center">
           <h1 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white">Inicia sesión</h1>
           <p className="mb-6 text-zinc-500 dark:text-gray-400">
@@ -98,7 +98,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="dark:bg-zinc-950 min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <div className="container mx-auto px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

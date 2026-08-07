@@ -35,3 +35,5 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+# runtime state (OpenRouter rate-limit counter, Vercel fs is read-only)
+data/news-sync-state.json

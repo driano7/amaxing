@@ -9,13 +9,13 @@ import { motion, AnimatePresence, useTransform, useScroll } from 'framer-motion'
 import { useEffect, useState, useCallback } from 'react'
 import classNames from 'classnames'
 import { useLanguage } from '@/lib/hooks/useLanguage'
-import { Utensils, Skull, MapPin, Palette, ChevronDown, LayoutGrid } from 'lucide-react'
+import { Utensils, Skull, MapPin, Palette, LayoutGrid, ChevronDown } from 'lucide-react'
 import { navItemsConfig, tourCategoriesConfig } from '@/data/hubMenuLinks'
 import enDict from '@/dictionaries/en.json'
 import esDict from '@/dictionaries/es.json'
 
 // Map icon names from config to actual icon components
-const iconComponents = { Utensils, Skull, MapPin, Palette }
+const iconComponents = { Utensils, Skull, MapPin, Palette, LayoutGrid }
 
 const dictionaries = { en: enDict, es: esDict }
 

@@ -60,7 +60,7 @@ export function SlideOverCheckout({
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="bg-zinc-950 flex h-full flex-col border-l border-white/10 shadow-2xl"
+              className="flex h-full flex-col border-l border-white/10 bg-zinc-950 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-white/10 p-6">

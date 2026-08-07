@@ -1,5 +1,5 @@
 import Link from '@/components/Link'
-import Image from 'next/image'
+import Image from '@/components/Image'
 import { motion } from 'framer-motion'
 import { Calendar, Clock, Users, MapPin, Star, Check, ArrowLeft, ChevronRight } from 'lucide-react'
 import { useLanguage } from '@/lib/hooks/useLanguage'
@@ -128,7 +128,7 @@ export default function TourDetail({ tour, locale }) {
                   <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
                     {locale === 'es' ? 'Descripción' : 'Description'}
                   </h2>
-                  <div className="prose prose-zinc max-w-none leading-relaxed text-gray-600 dark:prose-invert dark:text-gray-300">
+                  <div className="prose prose-zinc max-w-none leading-relaxed text-gray-600 dark:text-gray-300 dark:prose-dark">
                     <p>{tour.description}</p>
                   </div>
                 </div>

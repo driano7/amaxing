@@ -6,7 +6,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { useState } from 'react'
 import Pagination from '@/components/Pagination'
 import formatDate from '@/lib/utils/formatDate'
-import Image from 'next/image'
+import Image from '@/components/Image'
 import { AnimatedSection } from '@/components/AnimatedSection'
 
 const FALLBACK_COVER = '/static/images/jaguarBaja.png'
@@ -22,7 +22,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
     initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredBlogPosts
 
   return (
-    <div className="dark:bg-zinc-950 min-h-screen bg-white text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-zinc-950 dark:text-gray-100">
       <div className="container mx-auto px-4 py-16">
         <div className="mb-10 text-center">
           <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">

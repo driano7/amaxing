@@ -45,13 +45,6 @@ export default function AuthNav() {
         <span className="absolute inset-0 scale-0 rounded-full bg-current opacity-10 transition-transform duration-300 group-hover:scale-100" />
         <span className="relative">Iniciar sesión</span>
       </Link>
-      <Link
-        href="/register"
-        className="group relative inline-flex hidden overflow-hidden rounded-full bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-300 hover:bg-orange-600 sm:inline-flex"
-      >
-        <span className="bg-white/15 absolute inset-0 scale-0 rounded-full transition-transform duration-300 group-hover:scale-100" />
-        <span className="relative">Registrarse</span>
-      </Link>
     </div>
   )
 }

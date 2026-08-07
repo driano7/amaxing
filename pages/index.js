@@ -64,7 +64,7 @@ export default function Home({ posts }) {
                           <div className="space-y-5 xl:col-span-3">
                             <div className="space-y-6">
                               <div>
-                                <h3 className="text-2xl font-bold leading-8 tracking-tight text-gray-900">
+                                <h3 className="text-2xl font-bold leading-8 tracking-tight text-gray-900 dark:text-gray-100">
                                   <Link
                                     href={`/blog/${slug}`}
                                     className="text-gray-900 hover:text-orange-500 dark:text-gray-100"

@@ -65,7 +65,7 @@ export function VirtualTeaser() {
   }, [scrollYProgress])
 
   return (
-    <section ref={containerRef} className="bg-zinc-950 relative h-screen w-full">
+    <section ref={containerRef} className="relative h-screen w-full bg-zinc-950">
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
           <ambientLight intensity={0.5} />

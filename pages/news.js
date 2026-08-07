@@ -1,7 +1,7 @@
 'use client'
 
 import Link from '@/components/Link'
-import Image from 'next/image'
+import Image from '@/components/Image'
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
 import { getAllNotesAsync } from '@/lib/notes'

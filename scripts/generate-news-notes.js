@@ -1,13 +1,13 @@
-// Manual note generation: npm run news:generate [locale] [count]
-// locale: en | es (default en)  |  count: max 3 notes per day
+// Manual note generation: npm run news:generate [count]
+// Genera hasta `count` notas bilingües (en+es) con UN solo request de OpenRouter
+// (patrón EarningsAI). Límite: 3 notas por mes.
 const { generateNotes } = require('../lib/news-generators/autoNewsGenerator')
 
-const locale = process.argv[2] || 'en'
-const count = parseInt(process.argv[3] || '3', 10)
+const count = parseInt(process.argv[2] || '3', 10)
 
-console.log(`Generating up to ${count} tourism notes (${locale})...`)
+console.log(`Generating up to ${count} bilingual tourism notes (single OpenRouter request)...`)
 
-generateNotes(locale, count)
+generateNotes('en', count)
   .then((result) => {
     console.log('Done:', JSON.stringify(result, null, 2))
     process.exit(0)

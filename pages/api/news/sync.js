@@ -1,6 +1,8 @@
 // Trigger note generation (used by Vercel cron and admin).
 // NOTE: On serverless (Vercel), data/notes is read-only at runtime, so generated
 // notes cannot persist there. Run the manual script locally and commit the files.
+// The generator makes a SINGLE OpenRouter request for up to 3 bilingual (en+es)
+// notes per month (patrón EarningsAI), y persiste en Supabase.
 import { generateNotes } from '@/lib/news-generators/autoNewsGenerator'
 
 const CRON_SECRET = process.env.CRON_SECRET || process.env.JWT_SECRET || ''
@@ -15,14 +17,11 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' })
   }
 
-  // Alternate article language by day so EN and ES sources both get covered.
-  const daysSinceEpoch = Math.floor(Date.now() / 86400000)
-  const locale = req.query.locale || (daysSinceEpoch % 2 === 0 ? 'en' : 'es')
   const count = Math.min(parseInt(req.query.count || '3', 10), 3)
 
   try {
-    const result = await generateNotes(locale, count)
-    return res.status(200).json({ ok: true, locale, ...result })
+    const result = await generateNotes('en', count)
+    return res.status(200).json({ ok: true, ...result })
   } catch (error) {
     console.error('News sync failed:', error)
     return res.status(500).json({
