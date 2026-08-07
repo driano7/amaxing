@@ -84,8 +84,8 @@ export function ExperienceCard({ experience, onSelect, locale }) {
     <article
       className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${
         experience.isFeatured
-          ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-zinc-900 hover:border-orange-500/50 hover:from-orange-500/10'
-          : 'border-white/10 bg-zinc-900/50 hover:border-orange-500/30 hover:bg-zinc-900/70'
+          ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-zinc-100 hover:border-orange-500/50 hover:from-orange-500/10 dark:to-zinc-900'
+          : 'border-zinc-200 bg-white hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50 dark:hover:bg-zinc-900/70'
       }`}
       onClick={() => onSelect(experience)}
     >
@@ -104,7 +104,7 @@ export function ExperienceCard({ experience, onSelect, locale }) {
           </div>
         )}
         <div className="absolute top-4 right-4">
-          <div className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 backdrop-blur-sm">
+          <div className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 backdrop-blur-sm dark:bg-black/60">
             <Star className="h-3 w-3 fill-current text-orange-500" />
             <span className="text-xs font-medium text-white">{experience.rating}</span>
           </div>
@@ -121,13 +121,15 @@ export function ExperienceCard({ experience, onSelect, locale }) {
           </span>
         </div>
 
-        <h3 className="mb-2 text-xl font-bold text-white transition-colors group-hover:text-orange-500">
+        <h3 className="mb-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-orange-500 dark:text-white">
           {experience.title}
         </h3>
 
-        <p className="line-clamp-2 mb-4 text-sm text-zinc-400">{experience.location}</p>
+        <p className="line-clamp-2 mb-4 text-sm text-zinc-500 dark:text-zinc-400">
+          {experience.location}
+        </p>
 
-        <div className="mb-4 flex items-center gap-4 text-sm text-zinc-300">
+        <div className="mb-4 flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-300">
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
             <span>{formatDuration(experience.duration)}</span>
@@ -158,9 +160,13 @@ export function ExperienceCard({ experience, onSelect, locale }) {
 
         <div className="flex items-center justify-between">
           <div>
-            <div className="mb-1 text-xs text-zinc-400">{locale === 'es' ? 'Desde' : 'From'}</div>
-            <div className="text-2xl font-bold text-white">${experience.price}</div>
-            <div className="text-xs text-zinc-400">
+            <div className="mb-1 text-xs text-zinc-500 dark:text-zinc-400">
+              {locale === 'es' ? 'Desde' : 'From'}
+            </div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
+              ${experience.price}
+            </div>
+            <div className="text-xs text-zinc-500 dark:text-zinc-400">
               {locale === 'es' ? '/ persona' : '/ person'}
             </div>
           </div>

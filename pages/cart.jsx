@@ -58,7 +58,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="bg-zinc-950 min-h-screen">
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
       <div className="container mx-auto px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -77,17 +77,17 @@ export default function CartPage() {
           </div>
 
           {items.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-zinc-900/50 py-20 text-center">
-              <ShoppingBag className="mx-auto h-16 w-16 text-gray-600" />
+            <div className="rounded-2xl border border-zinc-200 bg-zinc-100/50 py-20 text-center dark:border-white/10 dark:bg-zinc-900/50">
+              <ShoppingBag className="mx-auto h-16 w-16 text-zinc-400 dark:text-gray-600" />
               <h2 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
                 Tu carrito está vacío
               </h2>
-              <p className="mt-2 text-gray-400">
+              <p className="mt-2 text-zinc-500 dark:text-gray-400">
                 Agrega experiencias para reservar tu próxima aventura
               </p>
               <Link
                 href="/tours"
-                className="mt-6 inline-flex items-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
+                className="mt-6 inline-flex items-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
               >
                 Explorar experiencias
               </Link>
@@ -103,7 +103,7 @@ export default function CartPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -100 }}
                       transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className="group relative flex flex-col gap-4 rounded-2xl border border-white/10 bg-zinc-900/50 p-4 transition-all duration-300 hover:border-orange-500/30 sm:flex-row"
+                      className="group relative flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 transition-all duration-300 hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50 sm:flex-row"
                     >
                       <div className="relative h-40 flex-shrink-0 overflow-hidden rounded-xl sm:h-28 sm:w-40">
                         <Image
@@ -121,11 +121,13 @@ export default function CartPage() {
                             <h3 className="line-clamp-1 text-lg font-bold text-gray-900 dark:text-white">
                               {item.title}
                             </h3>
-                            <p className="text-sm text-gray-400">{item.location}</p>
+                            <p className="text-sm text-zinc-500 dark:text-gray-400">
+                              {item.location}
+                            </p>
                           </div>
                           <button
                             onClick={() => removeItem(item.lineId)}
-                            className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                            className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-red-500/10 hover:text-red-400 dark:text-gray-500"
                             aria-label={`Eliminar ${item.title}`}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -134,7 +136,9 @@ export default function CartPage() {
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="mb-1 block text-xs text-gray-400">Fecha</label>
+                            <label className="mb-1 block text-xs text-zinc-500 dark:text-gray-400">
+                              Fecha
+                            </label>
                             <div className="relative">
                               <Calendar className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-orange-500" />
                               <input
@@ -143,19 +147,21 @@ export default function CartPage() {
                                 min={today}
                                 max={maxDateStr}
                                 onChange={(e) => updateItem(item.lineId, { date: e.target.value })}
-                                className="w-full rounded-lg border border-white/10 bg-zinc-900 py-1.5 pl-8 pr-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:text-white"
+                                className="w-full rounded-lg border border-zinc-300 bg-white py-1.5 pl-8 pr-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
                               />
                             </div>
                           </div>
                           <div>
-                            <label className="mb-1 block text-xs text-gray-400">Hora</label>
+                            <label className="mb-1 block text-xs text-zinc-500 dark:text-gray-400">
+                              Hora
+                            </label>
                             <div className="relative">
                               <Clock className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-orange-500" />
                               <select
                                 value={item.time || ''}
                                 onChange={(e) => updateItem(item.lineId, { time: e.target.value })}
                                 disabled={!item.date}
-                                className="w-full rounded-lg border border-white/10 bg-zinc-900 py-1.5 pl-8 pr-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none disabled:opacity-50 dark:text-white"
+                                className="w-full rounded-lg border border-zinc-300 bg-white py-1.5 pl-8 pr-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none disabled:opacity-50 dark:border-white/10 dark:bg-zinc-900 dark:text-white"
                               >
                                 <option value="">Selecciona</option>
                                 {timeSlots.map((slot) => (
@@ -175,7 +181,7 @@ export default function CartPage() {
                               <button
                                 onClick={() => handleQuantityChange(item.lineId, -1)}
                                 disabled={(item.peopleCount || 1) <= 1}
-                                className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-sm text-gray-900 transition-colors hover:bg-orange-500/20 disabled:opacity-40 dark:text-white"
+                                className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-100 text-sm text-gray-900 transition-colors hover:bg-orange-500/20 disabled:opacity-40 dark:bg-white/10 dark:text-white"
                               >
                                 -
                               </button>
@@ -185,7 +191,7 @@ export default function CartPage() {
                               <button
                                 onClick={() => handleQuantityChange(item.lineId, 1)}
                                 disabled={(item.peopleCount || 1) >= item.maxGuests}
-                                className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-sm text-gray-900 transition-colors hover:bg-orange-500/20 disabled:opacity-40 dark:text-white"
+                                className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-100 text-sm text-gray-900 transition-colors hover:bg-orange-500/20 disabled:opacity-40 dark:bg-white/10 dark:text-white"
                               >
                                 +
                               </button>
@@ -195,7 +201,7 @@ export default function CartPage() {
                             <div className="text-lg font-bold text-gray-900 dark:text-white">
                               {formatPrice((item.price || 0) * (item.peopleCount || 1))}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-zinc-500 dark:text-gray-500">
                               {formatPrice(item.price)} × {item.peopleCount || 1}
                             </div>
                           </div>
@@ -208,23 +214,25 @@ export default function CartPage() {
 
               <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-6">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-gray-300">Experiencias ({itemCount})</span>
+                  <span className="text-zinc-600 dark:text-gray-300">
+                    Experiencias ({itemCount})
+                  </span>
                   <span className="font-medium text-gray-900 dark:text-white">{itemCount}</span>
                 </div>
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-gray-300">Personas totales</span>
+                  <span className="text-zinc-600 dark:text-gray-300">Personas totales</span>
                   <span className="font-medium text-gray-900 dark:text-white">
                     {totalItemCount}
                   </span>
                 </div>
-                <div className="flex items-center justify-between border-t border-white/10 pt-3">
-                  <span className="text-lg text-gray-300">Total</span>
+                <div className="flex items-center justify-between border-t border-white/10 pt-3 dark:border-white/10">
+                  <span className="text-lg text-zinc-600 dark:text-gray-300">Total</span>
                   <span className="text-3xl font-bold text-gray-900 dark:text-white">
                     {formatPrice(subtotal)}
                   </span>
                 </div>
                 {!allItemsReady && (
-                  <p className="mt-3 text-xs text-orange-400">
+                  <p className="mt-3 text-xs text-orange-500">
                     ⚠ Selecciona fecha y hora para cada experiencia antes de continuar
                   </p>
                 )}
@@ -237,7 +245,7 @@ export default function CartPage() {
                       setTimeout(() => setIsCheckingOut(false), 2500)
                     }
                   }}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
+                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
                 >
                   Proceder al Checkout
                   <ArrowRight className="h-4 w-4" />

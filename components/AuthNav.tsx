@@ -37,17 +37,17 @@ export default function AuthNav() {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 sm:gap-3">
       <Link
         href="/login?mode=client"
-        className="group relative inline-flex overflow-hidden rounded-full border border-orange-500 px-4 py-1.5 text-sm font-semibold text-orange-500 transition-colors duration-300 hover:bg-orange-50 hover:text-orange-600"
+        className="group relative inline-flex overflow-hidden rounded-full border border-orange-500 px-3 py-1.5 text-sm font-semibold text-orange-500 transition-colors duration-300 hover:bg-orange-50 hover:text-orange-600 sm:px-4"
       >
         <span className="absolute inset-0 scale-0 rounded-full bg-current opacity-10 transition-transform duration-300 group-hover:scale-100" />
         <span className="relative">Iniciar sesión</span>
       </Link>
       <Link
         href="/register"
-        className="group relative inline-flex overflow-hidden rounded-full bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-300 hover:bg-orange-600"
+        className="group relative inline-flex hidden overflow-hidden rounded-full bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-300 hover:bg-orange-600 sm:inline-flex"
       >
         <span className="bg-white/15 absolute inset-0 scale-0 rounded-full transition-transform duration-300 group-hover:scale-100" />
         <span className="relative">Registrarse</span>

@@ -17,7 +17,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
   const author = authorDetails?.[0] || {}
 
   return (
-    <div className="bg-zinc-950 text-gray-100">
+    <div className="bg-white text-gray-900 dark:bg-zinc-950 dark:text-gray-100">
       <SectionContainer>
         <BlogSEO
           url={`${siteMetadata.siteUrl}/blog/${slug}`}
@@ -29,7 +29,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
           <header className="pt-8 pb-6 text-center">
             <Link
               href="/blog"
-              className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-gray-400 transition-colors hover:text-orange-400"
+              className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-orange-500 dark:text-gray-400 dark:hover:text-orange-400"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +56,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
 
             <PageTitle>{title}</PageTitle>
 
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-gray-400">
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-zinc-500 dark:text-gray-400">
               {author.name && (
                 <span className="inline-flex items-center gap-2">
                   {author.avatar && (
@@ -68,7 +68,9 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
                       className="h-7 w-7 rounded-full object-cover"
                     />
                   )}
-                  <span className="font-medium text-gray-200">{author.name}</span>
+                  <span className="font-medium text-zinc-800 dark:text-gray-200">
+                    {author.name}
+                  </span>
                 </span>
               )}
               {date && (
@@ -97,18 +99,21 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
           </header>
 
           {cover && (
-            <div className="relative mb-8 h-64 w-full overflow-hidden rounded-xl border border-white/10 md:h-96">
+            <div className="relative mb-8 h-64 w-full overflow-hidden rounded-xl border border-zinc-200 dark:border-white/10 md:h-96">
               <Image src={cover} alt={title} fill sizes="100vw" className="object-cover" />
             </div>
           )}
 
           {toc && toc.length > 0 && (
             <div className="mb-8">
-              <details className="rounded-xl border border-white/10 bg-zinc-900/60 p-4" open>
-                <summary className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-gray-300">
+              <details
+                className="rounded-xl border border-zinc-200 bg-zinc-100/60 p-4 dark:border-white/10 dark:bg-zinc-900/60"
+                open
+              >
+                <summary className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-zinc-600 dark:text-gray-300">
                   Table of contents
                 </summary>
-                <div className="mt-3 border-t border-white/10 pt-3">
+                <div className="mt-3 border-t border-zinc-200 pt-3 dark:border-white/10">
                   <TOCInline toc={toc} />
                 </div>
               </details>
@@ -116,24 +121,24 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
           )}
 
           {summary && (
-            <p className="mb-8 rounded-xl border border-orange-500/20 bg-orange-500/5 p-4 text-lg leading-relaxed text-gray-200">
+            <p className="mb-8 rounded-xl border border-orange-500/20 bg-orange-500/5 p-4 text-lg leading-relaxed text-zinc-700 dark:text-gray-200">
               {summary}
             </p>
           )}
 
-          <div className="prose prose-invert max-w-none pb-8">{children}</div>
+          <div className="prose prose-zinc max-w-none pb-8 dark:prose-invert">{children}</div>
 
           {(next || prev) && (
-            <div className="grid grid-cols-1 gap-4 border-t border-white/10 pt-8 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 border-t border-zinc-200 pt-8 dark:border-white/10 sm:grid-cols-2">
               {prev && (
                 <Link
                   href={`/blog/${prev.slug}`}
-                  className="group flex flex-col rounded-xl border border-white/10 bg-zinc-900 p-5 transition-all duration-300 hover:border-orange-500/40"
+                  className="group flex flex-col rounded-xl border border-zinc-200 bg-white p-5 transition-all duration-300 hover:border-orange-500/40 dark:border-white/10 dark:bg-zinc-900"
                 >
-                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-gray-500">
                     &larr; Previous
                   </span>
-                  <span className="mt-2 font-semibold text-gray-100 group-hover:text-orange-400">
+                  <span className="mt-2 font-semibold text-gray-900 group-hover:text-orange-500 dark:text-gray-100 dark:group-hover:text-orange-400">
                     {prev.title}
                   </span>
                 </Link>
@@ -141,12 +146,12 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
               {next && (
                 <Link
                   href={`/blog/${next.slug}`}
-                  className="group flex flex-col rounded-xl border border-white/10 bg-zinc-900 p-5 text-right transition-all duration-300 hover:border-orange-500/40 sm:col-start-2"
+                  className="group flex flex-col rounded-xl border border-zinc-200 bg-white p-5 text-right transition-all duration-300 hover:border-orange-500/40 dark:border-white/10 dark:bg-zinc-900 sm:col-start-2"
                 >
-                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-gray-500">
                     Next &rarr;
                   </span>
-                  <span className="mt-2 font-semibold text-gray-100 group-hover:text-orange-400">
+                  <span className="mt-2 font-semibold text-gray-900 group-hover:text-orange-500 dark:text-gray-100 dark:group-hover:text-orange-400">
                     {next.title}
                   </span>
                 </Link>

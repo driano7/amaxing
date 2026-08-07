@@ -359,8 +359,26 @@ export function HeroMouseBackground({ className }: HeroMouseBackgroundProps) {
     window.addEventListener('blur', onBlur)
     window.addEventListener('focus', onFocus)
 
+    let visible = true
+    const setRunning = (next) => {
+      if (visible === next) return
+      visible = next
+      if (visible) {
+        running = true
+        render()
+      } else {
+        running = false
+        window.cancelAnimationFrame(rafId)
+      }
+    }
+    const observer = new IntersectionObserver(([entry]) => setRunning(entry.isIntersecting), {
+      rootMargin: '100px 0px 100px 0px',
+    })
+    observer.observe(canvas)
+
     return () => {
       running = false
+      observer.disconnect()
       window.cancelAnimationFrame(rafId)
       window.clearTimeout(autoStartTimeoutId)
       window.removeEventListener('resize', resizeCanvas)

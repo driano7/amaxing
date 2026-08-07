@@ -31,7 +31,7 @@ export default function StoryDetail({ story, locale }) {
   return (
     <>
       <PageSEO title={story.title} description={story.excerpt} />
-      <div className="bg-zinc-950 min-h-screen">
+      <div className="min-h-screen bg-white dark:bg-zinc-950">
         {/* Hero Image */}
         <section className="relative h-[50vh] min-h-[350px]">
           <Image
@@ -42,7 +42,7 @@ export default function StoryDetail({ story, locale }) {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="from-zinc-950/90 via-zinc-950/30 absolute inset-0 bg-gradient-to-t to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/30 to-transparent" />
           <div className="absolute inset-0 flex items-end">
             <div className="container mx-auto px-6 pb-12">
               <motion.div
@@ -53,14 +53,14 @@ export default function StoryDetail({ story, locale }) {
               >
                 <div className="mb-4 flex items-center gap-3">
                   <BookOpen className="h-5 w-5 text-orange-500" />
-                  <span className="text-sm font-medium uppercase tracking-wider text-gray-300">
+                  <span className="text-sm font-medium uppercase tracking-wider text-gray-200">
                     {locale === 'es' ? 'Historia' : 'Story'}
                   </span>
                 </div>
-                <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-4xl lg:text-5xl">
+                <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
                   {story.title}
                 </h1>
-                <div className="flex flex-wrap items-center gap-4 text-gray-300">
+                <div className="flex flex-wrap items-center gap-4 text-gray-200">
                   {story.author && (
                     <div className="flex items-center gap-2">
                       {story.author.avatar && (
@@ -98,7 +98,7 @@ export default function StoryDetail({ story, locale }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="prose prose-invert max-w-none leading-relaxed text-gray-300"
+              className="prose prose-zinc max-w-none leading-relaxed text-gray-700 dark:prose-invert dark:text-gray-300"
             >
               <div dangerouslySetInnerHTML={{ __html: story.content }} />
             </motion.div>
@@ -108,13 +108,13 @@ export default function StoryDetail({ story, locale }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="mt-12 border-t border-white/10 pt-8"
+                className="mt-12 border-t border-zinc-200 pt-8 dark:border-white/10"
               >
                 <div className="flex flex-wrap gap-2">
                   {story.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-white/5 px-3 py-1 text-sm text-gray-400 transition-colors hover:bg-orange-500/20 hover:text-orange-500"
+                      className="rounded-full bg-zinc-100 px-3 py-1 text-sm text-zinc-600 transition-colors hover:bg-orange-500/20 hover:text-orange-500 dark:bg-white/5 dark:text-gray-400"
                     >
                       #{tag}
                     </span>
@@ -128,7 +128,7 @@ export default function StoryDetail({ story, locale }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="mt-12 border-t border-white/10 pt-8"
+              className="mt-12 border-t border-zinc-200 pt-8 dark:border-white/10"
             >
               <Link
                 href="/stories"

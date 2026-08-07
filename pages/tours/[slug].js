@@ -60,7 +60,7 @@ export default function TourDetail({ tour, locale }) {
   return (
     <>
       <PageSEO title={tour.title} description={tour.description} />
-      <div className="bg-zinc-950 min-h-screen">
+      <div className="min-h-screen bg-white dark:bg-zinc-950">
         {/* Hero Image */}
         <section className="relative h-[60vh] min-h-[400px]">
           <Image
@@ -71,7 +71,7 @@ export default function TourDetail({ tour, locale }) {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="from-zinc-950/90 via-zinc-950/20 absolute inset-0 bg-gradient-to-t to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
           <div className="absolute inset-0 flex items-end">
             <div className="container mx-auto px-6 pb-12">
               <motion.div
@@ -81,14 +81,14 @@ export default function TourDetail({ tour, locale }) {
                 className="max-w-3xl"
               >
                 {tour.category && (
-                  <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-orange-500/20 px-4 py-1.5 text-sm font-medium text-orange-500">
+                  <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-orange-500/20 px-4 py-1.5 text-sm font-medium text-orange-400">
                     {tour.category.name}
                   </span>
                 )}
-                <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+                <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
                   {tour.title}
                 </h1>
-                <div className="flex flex-wrap items-center gap-6 text-gray-300">
+                <div className="flex flex-wrap items-center gap-6 text-gray-200">
                   <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-orange-500" />
                     <span>{formatDuration(tour.duration)}</span>
@@ -107,7 +107,7 @@ export default function TourDetail({ tour, locale }) {
                   <div className="flex items-center gap-2">
                     <Star className="h-5 w-5 fill-current text-orange-500" />
                     <span className="font-semibold">{tour.rating}</span>
-                    <span className="text-gray-500">
+                    <span className="text-gray-400">
                       ({tour.reviewCount} {locale === 'es' ? 'reseñas' : 'reviews'})
                     </span>
                   </div>
@@ -128,7 +128,7 @@ export default function TourDetail({ tour, locale }) {
                   <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
                     {locale === 'es' ? 'Descripción' : 'Description'}
                   </h2>
-                  <div className="prose prose-invert max-w-none leading-relaxed text-gray-300">
+                  <div className="prose prose-zinc max-w-none leading-relaxed text-gray-600 dark:prose-invert dark:text-gray-300">
                     <p>{tour.description}</p>
                   </div>
                 </div>
@@ -146,12 +146,14 @@ export default function TourDetail({ tour, locale }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-start gap-3 rounded-xl border border-white/10 bg-zinc-900/50 p-4 transition-colors hover:border-orange-500/30"
+                        className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-100 p-4 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50"
                       >
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-orange-500/20">
                           <Check className="h-5 w-5 text-orange-500" />
                         </div>
-                        <span className="font-medium text-gray-200">{highlight}</span>
+                        <span className="font-medium text-gray-800 dark:text-gray-200">
+                          {highlight}
+                        </span>
                       </motion.div>
                     ))}
                   </div>
@@ -162,8 +164,8 @@ export default function TourDetail({ tour, locale }) {
                   <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
                     {locale === 'es' ? 'Ubicación' : 'Location'}
                   </h2>
-                  <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
-                    <div className="flex items-center gap-3 text-gray-300">
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-100 p-6 dark:border-white/10 dark:bg-zinc-900/50">
+                    <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
                       <MapPin className="h-6 w-6 flex-shrink-0 text-orange-500" />
                       <span>{tour.location}</span>
                     </div>
@@ -180,15 +182,15 @@ export default function TourDetail({ tour, locale }) {
                   className="sticky top-24 space-y-6"
                 >
                   {/* Price Card */}
-                  <div className="rounded-2xl border border-white/10 bg-zinc-900/50 p-6">
+                  <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900/50 dark:shadow-none">
                     <div className="mb-6">
-                      <div className="mb-1 text-xs uppercase tracking-wider text-gray-400">
+                      <div className="mb-1 text-xs uppercase tracking-wider text-zinc-500 dark:text-gray-400">
                         {locale === 'es' ? 'Desde' : 'From'}
                       </div>
                       <div className="text-4xl font-bold text-gray-900 dark:text-white">
                         {formatPrice(tour.price)}
                       </div>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-sm text-zinc-500 dark:text-gray-400">
                         {locale === 'es' ? '/ persona' : '/ person'}
                       </div>
                     </div>
@@ -198,25 +200,25 @@ export default function TourDetail({ tour, locale }) {
                       <span className="font-semibold text-gray-900 dark:text-white">
                         {tour.rating}
                       </span>
-                      <span className="text-gray-400">
+                      <span className="text-zinc-500 dark:text-gray-400">
                         ({tour.reviewCount} {locale === 'es' ? 'reseñas' : 'reviews'})
                       </span>
                     </div>
 
                     <div className="mb-6 space-y-3">
-                      <div className="flex items-center justify-between text-sm text-gray-300">
+                      <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
                         <span>{locale === 'es' ? 'Duración' : 'Duration'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
                           {formatDuration(tour.duration)}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-sm text-gray-300">
+                      <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
                         <span>{locale === 'es' ? 'Grupo máx.' : 'Max group'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
                           {tour.maxGuests}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-sm text-gray-300">
+                      <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
                         <span>{locale === 'es' ? 'Ubicación' : 'Location'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
                           {tour.location.split(',')[0]}
@@ -224,7 +226,7 @@ export default function TourDetail({ tour, locale }) {
                       </div>
                     </div>
 
-                    <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white">
+                    <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600">
                       {locale === 'es' ? 'Reservar Ahora' : 'Book Now'}
                       <ChevronRight className="h-5 w-5" />
                     </button>
@@ -239,7 +241,7 @@ export default function TourDetail({ tour, locale }) {
                           <div className="text-sm font-semibold text-gray-900 dark:text-white">
                             {locale === 'es' ? 'Tour Destacado' : 'Featured Tour'}
                           </div>
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-zinc-600 dark:text-gray-400">
                             {locale === 'es'
                               ? 'Uno de nuestros tours más solicitados'
                               : 'One of our most requested tours'}

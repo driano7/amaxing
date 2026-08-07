@@ -36,11 +36,15 @@ export default function NewsLayout({ frontMatter, children }) {
               </time>
             )}
             <PageTitle>{title}</PageTitle>
-            {summary && <p className="mx-auto max-w-2xl text-lg text-gray-400">{summary}</p>}
+            {summary && (
+              <p className="mx-auto max-w-2xl text-lg text-zinc-600 dark:text-gray-400">
+                {summary}
+              </p>
+            )}
             <div className="flex items-center justify-center gap-3">
               <Link
                 href={`/news/${slug}?lang=${otherLocale}`}
-                className="rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1 text-sm font-medium text-orange-500 transition-colors hover:bg-orange-500 hover:text-gray-900 dark:text-white"
+                className="rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1 text-sm font-medium text-orange-500 transition-colors hover:bg-orange-500 hover:text-white"
               >
                 {otherLabel}
               </Link>
@@ -49,7 +53,7 @@ export default function NewsLayout({ frontMatter, children }) {
                   href={sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full border border-white/10 px-4 py-1 text-sm font-medium text-gray-300 transition-colors hover:border-orange-500/50 hover:text-orange-500"
+                  className="rounded-full border border-zinc-300 px-4 py-1 text-sm font-medium text-zinc-600 transition-colors hover:border-orange-500/50 hover:text-orange-500 dark:border-white/10 dark:text-gray-300"
                 >
                   {lang === 'es' ? 'Ver fuente original ↗' : 'View original source ↗'}
                 </a>
@@ -59,15 +63,15 @@ export default function NewsLayout({ frontMatter, children }) {
         </header>
 
         {cover && (
-          <div className="relative mb-8 h-72 w-full overflow-hidden rounded-xl border border-white/10 md:h-96">
+          <div className="relative mb-8 h-72 w-full overflow-hidden rounded-xl border border-zinc-200 dark:border-white/10 md:h-96">
             <Image src={cover} alt={title} fill className="object-cover" sizes="100vw" />
           </div>
         )}
 
-        <div className="prose max-w-none pb-8 dark:prose-dark">{children}</div>
+        <div className="prose prose-zinc max-w-none pb-8 dark:prose-invert">{children}</div>
 
         {tags && tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 border-t border-white/10 pt-6">
+          <div className="flex flex-wrap gap-2 border-t border-zinc-200 pt-6 dark:border-white/10">
             {tags.map((tag) => (
               <Tag key={tag} text={tag} />
             ))}

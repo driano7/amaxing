@@ -1,3 +1,5 @@
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://amaxing-amx.vercel.app'
+
 const siteMetadata = {
   title: "Mexico's Amaxing",
   author: 'Donovan Riaño',
@@ -5,8 +7,8 @@ const siteMetadata = {
   description: 'The blog that brings the best from Mexico to the world',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteUrl,
+  siteRepo: 'https://github.com/driano7/amaxing',
   siteLogo: '/static/images/jaguarBaja.png',
   image: '/static/images/twitter-card.png',
   socialBanner: '/static/images/jaguarDALLE.png',

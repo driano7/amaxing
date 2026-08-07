@@ -34,7 +34,7 @@ export default function Tours() {
         }
       />
 
-      <div className="bg-zinc-950 min-h-screen">
+      <div className="min-h-screen bg-white dark:bg-zinc-950">
         {/* Hero Section */}
         <section className="py-20 px-6 lg:py-32">
           <div className="container mx-auto max-w-5xl text-center">
@@ -50,7 +50,7 @@ export default function Tours() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
-              className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-300 md:text-xl"
+              className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 dark:text-gray-300 md:text-xl"
             >
               {t('tours.heroSubtitle') ||
                 'Handpicked journeys that transcend the ordinary and reveal the authentic heart of Mexico.'}
@@ -82,8 +82,8 @@ export default function Tours() {
                     id={`tab-${category.id}`}
                     className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-orange-500 text-gray-900 shadow-lg shadow-orange-500/25 dark:text-white'
-                        : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-gray-900 dark:text-white'
+                        ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
+                        : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white'
                     }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -114,11 +114,11 @@ export default function Tours() {
                     animate={{ opacity: 1, y: 0 }}
                     className="py-20 text-center"
                   >
-                    <Grid className="mx-auto mb-4 h-16 w-16 text-gray-600" />
+                    <Grid className="mx-auto mb-4 h-16 w-16 text-zinc-400 dark:text-gray-600" />
                     <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
                       {t('tours.noResults') || 'No tours found in this category'}
                     </h3>
-                    <p className="text-gray-400">
+                    <p className="text-zinc-500 dark:text-gray-400">
                       {t('tours.tryAnotherCategory') || 'Try selecting another category'}
                     </p>
                   </motion.div>

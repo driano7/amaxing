@@ -114,7 +114,7 @@ export default function ChatbotAssistant() {
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState([])
   const [isMobile, setIsMobile] = useState(false)
-  const bottomRef = useRef(null)
+  const scrollRef = useRef(null)
   const reducedMotion = useReducedMotion()
 
   // Detectar móvil para mover el panel sobre el MobileDock
@@ -150,12 +150,11 @@ export default function ChatbotAssistant() {
     if (onboardingDone && step > 0) setStep(0)
   }, [onboardingDone, step])
 
-  // Autoscroll al fondo del chat cuando llegan mensajes
+  // Autoscroll dentro del panel (sin desplazar la página entera)
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [messages, isLoading])
+    const el = scrollRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [messages, isLoading, open])
 
   // Cargar respuestas guardadas si existen (reanudar onboarding)
   useEffect(() => {
@@ -230,7 +229,7 @@ export default function ChatbotAssistant() {
       const progress = ((step - 1) / QUESTIONS.length) * 100
 
       return (
-        <div className="flex flex-col gap-5 p-5">
+        <div className="flex flex-col gap-5 overflow-y-auto p-5">
           <div className="flex items-start justify-between gap-2">
             <h3 className="text-base font-semibold text-zinc-900 dark:text-white">
               {t(q.es, q.en)}
@@ -283,7 +282,7 @@ export default function ChatbotAssistant() {
     // ---- Chat flow ----
     return (
       <>
-        <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+        <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -314,7 +313,6 @@ export default function ChatbotAssistant() {
               )}
             </div>
           ))}
-          <div ref={bottomRef} />
         </div>
 
         {/* Quick actions */}
@@ -443,7 +441,9 @@ export default function ChatbotAssistant() {
               </div>
             </div>
 
-            <div className="flex h-[400px] max-h-[45vh] flex-col">{renderContent()}</div>
+            <div className="flex max-h-[70vh] min-h-0 flex-col md:max-h-[400px]">
+              {renderContent()}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -61,13 +61,13 @@ export default function Stories() {
           'Real stories from real travelers experiencing the magic of Mexico with Amaxing.'
         }
       />
-      <div className="bg-zinc-950 py-20">
+      <div className="bg-white py-20 dark:bg-zinc-950">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
             <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
               {t('stories.title') || 'Traveler Stories'}
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-gray-300">
+            <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
               {t('stories.subtitle') ||
                 'Real stories from real travelers experiencing the magic of Mexico with Amaxing.'}
             </p>
@@ -81,7 +81,7 @@ export default function Stories() {
                 direction="up"
                 className="w-full"
               >
-                <article className="group overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 transition-all duration-300 hover:border-orange-500/30 hover:bg-zinc-900/70 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+                <article className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all duration-300 hover:border-orange-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-zinc-900/50 dark:hover:bg-zinc-900/70 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
                   <Link
                     href={`/stories/${story.id}`}
                     className="relative block h-56 w-full overflow-hidden rounded-t-2xl"
@@ -111,12 +111,12 @@ export default function Stories() {
                       {story.title}
                     </h3>
 
-                    <p className="line-clamp-2 mb-4 text-sm leading-relaxed text-zinc-300">
+                    <p className="line-clamp-2 mb-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
                       {story.excerpt}
                     </p>
 
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-zinc-400">
+                      <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
                         <span>{story.author}</span>
                       </div>
                       <span className="text-sm font-medium text-orange-500 transition-colors hover:underline">

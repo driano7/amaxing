@@ -5,7 +5,6 @@ import Image from 'next/image'
 import AuthNav from './AuthNav'
 import { CartIcon } from './cart/CartIcon'
 import { ThemeToggle } from './theme-toggle'
-import { HubMenu } from './HubMenu'
 import { motion, AnimatePresence, useTransform, useScroll } from 'framer-motion'
 import { useEffect, useState, useCallback } from 'react'
 import classNames from 'classnames'
@@ -306,14 +305,14 @@ export function Navbar() {
                     : 'Cambiar idioma a Español'
                 }
                 className={classNames(
-                  'flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.35em]',
+                  'flex items-center gap-1.5 rounded-full px-2 py-1.5 text-xs font-black uppercase tracking-[0.35em] sm:gap-2 sm:px-4 sm:py-2',
                   'bg-gray-100/60 text-gray-800 transition-all hover:bg-gray-200 dark:bg-gray-800/60 dark:text-gray-100 dark:hover:bg-gray-700',
                   isChanging ? 'pointer-events-none opacity-60' : ''
                 )}
               >
                 <div className="flex flex-col items-center gap-0.5">
                   <svg
-                    className="h-4 w-4"
+                    className="hidden h-4 w-4 sm:block"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -348,34 +347,6 @@ export function Navbar() {
               >
                 {t('header.bookNow')}
               </Link>
-
-              {/* Chatbot trigger */}
-              <button
-                type="button"
-                onClick={() => window.dispatchEvent(new CustomEvent('open-amaxing-chatbot'))}
-                className="relative flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
-                aria-label="Open assistant"
-                title="Amaxing AI"
-              >
-                <svg
-                  stroke="currentColor"
-                  fill="none"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  height="1.25em"
-                  width="1.25em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
-                  />
-                </svg>
-              </button>
-
-              {/* Hub Menu — doc icon, single open state, works on mobile and desktop */}
-              <HubMenu />
             </div>
           </div>
         </header>

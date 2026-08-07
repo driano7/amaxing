@@ -55,11 +55,11 @@ export default function Pricing() {
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
-      <div className="bg-black py-20 text-gray-900 dark:text-white">
+      <div className="bg-white py-20 text-gray-900 dark:bg-black dark:text-white">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <h1 className="text-4xl font-bold md:text-5xl">Experience Pricing</h1>
-            <p className="mt-4 max-w-2xl text-lg text-gray-300">
+            <p className="mt-4 max-w-2xl text-lg text-zinc-600 dark:text-gray-300">
               Curated luxury tours designed for discerning travelers. Each experience includes
               expert guides, premium amenities, and authentic cultural immersion.
             </p>
@@ -71,19 +71,22 @@ export default function Pricing() {
                 key={tier.name}
                 className={`rounded-xl border transition-all duration-300 ${
                   tier.featured
-                    ? 'border-orange-500 bg-zinc-900 shadow-xl shadow-orange-500/20'
-                    : 'border-white/10 bg-zinc-900 hover:border-orange-500/50'
+                    ? 'border-orange-500 bg-zinc-100 shadow-xl shadow-orange-500/20 dark:bg-zinc-900'
+                    : 'border-zinc-200 bg-white hover:border-orange-500/50 dark:border-white/10 dark:bg-zinc-900'
                 }`}
               >
                 <div className="p-8">
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{tier.name}</h3>
                   <div className="mt-4 text-4xl font-extrabold text-orange-500">{tier.price}</div>
-                  <p className="mt-4 text-gray-400">{tier.description}</p>
+                  <p className="mt-4 text-zinc-500 dark:text-gray-400">{tier.description}</p>
                   <ul className="mt-6 space-y-3">
                     {tier.features.map((feature) => {
                       const Icon = feature.icon
                       return (
-                        <li key={feature.text} className="flex items-start gap-2 text-gray-300">
+                        <li
+                          key={feature.text}
+                          className="flex items-start gap-2 text-zinc-600 dark:text-gray-300"
+                        >
                           <Icon className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
                           <span>{feature.text}</span>
                         </li>
@@ -92,7 +95,7 @@ export default function Pricing() {
                   </ul>
                   <Link
                     href="https://wa.me/525512291607"
-                    className="mt-6 block w-full rounded-full bg-orange-500 py-3 text-center font-medium text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
+                    className="mt-6 block w-full rounded-full bg-orange-500 py-3 text-center font-medium text-white transition-colors hover:bg-orange-600"
                   >
                     Book Now
                   </Link>

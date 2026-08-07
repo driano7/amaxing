@@ -17,13 +17,13 @@ export default function Experiences() {
         title={t('experiences.title') || 'Curated Experiences'}
         description={t('experiences.subtitle') || 'Handpicked journeys that transcend the ordinary'}
       />
-      <div className="bg-zinc-950 py-20">
+      <div className="bg-white py-20 dark:bg-zinc-950">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
               {t('experiences.title') || 'Curated Experiences'}
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-300">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600 dark:text-gray-300">
               {t('experiences.subtitle') ||
                 'Handpicked journeys that transcend the ordinary and reveal the authentic heart of Mexico.'}
             </p>

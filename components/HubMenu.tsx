@@ -18,7 +18,7 @@ const getLabel = (item) => {
   return item.fallback || item.href
 }
 
-export function HubMenu() {
+export function HubMenu({ showTrigger = true }) {
   const [isOpen, setIsOpen] = useState(false)
   const reducedMotion = useReducedMotion()
   const { t } = useLanguage()
@@ -117,20 +117,22 @@ export function HubMenu() {
 
   return (
     <>
-      {/* Trigger — doc icon, visible on mobile and desktop */}
-      <button
-        type="button"
-        onClick={toggleMenu}
-        aria-label={isOpen ? 'Close menu' : 'Open menu'}
-        aria-expanded={isOpen}
-        aria-haspopup="dialog"
-        className={classNames(
-          'relative flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-110 active:scale-95',
-          isOpen ? 'bg-zinc-700 dark:bg-zinc-300 dark:text-zinc-900' : 'bg-orange-500'
-        )}
-      >
-        <FileText className="h-5 w-5" />
-      </button>
+      {/* Trigger — doc icon, visible on mobile and desktop (ocultable desde el header) */}
+      {showTrigger && (
+        <button
+          type="button"
+          onClick={toggleMenu}
+          aria-label={isOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isOpen}
+          aria-haspopup="dialog"
+          className={classNames(
+            'relative flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-110 active:scale-95',
+            isOpen ? 'bg-zinc-700 dark:bg-zinc-300 dark:text-zinc-900' : 'bg-orange-500'
+          )}
+        >
+          <FileText className="h-5 w-5" />
+        </button>
+      )}
 
       <AnimatePresence>
         {isOpen && (

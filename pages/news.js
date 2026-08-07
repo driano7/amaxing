@@ -4,7 +4,7 @@ import Link from '@/components/Link'
 import Image from 'next/image'
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
-import { getAllNotes } from '@/lib/notes'
+import { getAllNotesAsync } from '@/lib/notes'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AnimatedSection } from '@/components/AnimatedSection'
 
@@ -27,7 +27,7 @@ const pageTranslations = {
 
 export async function getServerSideProps({ req }) {
   const locale = req?.cookies?.NEXT_LOCALE === 'es' ? 'es' : 'en'
-  const notes = getAllNotes(locale)
+  const notes = await getAllNotesAsync(locale)
 
   // Fetch latest news from NewsAPI
   let newsArticles = []
@@ -64,13 +64,13 @@ export default function NewsPage({ notes, locale, newsArticles }) {
   return (
     <>
       <PageSEO title={t.title} description={t.subtitle} />
-      <div className="bg-zinc-950 min-h-screen">
+      <div className="min-h-screen bg-white dark:bg-zinc-950">
         <div className="container mx-auto px-4 py-16">
           <div className="mb-12 text-center">
             <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
               {t.title}
             </h1>
-            <p className="text-lg text-gray-300">{t.subtitle}</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300">{t.subtitle}</p>
           </div>
 
           {/* Auto-generated Notes Section */}
@@ -97,7 +97,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                   >
                     <Link
                       href={`/news/${note.slug}`}
-                      className="group relative flex flex-col overflow-hidden rounded-xl border border-white/10 bg-zinc-900 transition-all duration-300 hover:scale-[1.02] hover:border-orange-500/40 hover:bg-zinc-900/70 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+                      className="group relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition-all duration-300 hover:scale-[1.02] hover:border-orange-500/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-zinc-900 dark:hover:bg-zinc-900/70 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
                     >
                       {note.image && (
                         <div className="relative h-48 w-full overflow-hidden rounded-t-2xl">
@@ -112,7 +112,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                       )}
 
                       <div className="flex-1 p-6">
-                        <div className="mb-2 flex items-center gap-2 text-sm text-gray-500">
+                        <div className="mb-2 flex items-center gap-2 text-sm text-zinc-500 dark:text-gray-500">
                           <span>{siteMetadata.title}</span>
                           <span>•</span>
                           <time dateTime={note.date}>{formatDate(note.date, locale)}</time>
@@ -123,16 +123,18 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                         </h3>
 
                         {note.summary && (
-                          <p className="line-clamp-3 text-sm text-gray-300">{note.summary}</p>
+                          <p className="line-clamp-3 text-sm text-zinc-600 dark:text-gray-300">
+                            {note.summary}
+                          </p>
                         )}
                       </div>
 
                       {note.tags && note.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 border-t border-white/10 p-4">
+                        <div className="flex flex-wrap gap-2 border-t border-zinc-200 p-4 dark:border-white/10">
                           {note.tags.slice(0, 3).map((tag) => (
                             <span
                               key={tag}
-                              className="rounded-full bg-white/5 px-2.5 py-0.5 text-xs text-gray-400 transition-colors hover:bg-orange-500/10 hover:text-orange-500"
+                              className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-zinc-600 transition-colors hover:bg-orange-500/10 hover:text-orange-500 dark:bg-white/5 dark:text-gray-400"
                             >
                               #{tag}
                             </span>
@@ -160,7 +162,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                     direction="up"
                     className="w-full"
                   >
-                    <article className="group relative flex flex-col overflow-hidden rounded-xl border border-white/10 bg-zinc-900 transition-all duration-300 hover:scale-[1.02] hover:border-orange-500/40 hover:bg-zinc-900/70 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+                    <article className="group relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition-all duration-300 hover:scale-[1.02] hover:border-orange-500/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-zinc-900 dark:hover:bg-zinc-900/70 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
                       {article.urlToImage && (
                         <div className="relative h-48 w-full overflow-hidden rounded-t-2xl">
                           <Image
@@ -174,7 +176,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                       )}
 
                       <div className="flex-1 p-6">
-                        <div className="mb-2 flex items-center gap-2 text-sm text-gray-500">
+                        <div className="mb-2 flex items-center gap-2 text-sm text-zinc-500 dark:text-gray-500">
                           <span>{article.source?.name || 'News'}</span>
                           <span>•</span>
                           <time dateTime={article.publishedAt}>
@@ -187,13 +189,13 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                         </h3>
 
                         {article.description && (
-                          <p className="line-clamp-3 text-sm text-gray-300">
+                          <p className="line-clamp-3 text-sm text-zinc-600 dark:text-gray-300">
                             {article.description}
                           </p>
                         )}
                       </div>
 
-                      <div className="border-t border-white/10 p-4">
+                      <div className="border-t border-zinc-200 p-4 dark:border-white/10">
                         <Link
                           href={article.url}
                           target="_blank"
@@ -212,7 +214,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
           )}
 
           {notes.length === 0 && newsArticles.length === 0 && (
-            <div className="py-20 text-center text-gray-400">{t.empty}</div>
+            <div className="py-20 text-center text-zinc-500 dark:text-gray-400">{t.empty}</div>
           )}
         </div>
       </div>

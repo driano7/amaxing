@@ -1,15 +1,17 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import siteMetadata from '@/data/siteMetadata'
+import { buildCanonicalUrl, buildBlogPostingEntity } from '@/lib/seo'
 
 const CommonSEO = ({ title, description, ogType, ogImage, twImage, canonicalUrl }) => {
   const router = useRouter()
+  const canonical = buildCanonicalUrl(canonicalUrl || router.asPath)
   return (
     <Head>
       <title>{title}</title>
-      <meta name="robots" content="follow, index" />
+      <meta name="robots" content="index, follow" />
       <meta name="description" content={description} />
-      <meta property="og:url" content={`${siteMetadata.siteUrl}${router.asPath}`} />
+      <meta property="og:url" content={canonical} />
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content={siteMetadata.title} />
       <meta property="og:description" content={description} />
@@ -24,10 +26,7 @@ const CommonSEO = ({ title, description, ogType, ogImage, twImage, canonicalUrl 
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={twImage} />
-      <link
-        rel="canonical"
-        href={canonicalUrl ? canonicalUrl : `${siteMetadata.siteUrl}${router.asPath}`}
-      />
+      <link rel="canonical" href={canonical} />
     </Head>
   )
 }
@@ -82,8 +81,6 @@ export const BlogSEO = ({
   canonicalUrl,
 }) => {
   const router = useRouter()
-  const publishedAt = new Date(date).toISOString()
-  const modifiedAt = new Date(lastmod || date).toISOString()
   let imagesArr =
     images.length === 0
       ? [siteMetadata.socialBanner]
@@ -98,43 +95,15 @@ export const BlogSEO = ({
     }
   })
 
-  let authorList
-  if (authorDetails) {
-    authorList = authorDetails.map((author) => {
-      return {
-        '@type': 'Person',
-        name: author.name,
-      }
-    })
-  } else {
-    authorList = {
-      '@type': 'Person',
-      name: siteMetadata.author,
-    }
-  }
-
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': url,
-    },
-    headline: title,
-    image: featuredImages,
-    datePublished: publishedAt,
-    dateModified: modifiedAt,
-    author: authorList,
-    publisher: {
-      '@type': 'Organization',
-      name: siteMetadata.author,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${siteMetadata.siteUrl}${siteMetadata.siteLogo}`,
-      },
-    },
-    description: summary,
-  }
+  const structuredData = buildBlogPostingEntity({
+    title,
+    summary,
+    date,
+    lastmod,
+    url: url || buildCanonicalUrl(router.asPath),
+    images,
+    author: authorDetails?.[0]?.name || siteMetadata.author,
+  })
 
   const twImageUrl = featuredImages[0].url
 
@@ -149,8 +118,10 @@ export const BlogSEO = ({
         canonicalUrl={canonicalUrl}
       />
       <Head>
-        {date && <meta property="article:published_time" content={publishedAt} />}
-        {lastmod && <meta property="article:modified_time" content={modifiedAt} />}
+        {date && <meta property="article:published_time" content={new Date(date).toISOString()} />}
+        {lastmod && (
+          <meta property="article:modified_time" content={new Date(lastmod).toISOString()} />
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

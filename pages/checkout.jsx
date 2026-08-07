@@ -90,7 +90,7 @@ export default function CheckoutPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-zinc-950 flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
         <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
       </div>
     )
@@ -98,15 +98,15 @@ export default function CheckoutPage() {
 
   if (!user) {
     return (
-      <div className="bg-zinc-950 flex min-h-screen items-center justify-center">
-        <div className="text-gray-400">Redirigiendo al login...</div>
+      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
+        <div className="text-zinc-500 dark:text-gray-400">Redirigiendo al login...</div>
       </div>
     )
   }
 
   if (success) {
     return (
-      <div className="bg-zinc-950 min-h-screen">
+      <div className="min-h-screen bg-white dark:bg-zinc-950">
         <div className="container mx-auto px-4 py-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -117,7 +117,7 @@ export default function CheckoutPage() {
             <h1 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white md:text-4xl">
               ¡Reservas confirmadas!
             </h1>
-            <p className="mt-3 text-gray-300">
+            <p className="mt-3 text-zinc-600 dark:text-gray-300">
               Se generaron {createdBookings.length}{' '}
               {createdBookings.length === 1 ? 'ticket' : 'tickets'} con su QR. Puedes verlos en tu
               perfil o descargarlos aquí.
@@ -127,7 +127,7 @@ export default function CheckoutPage() {
               {createdBookings.map((booking) => (
                 <div
                   key={booking.id}
-                  className="flex items-center justify-between rounded-2xl border border-white/10 bg-zinc-900/50 p-4 text-left"
+                  className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 text-left dark:border-white/10 dark:bg-zinc-900/50"
                 >
                   <div className="flex items-center gap-3">
                     <TicketIcon className="h-5 w-5 text-orange-500" />
@@ -135,7 +135,7 @@ export default function CheckoutPage() {
                       <p className="font-semibold text-gray-900 dark:text-white">
                         {booking.experienceTitle}
                       </p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-zinc-500 dark:text-gray-400">
                         {booking.date} • {booking.time} • {booking.peopleCount}{' '}
                         {booking.peopleCount === 1 ? 'persona' : 'personas'}
                       </p>
@@ -143,7 +143,7 @@ export default function CheckoutPage() {
                   </div>
                   <button
                     onClick={() => setSelectedTicket(booking)}
-                    className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
+                    className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
                   >
                     Ver Ticket
                   </button>
@@ -154,13 +154,13 @@ export default function CheckoutPage() {
             <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
               <Link
                 href="/profile"
-                className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-3 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
+                className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
               >
                 Ir a mi perfil
               </Link>
               <Link
                 href="/tours"
-                className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-zinc-900 px-8 py-3 font-semibold text-gray-900 transition-colors hover:border-orange-500/30 dark:text-white"
+                className="inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-white px-8 py-3 font-semibold text-gray-900 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white"
               >
                 Explorar más tours
               </Link>
@@ -177,15 +177,17 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="bg-zinc-950 flex min-h-screen items-center justify-center px-4">
+      <div className="flex min-h-screen items-center justify-center bg-white px-4 dark:bg-zinc-950">
         <div className="max-w-md text-center">
           <h1 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
             Tu carrito está vacío
           </h1>
-          <p className="mb-6 text-gray-400">Agrega experiencias antes de hacer checkout.</p>
+          <p className="mb-6 text-zinc-500 dark:text-gray-400">
+            Agrega experiencias antes de hacer checkout.
+          </p>
           <Link
             href="/tours"
-            className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 dark:text-white"
+            className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
           >
             Explorar experiencias
           </Link>
@@ -195,7 +197,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="bg-zinc-950 min-h-screen">
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
       <div className="container mx-auto px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -213,14 +215,14 @@ export default function CheckoutPage() {
           <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">Checkout</h1>
 
           {error && (
-            <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-red-300">
+            <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-600 dark:bg-red-500/20 dark:text-red-300">
               {error}
             </div>
           )}
 
           <div className="grid gap-8 lg:grid-cols-2">
             {/* Summary */}
-            <div className="rounded-2xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-900/50">
               <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
                 Resumen de tu compra
               </h2>
@@ -228,7 +230,7 @@ export default function CheckoutPage() {
                 {items.map((item) => (
                   <div
                     key={item.lineId}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-zinc-900 p-3"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-white/5 dark:bg-zinc-900"
                   >
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg">
@@ -244,7 +246,7 @@ export default function CheckoutPage() {
                         <p className="truncate font-semibold text-gray-900 dark:text-white">
                           {item.title}
                         </p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-zinc-500 dark:text-gray-400">
                           {item.date} • {item.time || 'Sin hora'} • {item.peopleCount}{' '}
                           {item.peopleCount === 1 ? 'persona' : 'personas'}
                         </p>
@@ -257,9 +259,11 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="mt-6 border-t border-white/10 pt-4">
+              <div className="mt-6 border-t border-zinc-200 pt-4 dark:border-white/10">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-300">Total ({itemCount} experiencias)</span>
+                  <span className="text-zinc-600 dark:text-gray-300">
+                    Total ({itemCount} experiencias)
+                  </span>
                   <span className="text-2xl font-bold text-gray-900 dark:text-white">
                     {formatPrice(subtotal)}
                   </span>
@@ -274,7 +278,7 @@ export default function CheckoutPage() {
                 Confirmar reservas
               </h2>
 
-              <div className="rounded-xl border border-white/10 bg-zinc-900/80 p-4 text-sm text-gray-300">
+              <div className="rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-600 dark:border-white/10 dark:bg-zinc-900/80 dark:text-gray-300">
                 <p>
                   <strong className="text-gray-900 dark:text-white">Cliente:</strong>{' '}
                   {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.email}
@@ -287,7 +291,7 @@ export default function CheckoutPage() {
                 </p>
               </div>
 
-              <div className="mt-4 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-xs text-orange-300">
+              <div className="mt-4 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-xs text-orange-600 dark:text-orange-300">
                 Recibirás un ticket con código QR para cada experiencia al confirmar. Podrás
                 descargarlos como PNG o PDF desde tu perfil.
               </div>
@@ -295,7 +299,7 @@ export default function CheckoutPage() {
               <button
                 onClick={handleCheckout}
                 disabled={isSubmitting}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-gray-900 transition-colors hover:bg-orange-600 disabled:opacity-50 dark:text-white"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
@@ -310,7 +314,7 @@ export default function CheckoutPage() {
                 )}
               </button>
 
-              <p className="mt-3 text-center text-xs text-gray-500">
+              <p className="mt-3 text-center text-xs text-zinc-500 dark:text-gray-500">
                 Al confirmar, se crearán {itemCount} {itemCount === 1 ? 'reserva' : 'reservas'}{' '}
                 vinculadas a tu cuenta.
               </p>
