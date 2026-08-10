@@ -173,9 +173,15 @@ export function Navbar() {
             isVisible ? 'shadow-2xl' : 'border-transparent bg-transparent shadow-none'
           )}
         >
-          <div className="shrink-0">
+          <div className="flex shrink-0 items-center gap-2.5">
             <Link href="/" className="group flex items-center" aria-label="Amaxing">
-              <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full ring-2 ring-orange-500/60 transition-transform group-hover:rotate-6">
+              <div
+                className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full transition-transform group-hover:rotate-6"
+                style={{
+                  background:
+                    'linear-gradient(135deg, #DE1D8D 0%, #BE1588 25%, #9F0E7F 50%, #7B2BD9 75%, #6A0568 100%)',
+                }}
+              >
                 <Image
                   src="/static/images/jaguarBaja.png"
                   alt="Amaxing"
@@ -184,6 +190,12 @@ export function Navbar() {
                   className="h-full w-full object-cover"
                 />
               </div>
+            </Link>
+            <Link
+              href="/"
+              className="hidden font-serif text-lg font-bold tracking-wide text-zinc-900 transition-colors hover:text-orange-500 dark:text-white sm:block"
+            >
+              Amaxing
             </Link>
           </div>
 
