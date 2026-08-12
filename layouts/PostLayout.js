@@ -137,12 +137,16 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
               {prev && (
                 <Link
                   href={`/blog/${prev.slug}`}
-                  className="group flex flex-col rounded-xl border border-zinc-200 bg-white p-5 transition-all duration-300 hover:border-orange-500/40 dark:border-white/10 dark:bg-zinc-900"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, #6A0568 0%, #7B2BD9 25%, #9F0E7F 50%, #BE1588 75%, #DE1D8D 100%)',
+                  }}
+                  className="group flex flex-col rounded-xl p-5 text-white shadow-lg transition-all duration-300 hover:shadow-xl"
                 >
-                  <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-gray-500">
+                  <span className="text-xs font-medium uppercase tracking-wide text-white/70">
                     &larr; Previous
                   </span>
-                  <span className="mt-2 font-semibold text-gray-900 group-hover:text-orange-500 dark:text-gray-100 dark:group-hover:text-orange-400">
+                  <span className="mt-2 font-semibold text-white group-hover:text-white">
                     {prev.title}
                   </span>
                 </Link>
@@ -150,12 +154,16 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
               {next && (
                 <Link
                   href={`/blog/${next.slug}`}
-                  className="group flex flex-col rounded-xl border border-zinc-200 bg-white p-5 text-right transition-all duration-300 hover:border-orange-500/40 dark:border-white/10 dark:bg-zinc-900 sm:col-start-2"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, #6A0568 0%, #7B2BD9 25%, #9F0E7F 50%, #BE1588 75%, #DE1D8D 100%)',
+                  }}
+                  className="group flex flex-col rounded-xl p-5 text-right text-white shadow-lg transition-all duration-300 hover:shadow-xl dark:text-white sm:col-start-2"
                 >
-                  <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-gray-500">
+                  <span className="text-xs font-medium uppercase tracking-wide text-white/70">
                     Next &rarr;
                   </span>
-                  <span className="mt-2 font-semibold text-gray-900 group-hover:text-orange-500 dark:text-gray-100 dark:group-hover:text-orange-400">
+                  <span className="mt-2 font-semibold text-white group-hover:text-white">
                     {next.title}
                   </span>
                 </Link>

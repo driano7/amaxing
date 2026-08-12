@@ -83,7 +83,14 @@ export default function NewsLayout({ frontMatter, children }) {
         )}
 
         <div className="pt-6">
-          <Link href="/news" className="text-orange-500 hover:text-orange-400">
+          <Link
+            href="/news"
+            style={{
+              background:
+                'linear-gradient(135deg, #6A0568 0%, #7B2BD9 25%, #9F0E7F 50%, #BE1588 75%, #DE1D8D 100%)',
+            }}
+            className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
+          >
             &larr; {lang === 'es' ? 'Volver a noticias' : 'Back to news'}
           </Link>
         </div>

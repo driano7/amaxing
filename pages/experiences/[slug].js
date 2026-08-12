@@ -255,7 +255,11 @@ export default function ExperienceDetail({ experience, locale }) {
                   {/* Back Link */}
                   <Link
                     href="/experiences"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-orange-500 hover:text-orange-400"
+                    style={{
+                      background:
+                        'linear-gradient(135deg, #6A0568 0%, #7B2BD9 25%, #9F0E7F 50%, #BE1588 75%, #DE1D8D 100%)',
+                    }}
+                    className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     {locale === 'es' ? 'Volver a Experiencias' : 'Back to Experiences'}

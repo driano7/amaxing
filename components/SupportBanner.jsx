@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Bitcoin, Landmark, Check, Copy, HeartHandshake } from 'lucide-react'
 import siteMetadata from '@/data/siteMetadata'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 const DONATION_METHODS = [
   {
@@ -20,7 +21,7 @@ const DONATION_METHODS = [
   },
   {
     id: 'bank',
-    label: 'Cuenta bancaria',
+    label: null,
     value: siteMetadata.donations?.bank,
     accent: '#DE1D8D',
   },
@@ -127,8 +128,14 @@ function useStepReveal(itemCount) {
 
 export default function SupportBanner() {
   const [copied, setCopied] = useState(null)
+  const { t } = useLanguage()
   const totalSteps = 1 + DONATION_METHODS.length + 1
   const { registerRef, visibleCount } = useStepReveal(totalSteps)
+
+  const st = (key, fallback) => {
+    const val = t(`support.${key}`)
+    return val === `support.${key}` ? fallback : val
+  }
 
   const handleCopy = useCallback(async (id, value) => {
     const persist = () => {
@@ -186,14 +193,19 @@ export default function SupportBanner() {
             <HeartHandshake className="h-7 w-7" aria-hidden />
           </span>
           <h2 className="text-4xl font-black uppercase tracking-tighter text-white sm:text-5xl">
-            Apoya el proyecto
+            {st('title', 'Support the project')}
           </h2>
           <p className="max-w-lg text-lg font-medium leading-relaxed text-white/90">
-            Donaciones abiertas para seguir construyendo. Copia el método que prefieras o escanea el
-            código. Gracias por impulsar Amaxing.
+            {st(
+              'subtitle',
+              'Open donations to keep building. Copy the method you prefer or scan the code. Thank you for powering Amaxing.'
+            )}
           </p>
           <p className="max-w-lg text-sm text-white/80">
-            Tu contribución llega directamente al equipo para financiar mejoras en la experiencia.
+            {st(
+              'note',
+              'Your contribution goes directly to the team to fund experience improvements.'
+            )}
           </p>
         </div>
 
@@ -216,7 +228,7 @@ export default function SupportBanner() {
                 <MethodIcon id={method.id} className="h-5 w-5" style={{ color: method.accent }} />
               </span>
               <span className="text-sm font-semibold uppercase tracking-[0.25em] text-white/80">
-                {method.label}
+                {method.label ?? (method.id === 'bank' ? st('bank', 'Bank account') : method.label)}
               </span>
             </div>
 
@@ -236,11 +248,11 @@ export default function SupportBanner() {
               >
                 {copied === method.id ? (
                   <>
-                    <Check className="h-3.5 w-3.5" aria-hidden /> Copiado
+                    <Check className="h-3.5 w-3.5" aria-hidden /> {st('copied', 'Copied')}
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3.5 w-3.5" aria-hidden /> Copiar
+                    <Copy className="h-3.5 w-3.5" aria-hidden /> {st('copy', 'Copy')}
                   </>
                 )}
               </button>
@@ -258,12 +270,17 @@ export default function SupportBanner() {
               visibleCount > 1 + DONATION_METHODS.length ? 'translateY(0)' : 'translateY(24px)',
           }}
         >
-          <span>¿Prefieres donar con otra red o tu país usa transferencia bancaria?</span>
+          <span>
+            {st(
+              'or',
+              'Prefer to donate on another network or does your country use bank transfers?'
+            )}
+          </span>
           <Link
             href="/contact"
             className="font-bold text-white underline underline-offset-2 transition hover:text-white/80"
           >
-            Contáctanos
+            {st('contact', 'Contact us')}
           </Link>
         </div>
       </div>

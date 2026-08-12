@@ -8,9 +8,6 @@ import { Home, Compass, Mountain, BookOpen, Sparkle, FileText } from 'lucide-rea
 import Link from '@/components/Link'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 
-// Dock compuesto de las opciones principales del hubmenu del header,
-// inspirado en el DockNav de XocoCafe: pill redondeada, botón de IA,
-// menú completo y auto-colapso tras inactividad.
 const DOCK_ITEMS = [
   { href: '/', icon: Home, labelKey: 'header.nav.home', fallback: 'Home' },
   { href: '/tours', icon: Compass, labelKey: 'header.nav.tours', fallback: 'Tours' },
@@ -23,7 +20,7 @@ const DOCK_ITEMS = [
   { href: '/stories', icon: BookOpen, labelKey: 'header.nav.stories', fallback: 'Stories' },
 ]
 
-const DOCK_BUTTON_BASE = 'flex items-center justify-center rounded-full transition'
+const DOCK_BUTTON_BASE = 'flex items-center justify-center rounded-xl transition'
 const DOCK_BUTTON_ACTIVE = 'bg-orange-500 text-white shadow-lg'
 const DOCK_BUTTON_INACTIVE =
   'text-zinc-600 hover:bg-orange-500/10 hover:text-orange-500 dark:text-zinc-300 dark:hover:bg-orange-500/10 dark:hover:text-orange-400'
@@ -37,155 +34,146 @@ export function MobileDock() {
   const router = useRouter()
   const { t } = useLanguage()
   const reducedMotion = useReducedMotion()
-  const [isCollapsed, setIsCollapsed] = useState(false)
-  const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [compact, setCompact] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const getLabel = (item: { labelKey: string; fallback: string }) => {
     const val = t(item.labelKey)
     return val === item.labelKey ? item.fallback : val
   }
 
-  const scheduleCollapse = useCallback(() => {
-    if (collapseTimer.current) clearTimeout(collapseTimer.current)
-    collapseTimer.current = setTimeout(() => {
-      setIsCollapsed(true)
-    }, 15 * 60 * 1000)
+  // El dock nunca se oculta: tras inactividad o scroll hacia abajo solo se
+  // compacta (estilo EarningsAI). Cualquier interacción lo vuelve a expandir.
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+    setCompact(false)
+    timerRef.current = setTimeout(() => setCompact(true), 10000)
   }, [])
 
   useEffect(() => {
-    setIsCollapsed(false)
-    scheduleCollapse()
+    resetTimer()
     return () => {
-      if (collapseTimer.current) clearTimeout(collapseTimer.current)
+      if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [router.pathname, scheduleCollapse])
+  }, [router.pathname, resetTimer])
 
-  const handleAutoCollapse = useCallback(
-    (shouldCollapse: boolean) => {
-      if (shouldCollapse) {
-        if (collapseTimer.current) clearTimeout(collapseTimer.current)
-        setIsCollapsed((prev) => prev || true)
-      } else if (isCollapsed) {
-        setIsCollapsed(false)
-        scheduleCollapse()
-      }
-    },
-    [isCollapsed, scheduleCollapse]
-  )
-
-  const handleDockInteraction = useCallback(() => {
-    setIsCollapsed(false)
-    scheduleCollapse()
-  }, [scheduleCollapse])
-
-  const handleLinkClick = useCallback(() => {
-    handleDockInteraction()
-  }, [handleDockInteraction])
-
-  // Colapsar al scrollear un poco, restaurar al volver arriba (punteros finos y gruesos)
   useEffect(() => {
-    if (typeof window === 'undefined') return undefined
+    const events = ['pointerdown', 'focusin']
+    events.forEach((event) => document.addEventListener(event, resetTimer, { passive: true }))
+    return () => events.forEach((event) => document.removeEventListener(event, resetTimer))
+  }, [resetTimer])
 
-    const handleScroll = () => {
-      const scrolled = window.scrollY
-      const nearTop = scrolled <= 24
-      if (scrolled > 120) handleAutoCollapse(true)
-      else if (nearTop) handleAutoCollapse(false)
+  useEffect(() => {
+    let lastY = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      if (y > lastY) {
+        setCompact(true)
+        if (timerRef.current) clearTimeout(timerRef.current)
+        timerRef.current = setTimeout(() => setCompact(true), 10000)
+      } else {
+        resetTimer()
+      }
+      lastY = y
     }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleAutoCollapse])
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [resetTimer])
 
   return (
-    <div className="fixed inset-x-0 bottom-4 z-40 px-4 sm:hidden">
-      <div className="relative flex w-full items-end justify-center">
-        <nav
-          className={classNames(
-            'flex w-full items-center justify-between rounded-full border border-zinc-200/60 bg-white/90 px-2 py-2 text-zinc-900 shadow-2xl backdrop-blur-md transition-all duration-300 dark:border-zinc-800 dark:bg-zinc-950/90 dark:text-white',
-            isCollapsed ? 'scale-0 opacity-0' : 'scale-100 opacity-100'
-          )}
+    <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:hidden">
+      <nav
+        aria-label="Navegación móvil"
+        className={classNames(
+          'flex items-center justify-center gap-1 rounded-full border border-zinc-200/60 bg-white/90 py-1 shadow-2xl backdrop-blur-md transition-all duration-300 dark:border-zinc-800 dark:bg-zinc-950/90 dark:text-white',
+          compact ? 'px-1.5' : 'px-2'
+        )}
+      >
+        {/* Categorías primero */}
+        <motion.div
+          initial={reducedMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0 }}
         >
-          {DOCK_ITEMS.map((item, index) => {
-            const Icon: ComponentType<{ className?: string }> = item.icon
-            const active = isActiveRoute(router.pathname, item.href)
-            const label = getLabel(item)
-            return (
-              <motion.div
-                key={item.href}
-                initial={reducedMotion ? false : { opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.08 }}
+          <button
+            type="button"
+            onClick={() => {
+              resetTimer()
+              window.dispatchEvent(new CustomEvent('open-amaxing-hubmenu'))
+            }}
+            title="Categorías"
+            aria-label="Categorías"
+            className={classNames(
+              DOCK_BUTTON_BASE,
+              compact ? 'h-10 w-10' : 'h-11 w-11',
+              DOCK_BUTTON_ACTIVE
+            )}
+          >
+            <FileText className={compact ? 'h-4 w-4' : 'h-5 w-5'} />
+          </button>
+        </motion.div>
+
+        {/* Chatbot después */}
+        <motion.div
+          initial={reducedMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.08 }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              resetTimer()
+              window.dispatchEvent(new CustomEvent('open-amaxing-chatbot'))
+            }}
+            title="Amaxing AI"
+            aria-label="Amaxing AI"
+            className={classNames(
+              DOCK_BUTTON_BASE,
+              compact ? 'h-10 w-10' : 'h-11 w-11',
+              'text-orange-500 hover:bg-orange-500/10 dark:hover:bg-orange-500/10'
+            )}
+          >
+            <Sparkle className={compact ? 'h-4 w-4' : 'h-5 w-5'} />
+          </button>
+        </motion.div>
+
+        <div
+          className={classNames(
+            'mx-0.5 w-px shrink-0 bg-zinc-300 transition-all duration-300 dark:bg-zinc-700',
+            compact ? 'h-5' : 'h-7'
+          )}
+          aria-hidden="true"
+        />
+
+        {/* Navegación principal */}
+        {DOCK_ITEMS.map((item, index) => {
+          const Icon: ComponentType<{ className?: string }> = item.icon
+          const active = isActiveRoute(router.pathname, item.href)
+          const label = getLabel(item)
+          return (
+            <motion.div
+              key={item.href}
+              initial={reducedMotion ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.16 + index * 0.08 }}
+            >
+              <Link
+                href={item.href}
+                aria-label={label}
+                title={label}
+                onClick={resetTimer}
+                className={classNames(
+                  DOCK_BUTTON_BASE,
+                  compact ? 'h-10 w-10' : 'h-11 w-11',
+                  active ? DOCK_BUTTON_ACTIVE : DOCK_BUTTON_INACTIVE
+                )}
               >
-                <Link
-                  href={item.href}
-                  aria-label={label}
-                  title={label}
-                  onClick={handleLinkClick}
-                  className={classNames(
-                    DOCK_BUTTON_BASE,
-                    'h-11 w-11',
-                    active ? DOCK_BUTTON_ACTIVE : DOCK_BUTTON_INACTIVE
-                  )}
-                >
-                  <Icon className="h-5 w-5" />
-                </Link>
-              </motion.div>
-            )
-          })}
-
-          <motion.div
-            initial={reducedMotion ? false : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.35 }}
-          >
-            <button
-              type="button"
-              onClick={() => {
-                handleDockInteraction()
-                window.dispatchEvent(new CustomEvent('open-amaxing-chatbot'))
-              }}
-              title="Amaxing AI"
-              aria-label="Amaxing AI"
-              className={classNames(DOCK_BUTTON_BASE, 'h-11 w-11', DOCK_BUTTON_ACTIVE)}
-            >
-              <Sparkle className="h-5 w-5" />
-            </button>
-          </motion.div>
-
-          <motion.div
-            initial={reducedMotion ? false : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.43 }}
-          >
-            <button
-              type="button"
-              onClick={() => {
-                handleDockInteraction()
-                window.dispatchEvent(new CustomEvent('open-amaxing-hubmenu'))
-              }}
-              title="Menú"
-              aria-label="Menú"
-              className={classNames(DOCK_BUTTON_BASE, 'h-11 w-11', DOCK_BUTTON_INACTIVE)}
-            >
-              <FileText className="h-5 w-5" />
-            </button>
-          </motion.div>
-        </nav>
-
-        {/* Restore button when collapsed */}
-        <button
-          type="button"
-          aria-label="Mostrar dock"
-          title="Mostrar dock"
-          onClick={handleDockInteraction}
-          className={classNames(
-            'absolute bottom-0 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-500 text-white shadow-2xl transition-all duration-300',
-            isCollapsed ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-          )}
-        >
-          <Sparkle className="h-5 w-5" />
-        </button>
-      </div>
+                <Icon className={compact ? 'h-4 w-4' : 'h-5 w-5'} />
+              </Link>
+            </motion.div>
+          )
+        })}
+      </nav>
     </div>
   )
 }

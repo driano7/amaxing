@@ -186,5 +186,15 @@
     "history": "Uncensored History",
     "neighborhoods": "Neighborhood Deep Dives",
     "museums": "Art & Museums"
+  },
+  "support": {
+    "title": "Support the project",
+    "subtitle": "Open donations to keep building. Copy the method you prefer or scan the code. Thank you for powering Amaxing.",
+    "note": "Your contribution goes directly to the team to fund experience improvements.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "bank": "Bank account",
+    "or": "Prefer to donate on another network or does your country use bank transfers?",
+    "contact": "Contact us"
   }
 }

@@ -186,5 +186,15 @@
     "history": "Historia Sin Censura",
     "neighborhoods": "Inmersiones en Barrios",
     "museums": "Arte y Museos"
+  },
+  "support": {
+    "title": "Apoya el proyecto",
+    "subtitle": "Donaciones abiertas para seguir construyendo. Copia el método que prefieras o escanea el código. Gracias por impulsar Amaxing.",
+    "note": "Tu contribución llega directamente al equipo para financiar mejoras en la experiencia.",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "bank": "Cuenta bancaria",
+    "or": "¿Prefieres donar con otra red o tu país usa transferencia bancaria?",
+    "contact": "Contáctanos"
   }
 }
