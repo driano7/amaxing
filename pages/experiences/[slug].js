@@ -10,8 +10,17 @@ import ProseReveal from '@/components/ProseReveal'
 export default function ExperienceDetail({ experience, locale }) {
   const { t, currentLanguage } = useLanguage()
 
+  const isEs = currentLanguage === 'es' || locale === 'es'
+  const title = isEs ? experience.titleEs || experience.title : experience.title
+  const tagline = isEs ? experience.taglineEs || experience.tagline : experience.tagline
+  const description = isEs
+    ? experience.descriptionEs || experience.description
+    : experience.description
+  const location = isEs ? experience.locationEs || experience.location : experience.location
+  const highlights = isEs ? experience.highlightsEs || experience.highlights : experience.highlights
+
   const formatPrice = (price) => {
-    return new Intl.NumberFormat(locale === 'es' ? 'es-MX' : 'en-US', {
+    return new Intl.NumberFormat(isEs ? 'es-MX' : 'en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
@@ -21,52 +30,39 @@ export default function ExperienceDetail({ experience, locale }) {
 
   const formatDuration = (hours) => {
     if (hours === 1) {
-      return locale === 'es' ? '1 hora' : '1 hour'
+      return isEs ? '1 hora' : '1 hour'
     }
     if (hours < 12) {
-      return locale === 'es'
+      return isEs
         ? `${hours} ${hours === 2 ? 'hora' : 'horas'}`
         : `${hours} ${hours === 2 ? 'hour' : 'hours'}`
     }
     const days = Math.floor(hours / 24)
     const remainingHours = hours % 24
     if (remainingHours === 0) {
-      return locale === 'es'
+      return isEs
         ? `${days} ${days === 1 ? 'día' : 'días'}`
         : `${days} ${days === 1 ? 'day' : 'days'}`
     }
-    return locale === 'es' ? `${days}d ${remainingHours}h` : `${days}d ${remainingHours}h`
+    return isEs ? `${days}d ${remainingHours}h` : `${days}d ${remainingHours}h`
   }
 
   const getTranslatedHighlights = () => {
-    if (locale === 'es') {
-      return experience.highlights.map((highlight) => {
-        const translations = {
-          'Exclusive after-hours access': 'Acceso exclusivo fuera del horario público',
-          'Expert local guide': 'Guía experto local',
-          'Luxury transportation': 'Transporte de lujo',
-          'Astronomical precision': 'Precisión astronómica',
-          'Mayan calendar explanation': 'Explicación del calendario maya',
-          'Intimate access': 'Acceso íntimo',
-          'Cultural immersion': 'Inmersión cultural',
-          'Huichol community guide': 'Guía comunidad Huichol',
-          'hidden waterfalls': 'cascadas ocultas',
-        }
-        return translations[highlight] || highlight
-      })
+    if (isEs && Array.isArray(experience.highlightsEs)) {
+      return experience.highlightsEs
     }
     return experience.highlights
   }
 
   return (
     <>
-      <PageSEO title={experience.title} description={experience.description} />
+      <PageSEO title={title} description={description} />
       <div className="min-h-screen bg-white dark:bg-zinc-950">
         {/* Hero Image */}
         <section className="relative h-[60vh] min-h-[400px]">
           <Image
             src={experience.imageUrl}
-            alt={experience.title}
+            alt={title}
             fill
             priority
             sizes="100vw"
@@ -87,8 +83,11 @@ export default function ExperienceDetail({ experience, locale }) {
                   </span>
                 )}
                 <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
-                  {experience.title}
+                  {title}
                 </h1>
+                {tagline && (
+                  <p className="mb-6 max-w-2xl text-lg leading-relaxed text-gray-200">{tagline}</p>
+                )}
                 <div className="flex flex-wrap items-center gap-6 text-gray-200">
                   <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-orange-500" />
@@ -97,19 +96,19 @@ export default function ExperienceDetail({ experience, locale }) {
                   <div className="flex items-center gap-2">
                     <Users className="h-5 w-5 text-orange-500" />
                     <span>
-                      {locale === 'es' ? 'Hasta' : 'Up to'} {experience.maxGuests}{' '}
-                      {locale === 'es' ? 'personas' : 'guests'}
+                      {isEs ? 'Hasta' : 'Up to'} {experience.maxGuests}{' '}
+                      {isEs ? 'personas' : 'guests'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-orange-500" />
-                    <span>{experience.location.split(',')[0]}</span>
+                    <span>{location.split(',')[0]}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Star className="h-5 w-5 fill-current text-orange-500" />
                     <span className="font-semibold">{experience.rating}</span>
                     <span className="text-gray-500">
-                      ({experience.reviewCount} {locale === 'es' ? 'reseñas' : 'reviews'})
+                      ({experience.reviewCount} {isEs ? 'reseñas' : 'reviews'})
                     </span>
                   </div>
                 </div>
@@ -127,17 +126,17 @@ export default function ExperienceDetail({ experience, locale }) {
                 {/* Description */}
                 <div>
                   <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                    {locale === 'es' ? 'Descripción' : 'Description'}
+                    {isEs ? 'Descripción' : 'Description'}
                   </h2>
                   <ProseReveal className="prose prose-zinc max-w-none leading-relaxed text-gray-600 dark:text-gray-300 dark:prose-dark">
-                    {experience.description}
+                    {description}
                   </ProseReveal>
                 </div>
 
                 {/* Highlights */}
                 <div>
                   <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
-                    {locale === 'es' ? 'Lo que incluye' : "What's Included"}
+                    {isEs ? 'Lo que incluye' : "What's Included"}
                   </h2>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {getTranslatedHighlights().map((highlight, index) => (
@@ -163,12 +162,12 @@ export default function ExperienceDetail({ experience, locale }) {
                 {/* Location */}
                 <div>
                   <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                    {locale === 'es' ? 'Ubicación' : 'Location'}
+                    {isEs ? 'Ubicación' : 'Location'}
                   </h2>
                   <div className="rounded-xl border border-zinc-200 bg-zinc-100 p-6 dark:border-white/10 dark:bg-zinc-900/50">
                     <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
                       <MapPin className="h-6 w-6 flex-shrink-0 text-orange-500" />
-                      <span>{experience.location}</span>
+                      <span>{location}</span>
                     </div>
                   </div>
                 </div>
@@ -186,13 +185,13 @@ export default function ExperienceDetail({ experience, locale }) {
                   <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900/50 dark:shadow-none">
                     <div className="mb-6">
                       <div className="mb-1 text-xs uppercase tracking-wider text-zinc-500 dark:text-gray-400">
-                        {locale === 'es' ? 'Desde' : 'From'}
+                        {isEs ? 'Desde' : 'From'}
                       </div>
                       <div className="text-4xl font-bold text-gray-900 dark:text-white">
                         {formatPrice(experience.price)}
                       </div>
                       <div className="text-sm text-zinc-500 dark:text-gray-400">
-                        {locale === 'es' ? '/ persona' : '/ person'}
+                        {isEs ? '/ persona' : '/ person'}
                       </div>
                     </div>
 
@@ -202,33 +201,33 @@ export default function ExperienceDetail({ experience, locale }) {
                         {experience.rating}
                       </span>
                       <span className="text-zinc-500 dark:text-gray-400">
-                        ({experience.reviewCount} {locale === 'es' ? 'reseñas' : 'reviews'})
+                        ({experience.reviewCount} {isEs ? 'reseñas' : 'reviews'})
                       </span>
                     </div>
 
                     <div className="mb-6 space-y-3">
                       <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
-                        <span>{locale === 'es' ? 'Duración' : 'Duration'}</span>
+                        <span>{isEs ? 'Duración' : 'Duration'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
                           {formatDuration(experience.duration)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
-                        <span>{locale === 'es' ? 'Grupo máx.' : 'Max group'}</span>
+                        <span>{isEs ? 'Grupo máx.' : 'Max group'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
                           {experience.maxGuests}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
-                        <span>{locale === 'es' ? 'Ubicación' : 'Location'}</span>
+                        <span>{isEs ? 'Ubicación' : 'Location'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
-                          {experience.location.split(',')[0]}
+                          {location.split(',')[0]}
                         </span>
                       </div>
                     </div>
 
                     <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600">
-                      {locale === 'es' ? 'Reservar Ahora' : 'Book Now'}
+                      {isEs ? 'Reservar Ahora' : 'Book Now'}
                       <ChevronRight className="h-5 w-5" />
                     </button>
                   </div>
@@ -240,10 +239,10 @@ export default function ExperienceDetail({ experience, locale }) {
                         <Star className="h-6 w-6 fill-current text-orange-500" />
                         <div>
                           <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {locale === 'es' ? 'Experiencia Destacada' : 'Featured Experience'}
+                            {isEs ? 'Experiencia Destacada' : 'Featured Experience'}
                           </div>
                           <div className="text-xs text-zinc-600 dark:text-gray-400">
-                            {locale === 'es'
+                            {isEs
                               ? 'Una de nuestras experiencias más solicitadas'
                               : 'One of our most requested experiences'}
                           </div>
@@ -262,7 +261,7 @@ export default function ExperienceDetail({ experience, locale }) {
                     className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    {locale === 'es' ? 'Volver a Experiencias' : 'Back to Experiences'}
+                    {isEs ? 'Volver a Experiencias' : 'Back to Experiences'}
                   </Link>
                 </motion.div>
               </div>
@@ -274,16 +273,12 @@ export default function ExperienceDetail({ experience, locale }) {
   )
 }
 
-export async function getStaticPaths() {
-  return {
-    paths: tours.map((exp) => ({
-      params: { slug: exp.id },
-    })),
-    fallback: 'blocking',
-  }
+function getLocaleFromRequest(req, query) {
+  if (query.lang === 'es' || query.lang === 'en') return query.lang
+  return req?.cookies?.NEXT_LOCALE === 'es' ? 'es' : 'en'
 }
 
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params, req, query }) {
   const slug = params?.slug
   const experience = tours.find((t) => t.id === slug)
 
@@ -294,8 +289,7 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       experience,
-      locale: 'en',
+      locale: getLocaleFromRequest(req, query),
     },
-    revalidate: 3600,
   }
 }

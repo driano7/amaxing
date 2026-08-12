@@ -1,17 +1,53 @@
 import Link from '@/components/Link'
 import Image from '@/components/Image'
 import { motion } from 'framer-motion'
-import { Calendar, Clock, Users, MapPin, Star, Check, ArrowLeft, ChevronRight } from 'lucide-react'
+import {
+  Calendar,
+  Clock,
+  Users,
+  MapPin,
+  Star,
+  Check,
+  ArrowLeft,
+  ChevronRight,
+  MapPinned,
+} from 'lucide-react'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { PageSEO } from '@/components/SEO'
 import { tours } from '@/data/toursData'
 import ProseReveal from '@/components/ProseReveal'
 
+const categoryLabels = {
+  en: {
+    gastronomy: 'Culinary Underworld',
+    history: 'Uncensored History',
+    neighborhoods: 'Neighborhood Deep Dives',
+    museums: 'Art & Museums',
+  },
+  es: {
+    gastronomy: 'Submundo Culinario',
+    history: 'Historia Sin Censura',
+    neighborhoods: 'Inmersiones en Barrios',
+    museums: 'Arte y Museos',
+  },
+}
+
 export default function TourDetail({ tour, locale }) {
   const { t, currentLanguage } = useLanguage()
 
+  const isEs = currentLanguage === 'es' || locale === 'es'
+  const title = isEs ? tour.titleEs || tour.title : tour.title
+  const tagline = isEs ? tour.taglineEs || tour.tagline : tour.tagline
+  const description = isEs ? tour.descriptionEs || tour.description : tour.description
+  const location = isEs ? tour.locationEs || tour.location : tour.location
+  const meetingPoint = isEs ? tour.meetingPointEs || tour.meetingPoint : tour.meetingPoint
+  const highlights = isEs ? tour.highlightsEs || tour.highlights : tour.highlights
+  const includes = isEs ? tour.includesEs || tour.includes : tour.includes
+  const itinerary = isEs ? tour.itineraryEs || tour.itinerary : tour.itinerary
+  const gallery = tour.gallery?.length ? tour.gallery : [tour.imageUrl]
+
   const formatPrice = (price) => {
-    return new Intl.NumberFormat(locale === 'es' ? 'es-MX' : 'en-US', {
+    return new Intl.NumberFormat(isEs ? 'es-MX' : 'en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
@@ -21,52 +57,34 @@ export default function TourDetail({ tour, locale }) {
 
   const formatDuration = (hours) => {
     if (hours === 1) {
-      return locale === 'es' ? '1 hora' : '1 hour'
+      return isEs ? '1 hora' : '1 hour'
     }
     if (hours < 12) {
-      return locale === 'es'
+      return isEs
         ? `${hours} ${hours === 2 ? 'hora' : 'horas'}`
         : `${hours} ${hours === 2 ? 'hour' : 'hours'}`
     }
     const days = Math.floor(hours / 24)
     const remainingHours = hours % 24
     if (remainingHours === 0) {
-      return locale === 'es'
+      return isEs
         ? `${days} ${days === 1 ? 'día' : 'días'}`
         : `${days} ${days === 1 ? 'day' : 'days'}`
     }
-    return locale === 'es' ? `${days}d ${remainingHours}h` : `${days}d ${remainingHours}h`
+    return isEs ? `${days}d ${remainingHours}h` : `${days}d ${remainingHours}h`
   }
 
-  const getTranslatedHighlights = () => {
-    if (locale === 'es') {
-      return tour.highlights.map((highlight) => {
-        const translations = {
-          'Exclusive after-hours access': 'Acceso exclusivo fuera del horario público',
-          'Expert local guide': 'Guía experto local',
-          'Luxury transportation': 'Transporte de lujo',
-          'Astronomical precision': 'Precisión astronómica',
-          'Mayan calendar explanation': 'Explicación del calendario maya',
-          'Intimate access': 'Acceso íntimo',
-          'Cultural immersion': 'Inmersión cultural',
-          'Huichol community guide': 'Guía comunidad Huichol',
-          'hidden waterfalls': 'cascadas ocultas',
-        }
-        return translations[highlight] || highlight
-      })
-    }
-    return tour.highlights
-  }
+  const categoryLabel = categoryLabels[isEs ? 'es' : 'en'][tour.category] || tour.category
 
   return (
     <>
-      <PageSEO title={tour.title} description={tour.description} />
+      <PageSEO title={title} description={tagline || description} />
       <div className="min-h-screen bg-white dark:bg-zinc-950">
         {/* Hero Image */}
         <section className="relative h-[60vh] min-h-[400px]">
           <Image
             src={tour.imageUrl}
-            alt={tour.title}
+            alt={title}
             fill
             priority
             sizes="100vw"
@@ -83,12 +101,15 @@ export default function TourDetail({ tour, locale }) {
               >
                 {tour.category && (
                   <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-orange-500/20 px-4 py-1.5 text-sm font-medium text-orange-400">
-                    {tour.category.name}
+                    {categoryLabel}
                   </span>
                 )}
                 <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
-                  {tour.title}
+                  {title}
                 </h1>
+                {tagline && (
+                  <p className="mb-6 max-w-2xl text-lg leading-relaxed text-gray-200">{tagline}</p>
+                )}
                 <div className="flex flex-wrap items-center gap-6 text-gray-200">
                   <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-orange-500" />
@@ -97,19 +118,18 @@ export default function TourDetail({ tour, locale }) {
                   <div className="flex items-center gap-2">
                     <Users className="h-5 w-5 text-orange-500" />
                     <span>
-                      {locale === 'es' ? 'Hasta' : 'Up to'} {tour.maxGuests}{' '}
-                      {locale === 'es' ? 'personas' : 'guests'}
+                      {isEs ? 'Hasta' : 'Up to'} {tour.maxGuests} {isEs ? 'personas' : 'guests'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-orange-500" />
-                    <span>{tour.location.split(',')[0]}</span>
+                    <span>{location.split(',')[0]}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Star className="h-5 w-5 fill-current text-orange-500" />
                     <span className="font-semibold">{tour.rating}</span>
                     <span className="text-gray-400">
-                      ({tour.reviewCount} {locale === 'es' ? 'reseñas' : 'reviews'})
+                      ({tour.reviewCount} {isEs ? 'reseñas' : 'reviews'})
                     </span>
                   </div>
                 </div>
@@ -127,20 +147,46 @@ export default function TourDetail({ tour, locale }) {
                 {/* Description */}
                 <div>
                   <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                    {locale === 'es' ? 'Descripción' : 'Description'}
+                    {isEs ? '¿Qué es este tour?' : 'What is this tour?'}
                   </h2>
                   <ProseReveal className="prose prose-zinc max-w-none leading-relaxed text-gray-600 dark:text-gray-300 dark:prose-dark">
-                    {tour.description}
+                    {description}
                   </ProseReveal>
                 </div>
 
-                {/* Highlights */}
+                {/* What you'll do / Itinerary */}
+                {itinerary && itinerary.length > 0 && (
+                  <div>
+                    <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
+                      {isEs ? 'Qué harás' : "What you'll do"}
+                    </h2>
+                    <ol className="relative space-y-6 border-l-2 border-orange-500/30 pl-6">
+                      {itinerary.map((step, index) => (
+                        <motion.li
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.1 }}
+                          className="relative"
+                        >
+                          <span className="absolute -left-[31px] flex h-6 w-6 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
+                            {index + 1}
+                          </span>
+                          <p className="font-medium text-gray-800 dark:text-gray-200">{step}</p>
+                        </motion.li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+
+                {/* Includes */}
                 <div>
                   <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
-                    {locale === 'es' ? 'Lo que incluye' : "What's Included"}
+                    {isEs ? 'Lo que incluye' : "What's Included"}
                   </h2>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {getTranslatedHighlights().map((highlight, index) => (
+                    {highlights.map((highlight, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 20 }}
@@ -160,18 +206,67 @@ export default function TourDetail({ tour, locale }) {
                   </div>
                 </div>
 
-                {/* Location */}
-                <div>
-                  <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                    {locale === 'es' ? 'Ubicación' : 'Location'}
-                  </h2>
-                  <div className="rounded-xl border border-zinc-200 bg-zinc-100 p-6 dark:border-white/10 dark:bg-zinc-900/50">
-                    <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
-                      <MapPin className="h-6 w-6 flex-shrink-0 text-orange-500" />
-                      <span>{tour.location}</span>
+                {/* Extra includes */}
+                {includes && includes.length > 0 && (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {includes.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 text-sm text-zinc-600 dark:text-gray-300"
+                      >
+                        <Check className="h-4 w-4 flex-shrink-0 text-orange-500" />
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Meeting point */}
+                {meetingPoint && (
+                  <div>
+                    <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+                      {isEs ? 'Punto de encuentro' : 'Meeting point'}
+                    </h2>
+                    <div className="rounded-xl border border-zinc-200 bg-zinc-100 p-6 dark:border-white/10 dark:bg-zinc-900/50">
+                      <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                        <MapPinned className="h-6 w-6 flex-shrink-0 text-orange-500" />
+                        <div>
+                          <div className="font-medium">{meetingPoint}</div>
+                          <div className="text-sm text-zinc-500 dark:text-gray-400">{location}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {/* Photo gallery */}
+                {gallery.length > 1 && (
+                  <div>
+                    <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
+                      {isEs ? 'Galería' : 'Gallery'}
+                    </h2>
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                      {gallery.map((src, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, scale: 0.96 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.08 }}
+                          className="relative aspect-[4/3] overflow-hidden rounded-xl"
+                        >
+                          <Image
+                            src={src}
+                            alt={`${title} — ${index + 1}`}
+                            fill
+                            sizes="(min-width: 768px) 33vw, 50vw"
+                            className="object-cover"
+                          />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Sidebar - Booking */}
@@ -186,13 +281,13 @@ export default function TourDetail({ tour, locale }) {
                   <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900/50 dark:shadow-none">
                     <div className="mb-6">
                       <div className="mb-1 text-xs uppercase tracking-wider text-zinc-500 dark:text-gray-400">
-                        {locale === 'es' ? 'Desde' : 'From'}
+                        {isEs ? 'Desde' : 'From'}
                       </div>
                       <div className="text-4xl font-bold text-gray-900 dark:text-white">
                         {formatPrice(tour.price)}
                       </div>
                       <div className="text-sm text-zinc-500 dark:text-gray-400">
-                        {locale === 'es' ? '/ persona' : '/ person'}
+                        {isEs ? '/ persona' : '/ person'}
                       </div>
                     </div>
 
@@ -202,33 +297,33 @@ export default function TourDetail({ tour, locale }) {
                         {tour.rating}
                       </span>
                       <span className="text-zinc-500 dark:text-gray-400">
-                        ({tour.reviewCount} {locale === 'es' ? 'reseñas' : 'reviews'})
+                        ({tour.reviewCount} {isEs ? 'reseñas' : 'reviews'})
                       </span>
                     </div>
 
                     <div className="mb-6 space-y-3">
                       <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
-                        <span>{locale === 'es' ? 'Duración' : 'Duration'}</span>
+                        <span>{isEs ? 'Duración' : 'Duration'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
                           {formatDuration(tour.duration)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
-                        <span>{locale === 'es' ? 'Grupo máx.' : 'Max group'}</span>
+                        <span>{isEs ? 'Grupo máx.' : 'Max group'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
                           {tour.maxGuests}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-zinc-600 dark:text-gray-300">
-                        <span>{locale === 'es' ? 'Ubicación' : 'Location'}</span>
+                        <span>{isEs ? 'Ubicación' : 'Location'}</span>
                         <span className="font-medium text-gray-900 dark:text-white">
-                          {tour.location.split(',')[0]}
+                          {location.split(',')[0]}
                         </span>
                       </div>
                     </div>
 
                     <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600">
-                      {locale === 'es' ? 'Reservar Ahora' : 'Book Now'}
+                      {isEs ? 'Reservar Ahora' : 'Book Now'}
                       <ChevronRight className="h-5 w-5" />
                     </button>
                   </div>
@@ -240,10 +335,10 @@ export default function TourDetail({ tour, locale }) {
                         <Star className="h-6 w-6 fill-current text-orange-500" />
                         <div>
                           <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {locale === 'es' ? 'Tour Destacado' : 'Featured Tour'}
+                            {isEs ? 'Tour Destacado' : 'Featured Tour'}
                           </div>
                           <div className="text-xs text-zinc-600 dark:text-gray-400">
-                            {locale === 'es'
+                            {isEs
                               ? 'Uno de nuestros tours más solicitados'
                               : 'One of our most requested tours'}
                           </div>
@@ -262,7 +357,7 @@ export default function TourDetail({ tour, locale }) {
                     className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    {locale === 'es' ? 'Volver a Tours' : 'Back to Tours'}
+                    {isEs ? 'Volver a Tours' : 'Back to Tours'}
                   </Link>
                 </motion.div>
               </div>
@@ -274,16 +369,12 @@ export default function TourDetail({ tour, locale }) {
   )
 }
 
-export async function getStaticPaths() {
-  return {
-    paths: tours.map((t) => ({
-      params: { slug: t.id },
-    })),
-    fallback: 'blocking',
-  }
+function getLocaleFromRequest(req, query) {
+  if (query.lang === 'es' || query.lang === 'en') return query.lang
+  return req?.cookies?.NEXT_LOCALE === 'es' ? 'es' : 'en'
 }
 
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params, req, query }) {
   const slug = params?.slug
   const tour = tours.find((t) => t.id === slug)
 
@@ -294,8 +385,7 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       tour,
-      locale: 'en',
+      locale: getLocaleFromRequest(req, query),
     },
-    revalidate: 3600,
   }
 }

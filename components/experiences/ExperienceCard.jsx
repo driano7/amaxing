@@ -32,6 +32,10 @@ const categoryLabelMap = {
 export function ExperienceCard({ experience, onSelect, locale }) {
   const { addItem } = useCartStore()
   const CategoryIcon = categoryIconMap[experience.category] || MapPin
+  const isEs = locale === 'es'
+  const title = isEs ? experience.titleEs || experience.title : experience.title
+  const tagline = isEs ? experience.taglineEs || experience.tagline : experience.tagline
+  const location = isEs ? experience.locationEs || experience.location : experience.location
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -61,24 +65,12 @@ export function ExperienceCard({ experience, onSelect, locale }) {
   }
 
   const getTranslatedHighlights = () => {
-    if (locale === 'es') {
-      return experience.highlights.map((highlight) => {
-        const translations = {
-          'Exclusive after-hours access': 'Acceso exclusivo fuera del horario público',
-          'Expert local guide': 'Guía experto local',
-          'Luxury transportation': 'Transporte de lujo',
-          'Astronomical precision': 'Precisión astronómica',
-          'Mayan calendar explanation': 'Explicación del calendario maya',
-          'Intimate access': 'Acceso íntimo',
-          'Cultural immersion': 'Inmersión cultural',
-          'Huichol community guide': 'Guía comunidad Huichol',
-          'hidden waterfalls': 'cascadas ocultas',
-        }
-        return translations[highlight] || highlight
-      })
+    if (isEs && Array.isArray(experience.highlightsEs)) {
+      return experience.highlightsEs
     }
     return experience.highlights
   }
+  const highlights = getTranslatedHighlights()
 
   return (
     <article
@@ -92,7 +84,7 @@ export function ExperienceCard({ experience, onSelect, locale }) {
       <div className="relative h-48 overflow-hidden">
         <motion.img
           src={experience.imageUrl}
-          alt={experience.title}
+          alt={title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           whileHover={{ scale: 1.03 }}
         />
@@ -122,11 +114,16 @@ export function ExperienceCard({ experience, onSelect, locale }) {
         </div>
 
         <h3 className="mb-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-orange-500 dark:text-white">
-          {experience.title}
+          {title}
         </h3>
 
-        <p className="line-clamp-2 mb-4 text-sm text-zinc-500 dark:text-zinc-400">
-          {experience.location}
+        {tagline && (
+          <p className="line-clamp-2 mb-2 text-sm text-zinc-500 dark:text-zinc-400">{tagline}</p>
+        )}
+
+        <p className="mb-4 flex items-center gap-1 text-sm text-zinc-500 dark:text-zinc-400">
+          <MapPin className="h-3.5 w-3.5" />
+          {location}
         </p>
 
         <div className="mb-4 flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-300">
@@ -177,13 +174,13 @@ export function ExperienceCard({ experience, onSelect, locale }) {
                 e.stopPropagation()
                 addItem({
                   experienceId: experience.id,
-                  title: experience.title,
+                  title,
                   imageUrl: experience.imageUrl,
                   price: experience.price,
                   currency: 'USD',
-                  location: experience.location,
+                  location,
                   maxGuests: experience.maxGuests,
-                  highlights: experience.highlights,
+                  highlights,
                 })
               }}
               className="flex items-center gap-1.5 rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 font-semibold text-orange-500 transition-colors hover:bg-orange-500/20"

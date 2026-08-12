@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Utensils, Skull, MapPin, Palette, Grid } from 'lucide-react'
 import { tours, categories } from '@/data/toursData'
@@ -13,6 +13,14 @@ import { AnimatedSection } from '@/components/AnimatedSection'
 export default function Tours() {
   const { t, locale } = useTranslation()
   const [activeCategory, setActiveCategory] = useState('all')
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const category = params.get('category')
+    if (category && categories.some((c) => c.id === category)) {
+      setActiveCategory(category)
+    }
+  }, [])
 
   const filteredTours =
     activeCategory === 'all' ? tours : tours.filter((tour) => tour.category === activeCategory)
@@ -72,6 +80,10 @@ export default function Tours() {
               {categories.map((category) => {
                 const Icon = categoryIcons[category.id]
                 const isActive = activeCategory === category.id
+                const categoryLabel =
+                  category.id === 'all'
+                    ? t('tourCategories.all') || 'All Tours'
+                    : t(`tourCategories.${category.id}`) || category.label
                 return (
                   <motion.button
                     key={category.id}
@@ -89,7 +101,7 @@ export default function Tours() {
                     whileTap={{ scale: 0.98 }}
                   >
                     {Icon && <Icon className="h-4 w-4" aria-hidden="true" />}
-                    <span>{category.label}</span>
+                    <span>{categoryLabel}</span>
                   </motion.button>
                 )
               })}
