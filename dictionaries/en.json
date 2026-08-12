@@ -13,7 +13,8 @@
     "bookNow": "Book Now",
     "booking": "Booking",
     "logout": "Logout",
-    "login": "Login"
+    "login": "Login",
+    "more": "More"
   },
   "hero": {
     "title": "Discover the Mexico They Never Show You.",
@@ -196,5 +197,14 @@
     "bank": "Bank account",
     "or": "Prefer to donate on another network or does your country use bank transfers?",
     "contact": "Contact us"
+  },
+  "nav": {
+    "header": {
+      "tours": "Tours",
+      "culinary": "Culinary",
+      "history": "History",
+      "neighborhoods": "Neighborhoods",
+      "museums": "Museums"
+    }
   }
 }

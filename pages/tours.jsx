@@ -1,26 +1,34 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Utensils, Skull, MapPin, Palette, Grid } from 'lucide-react'
 import { tours, categories } from '@/data/toursData'
 import { ExperienceCard } from '@/components/experiences/ExperienceCard'
-import { useTranslation } from '@/lib/hooks/useTranslationClient'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
 import { AnimatedSection } from '@/components/AnimatedSection'
 
 export default function Tours() {
-  const { t, locale } = useTranslation()
+  const { t, currentLanguage } = useLanguage()
+  const locale = currentLanguage || 'en'
+  const router = useRouter()
   const [activeCategory, setActiveCategory] = useState('all')
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const category = params.get('category')
-    if (category && categories.some((c) => c.id === category)) {
-      setActiveCategory(category)
-    }
-  }, [])
+    const category = router.query.category
+    const nextCategory =
+      typeof category === 'string' && categories.some((c) => c.id === category) ? category : 'all'
+    setActiveCategory(nextCategory)
+  }, [router.query.category])
+
+  const handleCategoryClick = (categoryId) => {
+    const href = categoryId === 'all' ? '/tours' : `/tours?category=${categoryId}`
+    router.push(href, undefined, { scroll: false })
+    setActiveCategory(categoryId)
+  }
 
   const filteredTours =
     activeCategory === 'all' ? tours : tours.filter((tour) => tour.category === activeCategory)
@@ -31,6 +39,14 @@ export default function Tours() {
     neighborhoods: MapPin,
     museums: Palette,
     all: Grid,
+  }
+
+  const categoryDictKeys = {
+    gastronomy: 'culinary',
+    history: 'history',
+    neighborhoods: 'neighborhoods',
+    museums: 'museums',
+    all: 'all',
   }
 
   return (
@@ -82,12 +98,12 @@ export default function Tours() {
                 const isActive = activeCategory === category.id
                 const categoryLabel =
                   category.id === 'all'
-                    ? t('tourCategories.all') || 'All Tours'
-                    : t(`tourCategories.${category.id}`) || category.label
+                    ? t('tourCategories.all')
+                    : t(`tourCategories.${categoryDictKeys[category.id]}`) || category.label
                 return (
                   <motion.button
                     key={category.id}
-                    onClick={() => setActiveCategory(category.id)}
+                    onClick={() => handleCategoryClick(category.id)}
                     role="tab"
                     aria-selected={isActive}
                     aria-controls="tours-grid"

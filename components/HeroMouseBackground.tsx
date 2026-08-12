@@ -128,9 +128,6 @@ export function HeroMouseBackground({ className }: HeroMouseBackgroundProps) {
       dampening: isMobileTouch ? 0.28 : 0.25,
       tension: 0.98,
     }
-    const strokeLightness = isMobileTouch ? 62 : 55
-    const strokeAlpha = isMobileTouch ? 0.38 : 0.22
-    const glowAlpha = isMobileTouch ? 0.28 : 0.14
     const strokeWidth = isMobileTouch ? 1.9 : 1
     const glowBlur = isMobileTouch ? 14 : 8
 
@@ -312,6 +309,10 @@ export function HeroMouseBackground({ className }: HeroMouseBackgroundProps) {
     const render = () => {
       if (!running) return
       updateAutoMotion()
+      const isDark = document.documentElement.classList.contains('dark')
+      const strokeLightness = isDark ? (isMobileTouch ? 62 : 55) : 45
+      const strokeAlpha = isDark ? (isMobileTouch ? 0.38 : 0.22) : isMobileTouch ? 0.5 : 0.32
+      const glowAlpha = isDark ? (isMobileTouch ? 0.28 : 0.14) : isMobileTouch ? 0.34 : 0.2
       ctx.globalCompositeOperation = 'source-over'
       ctx.clearRect(0, 0, width, height)
       ctx.globalCompositeOperation = 'lighter'

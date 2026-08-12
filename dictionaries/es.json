@@ -13,7 +13,8 @@
     "bookNow": "Reservar Ahora",
     "booking": "Reservación",
     "logout": "Cerrar Sesión",
-    "login": "Iniciar Sesión"
+    "login": "Iniciar Sesión",
+    "more": "Más"
   },
   "hero": {
     "title": "Descubre el México que Nunca Te Enseñan.",
@@ -196,5 +197,14 @@
     "bank": "Cuenta bancaria",
     "or": "¿Prefieres donar con otra red o tu país usa transferencia bancaria?",
     "contact": "Contáctanos"
+  },
+  "nav": {
+    "header": {
+      "tours": "Tours",
+      "culinary": "Culinario",
+      "history": "Historia",
+      "neighborhoods": "Barrios",
+      "museums": "Museos"
+    }
   }
 }

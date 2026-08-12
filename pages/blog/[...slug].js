@@ -20,10 +20,12 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const allPosts = await getAllFilesFrontMatter('blog')
-  const postIndex = allPosts.findIndex((post) => formatSlug(post.slug) === params.slug.join('/'))
-  const prev = allPosts[postIndex + 1] || null
-  const next = allPosts[postIndex - 1] || null
   const post = await getFileBySlug('blog', params.slug.join('/'))
+  const postLang = post.frontMatter.lang || 'en'
+  const sameLangPosts = allPosts.filter((p) => (p.lang || 'en') === postLang)
+  const postIndex = sameLangPosts.findIndex((p) => formatSlug(p.slug) === params.slug.join('/'))
+  const prev = sameLangPosts[postIndex + 1] || null
+  const next = sameLangPosts[postIndex - 1] || null
   const authorList = post.frontMatter.authors || ['default']
   const authorPromise = authorList.map(async (author) => {
     const authorResults = await getFileBySlug('authors', [author])

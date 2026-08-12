@@ -9,14 +9,38 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { motion, AnimatePresence, useTransform, useScroll } from 'framer-motion'
 import { useEffect, useState, useCallback } from 'react'
 import classNames from 'classnames'
+import { useTheme } from 'next-themes'
 import { useLanguage } from '@/lib/hooks/useLanguage'
-import { Utensils, Skull, MapPin, Palette, LayoutGrid, ChevronDown } from 'lucide-react'
-import { navItemsConfig, tourCategoriesConfig } from '@/data/hubMenuLinks'
+import {
+  Utensils,
+  Skull,
+  MapPin,
+  Palette,
+  LayoutGrid,
+  ChevronDown,
+  Compass,
+  BookOpen,
+  Newspaper,
+  Mail,
+  Tag,
+} from 'lucide-react'
+import { navItemsConfig, headerDropdownConfig } from '@/data/hubMenuLinks'
 import enDict from '@/dictionaries/en.json'
 import esDict from '@/dictionaries/es.json'
 
 // Map icon names from config to actual icon components
-const iconComponents = { Utensils, Skull, MapPin, Palette, LayoutGrid }
+const iconComponents = {
+  Utensils,
+  Skull,
+  MapPin,
+  Palette,
+  LayoutGrid,
+  Compass,
+  BookOpen,
+  Newspaper,
+  Mail,
+  Tag,
+}
 
 const dictionaries = { en: enDict, es: esDict }
 
@@ -42,6 +66,8 @@ export function Navbar() {
   const [showLabels, setShowLabels] = useState(true)
   const { scrollY } = useScroll()
   const { currentLanguage, setLanguage, isChanging, t } = useLanguage()
+  const { resolvedTheme } = useTheme()
+  const isDarkTheme = resolvedTheme === 'dark'
 
   // Ensure currentLanguage is always a valid string
   const locale =
@@ -67,7 +93,7 @@ export function Navbar() {
   }))
 
   // Tour category dropdown - loaded from centralized config (data/hubMenuLinks.js)
-  const tourCategories = tourCategoriesConfig.map((item) => ({
+  const tourCategories = headerDropdownConfig.map((item) => ({
     ...item,
     label: item.labelKey ? getLabel(item.labelKey, item.fallback) : item.label,
     icon: iconComponents[item.icon],
@@ -141,7 +167,9 @@ export function Navbar() {
   const backgroundColor = useTransform(
     scrollY,
     [0, 50],
-    ['rgba(10, 10, 10, 0)', 'rgba(10, 10, 10, 0.7)']
+    isDarkTheme
+      ? ['rgba(10, 10, 10, 0)', 'rgba(10, 10, 10, 0.7)']
+      : ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.7)']
   )
 
   const backdropBlur = useTransform(scrollY, [0, 50], ['blur-none', 'blur-xl'])
@@ -240,7 +268,7 @@ export function Navbar() {
                   aria-expanded={categoriesOpen}
                 >
                   <LayoutGrid className="h-4 w-4 text-orange-500" aria-hidden="true" />
-                  <span>{getLabel('header.categories', 'Categories')}</span>
+                  <span>{getLabel('header.more', 'More')}</span>
                   <ChevronDown
                     className={classNames(
                       'h-3.5 w-3.5 text-orange-500 transition-transform duration-200',

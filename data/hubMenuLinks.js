@@ -4,38 +4,76 @@
  * This file documents all header navigation options for both
  * desktop and mobile (drawer) views.
  *
- * Each item has:
- *   - labelKey:  i18n key for translation (or null for hardcoded labels)
- *   - fallback:  fallback label if translation is missing
- *   - href:      route or URL
- *   - icon:      optional icon name (only for desktop category items)
- *   - isCategory: whether this item is a tour category (styled differently on desktop)
+ * Layout split (desktop):
+ *   - navItemsConfig        -> Header bar (compact 1-word category labels)
+ *   - headerDropdownConfig  -> Header secondary dropdown
  *
- * Usage in Navbar.tsx:
- *   import { navItemsConfig, drawerItemsConfig } from '@/data/hubMenuLinks'
- *   const navItems = navItemsConfig.map((item) => ({
- *     ...item,
- *     label: item.labelKey ? getLabel(item.labelKey, item.fallback) : item.fallback,
- *   }))
+ * Mobile:
+ *   - drawerItemsConfig     -> HubMenu drawer list + MobileDock nav
+ *   - tourCategoriesConfig  -> HubMenu "Categories" section
  */
 
-// Icon imports are handled in the component that uses this config.
-// We store the icon name as a string and map it in the component.
-// This keeps this file free of JSX/TSX dependencies.
-
+// Desktop header items — one-word labels to keep the bar compact.
 const navItemsConfig = [
-  { labelKey: 'header.nav.home', fallback: 'Home', href: '/' },
-  { labelKey: 'header.nav.experiences', fallback: 'Experiences', href: '/experiences' },
-  { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories' },
-  { labelKey: 'header.nav.news', fallback: 'News', href: '/news' },
-  { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact' },
+  { labelKey: 'nav.header.tours', fallback: 'Tours', href: '/tours', icon: 'LayoutGrid' },
+  {
+    labelKey: 'nav.header.culinary',
+    fallback: 'Culinary',
+    href: '/tours?category=gastronomy',
+    icon: 'Utensils',
+  },
+  {
+    labelKey: 'nav.header.history',
+    fallback: 'History',
+    href: '/tours?category=history',
+    icon: 'Skull',
+  },
+  {
+    labelKey: 'nav.header.neighborhoods',
+    fallback: 'Neighborhoods',
+    href: '/tours?category=neighborhoods',
+    icon: 'MapPin',
+  },
+  {
+    labelKey: 'nav.header.museums',
+    fallback: 'Museums',
+    href: '/tours?category=museums',
+    icon: 'Palette',
+  },
 ]
 
-// Tour categories grouped into a single "Categories" dropdown (desktop).
-// These are rendered as one hover trigger in the navbar and as a column
-// of options so the header stays compact.
-const tourCategoriesConfig = [
+// Desktop "More" dropdown — secondary pages (Experiences, Stories, News, Contact + Pricing + All Tours).
+const headerDropdownConfig = [
+  {
+    labelKey: 'header.nav.experiences',
+    fallback: 'Experiences',
+    href: '/experiences',
+    icon: 'Compass',
+  },
+  { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories', icon: 'BookOpen' },
+  { labelKey: 'header.nav.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
+  { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
+  { labelKey: 'header.nav.pricing', fallback: 'Pricing', href: '/pricing', icon: 'Tag' },
   { labelKey: 'tourCategories.all', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
+]
+
+// Mobile drawer main list (HubMenu + MobileDock).
+const drawerItemsConfig = [
+  {
+    labelKey: 'header.nav.experiences',
+    fallback: 'Experiences',
+    href: '/experiences',
+    icon: 'Compass',
+  },
+  { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories', icon: 'BookOpen' },
+  { labelKey: 'header.nav.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
+  { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
+  { labelKey: 'header.nav.pricing', fallback: 'Pricing', href: '/pricing', icon: 'Tag' },
+  { labelKey: 'tourCategories.all', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
+]
+
+// Mobile drawer "Categories" section — the 4 tour categories with their icons.
+const tourCategoriesConfig = [
   {
     labelKey: 'tourCategories.culinary',
     fallback: 'Culinary Underworld',
@@ -62,48 +100,9 @@ const tourCategoriesConfig = [
   },
 ]
 
-// Mobile drawer items (same as desktop but without icons)
-const drawerItemsConfig = [
-  { labelKey: 'header.nav.home', fallback: 'Home', href: '/' },
-  { labelKey: 'header.nav.tours', fallback: 'Tours', href: '/tours' },
-  {
-    labelKey: 'tourCategories.culinary',
-    fallback: 'Culinary Underworld',
-    href: '/tours?category=gastronomy',
-  },
-  {
-    labelKey: 'tourCategories.history',
-    fallback: 'Uncensored History',
-    href: '/tours?category=history',
-  },
-  {
-    labelKey: 'tourCategories.neighborhoods',
-    fallback: 'Neighborhood Deep Dives',
-    href: '/tours?category=neighborhoods',
-  },
-  {
-    labelKey: 'tourCategories.museums',
-    fallback: 'Art & Museums',
-    href: '/tours?category=museums',
-  },
-  { labelKey: 'header.nav.experiences', fallback: 'Experiences', href: '/experiences' },
-  { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories' },
-  { labelKey: 'header.nav.news', fallback: 'News', href: '/news' },
-  { labelKey: 'header.nav.pricing', fallback: 'Pricing', href: '/pricing' },
-  { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact' },
-]
-
-// Map icon names to components (used by Navbar)
-const iconMap = {
-  Utensils: 'Utensils',
-  Skull: 'Skull',
-  MapPin: 'MapPin',
-  Palette: 'Palette',
-}
-
 module.exports = {
   navItemsConfig,
   drawerItemsConfig,
+  headerDropdownConfig,
   tourCategoriesConfig,
-  iconMap,
 }

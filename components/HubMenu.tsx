@@ -4,14 +4,37 @@ import Link from '@/components/Link'
 import { motion, AnimatePresence, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef, useState, useCallback, type RefObject } from 'react'
 import classNames from 'classnames'
-import { FileText, Utensils, Skull, MapPin, Palette } from 'lucide-react'
+import {
+  FileText,
+  Utensils,
+  Skull,
+  MapPin,
+  Palette,
+  Compass,
+  BookOpen,
+  Newspaper,
+  Mail,
+  Tag,
+  LayoutGrid,
+} from 'lucide-react'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { drawerItemsConfig, tourCategoriesConfig } from '@/data/hubMenuLinks'
 
 // Use a type that works both server and client
 type DivRef = RefObject<HTMLDivElement | null>
 
-const iconComponents = { Utensils, Skull, MapPin, Palette }
+const iconComponents = {
+  Utensils,
+  Skull,
+  MapPin,
+  Palette,
+  Compass,
+  BookOpen,
+  Newspaper,
+  Mail,
+  Tag,
+  LayoutGrid,
+}
 
 const getLabel = (item, t) => {
   if (item.labelKey) {
@@ -189,23 +212,31 @@ export function HubMenu({ showTrigger = true }) {
 
                 {/* Nav Items */}
                 <nav className="flex-1 space-y-1 overflow-y-auto px-6 py-4">
-                  {drawerItemsConfig.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={closeMenu}
-                      className={classNames(
-                        'group relative flex items-center gap-3 rounded-2xl px-4 py-3.5 text-base font-semibold transition-all duration-200',
-                        'text-zinc-900 dark:text-white',
-                        'hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'
-                      )}
-                    >
-                      <span className="transition-transform duration-200 group-hover:-translate-x-0.5">
-                        {getLabel(item, t)}
-                      </span>
-                      <span className="absolute bottom-0 left-4 right-4 h-px origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
-                    </Link>
-                  ))}
+                  {drawerItemsConfig.map((item) => {
+                    const ItemIcon = iconComponents[item.icon]
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={closeMenu}
+                        className={classNames(
+                          'group relative flex items-center gap-3 rounded-2xl px-4 py-3.5 text-base font-semibold transition-all duration-200',
+                          'text-zinc-900 dark:text-white',
+                          'hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'
+                        )}
+                      >
+                        {ItemIcon && (
+                          <span className="bg-orange-500/15 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-orange-500 transition-transform duration-200 group-hover:scale-110">
+                            <ItemIcon className="h-4 w-4" />
+                          </span>
+                        )}
+                        <span className="transition-transform duration-200 group-hover:-translate-x-0.5">
+                          {getLabel(item, t)}
+                        </span>
+                        <span className="absolute bottom-0 left-4 right-4 h-px origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
+                      </Link>
+                    )
+                  })}
                 </nav>
 
                 {/* Categories section */}
