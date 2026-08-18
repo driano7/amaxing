@@ -58,7 +58,29 @@
     "total": "Total",
     "bookNow": "Reservar Ahora",
     "minutes": "minutos",
-    "refundable": "Totalmente reembolsable"
+    "refundable": "Totalmente reembolsable",
+    "backToCart": "Volver al carrito",
+    "title": "Checkout",
+    "orderSummary": "Resumen de tu compra",
+    "person": "persona",
+    "persons": "personas",
+    "currency": "Moneda",
+    "customer": "Cliente",
+    "payment": "Detalles de la tarjeta",
+    "qrNote": "Después del pago recibirás un ticket con código QR por cada experiencia. Podrás descargarlos desde tu perfil.",
+    "testMode": "Stripe modo prueba — usa la tarjeta 4242 4242 4242 4242",
+    "cardNumber": "Número de tarjeta",
+    "cardHolder": "Nombre en la tarjeta",
+    "expiration": "Expiración",
+    "cvv": "CVV",
+    "cardPreviewNote": "Esta es una vista previa visual. El cobro real ocurre en el checkout seguro de Stripe.",
+    "payNow": "Pagar ahora",
+    "processing": "Procesando...",
+    "redirectingStripe": "Redirigiendo a Stripe...",
+    "confirmAndPay": "Confirmar y pagar",
+    "notLoggedIn": "Redirigiendo al login...",
+    "processingOrder": "Creando tu reserva...",
+    "paymentConfirmed": "Pago confirmado"
   },
   "checkoutSuccess": {
     "title": "¡Reserva Confirmada!",
@@ -206,5 +228,24 @@
       "neighborhoods": "Barrios",
       "museums": "Museos"
     }
+  },
+  "cart": {
+    "title": "Tu Carrito",
+    "backToTours": "Seguir explorando",
+    "emptyTitle": "Tu carrito está vacío",
+    "emptySubtitle": "Agrega experiencias para reservar tu próxima aventura",
+    "exploreTours": "Explorar experiencias",
+    "experiences": "Experiencias",
+    "totalPeople": "Personas totales",
+    "total": "Total",
+    "date": "Fecha",
+    "time": "Hora",
+    "select": "Selecciona",
+    "completeDates": "Selecciona fecha y hora para cada experiencia antes de continuar",
+    "checkout": "Proceder al Checkout",
+    "setupRequired": "Configuración requerida",
+    "peopleCount": "personas",
+    "remove": "Eliminar",
+    "currencyNote": "Precios mostrados en MXN"
   }
 }

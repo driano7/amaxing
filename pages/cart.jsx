@@ -7,20 +7,15 @@ import Image from '@/components/Image'
 import { Trash2, Calendar, Clock, Users, ArrowRight, ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/lib/store/useCartStore'
 import { useLanguage } from '@/lib/hooks/useLanguage'
+import { formatPriceByLocale } from '@/lib/currency'
 
 export default function CartPage() {
   const { items, removeItem, updateItem, subtotal, itemCount, totalItemCount } = useCartStore()
-  const { t } = useLanguage()
+  const { t, currentLanguage } = useLanguage()
+  const locale = currentLanguage === 'es' ? 'es' : 'en'
   const [isCheckingOut, setIsCheckingOut] = useState(false)
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
-  }
+  const formatPrice = (price) => formatPriceByLocale(price, locale)
 
   const today = new Date().toISOString().split('T')[0]
   const maxDate = new Date()
@@ -67,12 +62,14 @@ export default function CartPage() {
           className="mx-auto max-w-4xl"
         >
           <div className="mb-8 flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Tu Carrito</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              {t('cart.title', 'Tu Carrito')}
+            </h1>
             <Link
               href="/tours"
               className="text-sm font-medium text-orange-500 hover:text-orange-400"
             >
-              ← Seguir explorando
+              ← {t('cart.backToTours', 'Seguir explorando')}
             </Link>
           </div>
 
@@ -80,16 +77,16 @@ export default function CartPage() {
             <div className="rounded-2xl border border-zinc-200 bg-zinc-100/50 py-20 text-center dark:border-white/10 dark:bg-zinc-900/50">
               <ShoppingBag className="mx-auto h-16 w-16 text-zinc-400 dark:text-gray-600" />
               <h2 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
-                Tu carrito está vacío
+                {t('cart.emptyTitle', 'Tu carrito está vacío')}
               </h2>
               <p className="mt-2 text-zinc-500 dark:text-gray-400">
-                Agrega experiencias para reservar tu próxima aventura
+                {t('cart.emptySubtitle', 'Agrega experiencias para reservar tu próxima aventura')}
               </p>
               <Link
                 href="/tours"
                 className="mt-6 inline-flex items-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
               >
-                Explorar experiencias
+                {t('cart.exploreTours', 'Explorar experiencias')}
               </Link>
             </div>
           ) : (
@@ -128,7 +125,7 @@ export default function CartPage() {
                           <button
                             onClick={() => removeItem(item.lineId)}
                             className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-red-500/10 hover:text-red-400 dark:text-gray-500"
-                            aria-label={`Eliminar ${item.title}`}
+                            aria-label={`${t('cart.remove', 'Eliminar')} ${item.title}`}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -137,7 +134,7 @@ export default function CartPage() {
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <label className="mb-1 block text-xs text-zinc-500 dark:text-gray-400">
-                              Fecha
+                              {t('cart.date', 'Fecha')}
                             </label>
                             <div className="relative">
                               <Calendar className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-orange-500" />
@@ -153,7 +150,7 @@ export default function CartPage() {
                           </div>
                           <div>
                             <label className="mb-1 block text-xs text-zinc-500 dark:text-gray-400">
-                              Hora
+                              {t('cart.time', 'Hora')}
                             </label>
                             <div className="relative">
                               <Clock className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-orange-500" />
@@ -163,7 +160,7 @@ export default function CartPage() {
                                 disabled={!item.date}
                                 className="w-full rounded-lg border border-zinc-300 bg-white py-1.5 pl-8 pr-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none disabled:opacity-50 dark:border-white/10 dark:bg-zinc-900 dark:text-white"
                               >
-                                <option value="">Selecciona</option>
+                                <option value="">{t('cart.select', 'Selecciona')}</option>
                                 {timeSlots.map((slot) => (
                                   <option key={slot} value={slot}>
                                     {slot}
@@ -215,25 +212,38 @@ export default function CartPage() {
               <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-6">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-zinc-600 dark:text-gray-300">
-                    Experiencias ({itemCount})
+                    {t('cart.experiences', 'Experiencias')} ({itemCount})
                   </span>
                   <span className="font-medium text-gray-900 dark:text-white">{itemCount}</span>
                 </div>
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-zinc-600 dark:text-gray-300">Personas totales</span>
+                  <span className="text-zinc-600 dark:text-gray-300">
+                    {t('cart.totalPeople', 'Personas totales')}
+                  </span>
                   <span className="font-medium text-gray-900 dark:text-white">
                     {totalItemCount}
                   </span>
                 </div>
                 <div className="flex items-center justify-between border-t border-white/10 pt-3 dark:border-white/10">
-                  <span className="text-lg text-zinc-600 dark:text-gray-300">Total</span>
+                  <span className="text-lg text-zinc-600 dark:text-gray-300">
+                    {t('cart.total', 'Total')}
+                  </span>
                   <span className="text-3xl font-bold text-gray-900 dark:text-white">
                     {formatPrice(subtotal)}
                   </span>
                 </div>
+                <p className="mt-1 text-right text-xs text-zinc-500 dark:text-gray-500">
+                  {locale === 'es'
+                    ? t('cart.currencyNote', 'Precios mostrados en MXN')
+                    : t('cart.currencyNote', 'Precios mostrados en USD')}
+                </p>
                 {!allItemsReady && (
                   <p className="mt-3 text-xs text-orange-500">
-                    ⚠ Selecciona fecha y hora para cada experiencia antes de continuar
+                    ⚠{' '}
+                    {t(
+                      'cart.completeDates',
+                      'Selecciona fecha y hora para cada experiencia antes de continuar'
+                    )}
                   </p>
                 )}
                 <Link
@@ -247,7 +257,7 @@ export default function CartPage() {
                   }}
                   className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
                 >
-                  Proceder al Checkout
+                  {t('cart.checkout', 'Proceder al Checkout')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

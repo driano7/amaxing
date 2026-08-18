@@ -58,7 +58,29 @@
     "total": "Total",
     "bookNow": "Book Now",
     "minutes": "minutes",
-    "refundable": "Fully refundable"
+    "refundable": "Fully refundable",
+    "backToCart": "Back to cart",
+    "title": "Checkout",
+    "orderSummary": "Order summary",
+    "person": "person",
+    "persons": "people",
+    "currency": "Currency",
+    "customer": "Customer",
+    "payment": "Card details",
+    "qrNote": "After payment you'll receive a ticket with a QR code for each experience. Download them from your profile.",
+    "testMode": "Stripe test mode — use card 4242 4242 4242 4242",
+    "cardNumber": "Card number",
+    "cardHolder": "Name on card",
+    "expiration": "Expiration",
+    "cvv": "CVV",
+    "cardPreviewNote": "This is a visual preview. The charge happens on Stripe's secure checkout.",
+    "payNow": "Pay now",
+    "processing": "Processing...",
+    "redirectingStripe": "Redirecting to Stripe...",
+    "confirmAndPay": "Confirm and pay",
+    "notLoggedIn": "Redirecting to login...",
+    "processingOrder": "Creating your booking...",
+    "paymentConfirmed": "Payment confirmed"
   },
   "checkoutSuccess": {
     "title": "Booking Confirmed!",
@@ -206,5 +228,24 @@
       "neighborhoods": "Neighborhoods",
       "museums": "Museums"
     }
+  },
+  "cart": {
+    "title": "Your Cart",
+    "backToTours": "Continue exploring",
+    "emptyTitle": "Your cart is empty",
+    "emptySubtitle": "Add experiences to book your next adventure",
+    "exploreTours": "Explore experiences",
+    "experiences": "Experiences",
+    "totalPeople": "Total people",
+    "total": "Total",
+    "date": "Date",
+    "time": "Time",
+    "select": "Select",
+    "completeDates": "Select a date and time for every experience before continuing",
+    "checkout": "Proceed to Checkout",
+    "setupRequired": "Setup required",
+    "peopleCount": "people",
+    "remove": "Remove",
+    "currencyNote": "Prices shown in USD"
   }
 }
