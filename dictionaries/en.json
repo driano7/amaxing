@@ -17,8 +17,9 @@
     "more": "More"
   },
   "hero": {
-    "title": "Discover the Mexico They Never Show You.",
-    "subtitle": "Exclusive luxury tours and experiences crafted for discerning travelers seeking authentic Mexican culture beyond the tourist trail.",
+    "titleStart": "Discover the",
+    "titleHighlight": "CDMX-traordinary they never show you.",
+    "subtitle": "amaxing, the city in every bite: local-led luxury tours through the real Mexico City.",
     "cta": "Book a Trip",
     "scrollHint": "Scroll to explore"
   },
@@ -114,8 +115,17 @@
       "remember": "Remember me",
       "forgot": "Forgot password?",
       "signIn": "Sign In",
-      "noAccount": "Don''t have an account?",
-      "signUp": "Sign Up"
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign Up",
+      "welcome": "Welcome back to Amaxing",
+      "join": "Join the traveler community",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "fillAll": "Please fill in all fields",
+      "requestError": "Error processing your request",
+      "orContinue": "Or continue with",
+      "switchToRegister": "Don't have an account? Sign up",
+      "switchToLogin": "Already have an account? Sign in"
     },
     "signup": {
       "title": "Create Your Account",
@@ -130,7 +140,9 @@
       "privacyPolicy": "Privacy Policy",
       "createAccount": "Create Account",
       "haveAccount": "Already have an account?",
-      "signIn": "Sign In"
+      "signIn": "Sign In",
+      "fillAll": "Please fill in all fields",
+      "requestError": "Error creating account"
     }
   },
   "common": {

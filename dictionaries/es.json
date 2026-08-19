@@ -17,8 +17,9 @@
     "more": "Más"
   },
   "hero": {
-    "title": "Descubre el México que Nunca Te Enseñan.",
-    "subtitle": "Experiencias de lujo exclusivas diseñadas para viajeros exigentes que buscan la auténtica cultura mexicana más allá de la ruta turística.",
+    "titleStart": "Descubre la",
+    "titleHighlight": "CDMX-traordinaria que nadie te enseña.",
+    "subtitle": "amaxing, la ciudad en cada bocado: tours de chilangos para sentir la CDMX de verdad.",
     "cta": "Reservar un Viaje",
     "scrollHint": "Desplázate para explorar"
   },
@@ -115,7 +116,16 @@
       "forgot": "¿Olvidaste tu contraseña?",
       "signIn": "Iniciar Sesión",
       "noAccount": "¿No tienes una cuenta?",
-      "signUp": "Registrarse"
+      "signUp": "Registrarse",
+      "welcome": "Bienvenido de nuevo a Amaxing",
+      "join": "Únete a la comunidad de viajeros",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "fillAll": "Por favor completa todos los campos",
+      "requestError": "Error al procesar la solicitud",
+      "orContinue": "O continúa con",
+      "switchToRegister": "¿No tienes cuenta? Regístrate",
+      "switchToLogin": "¿Ya tienes cuenta? Inicia sesión"
     },
     "signup": {
       "title": "Crea Tu Cuenta",
@@ -130,7 +140,9 @@
       "privacyPolicy": "Política de Privacidad",
       "createAccount": "Crear Cuenta",
       "haveAccount": "¿Ya tienes una cuenta?",
-      "signIn": "Iniciar Sesión"
+      "signIn": "Iniciar Sesión",
+      "fillAll": "Por favor completa todos los campos",
+      "requestError": "Error al crear la cuenta"
     }
   },
   "common": {

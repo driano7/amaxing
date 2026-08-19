@@ -38,6 +38,7 @@ import {
   Users2,
 } from 'lucide-react'
 import { useChatbot } from '@/hooks/useChatbot'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 // ---- Onboarding questions (xocoCafe-style icon pills) ----
 const QUESTIONS = [
@@ -96,6 +97,7 @@ const QUESTIONS = [
 ]
 
 export default function ChatbotAssistant() {
+  const { currentLanguage } = useLanguage()
   const {
     sendMessage,
     isLoading,
@@ -107,7 +109,7 @@ export default function ChatbotAssistant() {
     onboardingDone,
     resetOnboarding,
     locale,
-  } = useChatbot()
+  } = useChatbot(currentLanguage)
 
   const isEs = locale === 'es'
   const [open, setOpen] = useState(false)
@@ -134,14 +136,11 @@ export default function ChatbotAssistant() {
     return () => window.removeEventListener('open-amaxing-chatbot', handleOpen)
   }, [])
 
-  // Auto-open una vez después de un pequeño retraso (primeras visitas, móvil y desktop)
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const alreadyShown = window.localStorage.getItem('amaxing_assistant_shown')
-    if (!alreadyShown) {
-      const timer = window.setTimeout(() => setOpen(true), 1500)
-      return () => window.clearTimeout(timer)
-    }
+  // NO auto-open: el asistente solo se abre cuando el usuario toca el ícono
+  // flotante (desktop) o el botón de IA en el MobileDock (móvil).
+  const openAssistant = useCallback(() => {
+    window.localStorage.setItem('amaxing_assistant_shown', 'true')
+    setOpen(true)
   }, [])
 
   // Sync onboarding step with persisted state
@@ -382,10 +381,7 @@ export default function ChatbotAssistant() {
             exit={reducedMotion ? false : { scale: 0, opacity: 0 }}
             whileHover={reducedMotion ? undefined : { scale: 1.08 }}
             whileTap={reducedMotion ? undefined : { scale: 0.9 }}
-            onClick={() => {
-              window.localStorage.setItem('amaxing_assistant_shown', 'true')
-              setOpen(true)
-            }}
+            onClick={openAssistant}
             className="fixed bottom-6 right-6 z-[100] flex h-14 w-14 items-center justify-center rounded-full bg-orange-500 text-white shadow-[0_8px_32px_rgba(0,0,0,0.35)]"
             aria-label={t('Abrir Amaxing Assistant', 'Open Amaxing Assistant')}
           >

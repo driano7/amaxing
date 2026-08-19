@@ -42,14 +42,18 @@ export default function Register() {
 
         router.push('/profile')
       } else {
-        setError('Por favor completa todos los campos')
+        setError(t('auth.signup.fillAll') || 'Por favor completa todos los campos')
       }
     } catch (error) {
-      setError('Error al crear la cuenta')
+      setError(t('auth.signup.requestError') || 'Error al crear la cuenta')
     } finally {
       setIsLoading(false)
     }
   }
+
+  const inputClass =
+    'w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500'
+  const labelClass = 'mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300'
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-zinc-950">
@@ -76,8 +80,12 @@ export default function Register() {
               </span>
             </a>
           </Link>
-          <h1 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">Crear cuenta</h1>
-          <p className="text-zinc-500 dark:text-gray-400">Únete a la comunidad de viajeros</p>
+          <h1 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">
+            {t('auth.signup.title') || 'Crear cuenta'}
+          </h1>
+          <p className="text-zinc-500 dark:text-gray-400">
+            {t('auth.signup.subtitle') || 'Únete a la comunidad de viajeros'}
+          </p>
         </div>
 
         <div className="rounded-2xl border border-zinc-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/50">
@@ -94,11 +102,8 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label
-                  htmlFor="firstName"
-                  className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
-                >
-                  Nombre
+                <label htmlFor="firstName" className={labelClass}>
+                  {t('auth.signup.firstName') || 'Nombre'}
                 </label>
                 <input
                   type="text"
@@ -106,16 +111,13 @@ export default function Register() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
+                  className={inputClass}
                   placeholder="Juan"
                 />
               </div>
               <div>
-                <label
-                  htmlFor="lastName"
-                  className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
-                >
-                  Apellido
+                <label htmlFor="lastName" className={labelClass}>
+                  {t('auth.signup.lastName') || 'Apellido'}
                 </label>
                 <input
                   type="text"
@@ -123,18 +125,15 @@ export default function Register() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
+                  className={inputClass}
                   placeholder="Pérez"
                 />
               </div>
             </div>
 
             <div>
-              <label
-                htmlFor="email"
-                className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
-              >
-                Email
+              <label htmlFor="email" className={labelClass}>
+                {t('auth.signup.email') || 'Email'}
               </label>
               <input
                 type="email"
@@ -142,17 +141,14 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
+                className={inputClass}
                 placeholder="tu@email.com"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
-              >
-                Contraseña
+              <label htmlFor="password" className={labelClass}>
+                {t('auth.signup.password') || 'Contraseña'}
               </label>
               <input
                 type="password"
@@ -161,7 +157,7 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
+                className={inputClass}
                 placeholder="••••••••"
               />
             </div>
@@ -190,16 +186,18 @@ export default function Register() {
                   />
                 </svg>
               ) : (
-                'Crear cuenta'
+                t('auth.signup.createAccount') || 'Crear cuenta'
               )}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-zinc-500 dark:text-gray-400">
-              ¿Ya tienes cuenta?{' '}
+              {t('auth.signup.haveAccount') || '¿Ya tienes cuenta?'}{' '}
               <Link href="/login" passHref>
-                <a className="font-medium text-orange-500 hover:text-orange-400">Inicia sesión</a>
+                <a className="font-medium text-orange-500 hover:text-orange-400">
+                  {t('auth.signup.signIn') || 'Inicia sesión'}
+                </a>
               </Link>
             </p>
           </div>

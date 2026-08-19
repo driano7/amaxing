@@ -46,7 +46,7 @@ export default function Login() {
 
           router.push('/profile')
         } else {
-          setError('Por favor completa todos los campos')
+          setError(t('auth.login.fillAll') || 'Por favor completa todos los campos')
         }
       } else {
         // Register
@@ -67,15 +67,24 @@ export default function Login() {
 
           router.push('/profile')
         } else {
-          setError('Por favor completa todos los campos')
+          setError(t('auth.login.fillAll') || 'Por favor completa todos los campos')
         }
       }
     } catch (error) {
-      setError('Error al procesar la solicitud')
+      setError(t('auth.login.requestError') || 'Error al procesar la solicitud')
     } finally {
       setIsLoading(false)
     }
   }
+
+  const toggleMode = () => {
+    setMode(mode === 'login' ? 'register' : 'login')
+    setError('')
+  }
+
+  const inputClass =
+    'w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500'
+  const labelClass = 'mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300'
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-zinc-950">
@@ -103,12 +112,14 @@ export default function Login() {
             </a>
           </Link>
           <h1 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">
-            {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
+            {mode === 'login'
+              ? t('auth.login.title') || 'Iniciar sesión'
+              : t('auth.signup.title') || 'Crear cuenta'}
           </h1>
           <p className="text-zinc-500 dark:text-gray-400">
             {mode === 'login'
-              ? 'Bienvenido de nuevo a Amaxing'
-              : 'Únete a la comunidad de viajeros'}
+              ? t('auth.login.welcome') || 'Bienvenido de nuevo a Amaxing'
+              : t('auth.login.join') || 'Únete a la comunidad de viajeros'}
           </p>
         </div>
 
@@ -127,11 +138,8 @@ export default function Login() {
             {mode === 'register' && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label
-                    htmlFor="firstName"
-                    className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
-                  >
-                    Nombre
+                  <label htmlFor="firstName" className={labelClass}>
+                    {t('auth.login.firstName') || 'Nombre'}
                   </label>
                   <input
                     type="text"
@@ -139,16 +147,13 @@ export default function Login() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
+                    className={inputClass}
                     placeholder="Juan"
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="lastName"
-                    className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
-                  >
-                    Apellido
+                  <label htmlFor="lastName" className={labelClass}>
+                    {t('auth.login.lastName') || 'Apellido'}
                   </label>
                   <input
                     type="text"
@@ -156,7 +161,7 @@ export default function Login() {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
+                    className={inputClass}
                     placeholder="Pérez"
                   />
                 </div>
@@ -164,11 +169,8 @@ export default function Login() {
             )}
 
             <div>
-              <label
-                htmlFor="email"
-                className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
-              >
-                Email
+              <label htmlFor="email" className={labelClass}>
+                {t('auth.login.email') || 'Email'}
               </label>
               <input
                 type="email"
@@ -176,17 +178,14 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
+                className={inputClass}
                 placeholder="tu@email.com"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300"
-              >
-                Contraseña
+              <label htmlFor="password" className={labelClass}>
+                {t('auth.login.password') || 'Contraseña'}
               </label>
               <input
                 type="password"
@@ -195,7 +194,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500"
+                className={inputClass}
                 placeholder="••••••••"
               />
             </div>
@@ -224,31 +223,32 @@ export default function Login() {
                   />
                 </svg>
               ) : mode === 'login' ? (
-                'Iniciar sesión'
+                t('auth.login.signIn') || 'Iniciar sesión'
               ) : (
-                'Crear cuenta'
+                t('auth.signup.createAccount') || 'Crear cuenta'
               )}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-zinc-500 dark:text-gray-400">
-              {mode === 'login' ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}{' '}
+              {mode === 'login'
+                ? t('auth.login.noAccount') || '¿No tienes cuenta?'
+                : t('auth.signup.haveAccount') || '¿Ya tienes cuenta?'}{' '}
               <button
-                onClick={() => {
-                  setMode(mode === 'login' ? 'register' : 'login')
-                  setError('')
-                }}
+                onClick={toggleMode}
                 className="font-medium text-orange-500 hover:text-orange-400"
               >
-                {mode === 'login' ? 'Regístrate' : 'Inicia sesión'}
+                {mode === 'login'
+                  ? t('auth.login.signUp') || 'Regístrate'
+                  : t('auth.login.signIn') || 'Inicia sesión'}
               </button>
             </p>
           </div>
 
           <div className="mt-6 border-t border-zinc-200 pt-6 dark:border-white/10">
             <p className="mb-4 text-center text-sm text-zinc-500 dark:text-gray-400">
-              O continúa con
+              {t('auth.login.orContinue') || 'O continúa con'}
             </p>
             <div className="grid grid-cols-2 gap-3">
               <button className="flex items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800">

@@ -76,7 +76,7 @@ function getUuid() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36)
 }
 
-export function useChatbot() {
+export function useChatbot(overrideLocale?: string | null) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [chatId, setChatId] = useState<string>('')
@@ -105,6 +105,14 @@ export function useChatbot() {
       typeof navigator !== 'undefined' ? (navigator.language || 'en').split('-')[0] : 'en'
     setLocale(browserLocale === 'es' ? 'es' : 'en')
   }, [])
+
+  // Sync con el idioma del sitio: si el usuario usa el toggle EN/ES (useLanguage),
+  // el asistente cambia al idioma del sitio.
+  useEffect(() => {
+    if (overrideLocale === 'es' || overrideLocale === 'en') {
+      setLocale(overrideLocale)
+    }
+  }, [overrideLocale])
 
   // Persistir preferencias whenever they change
   useEffect(() => {
