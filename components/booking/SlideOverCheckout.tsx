@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Calendar } from 'react-day-picker'
 import { useBookingStore } from '@/lib/store/useBookingStore'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 import { cn } from '@/lib/utils'
 import 'react-day-picker/dist/style.css'
 
@@ -24,17 +25,24 @@ export function SlideOverCheckout({
   experiencePrice,
 }: SlideOverCheckoutProps) {
   const { date, guestsCount, setDate, setGuestsCount, totalPrice } = useBookingStore()
+  const { currentLanguage } = useLanguage()
+  const isEs = currentLanguage === 'es'
+
+  const t = (es: string, en: string) => (isEs ? es : en)
 
   const handleProceed = () => {
     if (date && guestsCount > 0) {
       const formattedPrice = `$${(totalPrice * guestsCount).toFixed(2)} USD`
       window.open(
         `https://wa.me/525512291607?text=${encodeURIComponent(
-          `Hola, me interesa reservar: ${experienceTitle}\n` +
-            `Fecha: ${date.toLocaleDateString()}\n` +
-            `Personas: ${guestsCount}\n` +
-            `Total: ${formattedPrice}\n` +
-            `Quisiera más información para proceder con el pago.`
+          `${t('Hola, me interesa reservar: ', 'Hi, I would like to book: ')}${experienceTitle}\n` +
+            `${t('Fecha: ', 'Date: ')}${date.toLocaleDateString()}\n` +
+            `${t('Personas: ', 'People: ')}${guestsCount}\n` +
+            `${t('Total: ', 'Total: ')}${formattedPrice}\n` +
+            `${t(
+              'Quisiera más información para proceder con el pago.',
+              'I would like more information to proceed with payment.'
+            )}`
         )}`,
         '_blank'
       )
@@ -64,7 +72,7 @@ export function SlideOverCheckout({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-white/10 p-6">
-                <h2 className="text-xl font-bold text-white">Reservar Ahora</h2>
+                <h2 className="text-xl font-bold text-white">{t('Reservar Ahora', 'Book Now')}</h2>
                 <button
                   onClick={onClose}
                   className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-white transition-colors hover:bg-white/20"
@@ -76,13 +84,15 @@ export function SlideOverCheckout({
               <div className="flex-1 space-y-6 overflow-y-auto p-6">
                 <div className="rounded-xl border border-white/10 bg-zinc-900 p-4">
                   <h3 className="mb-2 font-semibold text-white">{experienceTitle}</h3>
-                  <p className="font-medium text-orange-500">${experiencePrice} USD por persona</p>
+                  <p className="font-medium text-orange-500">
+                    ${experiencePrice} USD {t('por persona', 'per person')}
+                  </p>
                 </div>
 
                 <div className="space-y-4">
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-300">
-                      Fecha de la experiencia
+                      {t('Fecha de la experiencia', 'Experience date')}
                     </label>
                     <div className="rounded-xl border border-white/10 bg-zinc-900 p-4">
                       <Calendar
@@ -94,7 +104,7 @@ export function SlideOverCheckout({
                           date >
                             new Date(today.getFullYear(), today.getMonth() + 2, today.getDate())
                         }
-                        locale="en"
+                        locale={isEs ? 'es' : 'en'}
                         className={cn(
                           'rounded-xl bg-transparent p-0',
                           '[&_.rdp-day]:text-white',
@@ -110,17 +120,20 @@ export function SlideOverCheckout({
                       />
                     </div>
                     <p className="mt-2 text-xs text-gray-500">
-                      Selecciona una fecha (hasta 2 meses en el futuro)
+                      {t(
+                        'Selecciona una fecha (hasta 2 meses en el futuro)',
+                        'Select a date (up to 2 months ahead)'
+                      )}
                     </p>
                   </div>
 
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-300">
-                      Número de personas
+                      {t('Número de personas', 'Number of people')}
                     </label>
                     <div className="rounded-xl border border-white/10 bg-zinc-900 p-4">
                       <div className="flex items-center justify-between">
-                        <span className="text-white">Personas</span>
+                        <span className="text-white">{t('Personas', 'People')}</span>
                         <div className="flex items-center gap-3">
                           <button
                             onClick={() => setGuestsCount(Math.max(1, guestsCount - 1))}
@@ -142,14 +155,17 @@ export function SlideOverCheckout({
                         </div>
                       </div>
                       <p className="mt-2 text-xs text-gray-500">
-                        Máximo {maxGuests} personas por reserva
+                        {t(
+                          `Máximo ${maxGuests} personas por reserva`,
+                          `Maximum ${maxGuests} people per booking`
+                        )}
                       </p>
                     </div>
                   </div>
 
                   <div className="rounded-xl border border-orange-500/30 bg-orange-500/10 p-4">
                     <div className="mb-2 flex items-center justify-between">
-                      <span className="text-gray-300">Subtotal</span>
+                      <span className="text-gray-300">{t('Subtotal', 'Subtotal')}</span>
                       <span className="font-medium text-white">
                         ${((totalPrice || experiencePrice) * guestsCount).toFixed(2)} USD
                       </span>
@@ -157,7 +173,8 @@ export function SlideOverCheckout({
                     {guestsCount > 1 && (
                       <div className="flex items-center justify-between text-sm text-gray-400">
                         <span>
-                          {guestsCount} personas × ${totalPrice || experiencePrice}
+                          {guestsCount} {t('personas ×', 'people ×')} $
+                          {totalPrice || experiencePrice}
                         </span>
                         <span>${(totalPrice || experiencePrice) * guestsCount}.00 USD</span>
                       </div>
@@ -170,8 +187,8 @@ export function SlideOverCheckout({
                   disabled={!date || guestsCount <= 0}
                   className="w-full rounded-xl bg-orange-500 py-6 font-medium text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Proceed to Payment ${((totalPrice || experiencePrice) * guestsCount).toFixed(2)}{' '}
-                  USD
+                  {t('Proceder al Pago', 'Proceed to Payment')} $
+                  {((totalPrice || experiencePrice) * guestsCount).toFixed(2)} USD
                 </Button>
               </div>
             </motion.div>

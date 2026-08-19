@@ -259,5 +259,17 @@
     "peopleCount": "personas",
     "remove": "Eliminar",
     "currencyNote": "Precios mostrados en MXN"
+  },
+  "bookings": {
+    "title": "Mis Reservaciones",
+    "bookNew": "Reservar nueva experiencia",
+    "emptyTitle": "No tienes reservaciones aún",
+    "emptySubtitle": "Explora nuestras experiencias y reserva tu próxima aventura",
+    "explore": "Explorar experiencias"
+  },
+  "profile": {
+    "bookNew": "Reservar nueva experiencia",
+    "emptySubtitle": "Explora nuestras experiencias y reserva tu próxima aventura",
+    "explore": "Explorar experiencias"
   }
 }

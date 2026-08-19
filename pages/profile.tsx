@@ -141,13 +141,13 @@ export default function Profile() {
           <div>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
-                Mis Reservaciones
+                {t('bookings.title') || 'Mis Reservaciones'}
               </h2>
               <Link
                 href="/tours"
                 className="text-sm font-medium text-orange-500 hover:text-orange-400"
               >
-                Reservar nueva experiencia
+                {t('profile.bookNew') || 'Reservar nueva experiencia'}
               </Link>
             </div>
 
@@ -185,16 +185,17 @@ export default function Profile() {
                   />
                 </svg>
                 <h3 className="mt-4 text-xl font-semibold text-zinc-900 dark:text-white">
-                  No tienes reservaciones aún
+                  {t('bookings.emptyTitle') || 'No tienes reservaciones aún'}
                 </h3>
                 <p className="mt-2 text-zinc-500 dark:text-gray-400">
-                  Explora nuestras experiencias y reserva tu próxima aventura
+                  {t('profile.emptySubtitle') ||
+                    'Explora nuestras experiencias y reserva tu próxima aventura'}
                 </p>
                 <Link
                   href="/tours"
                   className="mt-6 inline-flex items-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
                 >
-                  Explorar experiencias
+                  {t('profile.explore') || 'Explorar experiencias'}
                 </Link>
               </div>
             ) : (
