@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback, useId } from 'react'
 import { useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Image from '@/components/Image'
@@ -12,6 +12,9 @@ import { PageSEO } from '@/components/SEO'
 import { useCartStore } from '@/lib/store/useCartStore'
 import { Navbar } from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { DayPicker } from 'react-day-picker'
+import { es, enUS } from 'date-fns/locale'
+import '@/css/react-day-picker.css'
 
 const experienceMap = {
   1: {
@@ -136,20 +139,78 @@ const experienceMap = {
   },
 }
 
+const MAX_ACTIVE_RESERVATIONS = 3
+
+const getTimeWindowForDate = (date) => {
+  const day = date?.getDay?.()
+  if (day === 0) return { start: 9, end: 15 }
+  if (day === 6) return { start: 9, end: 17 }
+  return { start: 9, end: 18 }
+}
+
+const formatSlot = (hours, minutes) =>
+  `${String(hours).padStart(2, '0')}:${minutes === 0 ? '00' : '30'}`
+
+const getTimeSlotsForDate = (date) => {
+  const { start, end } = getTimeWindowForDate(date)
+  const slots = []
+  for (let hour = start; hour < end; hour += 1) {
+    slots.push(formatSlot(hour, 0))
+    slots.push(formatSlot(hour, 30))
+  }
+  return slots
+}
+
 export default function BookingPage() {
   const params = useParams()
   const { user, token, isLoading: authLoading } = useAuth()
   const { t, locale } = useTranslation()
   const { addItem } = useCartStore()
-  const [selectedDate, setSelectedDate] = useState('')
-  const [selectedTime, setSelectedTime] = useState('')
+  const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedTime, setSelectedTime] = useState(null)
   const [peopleCount, setPeopleCount] = useState(2)
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
+  const [bookedSlots, setBookedSlots] = useState([])
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false)
+  const [availabilityError, setAvailabilityError] = useState(null)
+  const [displayMonth, setDisplayMonth] = useState(new Date())
+  const [reservations, setReservations] = useState([])
+  const [isLoadingReservations, setIsLoadingReservations] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const [showReservationForm, setShowReservationForm] = useState(true)
+  const [isMobileDevice, setIsMobileDevice] = useState(false)
 
   const experience = experienceMap[params?.slug || params?.id]
+  const maxPeople = experience?.maxGuests || 8
+  const isAuthenticated = Boolean(token && user)
+
+  const today = useMemo(() => {
+    const d = new Date()
+    d.setHours(0, 0, 0, 0)
+    return d
+  }, [])
+
+  const maxReservationDate = useMemo(() => {
+    const limit = new Date(today)
+    limit.setMonth(limit.getMonth() + 1)
+    return limit
+  }, [today])
+
+  const minMonth = useMemo(() => new Date(today.getFullYear(), today.getMonth(), 1), [today])
+  const maxMonth = useMemo(
+    () => new Date(maxReservationDate.getFullYear(), maxReservationDate.getMonth(), 1),
+    [maxReservationDate]
+  )
+
+  const canGoPrev =
+    displayMonth.getFullYear() > minMonth.getFullYear() ||
+    displayMonth.getMonth() > minMonth.getMonth()
+  const canGoNext =
+    displayMonth.getFullYear() < maxMonth.getFullYear() ||
+    displayMonth.getMonth() < maxMonth.getMonth()
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', {
@@ -160,31 +221,163 @@ export default function BookingPage() {
     }).format(price)
   }
 
-  const today = new Date().toISOString().split('T')[0]
-  const maxDate = new Date()
-  maxDate.setMonth(maxDate.getMonth() + 1)
-  const maxDateStr = maxDate.toISOString().split('T')[0]
+  const formatDateForInput = (date) => {
+    if (!date) return ''
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
 
-  const timeSlots = [
-    '09:00',
-    '09:30',
-    '10:00',
-    '10:30',
-    '11:00',
-    '11:30',
-    '12:00',
-    '12:30',
-    '13:00',
-    '13:30',
-    '14:00',
-    '14:30',
-    '15:00',
-    '15:30',
-    '16:00',
-    '16:30',
-    '17:00',
-    '17:30',
-  ]
+  const parseDateFromInput = (value) => {
+    const [year, month, day] = value.split('-').map(Number)
+    if ([year, month, day].some((segment) => Number.isNaN(segment))) {
+      return null
+    }
+    const parsed = new Date(year, (month || 1) - 1, day || 1)
+    parsed.setHours(0, 0, 0, 0)
+    return Number.isNaN(parsed.getTime()) ? null : parsed
+  }
+
+  const availableTimeSlots = useMemo(() => {
+    if (!selectedDate) return []
+    const baseSlots = getTimeSlotsForDate(selectedDate).filter(
+      (slot) => !bookedSlots.includes(slot)
+    )
+    const isSameDay = selectedDate.toDateString() === currentTime.toDateString()
+    if (!isSameDay) return baseSlots
+    return baseSlots.filter((slot) => {
+      const [hours, minutes] = slot.split(':').map(Number)
+      const slotDate = new Date(selectedDate)
+      slotDate.setHours(hours || 0, minutes || 0, 0, 0)
+      return slotDate.getTime() > currentTime.getTime()
+    })
+  }, [selectedDate, bookedSlots, currentTime])
+
+  const timeSelectPlaceholder = useMemo(() => {
+    if (!selectedDate) return 'Selecciona una fecha primero'
+    if (isLoadingSlots) return 'Cargando horarios...'
+    if (availableTimeSlots.length === 0) return 'No hay horarios disponibles'
+    return 'Selecciona una hora disponible'
+  }, [selectedDate, isLoadingSlots, availableTimeSlots.length])
+
+  useEffect(() => {
+    setSelectedTime(null)
+  }, [selectedDate])
+
+  useEffect(() => {
+    if (!selectedDate) {
+      setBookedSlots([])
+      setAvailabilityError(null)
+      setIsLoadingSlots(false)
+      return
+    }
+
+    let ignore = false
+    const controller = new AbortController()
+
+    const fetchAvailability = async () => {
+      setIsLoadingSlots(true)
+      setAvailabilityError(null)
+      try {
+        const dateParam = formatDateForInput(selectedDate)
+        const response = await fetch(
+          `/api/bookings/availability?date=${dateParam}&experienceId=${encodeURIComponent(
+            experience?.id || ''
+          )}`,
+          { signal: controller.signal }
+        )
+        const payload = await response.json()
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.message || 'No pudimos obtener la disponibilidad.')
+        }
+        if (!ignore) {
+          setBookedSlots(payload.slots || [])
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') return
+        console.error('Error consultando disponibilidad:', error)
+        if (!ignore) {
+          const message =
+            error instanceof Error ? error.message : 'No pudimos cargar los horarios disponibles.'
+          setBookedSlots([])
+          setAvailabilityError(message)
+        }
+      } finally {
+        if (!ignore) {
+          setIsLoadingSlots(false)
+        }
+      }
+    }
+
+    fetchAvailability()
+    return () => {
+      ignore = true
+      controller.abort()
+    }
+  }, [selectedDate, experience?.id])
+
+  useEffect(() => {
+    if (selectedTime && !availableTimeSlots.includes(selectedTime)) {
+      setSelectedTime(null)
+    }
+  }, [availableTimeSlots, selectedTime])
+
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const detectDevice = () => {
+      if (typeof window === 'undefined') return
+      const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : ''
+      const isTouchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1
+      const matchesViewport = window.matchMedia('(max-width: 768px)').matches
+      const isMobileMatch =
+        /android|iphone|ipad|ipod|windows phone/i.test(userAgent || '') ||
+        isTouchDevice ||
+        matchesViewport
+      setIsMobileDevice(isMobileMatch)
+    }
+    detectDevice()
+    window.addEventListener('resize', detectDevice)
+    return () => window.removeEventListener('resize', detectDevice)
+  }, [])
+
+  const loadReservations = useCallback(async () => {
+    if (!token) {
+      setReservations([])
+      return
+    }
+    setIsLoadingReservations(true)
+    try {
+      const response = await fetch('/api/bookings', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      const data = await response.json()
+      if (data.bookings) {
+        setReservations(Array.isArray(data.bookings) ? data.bookings : [])
+      }
+    } catch (error) {
+      console.error('Error cargando reservaciones:', error)
+    } finally {
+      setIsLoadingReservations(false)
+    }
+  }, [token])
+
+  useEffect(() => {
+    if (!token) {
+      setReservations([])
+      return
+    }
+    loadReservations()
+  }, [token, loadReservations])
+
+  const hasReachedReservationLimit =
+    isAuthenticated && reservations.length >= MAX_ACTIVE_RESERVATIONS
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -193,6 +386,11 @@ export default function BookingPage() {
 
     if (!selectedDate || !selectedTime) {
       setError('Por favor selecciona una fecha y hora válidas')
+      return
+    }
+
+    if (hasReachedReservationLimit) {
+      setError('Solo puedes tener 3 reservas activas. Cancela una o espera a que termine.')
       return
     }
 
@@ -212,7 +410,7 @@ export default function BookingPage() {
         },
         body: JSON.stringify({
           experienceId: params?.slug || params?.id,
-          date: selectedDate,
+          date: formatDateForInput(selectedDate),
           time: selectedTime,
           peopleCount,
           customerName: user?.firstName
@@ -229,6 +427,8 @@ export default function BookingPage() {
       }
 
       setSuccess(`¡Reserva confirmada! Tu código es: ${data.booking?.ticketCode}`)
+      setSelectedTime(null)
+      await loadReservations()
       setTimeout(() => {
         window.location.href = '/profile'
       }, 2000)
@@ -254,7 +454,7 @@ export default function BookingPage() {
 
   if (!experience) {
     return (
-      <div className="bg-zinc-950 flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
         <div className="text-center text-gray-400">Experiencia no encontrada</div>
       </div>
     )
@@ -262,7 +462,7 @@ export default function BookingPage() {
 
   if (authLoading) {
     return (
-      <div className="bg-zinc-950 flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
         <div className="text-center text-gray-400">Cargando...</div>
       </div>
     )
@@ -274,7 +474,7 @@ export default function BookingPage() {
       <div className="relative flex min-h-screen flex-col justify-between">
         <Navbar />
         <main className="mb-auto pt-20">
-          <div className="bg-zinc-950 min-h-screen">
+          <div className="min-h-screen bg-zinc-950">
             {/* Hero */}
             <section className="relative h-[60vh] min-h-[400px]">
               <Image
@@ -285,7 +485,7 @@ export default function BookingPage() {
                 sizes="100vw"
                 className="object-cover"
               />
-              <div className="from-zinc-950/90 via-zinc-950/20 absolute inset-0 bg-gradient-to-t to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
               <div className="absolute inset-0 flex items-end">
                 <div className="container mx-auto px-6 pb-12">
                   <motion.div
@@ -339,41 +539,173 @@ export default function BookingPage() {
                         </div>
                       )}
 
+                      {!isAuthenticated && (
+                        <div className="mb-6 rounded-xl border border-orange-500/30 bg-orange-500/10 p-4 text-orange-300">
+                          <p className="mb-2 text-sm font-semibold">Inicia sesión para reservar</p>
+                          <p className="text-xs text-orange-200">
+                            Necesitas una cuenta para confirmar reservas y ver tus tickets.
+                          </p>
+                        </div>
+                      )}
+
                       <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid gap-6 md:grid-cols-2">
                           <div>
                             <label className="mb-2 block text-sm font-medium text-gray-300">
                               Fecha
                             </label>
-                            <input
-                              type="date"
-                              value={selectedDate}
-                              onChange={(e) => setSelectedDate(e.target.value)}
-                              min={today}
-                              max={maxDateStr}
-                              required
-                              className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
-                            />
+                            {isMobileDevice ? (
+                              <input
+                                type="date"
+                                value={selectedDate ? formatDateForInput(selectedDate) : ''}
+                                min={formatDateForInput(today)}
+                                max={formatDateForInput(maxReservationDate)}
+                                onChange={(e) => {
+                                  const parsed = parseDateFromInput(e.target.value)
+                                  if (parsed) {
+                                    const normalized = new Date(
+                                      Math.max(parsed.getTime(), today.getTime()),
+                                      parsed.getMonth(),
+                                      parsed.getDate()
+                                    )
+                                    if (normalized > maxReservationDate) {
+                                      setSelectedDate(maxReservationDate)
+                                    } else {
+                                      setSelectedDate(normalized)
+                                    }
+                                    setDisplayMonth(
+                                      new Date(normalized.getFullYear(), normalized.getMonth(), 1)
+                                    )
+                                  } else {
+                                    setSelectedDate(null)
+                                  }
+                                }}
+                                className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white placeholder-gray-500 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                              />
+                            ) : (
+                              <div className="rounded-2xl border border-white/10 bg-zinc-900 p-4">
+                                <div className="mb-3 flex items-center justify-between">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (!canGoPrev) return
+                                      const prev = new Date(
+                                        displayMonth.getFullYear(),
+                                        displayMonth.getMonth() - 1,
+                                        1
+                                      )
+                                      setDisplayMonth(prev < minMonth ? minMonth : prev)
+                                    }}
+                                    disabled={!canGoPrev}
+                                    className="rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-gray-300 disabled:opacity-40"
+                                  >
+                                    ←
+                                  </button>
+                                  <p className="text-sm font-semibold text-white">
+                                    {displayMonth.toLocaleDateString('es-MX', {
+                                      month: 'long',
+                                      year: 'numeric',
+                                    })}
+                                  </p>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (!canGoNext) return
+                                      const next = new Date(
+                                        displayMonth.getFullYear(),
+                                        displayMonth.getMonth() + 1,
+                                        1
+                                      )
+                                      setDisplayMonth(next > maxMonth ? maxMonth : next)
+                                    }}
+                                    disabled={!canGoNext}
+                                    className="rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-gray-300 disabled:opacity-40"
+                                  >
+                                    →
+                                  </button>
+                                </div>
+                                <DayPicker
+                                  mode="single"
+                                  selected={selectedDate}
+                                  onSelect={setSelectedDate}
+                                  month={displayMonth}
+                                  onMonthChange={(month) => {
+                                    const normalized = new Date(
+                                      month.getFullYear(),
+                                      month.getMonth(),
+                                      1
+                                    )
+                                    if (normalized < minMonth) {
+                                      setDisplayMonth(minMonth)
+                                      return
+                                    }
+                                    if (normalized > maxMonth) {
+                                      setDisplayMonth(maxMonth)
+                                      return
+                                    }
+                                    setDisplayMonth(normalized)
+                                  }}
+                                  disabled={{ before: today, after: maxReservationDate }}
+                                  weekStartsOn={1}
+                                  fromDate={today}
+                                  toDate={maxReservationDate}
+                                  fromMonth={minMonth}
+                                  toMonth={maxMonth}
+                                  showOutsideDays={false}
+                                  locale={locale === 'es' ? es : enUS}
+                                  modifiersClassNames={{
+                                    selected: 'bg-orange-500 text-white hover:bg-orange-600',
+                                    today: 'text-orange-500 font-semibold',
+                                  }}
+                                  styles={{
+                                    caption: { color: '#fff' },
+                                    root: { width: '100%' },
+                                    table: { width: '100%' },
+                                    head_cell: { width: '14.285%', textTransform: 'uppercase' },
+                                    cell: { width: '14.285%' },
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <p className="mt-2 text-xs text-gray-400">
+                              Disponible hasta el{' '}
+                              {maxReservationDate.toLocaleDateString('es-MX', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                              })}
+                            </p>
                           </div>
                           <div>
                             <label className="mb-2 block text-sm font-medium text-gray-300">
                               Hora
                             </label>
                             <select
-                              value={selectedTime}
-                              onChange={(e) => setSelectedTime(e.target.value)}
-                              disabled={!selectedDate}
+                              value={selectedTime || ''}
+                              onChange={(e) => setSelectedTime(e.target.value || null)}
+                              disabled={!selectedDate || isLoadingSlots}
                               required
                               className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
                             >
-                              <option value="">Selecciona una fecha primero</option>
-                              {selectedDate &&
-                                timeSlots.map((slot) => (
-                                  <option key={slot} value={slot}>
-                                    {slot}
-                                  </option>
-                                ))}
+                              <option value="">{timeSelectPlaceholder}</option>
+                              {availableTimeSlots.map((slot) => (
+                                <option key={slot} value={slot}>
+                                  {slot}
+                                </option>
+                              ))}
                             </select>
+                            {availabilityError && (
+                              <p className="mt-2 text-xs text-red-400">{availabilityError}</p>
+                            )}
+                            {!availabilityError &&
+                              selectedDate &&
+                              !isLoadingSlots &&
+                              availableTimeSlots.length === 0 && (
+                                <p className="mt-2 text-xs text-gray-400">
+                                  Todos los horarios ya están reservados para esta fecha. Intenta
+                                  con otro día.
+                                </p>
+                              )}
                           </div>
                         </div>
 
@@ -386,13 +718,11 @@ export default function BookingPage() {
                             onChange={(e) => setPeopleCount(Number(e.target.value))}
                             className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
                           >
-                            {Array.from({ length: experience.maxGuests }, (_, i) => i + 1).map(
-                              (num) => (
-                                <option key={num} value={num}>
-                                  {num} {num === 1 ? 'persona' : 'personas'}
-                                </option>
-                              )
-                            )}
+                            {Array.from({ length: maxPeople }, (_, i) => i + 1).map((num) => (
+                              <option key={num} value={num}>
+                                {num} {num === 1 ? 'persona' : 'personas'}
+                              </option>
+                            ))}
                           </select>
                         </div>
 
@@ -431,7 +761,7 @@ export default function BookingPage() {
                             </button>
                             <motion.button
                               type="submit"
-                              disabled={isSubmitting}
+                              disabled={isSubmitting || !isAuthenticated}
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
                               className="flex-1 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
@@ -439,6 +769,11 @@ export default function BookingPage() {
                               {isSubmitting ? 'Reservando...' : 'Reservar ahora'}
                             </motion.button>
                           </div>
+                          {!isAuthenticated && (
+                            <p className="mt-2 text-center text-xs text-gray-400">
+                              Inicia sesión para confirmar tu reserva
+                            </p>
+                          )}
                         </div>
                       </form>
                     </div>

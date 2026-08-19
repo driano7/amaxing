@@ -22,6 +22,11 @@ export function getBookingsByUser(userId: string): Booking[] {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }
 
+export function getBookingsByExperienceAndDate(experienceId: string, date: string): Booking[] {
+  const bookings = getStoredBookings()
+  return bookings.filter((b) => b.experienceId === experienceId && b.date === date)
+}
+
 export function getBookingByIdFromStorage(bookingId: string): Booking | null {
   const bookings = getStoredBookings()
   return bookings.find((b) => b.id === bookingId) || null

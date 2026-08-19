@@ -24,58 +24,25 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
-    setIsLoading(true)
 
-    try {
-      if (mode === 'login') {
-        // Demo login - in production, call real API
-        if (email && password) {
-          const mockUser = {
-            id: 'user_1',
-            email,
-            firstName: 'Juan',
-            lastName: 'Pérez',
-            avatar: '/static/images/avatar-placeholder.jpg',
-          }
-          const mockToken = 'mock_jwt_token_' + Date.now()
-
-          localStorage.setItem('authToken', mockToken)
-          localStorage.setItem('authUser', JSON.stringify(mockUser))
-
-          // Trigger auth context update
-          window.dispatchEvent(new Event('authChange'))
-
-          router.push('/profile')
-        } else {
-          setError(t('auth.login.fillAll') || 'Por favor completa todos los campos')
-        }
-      } else {
-        // Register
-        if (email && password && firstName && lastName) {
-          const mockUser = {
-            id: 'user_' + Date.now(),
-            email,
-            firstName,
-            lastName,
-            avatar: '/static/images/avatar-placeholder.jpg',
-          }
-          const mockToken = 'mock_jwt_token_' + Date.now()
-
-          localStorage.setItem('authToken', mockToken)
-          localStorage.setItem('authUser', JSON.stringify(mockUser))
-
-          window.dispatchEvent(new Event('authChange'))
-
-          router.push('/profile')
-        } else {
-          setError(t('auth.login.fillAll') || 'Por favor completa todos los campos')
-        }
-      }
-    } catch (error) {
-      setError(t('auth.login.requestError') || 'Error al procesar la solicitud')
-    } finally {
-      setIsLoading(false)
+    // Demo sin BD: se crea un usuario mock inmediatamente, con los campos que
+    // el usuario haya tecleado o valores por defecto. No valida nada.
+    const mockUser = {
+      id: mode === 'login' ? 'user_1' : 'user_' + Date.now(),
+      email: email.trim() || 'demo@amaxing.com',
+      firstName: firstName.trim() || 'Juan',
+      lastName: lastName.trim() || 'Pérez',
+      avatar: '/static/images/avatar-placeholder.jpg',
     }
+    const mockToken = 'mock_jwt_token_' + Date.now()
+
+    localStorage.setItem('authToken', mockToken)
+    localStorage.setItem('authUser', JSON.stringify(mockUser))
+
+    // Trigger auth context update
+    window.dispatchEvent(new Event('authChange'))
+
+    router.push('/profile')
   }
 
   const toggleMode = () => {

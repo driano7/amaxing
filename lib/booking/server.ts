@@ -1,6 +1,7 @@
 import {
   getBookingByIdFromStorage,
   getBookingsByUser as getBookingsByUserFromStorage,
+  getBookingsByExperienceAndDate as getBookingsByExperienceAndDateFromStorage,
   createBookingInStorage,
   createBookingsInStorage,
   updateBookingInStorage,
@@ -24,6 +25,10 @@ export async function getBookingsByUser(userId: string) {
 
 export async function getBookingById(bookingId: string) {
   return getBookingByIdFromStorage(bookingId)
+}
+
+export async function getBookingsByExperienceAndDate(experienceId: string, date: string) {
+  return getBookingsByExperienceAndDateFromStorage(experienceId, date)
 }
 
 export async function createBooking(input: CreateBookingInput) {

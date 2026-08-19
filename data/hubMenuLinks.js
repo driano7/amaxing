@@ -54,6 +54,7 @@ const headerDropdownConfig = [
   { labelKey: 'header.nav.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
   { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
   { labelKey: 'header.nav.pricing', fallback: 'Pricing', href: '/pricing', icon: 'Tag' },
+  { labelKey: 'header.nav.moodboard', fallback: 'Moodboard', href: '/moodboard', icon: 'Palette' },
   { labelKey: 'tourCategories.all', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
 ]
 
@@ -69,6 +70,7 @@ const drawerItemsConfig = [
   { labelKey: 'header.nav.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
   { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
   { labelKey: 'header.nav.pricing', fallback: 'Pricing', href: '/pricing', icon: 'Tag' },
+  { labelKey: 'header.nav.moodboard', fallback: 'Moodboard', href: '/moodboard', icon: 'Palette' },
   { labelKey: 'tourCategories.all', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
 ]
 
