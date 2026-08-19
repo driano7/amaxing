@@ -153,6 +153,19 @@ export default function CheckoutPage() {
         const bookings = data.bookings || []
         setCreatedBookings(bookings)
         setSuccess(true)
+
+        // Persistir en localStorage para que profile/tickets los muestren con QR y recogida.
+        try {
+          const existing = localStorage.getItem('amaxing_bookings')
+          const parsed = existing ? JSON.parse(existing) : []
+          localStorage.setItem(
+            'amaxing_bookings',
+            JSON.stringify([...(Array.isArray(parsed) ? parsed : []), ...bookings])
+          )
+        } catch {
+          /* storage lleno o no disponible */
+        }
+
         clearCart()
       } catch (err) {
         console.error('Confirm error:', err)

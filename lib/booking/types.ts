@@ -17,6 +17,7 @@ export interface Booking {
   customerEmail?: string
   currency?: string
   location?: string
+  meetingPoint?: string
 }
 
 export interface CreateBookingInput {

@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
+import { AuthLoader } from '@/components/AuthLoader'
 
 export default function Register() {
   const { login } = useAuth()
@@ -54,6 +55,10 @@ export default function Register() {
   const inputClass =
     'w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500'
   const labelClass = 'mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300'
+
+  if (isLoading) {
+    return <AuthLoader label="Creando tu cuenta..." />
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-zinc-950">

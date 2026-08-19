@@ -360,13 +360,6 @@ export function Navbar() {
 
               {user && !authLoading && <CartIcon />}
 
-              <Link
-                href="https://wa.me/525512291607"
-                className="hidden rounded-full border border-orange-500/30 bg-orange-500/20 px-4 py-1.5 text-sm font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-white md:inline-block"
-              >
-                {t('header.bookNow')}
-              </Link>
-
               {/* Theme Toggle — rightmost icon */}
               <ThemeToggle />
             </div>

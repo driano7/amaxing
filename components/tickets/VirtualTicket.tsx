@@ -59,6 +59,8 @@ export function VirtualTicket({
       customerName: ticket.customerName || null,
       customerEmail: ticket.customerEmail || null,
       status: ticket.status,
+      meetingPoint: ticket.meetingPoint || ticket.location || null,
+      location: ticket.location || null,
     })
   })
 
@@ -226,6 +228,38 @@ export function VirtualTicket({
               </div>
               <span className="text-sm text-gray-500">{ticket.time}</span>
             </div>
+
+            {(ticket.meetingPoint || ticket.location) && (
+              <div className="flex items-center justify-between rounded-xl bg-orange-50 p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
+                    <svg
+                      className="h-6 w-6 text-orange-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 21s-6-5.2-6-11a6 6 0 1112 0c0 5.8-6 11-6 11z"
+                      />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Punto de recogida</p>
+                    <p className="text-sm text-gray-500">
+                      {ticket.meetingPoint || ticket.location}
+                    </p>
+                    {ticket.meetingPoint && ticket.location && (
+                      <p className="text-xs text-gray-400">{ticket.location}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4">
               <div className="flex items-center gap-3">

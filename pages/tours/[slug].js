@@ -267,6 +267,42 @@ export default function TourDetail({ tour, locale }) {
                     </div>
                   </div>
                 )}
+
+                {/* CTA — Reserve / Request info */}
+                <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-8 text-center">
+                  <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+                    {isEs ? '¿Listo para esta experiencia?' : 'Ready for this experience?'}
+                  </h2>
+                  <p className="mb-6 text-zinc-600 dark:text-gray-300">
+                    {isEs
+                      ? `Reserva tu lugar en ${tour.titleEs || title} o pide más información.`
+                      : `Book your spot on ${title} or request more information.`}
+                  </p>
+                  <div className="flex flex-col justify-center gap-3 sm:flex-row">
+                    <Link
+                      href={`/login?redirect=/tours/${tour.id}`}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                    >
+                      <Calendar className="h-5 w-5" />
+                      {isEs ? 'Reservar Ahora' : 'Book Now'}
+                    </Link>
+                    <a
+                      href={`https://wa.me/525512291607?text=${encodeURIComponent(
+                        isEs
+                          ? `Hola, me interesa el tour: ${
+                              tour.titleEs || title
+                            }. ¿Me pueden dar más información?`
+                          : `Hi, I'm interested in the tour: ${title}. Could you give me more info?`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-8 py-4 font-semibold text-emerald-600 transition-colors hover:bg-emerald-500/20 dark:text-emerald-400"
+                    >
+                      <Users className="h-5 w-5" />
+                      {isEs ? 'Pedir Información' : 'Request Info'}
+                    </a>
+                  </div>
+                </div>
               </div>
 
               {/* Sidebar - Booking */}
@@ -322,10 +358,13 @@ export default function TourDetail({ tour, locale }) {
                       </div>
                     </div>
 
-                    <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600">
+                    <Link
+                      href={`/login?redirect=/tours/${tour.id}`}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                    >
                       {isEs ? 'Reservar Ahora' : 'Book Now'}
                       <ChevronRight className="h-5 w-5" />
-                    </button>
+                    </Link>
                   </div>
 
                   {/* Featured Badge */}

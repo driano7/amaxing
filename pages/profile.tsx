@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from '@/components/Image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
+import { AuthLoader } from '@/components/AuthLoader'
 import { VirtualTicket } from '@/components/tickets/VirtualTicket'
 import { ExperienceCard } from '@/components/experiences/ExperienceCard'
 import { AnimatedSection } from '@/components/AnimatedSection'
@@ -24,11 +25,29 @@ export default function Profile() {
     if (user) {
       fetchBookings()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
   const fetchBookings = async () => {
     setIsLoadingBookings(true)
     try {
+      // En este demo las reservas se persisten en localStorage (lib/booking/storage.ts).
+      // El API es la fuente para crear/confirmar; la lectura de perfil usa la
+      // copia local para que tickets y QR queden disponibles offline/mismo navegador.
+      const raw = localStorage.getItem('amaxing_bookings')
+      const loaded = raw ? JSON.parse(raw) : []
+      const mine = Array.isArray(loaded)
+        ? loaded
+            .filter((b) => b.userId === (user as any)?.id)
+            .sort(
+              (a, b) =>
+                new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime()
+            )
+        : []
+      if (mine.length > 0) {
+        setBookings(mine)
+        return
+      }
       const response = await fetch('/api/bookings', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
@@ -71,11 +90,7 @@ export default function Profile() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-        <div className="text-center text-zinc-500 dark:text-gray-400">Cargando...</div>
-      </div>
-    )
+    return <AuthLoader label="Cargando tu perfil..." />
   }
 
   if (!user) {
@@ -266,6 +281,27 @@ export default function Profile() {
                           </svg>
                           <span>{booking.time}</span>
                         </div>
+                        {(booking.meetingPoint || booking.location) && (
+                          <div className="mb-3 flex items-center gap-2 text-sm text-zinc-500 dark:text-gray-400">
+                            <svg
+                              className="h-4 w-4 flex-shrink-0"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 21s-6-5.2-6-11a6 6 0 1112 0c0 5.8-6 11-6 11z"
+                              />
+                              <circle cx="12" cy="10" r="2.5" />
+                            </svg>
+                            <span className="line-clamp-1">
+                              {booking.meetingPoint || booking.location}
+                            </span>
+                          </div>
+                        )}
                         <div className="mt-auto flex items-center justify-between border-t border-zinc-200 pt-3 dark:border-white/10">
                           <span className="text-2xl font-bold text-zinc-900 dark:text-white">
                             ${formatPrice(booking.totalPrice)}

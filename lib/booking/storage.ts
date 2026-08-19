@@ -1,5 +1,6 @@
 import { Booking } from './types'
 import { generateBookingCode } from './types'
+import { tours } from '@/data/toursData'
 
 const BOOKINGS_KEY = 'amaxing_bookings'
 
@@ -26,49 +27,12 @@ export function getBookingByIdFromStorage(bookingId: string): Booking | null {
   return bookings.find((b) => b.id === bookingId) || null
 }
 
-// Mock experience data - in real app, fetch from API
-const experienceTitles: Record<string, string> = {
-  '1': 'Culinary Secrets of Oaxaca',
-  '2': 'Mezcal & Agave Journey',
-  '3': 'Aztec Empire Uncovered',
-  '4': 'Revolutionary Routes',
-  '5': 'Roma & Condesa Nights',
-  '6': 'Coyoacán Art Walk',
-  '7': 'Frida & Diego Private Tour',
-  '8': 'Contemporary Gallery Circuit',
-}
-
-const experienceImages: Record<string, string> = {
-  '1': '/static/images/og/oaxaca-culinary.jpg',
-  '2': '/static/images/og/mezcal-journey.jpg',
-  '3': '/static/images/og/aztec-empire.jpg',
-  '4': '/static/images/og/revolutionary-routes.jpg',
-  '5': '/static/images/og/roma-condesa.jpg',
-  '6': '/static/images/og/coyoacan.jpg',
-  '7': '/static/images/og/frida-diego.jpg',
-  '8': '/static/images/og/gallery-circuit.jpg',
-}
-
-const experienceLocations: Record<string, string> = {
-  '1': 'Oaxaca City, Mexico',
-  '2': 'Oaxaca Valley, Mexico',
-  '3': 'Mexico City, Mexico',
-  '4': 'Mexico City, Mexico',
-  '5': 'Mexico City, Mexico',
-  '6': 'Mexico City, Mexico',
-  '7': 'Mexico City, Mexico',
-  '8': 'Mexico City, Mexico',
-}
-
-const prices: Record<string, number> = {
-  '1': 450,
-  '2': 380,
-  '3': 520,
-  '4': 350,
-  '5': 280,
-  '6': 320,
-  '7': 650,
-  '8': 420,
+// Datos reales desde data/toursData.js (precios, títulos, ubicación y punto de
+// recogida) para que los tickets reflejen el tour correcto.
+export function getTourMeta(experienceId: string) {
+  const tour = tours.find((t) => t.id === String(experienceId))
+  if (!tour) return null
+  return tour
 }
 
 export function buildQrPayload(booking: Booking): Record<string, unknown> {
@@ -84,6 +48,8 @@ export function buildQrPayload(booking: Booking): Record<string, unknown> {
     customerName: booking.customerName || null,
     customerEmail: booking.customerEmail || null,
     status: booking.status,
+    meetingPoint: booking.meetingPoint || null,
+    location: booking.location || null,
   }
 }
 
@@ -101,19 +67,21 @@ export function createBookingInStorage(input: {
 
   const now = new Date().toISOString()
   const bookingCode = generateBookingCode()
+  const meta = getTourMeta(input.experienceId)
 
-  const base = {
+  const base: Booking = {
     id: `booking_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     userId: input.userId,
     experienceId: input.experienceId,
-    experienceTitle: experienceTitles[input.experienceId] || 'Experiencia',
-    experienceImage: experienceImages[input.experienceId] || '/static/images/jaguarBaja.png',
-    location: experienceLocations[input.experienceId] || 'Mexico',
+    experienceTitle: meta?.title || 'Experiencia',
+    experienceImage: meta?.imageUrl || '/static/images/jaguarBaja.png',
+    location: meta?.location || 'Mexico',
+    meetingPoint: meta?.meetingPoint || null,
     date: input.date,
     time: input.time,
     peopleCount: input.peopleCount,
-    totalPrice: (prices[input.experienceId] || 300) * input.peopleCount,
-    status: 'confirmed' as const,
+    totalPrice: (meta?.price || 300) * input.peopleCount,
+    status: 'confirmed',
     createdAt: now,
     updatedAt: now,
     ticketCode: bookingCode,
@@ -151,19 +119,21 @@ export function createBookingsInStorage(
   for (const input of inputs) {
     const now = new Date().toISOString()
     const bookingCode = generateBookingCode()
+    const meta = getTourMeta(input.experienceId)
 
-    const base = {
+    const base: Booking = {
       id: `booking_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       userId: input.userId,
       experienceId: input.experienceId,
-      experienceTitle: experienceTitles[input.experienceId] || 'Experiencia',
-      experienceImage: experienceImages[input.experienceId] || '/static/images/jaguarBaja.png',
-      location: experienceLocations[input.experienceId] || 'Mexico',
+      experienceTitle: meta?.title || 'Experiencia',
+      experienceImage: meta?.imageUrl || '/static/images/jaguarBaja.png',
+      location: meta?.location || 'Mexico',
+      meetingPoint: meta?.meetingPoint || null,
       date: input.date,
       time: input.time,
       peopleCount: input.peopleCount,
-      totalPrice: (prices[input.experienceId] || 300) * input.peopleCount,
-      status: 'confirmed' as const,
+      totalPrice: (meta?.price || 300) * input.peopleCount,
+      status: 'confirmed',
       createdAt: now,
       updatedAt: now,
       ticketCode: bookingCode,
