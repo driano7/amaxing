@@ -8,7 +8,7 @@ const styles = `
   .moodboard {
     font-family: 'Nunito', sans-serif;
     background: #FAF3EA;
-    color: #2E2E33;
+    color: #3A2E2A;
     line-height: 1.5;
     padding-bottom: 80px;
   }
@@ -115,7 +115,7 @@ const styles = `
     font-family: 'Fraunces', serif;
     font-size: 2.4rem;
     font-weight: 600;
-    color: #2E2E33;
+    color: #3A2E2A;
   }
 
   .moodboard .headline-sample.italic { font-style: italic; font-weight: 500; }
@@ -181,7 +181,7 @@ const styles = `
     font-family: 'Fraunces', serif;
     font-size: 1.25rem;
     font-weight: 700;
-    color: #2E2E33;
+    color: #3A2E2A;
   }
 
   .moodboard .name-card p { font-size: 0.85rem; color: #7A6A62; margin-top: 4px; }
@@ -230,8 +230,8 @@ export default function Moodboard() {
           <p className="subtitle">
             Rosa mexicano como base, acompañado de tonos que vienen del mercado, la talavera, el
             papel picado y el cempasúchil — para que el rosa no quede solo, sino en compañía. Se
-            sustituye el negro puro del sitio actual por un gris carbón neutro (sin subtono café,
-            para no perder el aire moderno) y un hueso/crema en vez de blanco frío.
+            sustituye el negro puro del sitio actual por un grafito cálido y un hueso/crema en vez
+            de blanco frío.
           </p>
           <div className="palette">
             <div className="swatch">
@@ -259,9 +259,9 @@ export default function Moodboard() {
               </div>
             </div>
             <div className="swatch">
-              <div className="color" style={{ background: '#2E2E33' }} />
+              <div className="color" style={{ background: '#3A2E2A' }} />
               <div className="label">
-                <b>Gris carbón</b>#2E2E33 — reemplaza el negro, neutro y moderno
+                <b>Grafito cálido</b>#3A2E2A — reemplaza el negro
               </div>
             </div>
             <div className="swatch">
@@ -308,7 +308,7 @@ export default function Moodboard() {
           <div className="mascot-grid">
             <div className="mascot-card">
               <svg width="72" height="72" viewBox="0 0 100 100">
-                <rect x="5" y="5" width="90" height="90" rx="24" fill="#2E2E33" />
+                <rect x="5" y="5" width="90" height="90" rx="24" fill="#3A2E2A" />
                 <path d="M30 50 Q38 30 46 50 Q38 70 30 50 Z" fill="#FAF3EA" />
                 <path d="M54 50 Q62 30 70 50 Q62 70 54 50 Z" fill="#FAF3EA" />
                 <circle cx="38" cy="50" r="3.5" fill="#E4007C" />
@@ -347,7 +347,7 @@ export default function Moodboard() {
               <svg width="72" height="72" viewBox="0 0 100 100">
                 <polygon
                   points="50,10 30,5 38,28 15,45 25,75 50,90 75,75 85,45 62,28 70,5"
-                  fill="#2E2E33"
+                  fill="#3A2E2A"
                 />
                 <polygon points="50,10 85,45 50,50" fill="#E4007C" opacity="0.9" />
                 <polygon points="50,50 85,45 75,75" fill="#0E8C7A" opacity="0.9" />
@@ -380,7 +380,7 @@ export default function Moodboard() {
                   stroke="#C1440E"
                   stroke-width="4"
                 />
-                <path d="M50 38 Q60 50 50 62 Q40 50 50 38 Z" fill="#2E2E33" />
+                <path d="M50 38 Q60 50 50 62 Q40 50 50 38 Z" fill="#3A2E2A" />
                 <circle cx="50" cy="50" r="4" fill="#E4007C" />
               </svg>
               <div>
