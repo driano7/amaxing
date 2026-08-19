@@ -141,7 +141,17 @@ export default function CheckoutPage() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ sessionId }),
+          body: JSON.stringify({
+            sessionId,
+            // En modo mock (sin Stripe) el servidor necesita los items del carrito
+            // para crear los bookings. En modo real se ignoran (se leen de la sesión).
+            items: items.map((item) => ({
+              experienceId: item.experienceId,
+              date: item.date,
+              time: item.time,
+              peopleCount: item.peopleCount,
+            })),
+          }),
         })
 
         const data = await response.json()
@@ -174,6 +184,7 @@ export default function CheckoutPage() {
         setIsSubmitting(false)
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [token, clearCart]
   )
 

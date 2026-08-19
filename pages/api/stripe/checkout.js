@@ -21,6 +21,47 @@ const tourTitleFor = (experienceId, fallback) => {
   return tour?.title || fallback || `Experience ${experienceId}`
 }
 
+// ─── MOCK MODE ────────────────────────────────────────────────────────────────
+// Si no hay STRIPE_SECRET_KEY configurada, usamos un "mock checkout" que simula
+// el flujo completo de Stripe con datos de prueba (tarjeta 4242 4242 4242 4242).
+// El mock genera una URL local /checkout/mock?session_id=... que al confirmarse
+// crea los bookings con tickets y QR, igual que el flujo real.
+const isMockMode = () => {
+  const key = process.env.STRIPE_SECRET_KEY || process.env.STRIPE_PRIVATE
+  return !key || !key.startsWith('sk_test_')
+}
+
+const createMockSession = (items, customerEmail, customerName, locale, baseUrl) => {
+  const sessionId = `mock_cs_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+  const metadata = {
+    source: 'amaxing-tours-checkout',
+    locale,
+    ...(customerEmail ? { customer_email: customerEmail } : {}),
+    ...(customerName ? { customer_name: customerName } : {}),
+    items: JSON.stringify(
+      items.map((item) => ({
+        experienceId: String(item.experienceId),
+        date: item.date || '',
+        time: item.time || '',
+        peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+      }))
+    ),
+  }
+
+  // Simula la URL de Stripe Checkout: una página local que muestra la tarjeta de prueba
+  const mockUrl = `${baseUrl}/checkout/mock?session_id=${sessionId}`
+
+  return {
+    id: sessionId,
+    url: mockUrl,
+    metadata,
+    payment_status: 'unpaid',
+    customer_email: customerEmail || null,
+    customer_details: customerEmail ? { email: customerEmail } : null,
+  }
+}
+// ───────────────────────────────────────────────────────────────────────────────
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -37,13 +78,29 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Tu carrito está vacío' })
     }
 
-    // Stripe Checkout cobra siempre en USD (la fuente de verdad del precio).
+    // Validar que todos los items tengan precio conocido
+    for (const item of items) {
+      const unitUsd = priceFor(item.experienceId)
+      if (unitUsd <= 0) {
+        return res
+          .status(400)
+          .json({ error: `Precio no encontrado para la experiencia ${item.experienceId}` })
+      }
+    }
+
+    const baseUrl = getBaseUrl(req)
+
+    // ─── MOCK MODE: sin clave de Stripe ───
+    if (isMockMode()) {
+      const mockSession = createMockSession(items, customerEmail, customerName, locale, baseUrl)
+      console.log('[stripe.mock] Checkout session creada (mock):', mockSession.id)
+      return res.status(200).json({ url: mockSession.url, sessionId: mockSession.id, mock: true })
+    }
+
+    // ─── MODO REAL: Stripe Checkout ───
     const lineItems = items.map((item) => {
       const unitUsd = priceFor(item.experienceId)
       const qty = Math.max(1, Number(item.peopleCount) || 1)
-      if (unitUsd <= 0) {
-        throw new Error(`Precio no encontrado para la experiencia ${item.experienceId}`)
-      }
       return {
         quantity: qty,
         price_data: {
@@ -58,7 +115,6 @@ export default async function handler(req, res) {
     })
 
     const stripe = getStripeClient()
-    const baseUrl = getBaseUrl(req)
 
     const metadata = {
       source: 'amaxing-tours-checkout',

@@ -4,6 +4,20 @@ import { getSession } from '@/lib/auth/session'
 
 export const config = { runtime: 'nodejs' }
 
+// ─── MOCK MODE ────────────────────────────────────────────────────────────────
+// Si la session_id empieza con "mock_cs_", no consultamos Stripe: simulamos que
+// el pago fue exitoso y creamos los bookings directamente (tickets con QR).
+const isMockSession = (sessionId) =>
+  typeof sessionId === 'string' && sessionId.startsWith('mock_cs_')
+
+const createMockBookings = (sessionId, user) => {
+  // En el mock, los items se pasan en el query/body porque no hay sesión real de Stripe.
+  // El checkout mock redirige a /checkout?status=success&session_id=... y el cliente
+  // re-envía los items del carrito en el body de confirm.
+  return { mock: true }
+}
+// ───────────────────────────────────────────────────────────────────────────────
+
 // Convierte la sesión de Stripe en bookings persistidos (tickets con QR) para
 // el usuario logueado. Se llama desde /checkout?status=success&session_id=...
 export default async function handler(req, res) {
@@ -16,13 +30,44 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'No autorizado' })
   }
 
-  const { sessionId } = req.body || {}
+  const { sessionId, items } = req.body || {}
 
   if (typeof sessionId !== 'string' || !sessionId) {
     return res.status(400).json({ error: 'Falta session_id' })
   }
 
   try {
+    // ─── MOCK MODE: sin Stripe ───
+    if (isMockSession(sessionId)) {
+      // Los items vienen del carrito (el cliente los re-envía en el body)
+      const mockItems = Array.isArray(items) ? items : []
+      if (mockItems.length === 0) {
+        return res.status(400).json({ error: 'No hay items en la sesión' })
+      }
+
+      const customerEmail = session.user.email || ''
+      const customerName = session.user.firstName
+        ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
+        : ''
+
+      const bookings = createBookings(
+        mockItems.map((item) => ({
+          userId: session.user.id,
+          experienceId: item.experienceId,
+          date: item.date,
+          time: item.time,
+          peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+          customerName,
+          customerEmail,
+          currency: 'USD',
+        }))
+      )
+
+      console.log('[stripe.mock] Bookings creados (mock):', bookings.length)
+      return res.status(200).json({ ok: true, bookings, mock: true })
+    }
+
+    // ─── MODO REAL: Stripe ───
     const stripe = getStripeClient()
     const checkout = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['payment_intent'],

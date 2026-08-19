@@ -16,6 +16,7 @@ import { useLanguage } from '@/lib/hooks/useLanguage'
 import { PageSEO } from '@/components/SEO'
 import { tours } from '@/data/toursData'
 import ProseReveal from '@/components/ProseReveal'
+import { AddToCartButton } from '@/components/tours/AddToCartButton'
 
 const categoryLabels = {
   en: {
@@ -358,13 +359,16 @@ export default function TourDetail({ tour, locale }) {
                       </div>
                     </div>
 
-                    <Link
-                      href={`/login?redirect=/tours/${tour.id}`}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
-                    >
-                      {isEs ? 'Reservar Ahora' : 'Book Now'}
-                      <ChevronRight className="h-5 w-5" />
-                    </Link>
+                    <div className="space-y-3">
+                      <AddToCartButton tour={tour} locale={isEs ? 'es' : 'en'} />
+                      <Link
+                        href={`/login?redirect=/tours/${tour.id}`}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                      >
+                        {isEs ? 'Reservar Ahora' : 'Book Now'}
+                        <ChevronRight className="h-5 w-5" />
+                      </Link>
+                    </div>
                   </div>
 
                   {/* Featured Badge */}

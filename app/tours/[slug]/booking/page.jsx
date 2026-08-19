@@ -450,6 +450,7 @@ export default function BookingPage() {
       maxGuests: experience.maxGuests,
       highlights: experience.highlights,
     })
+    window.location.href = '/cart'
   }
 
   if (!experience) {
