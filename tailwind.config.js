@@ -38,9 +38,9 @@ module.exports = {
       colors: {
         // zinc-950 was added in Tailwind 3.3; this project runs Tailwind 3.2.4,
         // so it is defined here to keep dark surfaces (bg-zinc-950) working.
-        // Grafito cálido (reemplaza el negro puro del sitio actual).
+        // Gris carbón — reemplaza el negro puro del sitio actual (neutro y moderno).
         zinc: {
-          950: '#3A2E2A',
+          950: '#2E2E33',
         },
         // Hueso / crema — reemplaza el blanco frío en superficies claras.
         white: '#FAF3EA',
@@ -110,9 +110,9 @@ module.exports = {
           500: '#C1440E',
           700: '#9A3207',
         },
-        grafito: '#3A2E2A',
+        grafito: '#2E2E33',
         hueso: '#FAF3EA',
-        'background-color': '#3A2E2A',
+        'background-color': '#2E2E33',
         green: colors.violet,
         gray: colors.neutral,
       },

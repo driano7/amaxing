@@ -1,6 +1,8 @@
 import Link from '@/components/Link'
 import Image from '@/components/Image'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 import {
   Calendar,
   Clock,
@@ -10,12 +12,19 @@ import {
   Check,
   ArrowLeft,
   ChevronRight,
+  ChevronDown,
   MapPinned,
+  ShoppingBag,
+  Heart,
 } from 'lucide-react'
 import { useLanguage } from '@/lib/hooks/useLanguage'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { useCartStore } from '@/lib/store/useCartStore'
+import { isFavorite, toggleFavorite } from '@/lib/userData'
 import { PageSEO } from '@/components/SEO'
 import { tours } from '@/data/toursData'
 import ProseReveal from '@/components/ProseReveal'
+import { TourReviews } from '@/components/experiences/TourReviews'
 import { AddToCartButton } from '@/components/tours/AddToCartButton'
 
 const categoryLabels = {
@@ -35,8 +44,16 @@ const categoryLabels = {
 
 export default function TourDetail({ tour, locale }) {
   const { t, currentLanguage } = useLanguage()
+  const router = useRouter()
+  const { user } = useAuth()
+  const { addItem } = useCartStore()
 
   const isEs = currentLanguage === 'es' || locale === 'es'
+  const [fav, setFav] = useState(false)
+
+  useEffect(() => {
+    setFav(isFavorite(tour.id))
+  }, [tour.id])
   const title = isEs ? tour.titleEs || tour.title : tour.title
   const tagline = isEs ? tour.taglineEs || tour.tagline : tour.tagline
   const description = isEs ? tour.descriptionEs || tour.description : tour.description
@@ -76,6 +93,24 @@ export default function TourDetail({ tour, locale }) {
   }
 
   const categoryLabel = categoryLabels[isEs ? 'es' : 'en'][tour.category] || tour.category
+
+  const handleAddToCart = () => {
+    if (!user) {
+      router.push(`/login?redirect=/tours/${tour.id}`)
+      return
+    }
+    addItem({
+      experienceId: tour.id,
+      title,
+      imageUrl: tour.imageUrl,
+      price: tour.price,
+      currency: 'USD',
+      location,
+      maxGuests: tour.maxGuests,
+      highlights,
+    })
+    router.push('/cart')
+  }
 
   return (
     <>
@@ -127,11 +162,22 @@ export default function TourDetail({ tour, locale }) {
                     <span>{location.split(',')[0]}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Star className="h-5 w-5 fill-current text-orange-500" />
-                    <span className="font-semibold">{tour.rating}</span>
-                    <span className="text-gray-400">
-                      ({tour.reviewCount} {isEs ? 'reseñas' : 'reviews'})
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const el = document.getElementById('tour-reviews')
+                        el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }}
+                      className="flex items-center gap-2 text-left"
+                      aria-label={isEs ? 'Ver comentarios' : 'View reviews'}
+                    >
+                      <Star className="h-5 w-5 fill-current text-orange-500" />
+                      <span className="font-semibold">{tour.rating}</span>
+                      <span className="text-gray-400">
+                        ({tour.reviewCount} {isEs ? 'reseñas' : 'reviews'})
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-orange-500" />
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -280,13 +326,14 @@ export default function TourDetail({ tour, locale }) {
                       : `Book your spot on ${title} or request more information.`}
                   </p>
                   <div className="flex flex-col justify-center gap-3 sm:flex-row">
-                    <Link
-                      href={`/login?redirect=/tours/${tour.id}`}
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
                       className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
                     >
-                      <Calendar className="h-5 w-5" />
-                      {isEs ? 'Reservar Ahora' : 'Book Now'}
-                    </Link>
+                      <ShoppingBag className="h-5 w-5" />
+                      {isEs ? 'Agregar al carrito' : 'Add to Cart'}
+                    </button>
                     <a
                       href={`https://wa.me/525512291607?text=${encodeURIComponent(
                         isEs
@@ -361,13 +408,24 @@ export default function TourDetail({ tour, locale }) {
 
                     <div className="space-y-3">
                       <AddToCartButton tour={tour} locale={isEs ? 'es' : 'en'} />
-                      <Link
-                        href={`/login?redirect=/tours/${tour.id}`}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                      <button
+                        type="button"
+                        onClick={() => setFav(toggleFavorite(tour.id))}
+                        className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 font-semibold transition-colors ${
+                          fav
+                            ? 'bg-rose-500/10 text-rose-500 hover:bg-rose-500/20'
+                            : 'border border-zinc-200 text-zinc-600 hover:border-rose-500/30 hover:text-rose-500 dark:border-white/10 dark:text-gray-300'
+                        }`}
                       >
-                        {isEs ? 'Reservar Ahora' : 'Book Now'}
-                        <ChevronRight className="h-5 w-5" />
-                      </Link>
+                        <Heart className={`h-5 w-5 ${fav ? 'fill-current' : ''}`} />
+                        {fav
+                          ? isEs
+                            ? 'En favoritos'
+                            : 'In favorites'
+                          : isEs
+                          ? 'Guardar en favoritos'
+                          : 'Save to favorites'}
+                      </button>
                     </div>
                   </div>
 
@@ -407,6 +465,9 @@ export default function TourDetail({ tour, locale }) {
             </div>
           </div>
         </section>
+
+        {/* Comentarios del tour */}
+        <TourReviews tour={tour} isEs={isEs} locale={isEs ? 'es' : 'en'} />
       </div>
     </>
   )

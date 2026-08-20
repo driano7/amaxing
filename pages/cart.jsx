@@ -17,9 +17,12 @@ export default function CartPage() {
 
   const formatPrice = (price) => formatPriceByLocale(price, locale)
 
-  const today = new Date().toISOString().split('T')[0]
+  // Reglas tipo Xococafé: mínimo 3 días de anticipación, hasta 2 meses.
+  const minDate = new Date()
+  minDate.setDate(minDate.getDate() + 3)
+  const today = minDate.toISOString().split('T')[0]
   const maxDate = new Date()
-  maxDate.setMonth(maxDate.getMonth() + 1)
+  maxDate.setMonth(maxDate.getMonth() + 2)
   const maxDateStr = maxDate.toISOString().split('T')[0]
 
   const timeSlots = [

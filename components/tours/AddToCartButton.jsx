@@ -4,14 +4,20 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { ShoppingBag, Check } from 'lucide-react'
 import { useCartStore } from '@/lib/store/useCartStore'
+import { useAuth } from '@/lib/hooks/useAuth'
 
 export function AddToCartButton({ tour, locale }) {
   const { addItem } = useCartStore()
   const router = useRouter()
+  const { user } = useAuth()
   const [added, setAdded] = useState(false)
   const isEs = locale === 'es'
 
   const handleAdd = () => {
+    if (!user) {
+      router.push(`/login?redirect=/tours/${tour.id}`)
+      return
+    }
     addItem({
       experienceId: tour.id,
       title: tour.title,

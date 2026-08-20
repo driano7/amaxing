@@ -7,7 +7,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
-import { AuthLoader } from '@/components/AuthLoader'
 
 export default function Login() {
   const { login } = useAuth()
@@ -16,7 +15,6 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -53,18 +51,6 @@ export default function Login() {
   const inputClass =
     'w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500'
   const labelClass = 'mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300'
-
-  if (isLoading) {
-    return (
-      <AuthLoader
-        label={
-          mode === 'login'
-            ? t('auth.login.signIn') || 'Iniciando sesión...'
-            : t('auth.signup.createAccount') || 'Creando tu cuenta...'
-        }
-      />
-    )
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-zinc-950">
@@ -114,7 +100,7 @@ export default function Login() {
             </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} noValidate className="space-y-5">
             {mode === 'register' && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -181,32 +167,13 @@ export default function Login() {
 
             <motion.button
               type="submit"
-              disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
             >
-              {isLoading ? (
-                <svg className="-ml-1 mr-2 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-              ) : mode === 'login' ? (
-                t('auth.login.signIn') || 'Iniciar sesión'
-              ) : (
-                t('auth.signup.createAccount') || 'Crear cuenta'
-              )}
+              {mode === 'login'
+                ? t('auth.login.signIn') || 'Iniciar sesión'
+                : t('auth.signup.createAccount') || 'Crear cuenta'}
             </motion.button>
           </form>
 
