@@ -8,6 +8,7 @@ import Image from '@/components/Image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AuthLoader } from '@/components/AuthLoader'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { VirtualTicket } from '@/components/tickets/VirtualTicket'
 import { tours } from '@/data/toursData'
 import { formatBookingDate } from '@/lib/booking/types'
@@ -491,84 +492,96 @@ export default function Profile() {
               transition={{ duration: 0.25 }}
             >
               {tab === 'dashboard' && (
-                <DashboardContent
-                  bookings={bookings}
-                  favTours={favTours}
-                  commentedTours={commentedTours}
-                  isEs={isEs}
-                  isLoadingBookings={isLoadingBookings}
-                  error={error}
-                  t={t}
-                  onViewBooking={(booking) => setShowTicket(booking)}
-                  formatBookingDate={formatBookingDate}
-                />
+                <ErrorBoundary>
+                  <DashboardContent
+                    bookings={bookings}
+                    favTours={favTours}
+                    commentedTours={commentedTours}
+                    isEs={isEs}
+                    isLoadingBookings={isLoadingBookings}
+                    error={error}
+                    t={t}
+                    onViewBooking={(booking) => setShowTicket(booking)}
+                    formatBookingDate={formatBookingDate}
+                  />
+                </ErrorBoundary>
               )}
 
               {tab === 'bookings' && (
-                <BookingsContent
-                  bookings={bookings}
-                  isEs={isEs}
-                  isLoadingBookings={isLoadingBookings}
-                  error={error}
-                  t={t}
-                  onViewBooking={(booking) => setShowTicket(booking)}
-                  formatBookingDate={formatBookingDate}
-                />
+                <ErrorBoundary>
+                  <BookingsContent
+                    bookings={bookings}
+                    isEs={isEs}
+                    isLoadingBookings={isLoadingBookings}
+                    error={error}
+                    t={t}
+                    onViewBooking={(booking) => setShowTicket(booking)}
+                    formatBookingDate={formatBookingDate}
+                  />
+                </ErrorBoundary>
               )}
 
               {tab === 'favorites' && (
-                <TourGrid
-                  tours={favTours}
-                  isEs={isEs}
-                  emptyLabel={
-                    isEs
-                      ? 'Aún no tienes tours favoritos. Toca el corazón en un tour.'
-                      : 'No favorite tours yet. Tap the heart on a tour.'
-                  }
-                  onToggle={(id) => {
-                    toggleFavorite(id)
-                    setFavorites(getFavorites())
-                  }}
-                  isFavorite={(id) => favorites.includes(id)}
-                />
+                <ErrorBoundary>
+                  <TourGrid
+                    tours={favTours}
+                    isEs={isEs}
+                    emptyLabel={
+                      isEs
+                        ? 'Aún no tienes tours favoritos. Toca el corazón en un tour.'
+                        : 'No favorite tours yet. Tap the heart on a tour.'
+                    }
+                    onToggle={(id) => {
+                      toggleFavorite(id)
+                      setFavorites(getFavorites())
+                    }}
+                    isFavorite={(id) => favorites.includes(id)}
+                  />
+                </ErrorBoundary>
               )}
 
               {tab === 'commented' && (
-                <TourGrid
-                  tours={commentedTours}
-                  isEs={isEs}
-                  emptyLabel={
-                    isEs
-                      ? 'Todavía no has comentado ningún tour.'
-                      : "You haven't commented on any tour yet."
-                  }
-                />
+                <ErrorBoundary>
+                  <TourGrid
+                    tours={commentedTours}
+                    isEs={isEs}
+                    emptyLabel={
+                      isEs
+                        ? 'Todavía no has comentado ningún tour.'
+                        : "You haven't commented on any tour yet."
+                    }
+                  />
+                </ErrorBoundary>
               )}
 
               {tab === 'profile' && (
-                <ProfileForm
-                  form={form}
-                  setForm={setForm}
-                  savedMsg={savedMsg}
-                  setSavedMsg={setSavedMsg}
-                  isEs={isEs}
-                  onSubmit={handleSaveProfile}
-                  profileLoaded={profileLoaded}
-                />
+                <ErrorBoundary>
+                  <ProfileForm
+                    form={form}
+                    setForm={setForm}
+                    savedMsg={savedMsg}
+                    setSavedMsg={setSavedMsg}
+                    isEs={isEs}
+                    onSubmit={handleSaveProfile}
+                    profileLoaded={profileLoaded}
+                  />
+                </ErrorBoundary>
               )}
 
               {tab === 'security' && (
-                <SecuritySection
-                  pwMsg={pwMsg}
-                  setPwMsg={setPwMsg}
-                  gdprMsg={gdprMsg}
-                  setGdprMsg={setGdprMsg}
-                  isEs={isEs}
-                  onChangePassword={handleChangePassword}
-                  onExport={handleExport}
-                  onExportEncrypted={handleExportEncrypted}
-                  onDelete={handleDelete}
-                />
+                <ErrorBoundary>
+                  <SecuritySection
+                    pwMsg={pwMsg}
+                    setPwMsg={setPwMsg}
+                    gdprMsg={gdprMsg}
+                    setGdprMsg={setGdprMsg}
+                    isEs={isEs}
+                    onChangePassword={handleChangePassword}
+                    onExport={handleExport}
+                    onExportEncrypted={handleExportEncrypted}
+                    onDelete={handleDelete}
+                  />
+                </ErrorBoundary>
               )}
             </motion.div>
           </AnimatePresence>
@@ -882,12 +895,12 @@ function DashboardContent({
           </p>
           <p className="mt-2 text-lg font-bold text-zinc-900 dark:text-white">
             {categoryData.length > 0
-              ? categoryData.sort((a, b) => b.value - a.value)[0].label
+              ? [...categoryData].sort((a, b) => b.value - a.value)[0].label
               : '—'}
           </p>
           <p className="mt-1 text-sm text-zinc-500">
             {categoryData.length > 0
-              ? `${categoryData.sort((a, b) => b.value - a.value)[0].value} ${
+              ? `${[...categoryData].sort((a, b) => b.value - a.value)[0].value} ${
                   isEs ? 'tours' : 'tours'
                 }`
               : isEs

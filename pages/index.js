@@ -9,6 +9,7 @@ import { getLocaleFromRequest } from '@/lib/utils/locale'
 import formatDate from '@/lib/utils/formatDate'
 import Image from '@/components/Image'
 import projectsData from '@/data/projectsData'
+import { GdprBanner } from '@/components/GdprBanner'
 
 const MAX_DISPLAY = 5
 
@@ -170,6 +171,8 @@ export default function Home({ posts, locale }) {
             </Link>
           </div>
         </div>
+
+        <GdprBanner className="mt-2" />
       </div>
     </>
   )
