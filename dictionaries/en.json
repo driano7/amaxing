@@ -272,5 +272,23 @@
     "bookNew": "Book a new experience",
     "emptySubtitle": "Explore our experiences and book your next adventure",
     "explore": "Explore experiences"
+  },
+  "gdpr": {
+    "badge": "Privacy first",
+    "title": "Your information is safe with us",
+    "subtitle": "We protect your data and you decide what happens with it. Always.",
+    "detail1Title": "Only you can see your information",
+    "detail1Body": "Your name, phone, and email are stored securely. No one else can access them, not even our team.",
+    "detail2Title": "Protected at all times",
+    "detail2Body": "Everything is encrypted when it travels through the internet and when it's stored. If someone tried to intercept it, they would only see gibberish.",
+    "detail3Title": "Your guides see only what they need",
+    "detail3Body": "Tour guides only see the essential details to assist you during the experience. Nothing more.",
+    "detail4Title": "Download your data anytime",
+    "detail4Body": "You can download all your information in a file whenever you want. It's your data, you decide.",
+    "detail5Title": "Delete everything if you want",
+    "detail5Body": "You can permanently delete your account and all your data. No questions asked.",
+    "manageTitle": "Manage your data",
+    "manageBody": "Export, review, or delete your information from your profile.",
+    "manageCta": "Go to Security & data"
   }
 }

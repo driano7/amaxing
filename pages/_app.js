@@ -28,6 +28,11 @@ const ChatbotAssistant = dynamic(() => import('@/components/ChatbotAssistant'), 
   loading: () => null,
 })
 
+const PageAnalyticsTracker = dynamic(() => import('@/components/PageAnalyticsTracker'), {
+  ssr: false,
+  loading: () => null,
+})
+
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isSocket = process.env.SOCKET
 
@@ -68,6 +73,7 @@ export default function App({ Component, pageProps }) {
               <Component {...pageProps} />
             </LayoutWrapper>
             <ChatbotAssistant />
+            <PageAnalyticsTracker />
           </AnalyticsProvider>
         </AuthProvider>
       </LanguageProvider>

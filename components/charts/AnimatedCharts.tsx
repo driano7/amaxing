@@ -1,7 +1,6 @@
 'use client'
 
-import React from 'react'
-import { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { useInView, useReducedMotion } from 'framer-motion'
 import {
   Bar,
@@ -20,44 +19,13 @@ import {
 import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toPng } from 'html-to-image'
-import { SequentialBarShape } from './SequentialBarShape'
 import { SequentialChartDataRenderer } from './SequentialChartDataRenderer'
 
 const CHART_IN_VIEW_OPTIONS = { margin: '0px 0px -10% 0px', amount: 0.5, once: true } as const
 
 const ORANGE_PRIMARY = '#f97316'
-const ORANGE_ACCENT = '#fb923c'
-const ORANGE_DEEP = '#ea580c'
-const ORANGE_LIGHT = '#fed7aa'
-const AMBER_ACCENT = '#fbbf24'
-
-const createSequentialBarShape = (
-  shouldReduceMotion: boolean,
-  orientation: 'vertical' | 'horizontal'
-) =>
-  function SequentialBarShapeRenderer(props: {
-    x?: number
-    y?: number
-    width?: number
-    height?: number
-    fill?: string
-    index?: number
-  }) {
-    return (
-      <SequentialBarShape {...props} reduceMotion={shouldReduceMotion} orientation={orientation} />
-    )
-  }
 
 const clampPercent = (value: number) => Math.max(0, Math.min(100, value))
-
-const downloadBlob = (filename: string, blob: Blob) => {
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  link.click()
-  URL.revokeObjectURL(url)
-}
 
 const downloadChartPng = async (container: HTMLDivElement | null, filename: string) => {
   if (!container) return
@@ -113,7 +81,7 @@ export function SequentialBarChart({
   showPngButton = true,
   pngFilename,
   height = 220,
-  stepMs = 80,
+  stepMs = 85,
 }: SequentialBarChartProps) {
   const shouldReduceMotion = Boolean(useReducedMotion())
   const chartRef = useRef<HTMLDivElement>(null)
@@ -142,8 +110,6 @@ export function SequentialBarChart({
       </article>
     )
   }
-
-  const shape = createSequentialBarShape(shouldReduceMotion, layout)
 
   return (
     <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
@@ -206,9 +172,10 @@ export function SequentialBarChart({
                   <Bar
                     dataKey={dataKey}
                     fill={color}
-                    radius={layout === 'vertical' ? [6, 6, 0, 0] : [0, 6, 6, 0]}
-                    isAnimationActive={false}
-                    shape={shape as any}
+                    radius={[6, 6, 0, 0]}
+                    isAnimationActive={!shouldReduceMotion}
+                    animationDuration={600}
+                    animationEasing="ease-out"
                   />
                 </BarChart>
               ) : (
@@ -230,11 +197,11 @@ export function SequentialBarChart({
                     tick={{ fontSize: 11, fill: '#71717a' }}
                   />
                   <YAxis
-                    dataKey={nameKey}
                     type="category"
+                    dataKey={nameKey}
                     tickLine={false}
                     axisLine={false}
-                    width={100}
+                    width={80}
                     tick={{ fontSize: 11, fill: '#71717a' }}
                   />
                   <Tooltip
@@ -251,8 +218,9 @@ export function SequentialBarChart({
                     dataKey={dataKey}
                     fill={color}
                     radius={[0, 6, 6, 0]}
-                    isAnimationActive={false}
-                    shape={shape as any}
+                    isAnimationActive={!shouldReduceMotion}
+                    animationDuration={600}
+                    animationEasing="ease-out"
                   />
                 </BarChart>
               )}
@@ -274,7 +242,7 @@ interface SequentialLineChartProps {
   pngFilename?: string
   height?: number
   stepMs?: number
-  yDomain?: [number, number]
+  yDomain?: [number, string]
 }
 
 export function SequentialLineChart({
@@ -375,7 +343,7 @@ export function SequentialLineChart({
                   labelStyle={{ color: '#18181b', fontWeight: 600 }}
                   itemStyle={{ color: '#18181b' }}
                 />
-                {lines.map((line, index) => (
+                {lines.map((line) => (
                   <Line
                     key={line.dataKey}
                     type="monotone"
@@ -447,6 +415,8 @@ export function SequentialRadialBarChart({
                 dataKey="value"
                 cornerRadius={6}
                 background={{ fill: '#f1f5f9', opacity: 0.5 }}
+                isAnimationActive={true}
+                animationDuration={800}
               />
             </RadialBarChart>
           </ResponsiveContainer>
@@ -459,8 +429,8 @@ export function SequentialRadialBarChart({
           {periodLabel && (
             <p className="font-semibold text-zinc-900 dark:text-white">{periodLabel}</p>
           )}
-          {coveredDays !== undefined && <p>{coveredDays} días con actividad</p>}
-          {expectedDays !== undefined && <p>{expectedDays} días esperados</p>}
+          {coveredDays !== undefined && <p>{coveredDays} tours completados</p>}
+          {expectedDays !== undefined && <p>{expectedDays} tours totales</p>}
         </div>
       </div>
     </article>

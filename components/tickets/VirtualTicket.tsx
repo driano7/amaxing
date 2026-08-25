@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 interface VirtualTicketProps {
   ticket: {
@@ -32,36 +33,32 @@ export function VirtualTicket({
   onDownloadPNG,
   onDownloadPDF,
 }: VirtualTicketProps) {
+  const { currentLanguage } = useLanguage()
+  const isEs = currentLanguage === 'es'
   const ticketRef = useRef<HTMLDivElement>(null)
   const [isGenerating, setIsGenerating] = useState<'png' | 'pdf' | null>(null)
   const [qrValue, setQrValue] = useState<string>(() => {
-    // Try to parse qrCodeData as JSON payload first, else fallback to deep link
+    const ticketCode = ticket.ticketCode || ticket.code || ticket.id
+    if (ticketCode) {
+      const code = String(ticketCode)
+        .replace(/^AMX-T-/i, '')
+        .toUpperCase()
+      return `AMX-T-${code}`
+    }
+    // Fallback for legacy data
     if (ticket.qrCodeData) {
       try {
         const parsed = JSON.parse(ticket.qrCodeData)
-        if (parsed && typeof parsed === 'object') {
-          return JSON.stringify(parsed)
+        if (parsed?.ticketCode) {
+          return `AMX-T-${String(parsed.ticketCode)
+            .replace(/^AMX-T-/i, '')
+            .toUpperCase()}`
         }
       } catch {
-        // not JSON, use as-is
+        // not JSON
       }
-      return ticket.qrCodeData
     }
-    return JSON.stringify({
-      ticketCode: ticket.ticketCode || ticket.code || ticket.id,
-      experienceId: 'tour',
-      experienceTitle: ticket.experienceTitle,
-      date: ticket.date,
-      time: ticket.time,
-      peopleCount: ticket.peopleCount,
-      totalPrice: ticket.totalPrice,
-      currency: ticket.currency || 'USD',
-      customerName: ticket.customerName || null,
-      customerEmail: ticket.customerEmail || null,
-      status: ticket.status,
-      meetingPoint: ticket.meetingPoint || ticket.location || null,
-      location: ticket.location || null,
-    })
+    return 'AMX-T-UNKNOWN'
   })
 
   const formatDate = (dateStr: string) => {
@@ -155,7 +152,7 @@ export function VirtualTicket({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white shadow-2xl"
+        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white shadow-2xl dark:bg-zinc-900"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -165,7 +162,7 @@ export function VirtualTicket({
             <button
               onClick={onClose}
               className="rounded-full bg-white/20 p-2 text-white transition-colors hover:bg-white/30"
-              aria-label="Cerrar"
+              aria-label={isEs ? 'Cerrar' : 'Close'}
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -183,20 +180,20 @@ export function VirtualTicket({
           </div>
         </div>
 
-        <div ref={ticketRef} className="space-y-4 bg-white p-6">
+        <div ref={ticketRef} className="space-y-4 bg-white p-6 dark:bg-zinc-900">
           {/* QR Code */}
           <div className="flex justify-center">
-            <div className="relative rounded-xl bg-gray-50 p-4">
+            <div className="relative rounded-xl bg-gray-50 p-4 dark:bg-zinc-800/50 dark:bg-zinc-800/50">
               <div className="flex justify-center">
                 <div className="relative rounded-lg bg-white p-3 shadow-sm">
                   {/* Lazy-import QR to avoid SSR issues */}
                   <span className="mb-2 block text-center text-[0.6rem] uppercase tracking-widest text-gray-400">
-                    Escanea para verificar
+                    {isEs ? 'Escanea para verificar' : 'Scan to verify'}
                   </span>
                   <TicketQR value={qrValue} />
                 </div>
               </div>
-              <p className="mt-3 text-center font-mono text-sm font-semibold tracking-wider text-gray-600">
+              <p className="mt-3 text-center font-mono text-sm font-semibold tracking-wider text-gray-600 dark:text-zinc-300">
                 {ticketCode}
               </p>
             </div>
@@ -204,9 +201,9 @@ export function VirtualTicket({
 
           {/* Ticket Info */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between rounded-xl bg-orange-50 p-4">
+            <div className="flex items-center justify-between rounded-xl bg-orange-50 p-4 dark:bg-orange-500/10">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-500/20">
                   <svg
                     className="h-6 w-6 text-orange-600"
                     fill="none"
@@ -222,17 +219,21 @@ export function VirtualTicket({
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Fecha</p>
-                  <p className="text-sm text-gray-500">{formatDate(ticket.date)}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {isEs ? 'Fecha' : 'Date'}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-zinc-400">
+                    {formatDate(ticket.date)}
+                  </p>
                 </div>
               </div>
-              <span className="text-sm text-gray-500">{ticket.time}</span>
+              <span className="text-sm text-gray-500 dark:text-zinc-400">{ticket.time}</span>
             </div>
 
             {(ticket.meetingPoint || ticket.location) && (
-              <div className="flex items-center justify-between rounded-xl bg-orange-50 p-4">
+              <div className="flex items-center justify-between rounded-xl bg-orange-50 p-4 dark:bg-orange-500/10">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-500/20">
                     <svg
                       className="h-6 w-6 text-orange-600"
                       fill="none"
@@ -249,8 +250,10 @@ export function VirtualTicket({
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Punto de recogida</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {isEs ? 'Punto de recogida' : 'Meeting point'}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-zinc-400">
                       {ticket.meetingPoint || ticket.location}
                     </p>
                     {ticket.meetingPoint && ticket.location && (
@@ -261,9 +264,9 @@ export function VirtualTicket({
               </div>
             )}
 
-            <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4">
+            <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-zinc-800/50 dark:bg-zinc-800/50">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-500/20">
                   <svg
                     className="h-6 w-6 text-blue-600"
                     fill="none"
@@ -279,18 +282,27 @@ export function VirtualTicket({
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Personas</p>
-                  <p className="text-sm text-gray-500">
-                    {ticket.peopleCount} {ticket.peopleCount === 1 ? 'persona' : 'personas'}
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {isEs ? 'Personas' : 'People'}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-zinc-400">
+                    {ticket.peopleCount}{' '}
+                    {ticket.peopleCount === 1
+                      ? isEs
+                        ? 'persona'
+                        : 'person'
+                      : isEs
+                      ? 'personas'
+                      : 'people'}
                   </p>
                 </div>
               </div>
-              <span className="text-sm font-semibold text-gray-700">
+              <span className="text-sm font-semibold text-gray-700 dark:text-zinc-200">
                 {formatPrice(ticket.totalPrice)}
               </span>
             </div>
 
-            <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
+            <div className="rounded-xl border border-orange-200 bg-orange-50 p-4 dark:border-orange-500/30 dark:bg-orange-500/10 dark:bg-orange-500/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <svg className="h-5 w-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
@@ -305,7 +317,9 @@ export function VirtualTicket({
                       clipRule="evenodd"
                     />
                   </svg>
-                  <p className="font-medium text-gray-900">Código de reserva</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    {isEs ? 'Código de reserva' : 'Booking code'}
+                  </p>
                 </div>
                 <span className="font-mono text-lg font-bold tracking-widest text-orange-600">
                   {ticketCode}
@@ -315,9 +329,11 @@ export function VirtualTicket({
           </div>
 
           {/* Experience Info */}
-          <div className="space-y-2 border-t border-gray-200 pt-4">
-            <p className="text-sm text-gray-500">Experiencia</p>
-            <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+          <div className="space-y-2 border-t border-gray-200 pt-4 dark:border-white/10">
+            <p className="text-sm text-gray-500 dark:text-zinc-400">
+              {isEs ? 'Experiencia' : 'Experience'}
+            </p>
+            <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-zinc-800/50">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={ticket.experienceImage || '/static/images/jaguarBaja.png'}
@@ -325,47 +341,64 @@ export function VirtualTicket({
                 className="h-16 w-16 rounded-lg object-cover"
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium text-gray-900">{ticket.experienceTitle}</p>
-                {ticket.location && <p className="text-sm text-gray-500">{ticket.location}</p>}
+                <p className="truncate font-medium text-gray-900 dark:text-white">
+                  {ticket.experienceTitle}
+                </p>
+                {ticket.location && (
+                  <p className="text-sm text-gray-500 dark:text-zinc-400">{ticket.location}</p>
+                )}
               </div>
             </div>
             {ticket.customerName && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Cliente</span>
-                <span className="font-medium text-gray-800">{ticket.customerName}</span>
+                <span className="text-gray-500 dark:text-zinc-400">
+                  {isEs ? 'Cliente' : 'Client'}
+                </span>
+                <span className="font-medium text-gray-800 dark:text-zinc-100">
+                  {ticket.customerName}
+                </span>
               </div>
             )}
             {ticket.customerEmail && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Email</span>
-                <span className="font-medium text-gray-800">{ticket.customerEmail}</span>
+                <span className="text-gray-500 dark:text-zinc-400">Email</span>
+                <span className="font-medium text-gray-800 dark:text-zinc-100">
+                  {ticket.customerEmail}
+                </span>
               </div>
             )}
           </div>
 
           {/* Status Badge */}
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-2">
             <span
               className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${
                 ticket.status === 'confirmed'
-                  ? 'bg-emerald-100 text-emerald-800'
+                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300'
                   : ticket.status === 'pending'
-                  ? 'bg-amber-100 text-amber-800'
+                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300'
                   : ticket.status === 'cancelled'
-                  ? 'bg-red-100 text-red-800'
-                  : 'bg-blue-100 text-blue-800'
+                  ? 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300'
+                  : 'bg-blue-100 text-blue-800 dark:bg-blue-500/20'
               }`}
             >
-              {ticket.status === 'confirmed' && '✓ Confirmada'}
-              {ticket.status === 'pending' && '⏳ Pendiente'}
-              {ticket.status === 'cancelled' && '✗ Cancelada'}
-              {ticket.status === 'completed' && '✓ Completada'}
+              {ticket.status === 'confirmed' && isEs ? '✓ Confirmada' : '✓ Confirmed'}
+              {ticket.status === 'pending' && isEs ? '⏳ Pendiente' : '⏳ Pending'}
+              {ticket.status === 'cancelled' && isEs ? '✗ Cancelada' : '✗ Cancelled'}
+              {ticket.status === 'completed' && isEs ? '✓ Completada' : '✓ Completed'}
             </span>
+            {ticket.paymentMethod === 'crypto' && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700 dark:bg-orange-500/20 dark:text-orange-300">
+                <span aria-hidden="true">₿</span>
+                isEs ? 'Pagado con cripto' : 'Paid with crypto'
+                {ticket.cryptoNetwork ? ` · ${String(ticket.cryptoNetwork).toLowerCase()}` : ''}
+              </span>
+            )}
           </div>
         </div>
 
         {/* Actions */}
-        <div className="space-y-3 border-t border-gray-200 bg-white p-4">
+        <div className="space-y-3 border-t border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-900">
           <button
             onClick={generateTicketImage}
             disabled={isGenerating !== null}
@@ -397,13 +430,19 @@ export function VirtualTicket({
                 />
               </svg>
             )}
-            {isGenerating === 'png' ? 'Generando...' : 'Descargar PNG'}
+            {isGenerating === 'png'
+              ? isEs
+                ? 'Generando...'
+                : 'Generating...'
+              : isEs
+              ? 'Descargar PNG'
+              : 'Download PNG'}
           </button>
 
           <button
             onClick={generatePDF}
             disabled={isGenerating !== null}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-100 py-3 px-4 font-semibold text-gray-900 transition-colors hover:bg-gray-200 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-100 py-3 px-4 font-semibold text-gray-900 transition-colors hover:bg-gray-200 disabled:opacity-50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
           >
             {isGenerating === 'pdf' ? (
               <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -431,14 +470,20 @@ export function VirtualTicket({
                 />
               </svg>
             )}
-            {isGenerating === 'pdf' ? 'Generando...' : 'Descargar PDF'}
+            {isGenerating === 'pdf'
+              ? isEs
+                ? 'Generando...'
+                : 'Generating...'
+              : isEs
+              ? 'Descargar PDF'
+              : 'Download PDF'}
           </button>
 
           <button
             onClick={onClose}
-            className="w-full rounded-xl border border-gray-300 py-3 px-4 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+            className="w-full rounded-xl border border-gray-300 py-3 px-4 font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-white/20 dark:text-zinc-200 dark:hover:bg-white/5"
           >
-            Cerrar
+            {isEs ? 'Cerrar' : 'Close'}
           </button>
         </div>
       </motion.div>
@@ -470,7 +515,9 @@ function TicketQR({ value }: { value: string }) {
   }, [])
 
   if (!QRCode) {
-    return <div className="h-[160px] w-[160px] animate-pulse rounded-lg bg-gray-200" />
+    return (
+      <div className="h-[160px] w-[160px] animate-pulse rounded-lg bg-gray-200 dark:bg-zinc-700" />
+    )
   }
 
   return (

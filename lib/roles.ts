@@ -76,6 +76,8 @@ export interface RolePermissions {
   canViewBookings: boolean
   canViewPayments: boolean
   canExportGDPR: boolean
+  /** Solo socios (admins): métricas ML, predicciones y analítica pasiva */
+  canViewAdvancedMetrics: boolean
 }
 
 export function getPermissions(role: Role): RolePermissions {
@@ -89,6 +91,7 @@ export function getPermissions(role: Role): RolePermissions {
         canViewBookings: true,
         canViewPayments: true,
         canExportGDPR: true,
+        canViewAdvancedMetrics: true, // socio = admin en amaxing
       }
     case 'employee':
       return {
@@ -99,6 +102,7 @@ export function getPermissions(role: Role): RolePermissions {
         canViewBookings: true, // para operar tours del día
         canViewPayments: false,
         canExportGDPR: false,
+        canViewAdvancedMetrics: false,
       }
     default:
       return {
@@ -109,6 +113,7 @@ export function getPermissions(role: Role): RolePermissions {
         canViewBookings: false,
         canViewPayments: false,
         canExportGDPR: false,
+        canViewAdvancedMetrics: false,
       }
   }
 }

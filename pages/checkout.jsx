@@ -17,6 +17,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { FlipCard } from '@/components/ui/FlipCard'
 import { VirtualTicket } from '@/components/tickets/VirtualTicket'
+import { CryptoPayment } from '@/components/CryptoPayment'
 import { formatPriceByLocale } from '@/lib/currency'
 
 export default function CheckoutPage() {
@@ -30,6 +31,10 @@ export default function CheckoutPage() {
   const [success, setSuccess] = useState(false)
   const [createdBookings, setCreatedBookings] = useState([])
   const [selectedTicket, setSelectedTicket] = useState(null)
+
+  // Método de pago: tarjeta (Stripe) o cripto
+  const [payMethod, setPayMethod] = useState('card')
+  const [showCryptoModal, setShowCryptoModal] = useState(false)
 
   // Form de la tarjeta (vista previa visual en la flip card)
   const [form, setForm] = useState({
@@ -278,6 +283,53 @@ export default function CheckoutPage() {
         {selectedTicket && (
           <VirtualTicket ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />
         )}
+
+        <CryptoPayment
+          open={showCryptoModal}
+          amount={subtotal}
+          currency={locale === 'es' ? 'MXN' : 'USD'}
+          onClose={() => setShowCryptoModal(false)}
+          onConfirmed={async (reference, network) => {
+            setShowCryptoModal(false)
+            setSuccess(true)
+            try {
+              const raw = localStorage.getItem('amaxing_bookings')
+              const existing = raw ? JSON.parse(raw) : []
+              const now = new Date().toISOString()
+              const cryptoBookings = items.map((item, idx) => ({
+                id: `crypto-${Date.now()}-${idx}`,
+                userId: user?.id || 'guest',
+                experienceId: item.id,
+                experienceTitle: item.title,
+                experienceImage: item.image,
+                date: item.date || now.slice(0, 10),
+                time: item.time || '10:00',
+                peopleCount: item.quantity || 1,
+                totalPrice: item.price * (item.quantity || 1),
+                currency: locale === 'es' ? 'MXN' : 'USD',
+                status: 'confirmed',
+                createdAt: now,
+                updatedAt: now,
+                ticketCode: `AMX-T-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+                customerName: user?.firstName
+                  ? `${user.firstName} ${user.lastName || ''}`.trim()
+                  : 'Cliente cripto',
+                customerEmail: user?.email || null,
+                paymentMethod: 'crypto',
+                paymentReference: reference,
+                cryptoNetwork: network,
+              }))
+              localStorage.setItem(
+                'amaxing_bookings',
+                JSON.stringify([...existing, ...cryptoBookings])
+              )
+              setCreatedBookings(cryptoBookings)
+            } catch {
+              // storage error
+            }
+            clearCart()
+          }}
+        />
       </div>
     )
   }
@@ -403,95 +455,159 @@ export default function CheckoutPage() {
                 {t('checkout.payment', 'Detalles de la tarjeta')}
               </h2>
 
-              <FlipCard
-                cardNumber={form.cardNumber}
-                cardHolder={form.cardHolder}
-                expiration={form.expiration}
-                cvv={form.cvv}
-                isFlipped={focusField === 'cvv'}
-              />
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="cc-number"
-                  placeholder={t('checkout.cardNumber', 'Número de tarjeta')}
-                  value={form.cardNumber}
-                  onChange={handleCardInput('cardNumber')}
-                  onFocus={() => setFocusField('cardNumber')}
-                  onBlur={() => setFocusField(null)}
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white sm:col-span-2"
-                />
-                <input
-                  type="text"
-                  autoComplete="cc-name"
-                  placeholder={t('checkout.cardHolder', 'Nombre en la tarjeta')}
-                  value={form.cardHolder}
-                  onChange={handleCardInput('cardHolder')}
-                  onFocus={() => setFocusField('cardHolder')}
-                  onBlur={() => setFocusField(null)}
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white sm:col-span-2"
-                />
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="cc-exp"
-                  placeholder={t('checkout.expiration', 'MM/AA')}
-                  value={form.expiration}
-                  onChange={handleCardInput('expiration')}
-                  onFocus={() => setFocusField('expiration')}
-                  onBlur={() => setFocusField(null)}
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
-                />
-                <input
-                  type="password"
-                  inputMode="numeric"
-                  autoComplete="cc-csc"
-                  placeholder={t('checkout.cvv', 'CVV')}
-                  value={form.cvv}
-                  onChange={handleCardInput('cvv')}
-                  onFocus={() => setFocusField('cvv')}
-                  onBlur={() => setFocusField(null)}
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
-                />
+              {/* Selector de método */}
+              <div className="mb-5 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPayMethod('card')}
+                  className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-all ${
+                    payMethod === 'card'
+                      ? 'border-orange-500 bg-orange-500/10 text-orange-600 dark:text-orange-400'
+                      : 'dark:border-white/15 border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:text-gray-400'
+                  }`}
+                >
+                  <CreditCard className="h-4 w-4" />
+                  {locale === 'es' ? 'Tarjeta' : 'Card'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPayMethod('crypto')}
+                  className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-all ${
+                    payMethod === 'crypto'
+                      ? 'border-orange-500 bg-orange-500/10 text-orange-600 dark:text-orange-400'
+                      : 'dark:border-white/15 border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:text-gray-400'
+                  }`}
+                >
+                  <span aria-hidden="true">₿</span>
+                  {locale === 'es' ? 'Cripto' : 'Crypto'}
+                </button>
               </div>
 
-              <p className="mt-3 text-xs text-zinc-500 dark:text-gray-500">
-                {t(
-                  'checkout.cardPreviewNote',
-                  'Esta es una vista previa visual. El cobro real ocurre en el checkout seguro de Stripe.'
-                )}
-              </p>
+              {payMethod === 'card' ? (
+                <>
+                  <FlipCard
+                    cardNumber={form.cardNumber}
+                    cardHolder={form.cardHolder}
+                    expiration={form.expiration}
+                    cvv={form.cvv}
+                    isFlipped={focusField === 'cvv'}
+                  />
 
-              <div className="mt-4 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-xs text-orange-600 dark:text-orange-300">
-                {t(
-                  'checkout.qrNote',
-                  'Después del pago recibirás un ticket con código QR por cada experiencia.'
-                )}
-              </div>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="cc-number"
+                      placeholder={t('checkout.cardNumber', 'Número de tarjeta')}
+                      value={form.cardNumber}
+                      onChange={handleCardInput('cardNumber')}
+                      onFocus={() => setFocusField('cardNumber')}
+                      onBlur={() => setFocusField(null)}
+                      className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white sm:col-span-2"
+                    />
+                    <input
+                      type="text"
+                      autoComplete="cc-name"
+                      placeholder={t('checkout.cardHolder', 'Nombre en la tarjeta')}
+                      value={form.cardHolder}
+                      onChange={handleCardInput('cardHolder')}
+                      onFocus={() => setFocusField('cardHolder')}
+                      onBlur={() => setFocusField(null)}
+                      className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white sm:col-span-2"
+                    />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="cc-exp"
+                      placeholder={t('checkout.expiration', 'MM/AA')}
+                      value={form.expiration}
+                      onChange={handleCardInput('expiration')}
+                      onFocus={() => setFocusField('expiration')}
+                      onBlur={() => setFocusField(null)}
+                      className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+                    />
+                    <input
+                      type="password"
+                      inputMode="numeric"
+                      autoComplete="cc-csc"
+                      placeholder={t('checkout.cvv', 'CVV')}
+                      value={form.cvv}
+                      onChange={handleCardInput('cvv')}
+                      onFocus={() => setFocusField('cvv')}
+                      onBlur={() => setFocusField(null)}
+                      className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+                    />
+                  </div>
 
-              <button
-                onClick={() => void createCheckoutSession()}
-                disabled={isSubmitting}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    {t('checkout.redirectingStripe', 'Redirigiendo a Stripe...')}
-                  </>
-                ) : (
-                  <>
+                  <p className="mt-3 text-xs text-zinc-500 dark:text-gray-500">
+                    {t(
+                      'checkout.cardPreviewNote',
+                      'Esta es una vista previa visual. El cobro real ocurre en el checkout seguro de Stripe.'
+                    )}
+                  </p>
+
+                  <div className="mt-4 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-xs text-orange-600 dark:text-orange-300">
+                    {t(
+                      'checkout.qrNote',
+                      'Después del pago recibirás un ticket con código QR por cada experiencia.'
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => void createCheckoutSession()}
+                    disabled={isSubmitting}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        {t('checkout.redirectingStripe', 'Redirigiendo a Stripe...')}
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="h-5 w-5" />
+                        {t('checkout.payNow', 'Pagar ahora')} {formatPrice(subtotal)}
+                      </>
+                    )}
+                  </button>
+
+                  <p className="mt-3 text-center text-xs text-zinc-500 dark:text-gray-500">
+                    {t(
+                      'checkout.testMode',
+                      'Stripe test mode — usa la tarjeta 4242 4242 4242 4242'
+                    )}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 p-5 text-center">
+                    <p className="text-3xl">₿</p>
+                    <h3 className="mt-2 font-bold text-gray-900 dark:text-white">
+                      {locale === 'es' ? 'Paga con cripto' : 'Pay with crypto'}
+                    </h3>
+                    <p className="mt-1 text-sm text-zinc-600 dark:text-gray-400">
+                      {locale === 'es'
+                        ? 'Ethereum, Base y Lightning Network. Escanea el QR, envía el pago y pega tu hash para verificarlo en cadena.'
+                        : 'Ethereum, Base and Lightning Network. Scan the QR, send the payment and paste your hash to verify on-chain.'}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => setShowCryptoModal(true)}
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                  >
                     <Lock className="h-5 w-5" />
-                    {t('checkout.payNow', 'Pagar ahora')} {formatPrice(subtotal)}
-                  </>
-                )}
-              </button>
+                    {locale === 'es' ? 'Pagar con cripto' : 'Pay with crypto'}{' '}
+                    {formatPrice(subtotal)}
+                  </button>
 
-              <p className="mt-3 text-center text-xs text-zinc-500 dark:text-gray-500">
-                {t('checkout.testMode', 'Stripe test mode — usa la tarjeta 4242 4242 4242 4242')}
-              </p>
+                  <p className="mt-3 text-center text-xs text-zinc-500 dark:text-gray-500">
+                    {locale === 'es'
+                      ? 'La reserva se confirma cuando la transacción es verificada on-chain.'
+                      : 'The booking is confirmed once the transaction is verified on-chain.'}
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </motion.div>

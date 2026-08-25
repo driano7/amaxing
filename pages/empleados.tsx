@@ -7,6 +7,10 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AuthLoader } from '@/components/AuthLoader'
 import { CoffeeBackground } from '@/components/CoffeeBackground'
+import { QrScanner } from '@/components/QrScanner'
+import { ScanResultDisplay } from '@/components/ScanResultDisplay'
+import { resolveQr } from '@/lib/qr/resolve'
+import { type QrType } from '@/lib/qr/types'
 import {
   BadgeCheck,
   CalendarClock,
@@ -16,6 +20,7 @@ import {
   ArrowLeft,
   CheckCircle2,
   Clock,
+  Camera,
 } from 'lucide-react'
 
 const MOCK_TODAY = [
@@ -262,6 +267,16 @@ export default function EmployeePanel() {
             })}
           </motion.div>
 
+          {/* QR Scanner */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-8"
+          >
+            <QrScannerSection isEs={isEs} />
+          </motion.div>
+
           {/* Agenda del día */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
@@ -376,5 +391,71 @@ export default function EmployeePanel() {
         </motion.div>
       </div>
     </CoffeeBackground>
+  )
+}
+
+function QrScannerSection({ isEs }: { isEs: boolean }) {
+  const [showScanner, setShowScanner] = useState(false)
+  const [scanResult, setScanResult] = useState<any>(null)
+
+  const handleScan = (raw: string, type: QrType, code: string) => {
+    const resolved = resolveQr(raw)
+    if (resolved) {
+      setScanResult(resolved)
+      setShowScanner(false)
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-500">
+            {isEs ? 'Lector de QR' : 'QR Scanner'}
+          </p>
+          <p className="mt-1 text-sm text-zinc-600 dark:text-gray-400">
+            {isEs
+              ? 'Escanea el código QR de un cliente o reserva para ver los detalles.'
+              : 'Scan a client or booking QR code to see the details.'}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setShowScanner(!showScanner)
+            setScanResult(null)
+          }}
+          className="flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-orange-600"
+        >
+          <Camera className="h-4 w-4" />
+          {showScanner
+            ? isEs
+              ? 'Cerrar lector'
+              : 'Close scanner'
+            : isEs
+            ? 'Abrir lector'
+            : 'Open scanner'}
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {showScanner && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 overflow-hidden"
+          >
+            <QrScanner onScan={handleScan} onClose={() => setShowScanner(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {scanResult && (
+        <div className="mt-4">
+          <ScanResultDisplay result={scanResult} isEs={isEs} />
+        </div>
+      )}
+    </div>
   )
 }

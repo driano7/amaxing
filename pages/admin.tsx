@@ -7,6 +7,13 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AuthLoader } from '@/components/AuthLoader'
 import { CoffeeBackground } from '@/components/CoffeeBackground'
+import { QrScanner } from '@/components/QrScanner'
+import { ScanResultDisplay } from '@/components/ScanResultDisplay'
+import { resolveQr } from '@/lib/qr/resolve'
+import { type QrType } from '@/lib/qr/types'
+import { AdvancedMetricsPanel, PassiveAnalyticsPanel } from '@/components/analytics/SocioPanels'
+import { getLocalAnalytics, type AnalyticsEntry } from '@/lib/analytics/track'
+import { MOCK_SOCIO_BOOKINGS, MOCK_ANALYTICS_ENTRIES } from '@/lib/mocks/socioData'
 import {
   ShieldCheck,
   Users,
@@ -23,6 +30,7 @@ import {
   ArrowLeft,
   KeyRound,
   Mail,
+  Camera,
 } from 'lucide-react'
 
 interface MeData {
@@ -419,6 +427,67 @@ export default function AdminPanel() {
             })}
           </motion.div>
 
+          {/* QR Scanner */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-8"
+          >
+            <QrScannerSection isEs={isEs} />
+          </motion.div>
+
+          {/* SOCIOS ONLY: Métricas ML + Analítica pasiva */}
+          {me.role === 'admin' && me.permissions.canViewAdvancedMetrics && (
+            <>
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mb-8 rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-lg dark:border-white/10 dark:bg-zinc-900/50"
+              >
+                <div className="mb-6">
+                  <h2 className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-white">
+                    <Activity className="h-5 w-5 text-orange-500" />
+                    {isEs ? 'Métricas avanzadas (socios)' : 'Advanced metrics (partners)'}
+                  </h2>
+                  <p className="mt-1 text-xs text-zinc-500 dark:text-gray-400">
+                    {isEs
+                      ? 'Segmentación de clientes, proyección de ingresos, demanda por tour y detección de anomalías. Exclusivo para socios.'
+                      : 'Client segmentation, revenue projection, tour demand and anomaly detection. Partners only.'}
+                  </p>
+                  <span className="bg-orange-500/15 mt-2 inline-block rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400">
+                    🔒 Solo socios
+                  </span>
+                </div>
+                <SocioMetricsData isEs={isEs} />
+              </motion.section>
+
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mb-8 rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-lg dark:border-white/10 dark:bg-zinc-900/50"
+              >
+                <div className="mb-6">
+                  <h2 className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-white">
+                    <Eye className="h-5 w-5 text-blue-500" />
+                    {isEs ? 'Analítica pasiva (socios)' : 'Passive analytics (partners)'}
+                  </h2>
+                  <p className="mt-1 text-xs text-zinc-500 dark:text-gray-400">
+                    {isEs
+                      ? 'Visitas, dispositivos, navegadores y flujo del sitio. Recolectado automáticamente.'
+                      : 'Visits, devices, browsers and site flow. Collected automatically.'}
+                  </p>
+                  <span className="bg-blue-500/15 mt-2 inline-block rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
+                    🔒 Solo socios
+                  </span>
+                </div>
+                <PassiveAnalyticsData isEs={isEs} />
+              </motion.section>
+            </>
+          )}
+
           {/* Gestión de usuarios + toggle descifrado */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
@@ -683,5 +752,114 @@ export default function AdminPanel() {
         </motion.div>
       </div>
     </CoffeeBackground>
+  )
+}
+
+function PassiveAnalyticsData({ isEs }: { isEs: boolean }) {
+  const [entries, setEntries] = useState<AnalyticsEntry[]>([])
+  const [isDemo, setIsDemo] = useState(false)
+
+  useEffect(() => {
+    const local = getLocalAnalytics()
+    if (local.length > 0) {
+      setEntries(local)
+      setIsDemo(false)
+      return
+    }
+    // Sin datos reales → mock para previsualizar el panel
+    setEntries(MOCK_ANALYTICS_ENTRIES)
+    setIsDemo(true)
+  }, [])
+
+  return <PassiveAnalyticsPanel entries={entries} isEs={isEs} isDemo={isDemo} />
+}
+
+function SocioMetricsData({ isEs }: { isEs: boolean }) {
+  const [bookings, setBookings] = useState<any[]>([])
+  const [isDemo, setIsDemo] = useState(false)
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('amaxing_bookings')
+      const loaded = raw ? JSON.parse(raw) : []
+      if (Array.isArray(loaded) && loaded.length > 0) {
+        setBookings(loaded)
+        setIsDemo(false)
+        return
+      }
+    } catch {
+      // fall through to demo
+    }
+    // Sin datos reales → mock para previsualizar el panel de socio
+    setBookings(MOCK_SOCIO_BOOKINGS as any[])
+    setIsDemo(true)
+  }, [])
+
+  return <AdvancedMetricsPanel bookings={bookings} isEs={isEs} isDemo={isDemo} />
+}
+
+function QrScannerSection({ isEs }: { isEs: boolean }) {
+  const [showScanner, setShowScanner] = useState(false)
+  const [scanResult, setScanResult] = useState<any>(null)
+
+  const handleScan = (raw: string, type: QrType, code: string) => {
+    const resolved = resolveQr(raw)
+    if (resolved) {
+      setScanResult(resolved)
+      setShowScanner(false)
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-500">
+            {isEs ? 'Lector de QR' : 'QR Scanner'}
+          </p>
+          <p className="mt-1 text-sm text-zinc-600 dark:text-gray-400">
+            {isEs
+              ? 'Escanea el código QR de un cliente o reserva para ver los detalles.'
+              : 'Scan a client or booking QR code to see the details.'}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setShowScanner(!showScanner)
+            setScanResult(null)
+          }}
+          className="flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-orange-600"
+        >
+          <Camera className="h-4 w-4" />
+          {showScanner
+            ? isEs
+              ? 'Cerrar lector'
+              : 'Close scanner'
+            : isEs
+            ? 'Abrir lector'
+            : 'Open scanner'}
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {showScanner && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 overflow-hidden"
+          >
+            <QrScanner onScan={handleScan} onClose={() => setShowScanner(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {scanResult && (
+        <div className="mt-4">
+          <ScanResultDisplay result={scanResult} isEs={isEs} />
+        </div>
+      )}
+    </div>
   )
 }

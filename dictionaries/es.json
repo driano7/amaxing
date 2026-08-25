@@ -272,5 +272,23 @@
     "bookNew": "Reservar nueva experiencia",
     "emptySubtitle": "Explora nuestras experiencias y reserva tu próxima aventura",
     "explore": "Explorar experiencias"
+  },
+  "gdpr": {
+    "badge": "Privacidad primero",
+    "title": "Tu información está segura con nosotros",
+    "subtitle": "Protegemos tus datos y tú decides qué pasa con ellos. Siempre.",
+    "detail1Title": "Solo tú puedes ver tu información",
+    "detail1Body": "Tu nombre, teléfono y correo se guardan de forma segura. Nadie más puede acceder, ni siquiera nuestro equipo.",
+    "detail2Title": "Protegida en todo momento",
+    "detail2Body": "Todo está cifrado cuando viaja por internet y cuando se almacena. Si alguien intentara interceptarlo, solo vería caracteres ilegibles.",
+    "detail3Title": "Tus guías ven solo lo necesario",
+    "detail3Body": "Los guías de tours solo ven los datos esenciales para atenderte durante la experiencia. Nada más.",
+    "detail4Title": "Descarga tus datos cuando quieras",
+    "detail4Body": "Puedes descargar toda tu información en un archivo cuando lo desees. Son tus datos, tú decides.",
+    "detail5Title": "Borra todo si así lo prefieres",
+    "detail5Body": "Puedes eliminar tu cuenta y todos tus datos de forma permanente. Sin preguntas.",
+    "manageTitle": "Gestiona tus datos",
+    "manageBody": "Exporta, revisa o elimina tu información desde tu perfil.",
+    "manageCta": "Ir a Seguridad y datos"
   }
 }

@@ -4,41 +4,23 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShieldCheck, ChevronDown, Lock, Download, Trash2, Eye, Server } from 'lucide-react'
 import Link from 'next/link'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 interface GdprBannerProps {
   className?: string
 }
 
-const DETAILS = [
-  {
-    icon: Lock,
-    title: 'Cifrado AES-256-GCM',
-    body: 'Tus datos personales (nombre, teléfono, correo) se cifran con AES-256-GCM antes de guardarse. La clave se deriva de tu identificador mediante PBKDF2 con 100,000 iteraciones.',
-  },
-  {
-    icon: Server,
-    title: 'Protegido en tránsito y en reposo',
-    body: 'Toda la comunicación viaja sobre TLS 1.3 y los datos almacenados permanecen cifrados. Solo tu cuenta puede descifrarlos; ni siquiera nosotros podemos leerlos sin tu sesión.',
-  },
-  {
-    icon: Eye,
-    title: 'Acceso controlado por roles',
-    body: 'Los empleados solo ven lo estrictamente necesario para operar tus tours. Cada acceso o descifrado por parte del personal queda registrado en un log de auditoría inalterable.',
-  },
-  {
-    icon: Download,
-    title: 'Exportación de datos',
-    body: 'Puedes descargar todos tus datos en formato JSON desde tu perfil, con opción de descarga adicionalmente cifrada para que solo tú puedas abrirla.',
-  },
-  {
-    icon: Trash2,
-    title: 'Derecho al olvido',
-    body: 'Puedes eliminar tu cuenta y todos tus datos de forma permanente en cualquier momento desde Perfil → Seguridad y datos, conforme al RGPD (GDPR).',
-  },
-]
+const DETAIL_ICONS = [Lock, Server, Eye, Download, Trash2]
 
 export function GdprBanner({ className = '' }: GdprBannerProps) {
   const [open, setOpen] = useState(false)
+  const { t } = useLanguage()
+
+  const details = DETAIL_ICONS.map((icon, i) => ({
+    icon,
+    title: t(`gdpr.detail${i + 1}Title`),
+    body: t(`gdpr.detail${i + 1}Body`),
+  }))
 
   return (
     <motion.div
@@ -54,7 +36,6 @@ export function GdprBanner({ className = '' }: GdprBannerProps) {
         aria-expanded={open}
         className="group relative block w-full overflow-hidden rounded-2xl border border-emerald-500/25 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 p-6 text-left transition-all duration-300 hover:border-emerald-500/50 hover:shadow-[0_16px_40px_rgba(16,185,129,0.15)] dark:border-emerald-400/20 dark:hover:border-emerald-400/40"
       >
-        {/* brillo decorativo */}
         <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl transition-opacity duration-500 group-hover:bg-emerald-500/20" />
 
         <div className="relative flex flex-col items-start gap-4 sm:flex-row sm:items-center">
@@ -68,18 +49,15 @@ export function GdprBanner({ className = '' }: GdprBannerProps) {
 
           <div className="min-w-0 flex-1">
             <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">
-              Privacidad primero
+              {t('gdpr.badge')}
               <span className="bg-emerald-500/15 rounded-full px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
                 GDPR
               </span>
             </p>
             <h3 className="mt-1 text-lg font-bold text-zinc-900 dark:text-white sm:text-xl">
-              Tus datos están protegidos con cifrado AES-256-GCM
+              {t('gdpr.title')}
             </h3>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-gray-400">
-              Cifrados en tránsito y en reposo · Tú tienes el control: expórtalos o elimínalos
-              cuando quieras.
-            </p>
+            <p className="mt-1 text-sm text-zinc-600 dark:text-gray-400">{t('gdpr.subtitle')}</p>
           </div>
 
           <motion.span
@@ -103,7 +81,7 @@ export function GdprBanner({ className = '' }: GdprBannerProps) {
             className="overflow-hidden"
           >
             <div className="mt-4 grid gap-4 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50 sm:grid-cols-2 lg:grid-cols-3">
-              {DETAILS.map((item, i) => {
+              {details.map((item, i) => {
                 const Icon = item.icon
                 return (
                   <motion.article
@@ -126,21 +104,21 @@ export function GdprBanner({ className = '' }: GdprBannerProps) {
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.08 * DETAILS.length, duration: 0.35 }}
+                transition={{ delay: 0.08 * details.length, duration: 0.35 }}
                 className="flex flex-col justify-center rounded-xl border border-orange-500/30 bg-orange-500/10 p-4"
               >
                 <p className="text-sm font-semibold text-zinc-900 dark:text-white">
-                  Gestiona tus datos
+                  {t('gdpr.manageTitle')}
                 </p>
                 <p className="mt-1 text-xs text-zinc-600 dark:text-gray-400">
-                  Exporta, cifra o elimina tu información desde tu perfil.
+                  {t('gdpr.manageBody')}
                 </p>
                 <Link
-                  href="/profile"
+                  href="/profile?tab=security"
                   onClick={(e) => e.stopPropagation()}
                   className="mt-3 inline-flex w-fit items-center rounded-lg bg-orange-500 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-orange-600"
                 >
-                  Ir a Seguridad y datos →
+                  {t('gdpr.manageCta')} →
                 </Link>
               </motion.div>
             </div>

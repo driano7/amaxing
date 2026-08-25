@@ -3,7 +3,10 @@
 import React from 'react'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion'
+import dynamic from 'next/dynamic'
+import { buildClientQr } from '@/lib/qr/types'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import Image from '@/components/Image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
@@ -147,8 +150,9 @@ const MOCK_BOOKINGS = [
 export default function Profile() {
   const { user, isLoading, updateUser, logout } = useAuth()
   const { t, currentLanguage } = useLanguage()
+  const router = useRouter()
   const isEs = currentLanguage === 'es'
-  const [tab, setTab] = useState<Tab>('profile')
+  const [tab, setTab] = useState<Tab>((router.query.tab as Tab) || 'profile')
   const [showTicket, setShowTicket] = useState<any>(null)
   const [bookings, setBookings] = useState<any[]>([])
   const [favorites, setFavorites] = useState<string[]>([])
@@ -228,6 +232,14 @@ export default function Profile() {
   useEffect(() => {
     loadProfileData()
   }, [loadProfileData])
+
+  useEffect(() => {
+    const queryTab = router.query.tab as Tab | undefined
+    if (queryTab && queryTab !== tab) {
+      setTab(queryTab)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.tab])
 
   const favTours = tours.filter((tr) => favorites.includes(tr.id))
   const commentedTours = tours.filter((tr) => commented.includes(tr.id))
@@ -564,6 +576,7 @@ export default function Profile() {
                     isEs={isEs}
                     onSubmit={handleSaveProfile}
                     profileLoaded={profileLoaded}
+                    user={user}
                   />
                 </ErrorBoundary>
               )}
@@ -1172,7 +1185,16 @@ function BookingsContent({
   )
 }
 
-function ProfileForm({ form, setForm, savedMsg, setSavedMsg, isEs, onSubmit, profileLoaded }: any) {
+function ProfileForm({
+  form,
+  setForm,
+  savedMsg,
+  setSavedMsg,
+  isEs,
+  onSubmit,
+  profileLoaded,
+  user,
+}: any) {
   if (!profileLoaded) {
     return (
       <motion.div
@@ -1186,93 +1208,157 @@ function ProfileForm({ form, setForm, savedMsg, setSavedMsg, isEs, onSubmit, pro
   }
 
   return (
-    <motion.form
-      onSubmit={onSubmit}
-      className="space-y-5 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50"
+    <>
+      <motion.form
+        onSubmit={onSubmit}
+        className="space-y-5 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.h2
+          className="text-xl font-bold text-zinc-900 dark:text-white"
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          {isEs ? 'Editar mi información' : 'Edit my information'}
+        </motion.h2>
+        {savedMsg && (
+          <motion.div
+            className="rounded-xl border border-emerald-300/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-900/20 dark:text-emerald-200"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            ✓ {savedMsg}
+          </motion.div>
+        )}
+        <motion.div
+          className="grid gap-4 md:grid-cols-2"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <Field
+            label={isEs ? 'Nombre' : 'First name'}
+            value={form.firstName}
+            onChange={(v) => setForm({ ...form, firstName: v })}
+          />
+          <Field
+            label={isEs ? 'Apellido' : 'Last name'}
+            value={form.lastName}
+            onChange={(v) => setForm({ ...form, lastName: v })}
+          />
+          <Field
+            label={isEs ? 'Correo electrónico' : 'Email'}
+            value={form.email}
+            onChange={(v) => setForm({ ...form, email: v })}
+          />
+          <Field
+            label={isEs ? 'Teléfono' : 'Phone'}
+            value={form.phone}
+            onChange={(v) => setForm({ ...form, phone: v })}
+          />
+          <Field
+            label={isEs ? 'País' : 'Country'}
+            value={form.country}
+            onChange={(v) => setForm({ ...form, country: v })}
+          />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300">
+            {isEs ? 'Acerca de ti' : 'About you'}
+          </label>
+          <textarea
+            rows={3}
+            value={form.summary}
+            onChange={(e) => setForm({ ...form, summary: e.target.value })}
+            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+          />
+        </motion.div>
+        <motion.button
+          type="submit"
+          className="rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          {isEs ? 'Guardar cambios' : 'Save changes'}
+        </motion.button>
+      </motion.form>
+
+      <ClientQrSection isEs={isEs} user={null} />
+    </>
+  )
+}
+
+function ClientQrSection({ isEs, user }: { isEs: boolean; user: any }) {
+  const [QRCodeComponent, setQRCodeComponent] = useState<any>(null)
+
+  useEffect(() => {
+    import('qrcode.react').then((mod) => setQRCodeComponent(() => mod.QRCodeSVG))
+  }, [])
+
+  const clientCode = user?.id ? String(user.id).slice(0, 8).toUpperCase() : 'DEMO'
+  const qrValue = buildClientQr(clientCode)
+
+  return (
+    <motion.div
+      className="mt-6 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
     >
-      <motion.h2
-        className="text-xl font-bold text-zinc-900 dark:text-white"
-        initial={{ opacity: 0, y: -10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-      >
-        {isEs ? 'Editar mi información' : 'Edit my information'}
-      </motion.h2>
-      {savedMsg && (
-        <motion.div
-          className="rounded-xl border border-emerald-300/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-900/20 dark:text-emerald-200"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          ✓ {savedMsg}
-        </motion.div>
-      )}
-      <motion.div
-        className="grid gap-4 md:grid-cols-2"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        <Field
-          label={isEs ? 'Nombre' : 'First name'}
-          value={form.firstName}
-          onChange={(v) => setForm({ ...form, firstName: v })}
-        />
-        <Field
-          label={isEs ? 'Apellido' : 'Last name'}
-          value={form.lastName}
-          onChange={(v) => setForm({ ...form, lastName: v })}
-        />
-        <Field
-          label={isEs ? 'Correo electrónico' : 'Email'}
-          value={form.email}
-          onChange={(v) => setForm({ ...form, email: v })}
-        />
-        <Field
-          label={isEs ? 'Teléfono' : 'Phone'}
-          value={form.phone}
-          onChange={(v) => setForm({ ...form, phone: v })}
-        />
-        <Field
-          label={isEs ? 'País' : 'Country'}
-          value={form.country}
-          onChange={(v) => setForm({ ...form, country: v })}
-        />
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300">
-          {isEs ? 'Acerca de ti' : 'About you'}
-        </label>
-        <textarea
-          rows={3}
-          value={form.summary}
-          onChange={(e) => setForm({ ...form, summary: e.target.value })}
-          className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
-        />
-      </motion.div>
-      <motion.button
-        type="submit"
-        className="rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-      >
-        {isEs ? 'Guardar cambios' : 'Save changes'}
-      </motion.button>
-    </motion.form>
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-500">
+        {isEs ? 'Tu código QR' : 'Your QR code'}
+      </p>
+      <p className="mt-1 text-sm text-zinc-600 dark:text-gray-400">
+        {isEs
+          ? 'Muestra este código para que tus guías o el equipo te identifiquen al check-in.'
+          : 'Show this code so your guides or team can identify you at check-in.'}
+      </p>
+
+      <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row">
+        <div className="flex shrink-0 items-center justify-center rounded-2xl border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-900">
+          {QRCodeComponent ? (
+            <QRCodeComponent
+              value={qrValue}
+              size={140}
+              level="M"
+              bgColor="#ffffff"
+              fgColor="#0f172a"
+            />
+          ) : (
+            <div className="flex h-[140px] w-[140px] items-center justify-center">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+            </div>
+          )}
+        </div>
+
+        <div className="text-center sm:text-left">
+          <p className="rounded-lg bg-zinc-100 px-3 py-1.5 font-mono text-lg font-bold text-zinc-900 dark:bg-white/10 dark:text-white">
+            {qrValue}
+          </p>
+          <p className="mt-2 text-xs text-zinc-500">
+            {isEs ? 'Nombre' : 'Name'}: {user?.firstName || '—'} {user?.lastName || ''}
+          </p>
+          <p className="text-xs text-zinc-500">
+            {isEs ? 'Correo' : 'Email'}: {user?.email || '—'}
+          </p>
+        </div>
+      </div>
+    </motion.div>
   )
 }
 
