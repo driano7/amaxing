@@ -175,20 +175,22 @@ export default function EmployeePanel() {
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <Link
-              href="/profile"
-              className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-orange-500 hover:underline"
-            >
-              <ArrowLeft className="h-4 w-4" /> {isEs ? 'Mi perfil' : 'My profile'}
+            <div className="mb-4 flex items-center gap-4">
+              <Link href="/profile">
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-orange-500 hover:underline">
+                  <ArrowLeft className="h-4 w-4" />
+                  {isEs ? 'Mi perfil' : 'My profile'}
+                </span>
+              </Link>
               {roleResolved === 'admin' && (
                 <Link
                   href="/admin"
-                  className="ml-3 text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400"
+                  className="text-xs font-bold uppercase tracking-widest text-emerald-600 hover:underline dark:text-emerald-400"
                 >
                   {isEs ? '→ Panel Admin' : '→ Admin Panel'}
                 </Link>
               )}
-            </Link>
+            </div>
             <div className="rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-xl dark:border-white/10 dark:bg-zinc-900/50">
               <div className="flex items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-500/30">

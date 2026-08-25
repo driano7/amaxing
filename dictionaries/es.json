@@ -235,11 +235,11 @@
   },
   "nav": {
     "header": {
-      "tours": "Tours",
-      "culinary": "Culinario",
-      "history": "Historia",
-      "neighborhoods": "Barrios",
-      "museums": "Museos"
+      "experiences": "Experiencias",
+      "stories": "Historias",
+      "news": "Noticias",
+      "contact": "Contacto",
+      "allTours": "Todos los Tours"
     }
   },
   "cart": {

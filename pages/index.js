@@ -10,6 +10,7 @@ import formatDate from '@/lib/utils/formatDate'
 import Image from '@/components/Image'
 import projectsData from '@/data/projectsData'
 import { GdprBanner } from '@/components/GdprBanner'
+import { HeroPhoneWalletScroll } from '@/components/PhoneWalletShowcase'
 
 const MAX_DISPLAY = 5
 
@@ -171,6 +172,9 @@ export default function Home({ posts, locale }) {
             </Link>
           </div>
         </div>
+
+        {/* iPhone showcase (adaptado de Criptec) */}
+        <HeroPhoneWalletScroll />
 
         <GdprBanner className="mt-2" />
       </div>

@@ -27,7 +27,7 @@ export function AuthLoader({ label = 'Cargando...' }: { label?: string }) {
         <Image
           src="/static/images/jaguarBaja.png"
           alt=""
-          fill
+          layout="fill"
           className="relative z-10 object-cover"
           priority
         />

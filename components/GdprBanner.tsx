@@ -118,7 +118,7 @@ export function GdprBanner({ className = '' }: GdprBannerProps) {
                   onClick={(e) => e.stopPropagation()}
                   className="mt-3 inline-flex w-fit items-center rounded-lg bg-orange-500 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-orange-600"
                 >
-                  {t('gdpr.manageCta')} →
+                  {`${t('gdpr.manageCta')} →`}
                 </Link>
               </motion.div>
             </div>

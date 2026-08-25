@@ -35,10 +35,10 @@ export function AddToCartButton({ tour, locale }) {
   return (
     <button
       onClick={handleAdd}
-      className={`flex w-full items-center justify-center gap-2 rounded-xl py-4 font-semibold transition-colors ${
+      className={`flex w-full items-center justify-center gap-2 rounded-xl py-4 font-semibold transition-all ${
         added
           ? 'bg-emerald-500 text-white hover:bg-emerald-600'
-          : 'border border-orange-500/30 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20'
+          : 'border border-[var(--a30)] bg-[var(--a10)] text-[var(--accent)] hover:bg-[var(--a20)] hover:brightness-105'
       }`}
     >
       {added ? <Check className="h-5 w-5" /> : <ShoppingBag className="h-5 w-5" />}

@@ -1028,21 +1028,20 @@ function BookingCard({ booking, isEs, onView, formatBookingDate }: any) {
 function MiniTourCard({ tour, isEs }: any) {
   const title = isEs ? tour.titleEs || tour.title : tour.title
   return (
-    <Link
-      href={`/tours/${tour.id}`}
-      className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white/80 p-2 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50"
-    >
-      <Image
-        src={tour.imageUrl}
-        alt={title}
-        width={56}
-        height={56}
-        className="rounded-lg object-cover"
-      />
-      <div className="min-w-0">
-        <p className="truncate font-medium text-zinc-900 dark:text-white">{title}</p>
-        <p className="text-sm text-zinc-500 dark:text-gray-400">${tour.price}</p>
-      </div>
+    <Link href={`/tours/${tour.id}`}>
+      <a className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white/80 p-2 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50">
+        <Image
+          src={tour.imageUrl}
+          alt={title}
+          width={56}
+          height={56}
+          className="rounded-lg object-cover"
+        />
+        <div className="min-w-0">
+          <p className="truncate font-medium text-zinc-900 dark:text-white">{title}</p>
+          <p className="text-sm text-zinc-500 dark:text-gray-400">${tour.price}</p>
+        </div>
+      </a>
     </Link>
   )
 }

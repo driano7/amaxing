@@ -251,9 +251,9 @@ export function Navbar() {
                 </Link>
               ))}
 
-              {/* Categories dropdown - hover to reveal the 4 tour categories in a column */}
+              {/* Categories dropdown - hidden when headerDropdownConfig is empty */}
               <div
-                className="relative"
+                className={tourCategories.length > 0 ? 'relative' : 'hidden'}
                 onMouseEnter={() => setCategoriesOpen(true)}
                 onMouseLeave={() => setCategoriesOpen(false)}
               >

@@ -5,58 +5,30 @@
  * desktop and mobile (drawer) views.
  *
  * Layout split (desktop):
- *   - navItemsConfig        -> Header bar (compact 1-word category labels)
- *   - headerDropdownConfig  -> Header secondary dropdown
+ *   - navItemsConfig        -> Header bar
+ *   - headerDropdownConfig  -> Header secondary dropdown ("More")
  *
  * Mobile:
  *   - drawerItemsConfig     -> HubMenu drawer list + MobileDock nav
  *   - tourCategoriesConfig  -> HubMenu "Categories" section
  */
 
-// Desktop header items — one-word labels to keep the bar compact.
+// Desktop header items.
 const navItemsConfig = [
-  { labelKey: 'nav.header.tours', fallback: 'Tours', href: '/tours', icon: 'LayoutGrid' },
   {
-    labelKey: 'nav.header.culinary',
-    fallback: 'Culinary',
-    href: '/tours?category=gastronomy',
-    icon: 'Utensils',
-  },
-  {
-    labelKey: 'nav.header.history',
-    fallback: 'History',
-    href: '/tours?category=history',
-    icon: 'Skull',
-  },
-  {
-    labelKey: 'nav.header.neighborhoods',
-    fallback: 'Neighborhoods',
-    href: '/tours?category=neighborhoods',
-    icon: 'MapPin',
-  },
-  {
-    labelKey: 'nav.header.museums',
-    fallback: 'Museums',
-    href: '/tours?category=museums',
-    icon: 'Palette',
-  },
-]
-
-// Desktop "More" dropdown — secondary pages (Experiences, Stories, News, Contact + Pricing + All Tours).
-const headerDropdownConfig = [
-  {
-    labelKey: 'header.nav.experiences',
+    labelKey: 'nav.header.experiences',
     fallback: 'Experiences',
     href: '/experiences',
     icon: 'Compass',
   },
-  { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories', icon: 'BookOpen' },
-  { labelKey: 'header.nav.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
-  { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
-  { labelKey: 'header.nav.pricing', fallback: 'Pricing', href: '/pricing', icon: 'Tag' },
-  { labelKey: 'header.nav.moodboard', fallback: 'Moodboard', href: '/moodboard', icon: 'Palette' },
-  { labelKey: 'tourCategories.all', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
+  { labelKey: 'nav.header.stories', fallback: 'Stories', href: '/stories', icon: 'BookOpen' },
+  { labelKey: 'nav.header.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
+  { labelKey: 'nav.header.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
+  { labelKey: 'nav.header.allTours', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
 ]
+
+// Desktop "More" dropdown — empty for now (pricing & moodboard hidden).
+const headerDropdownConfig = []
 
 // Mobile drawer main list (HubMenu + MobileDock).
 const drawerItemsConfig = [
@@ -69,8 +41,6 @@ const drawerItemsConfig = [
   { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories', icon: 'BookOpen' },
   { labelKey: 'header.nav.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
   { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
-  { labelKey: 'header.nav.pricing', fallback: 'Pricing', href: '/pricing', icon: 'Tag' },
-  { labelKey: 'header.nav.moodboard', fallback: 'Moodboard', href: '/moodboard', icon: 'Palette' },
   { labelKey: 'tourCategories.all', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
 ]
 

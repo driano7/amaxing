@@ -27,7 +27,6 @@ import {
   Trash2,
   UserCog,
   Activity,
-  ArrowLeft,
   KeyRound,
   Mail,
   Camera,
@@ -293,7 +292,7 @@ export default function AdminPanel() {
               href="/profile"
               className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-orange-500 hover:underline"
             >
-              <ArrowLeft className="h-4 w-4" /> {isEs ? 'Mi perfil' : 'My profile'}
+              {`${isEs ? '← Mi perfil' : '← My profile'}`}
             </Link>
             <div className="flex flex-col gap-6 rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-xl dark:border-white/10 dark:bg-zinc-900/50 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">

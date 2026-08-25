@@ -95,6 +95,13 @@ module.exports = withBundleAnalyzer({
     // Fall back to classic file resolution (works like @fontsource/inter).
     config.resolve.exportsFields = []
 
+    // With exportsFields disabled above, fast-equals resolves to a build this
+    // old webpack can't statically analyze → `deepEqual` is undefined at
+    // runtime and react-smooth chart animations crash. Point the package at a
+    // minimal CommonJS shim (react-smooth only uses `deepEqual`).
+    const path = require('path')
+    config.resolve.alias['fast-equals'] = path.join(__dirname, 'lib/shims/fast-equals.js')
+
     if (!dev && !isServer) {
       // Replace React with Preact only in client production build
       Object.assign(config.resolve.alias, {

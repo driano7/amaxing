@@ -26,6 +26,7 @@ import { tours } from '@/data/toursData'
 import ProseReveal from '@/components/ProseReveal'
 import { TourReviews } from '@/components/experiences/TourReviews'
 import { AddToCartButton } from '@/components/tours/AddToCartButton'
+import { getCategoryTheme, themeVars } from '@/lib/tourTheme'
 
 const categoryLabels = {
   en: {
@@ -93,6 +94,7 @@ export default function TourDetail({ tour, locale }) {
   }
 
   const categoryLabel = categoryLabels[isEs ? 'es' : 'en'][tour.category] || tour.category
+  const theme = getCategoryTheme(tour.category)
 
   const handleAddToCart = () => {
     if (!user) {
@@ -115,7 +117,7 @@ export default function TourDetail({ tour, locale }) {
   return (
     <>
       <PageSEO title={title} description={tagline || description} />
-      <div className="min-h-screen bg-white dark:bg-zinc-950">
+      <div className="min-h-screen bg-white dark:bg-zinc-950" style={themeVars(theme)}>
         {/* Hero Image */}
         <section className="relative h-[60vh] min-h-[400px]">
           <Image
@@ -136,7 +138,7 @@ export default function TourDetail({ tour, locale }) {
                 className="max-w-3xl"
               >
                 {tour.category && (
-                  <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-orange-500/20 px-4 py-1.5 text-sm font-medium text-orange-400">
+                  <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-[var(--a20)] px-4 py-1.5 text-sm font-medium text-[var(--accent)]">
                     {categoryLabel}
                   </span>
                 )}
@@ -148,17 +150,17 @@ export default function TourDetail({ tour, locale }) {
                 )}
                 <div className="flex flex-wrap items-center gap-6 text-gray-200">
                   <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-orange-500" />
+                    <Clock className="h-5 w-5 text-[var(--accent)]" />
                     <span>{formatDuration(tour.duration)}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-orange-500" />
+                    <Users className="h-5 w-5 text-[var(--accent)]" />
                     <span>
                       {isEs ? 'Hasta' : 'Up to'} {tour.maxGuests} {isEs ? 'personas' : 'guests'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-orange-500" />
+                    <MapPin className="h-5 w-5 text-[var(--accent)]" />
                     <span>{location.split(',')[0]}</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -171,12 +173,12 @@ export default function TourDetail({ tour, locale }) {
                       className="flex items-center gap-2 text-left"
                       aria-label={isEs ? 'Ver comentarios' : 'View reviews'}
                     >
-                      <Star className="h-5 w-5 fill-current text-orange-500" />
+                      <Star className="h-5 w-5 fill-current text-[var(--accent)]" />
                       <span className="font-semibold">{tour.rating}</span>
                       <span className="text-gray-400">
                         ({tour.reviewCount} {isEs ? 'reseñas' : 'reviews'})
                       </span>
-                      <ChevronDown className="h-4 w-4 text-orange-500" />
+                      <ChevronDown className="h-4 w-4 text-[var(--accent)]" />
                     </button>
                   </div>
                 </div>
@@ -207,7 +209,7 @@ export default function TourDetail({ tour, locale }) {
                     <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
                       {isEs ? 'Qué harás' : "What you'll do"}
                     </h2>
-                    <ol className="relative space-y-6 border-l-2 border-orange-500/30 pl-6">
+                    <ol className="relative space-y-6 border-l-2 border-[var(--a30)] pl-6">
                       {itinerary.map((step, index) => (
                         <motion.li
                           key={index}
@@ -217,7 +219,7 @@ export default function TourDetail({ tour, locale }) {
                           transition={{ delay: index * 0.1 }}
                           className="relative"
                         >
-                          <span className="absolute -left-[31px] flex h-6 w-6 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
+                          <span className="absolute -left-[31px] flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
                             {index + 1}
                           </span>
                           <p className="font-medium text-gray-800 dark:text-gray-200">{step}</p>
@@ -240,10 +242,10 @@ export default function TourDetail({ tour, locale }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-100 p-4 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50"
+                        className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-100 p-4 transition-colors hover:border-[var(--a30)] dark:border-white/10 dark:bg-zinc-900/50"
                       >
-                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-orange-500/20">
-                          <Check className="h-5 w-5 text-orange-500" />
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--a20)]">
+                          <Check className="h-5 w-5 text-[var(--accent)]" />
                         </div>
                         <span className="font-medium text-gray-800 dark:text-gray-200">
                           {highlight}
@@ -261,7 +263,7 @@ export default function TourDetail({ tour, locale }) {
                         key={index}
                         className="flex items-center gap-2 text-sm text-zinc-600 dark:text-gray-300"
                       >
-                        <Check className="h-4 w-4 flex-shrink-0 text-orange-500" />
+                        <Check className="h-4 w-4 flex-shrink-0 text-[var(--accent)]" />
                         {item}
                       </div>
                     ))}
@@ -276,7 +278,7 @@ export default function TourDetail({ tour, locale }) {
                     </h2>
                     <div className="rounded-xl border border-zinc-200 bg-zinc-100 p-6 dark:border-white/10 dark:bg-zinc-900/50">
                       <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
-                        <MapPinned className="h-6 w-6 flex-shrink-0 text-orange-500" />
+                        <MapPinned className="h-6 w-6 flex-shrink-0 text-[var(--accent)]" />
                         <div>
                           <div className="font-medium">{meetingPoint}</div>
                           <div className="text-sm text-zinc-500 dark:text-gray-400">{location}</div>
@@ -316,7 +318,7 @@ export default function TourDetail({ tour, locale }) {
                 )}
 
                 {/* CTA — Reserve / Request info */}
-                <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-8 text-center">
+                <div className="rounded-2xl border border-[var(--a20)] bg-[var(--a05)] p-8 text-center">
                   <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
                     {isEs ? '¿Listo para esta experiencia?' : 'Ready for this experience?'}
                   </h2>
@@ -329,7 +331,7 @@ export default function TourDetail({ tour, locale }) {
                     <button
                       type="button"
                       onClick={handleAddToCart}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-8 py-4 font-semibold text-white transition-all hover:brightness-110"
                     >
                       <ShoppingBag className="h-5 w-5" />
                       {isEs ? 'Agregar al carrito' : 'Add to Cart'}
@@ -375,8 +377,8 @@ export default function TourDetail({ tour, locale }) {
                       </div>
                     </div>
 
-                    <div className="mb-4 flex items-center gap-2 rounded-lg bg-orange-500/10 p-3">
-                      <Star className="h-5 w-5 fill-current text-orange-500" />
+                    <div className="mb-4 flex items-center gap-2 rounded-lg bg-[var(--a10)] p-3">
+                      <Star className="h-5 w-5 fill-current text-[var(--accent)]" />
                       <span className="font-semibold text-gray-900 dark:text-white">
                         {tour.rating}
                       </span>
@@ -413,8 +415,8 @@ export default function TourDetail({ tour, locale }) {
                         onClick={() => setFav(toggleFavorite(tour.id))}
                         className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 font-semibold transition-colors ${
                           fav
-                            ? 'bg-rose-500/10 text-rose-500 hover:bg-rose-500/20'
-                            : 'border border-zinc-200 text-zinc-600 hover:border-rose-500/30 hover:text-rose-500 dark:border-white/10 dark:text-gray-300'
+                            ? 'bg-[var(--a10)] text-[var(--accent)] hover:bg-[var(--a20)]'
+                            : 'border border-zinc-200 text-zinc-600 hover:border-[var(--a30)] hover:text-[var(--accent)] dark:border-white/10 dark:text-gray-300'
                         }`}
                       >
                         <Heart className={`h-5 w-5 ${fav ? 'fill-current' : ''}`} />
@@ -431,9 +433,9 @@ export default function TourDetail({ tour, locale }) {
 
                   {/* Featured Badge */}
                   {tour.isFeatured && (
-                    <div className="rounded-xl border border-orange-500/30 bg-gradient-to-r from-orange-500/20 to-orange-500/20 p-4">
+                    <div className="rounded-xl border border-[var(--a30)] bg-[var(--a20)] p-4">
                       <div className="flex items-center gap-3">
-                        <Star className="h-6 w-6 fill-current text-orange-500" />
+                        <Star className="h-6 w-6 fill-current text-[var(--accent)]" />
                         <div>
                           <div className="text-sm font-semibold text-gray-900 dark:text-white">
                             {isEs ? 'Tour Destacado' : 'Featured Tour'}
