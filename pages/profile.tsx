@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
 import Image from '@/components/Image'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -47,13 +47,107 @@ import {
   StatCard,
 } from '@/components/charts/AnimatedCharts'
 
-type Tab = 'dashboard' | 'bookings' | 'favorites' | 'commented' | 'profile' | 'security'
+type Tab = 'profile' | 'bookings' | 'dashboard' | 'favorites' | 'commented' | 'security'
+
+// Mock bookings data for animation preview
+const MOCK_BOOKINGS = [
+  {
+    id: 'bk_1',
+    userId: 'user_1',
+    experienceId: '1',
+    experienceTitle: 'Ruta del Jaguar en Baja',
+    experienceImage: '/static/images/jaguarBaja.png',
+    date: '2025-02-15',
+    time: '09:00',
+    totalPrice: 2500,
+    status: 'confirmed',
+    category: 'gastronomy',
+    location: 'Ensenada, Baja California',
+    meetingPoint: 'Hotel Coral & Marina',
+    createdAt: '2025-01-20T10:30:00Z',
+  },
+  {
+    id: 'bk_2',
+    userId: 'user_1',
+    experienceId: '2',
+    experienceTitle: 'Historia Viva: Centro Histórico CDMX',
+    experienceImage: '/static/images/jaguarBaja.png',
+    date: '2025-01-20',
+    time: '10:00',
+    totalPrice: 1800,
+    status: 'completed',
+    category: 'history',
+    location: 'Ciudad de México',
+    meetingPoint: 'Zócalo, frente a Catedral',
+    createdAt: '2024-12-10T14:00:00Z',
+  },
+  {
+    id: 'bk_3',
+    userId: 'user_1',
+    experienceId: '3',
+    experienceTitle: 'Barrios Mágicos: Roma y Condesa',
+    experienceImage: '/static/images/jaguarBaja.png',
+    date: '2025-03-10',
+    time: '16:00',
+    totalPrice: 2200,
+    status: 'pending',
+    category: 'neighborhoods',
+    location: 'Ciudad de México',
+    meetingPoint: 'Parque México',
+    createdAt: '2025-02-01T09:15:00Z',
+  },
+  {
+    id: 'bk_4',
+    userId: 'user_1',
+    experienceId: '4',
+    experienceTitle: 'Arte y Museos: Museo Nacional de Antropología',
+    experienceImage: '/static/images/jaguarBaja.png',
+    date: '2024-11-25',
+    time: '11:00',
+    totalPrice: 1500,
+    status: 'completed',
+    category: 'museums',
+    location: 'Ciudad de México',
+    meetingPoint: 'Entrada principal del museo',
+    createdAt: '2024-10-15T16:45:00Z',
+  },
+  {
+    id: 'bk_5',
+    userId: 'user_1',
+    experienceId: '5',
+    experienceTitle: 'Sabores de Oaxaca: Mercado 20 de Noviembre',
+    experienceImage: '/static/images/jaguarBaja.png',
+    date: '2025-04-05',
+    time: '08:00',
+    totalPrice: 3200,
+    status: 'confirmed',
+    category: 'gastronomy',
+    location: 'Oaxaca, Oaxaca',
+    meetingPoint: 'Mercado 20 de Noviembre',
+    createdAt: '2025-02-20T11:20:00Z',
+  },
+  {
+    id: 'bk_6',
+    userId: 'user_1',
+    experienceId: '6',
+    experienceTitle: 'Rutas del Mezcal: Santiago Matatlán',
+    experienceImage: '/static/images/jaguarBaja.png',
+    date: '2024-10-12',
+    time: '14:00',
+    totalPrice: 2800,
+    status: 'completed',
+    category: 'gastronomy',
+    location: 'Oaxaca, Oaxaca',
+    meetingPoint: 'Palacio Municipal',
+    createdAt: '2024-09-01T12:00:00Z',
+  },
+]
 
 export default function Profile() {
   const { user, isLoading, updateUser, logout } = useAuth()
   const { t, currentLanguage } = useLanguage()
   const isEs = currentLanguage === 'es'
-  const [tab, setTab] = useState<Tab>('dashboard')
+  const [tab, setTab] = useState<Tab>('profile')
   const [showTicket, setShowTicket] = useState<any>(null)
   const [bookings, setBookings] = useState<any[]>([])
   const [favorites, setFavorites] = useState<string[]>([])
@@ -108,14 +202,27 @@ export default function Profile() {
 
   const loadProfileData = useCallback(async () => {
     if (user) {
-      fetchBookings()
-      setFavorites(getFavorites())
-      setCommented(getCommented())
+      // Use mock data for animation preview
+      setBookings(MOCK_BOOKINGS)
+      setIsLoadingBookings(false)
+      // Mock favoritos/comentados si el usuario aún no tiene datos reales
+      const realFavs = getFavorites()
+      const realCommented = getCommented()
+      setFavorites(realFavs.length > 0 ? realFavs : ['1', '3', '5'])
+      setCommented(realCommented.length > 0 ? realCommented : ['2'])
       const profileData = await getProfileData(user)
-      setForm(profileData)
+      setForm({
+        ...profileData,
+        firstName: profileData.firstName || user.firstName || 'Donovan',
+        lastName: profileData.lastName || 'Riaño',
+        email: profileData.email || user.email,
+        phone: profileData.phone || '+52 55 5122 9160',
+        country: profileData.country || 'México',
+        summary: profileData.summary || 'Explorador de experiencias auténticas en México.',
+      })
       setProfileLoaded(true)
     }
-  }, [user, fetchBookings])
+  }, [user])
 
   useEffect(() => {
     loadProfileData()
@@ -240,11 +347,11 @@ export default function Profile() {
   }
 
   const tabs: { id: Tab; label: string; icon: any }[] = [
-    { id: 'dashboard', label: isEs ? 'Dashboard' : 'Dashboard', icon: BarChart2 },
+    { id: 'profile', label: isEs ? 'Mi perfil' : 'My profile', icon: User },
     { id: 'bookings', label: isEs ? 'Mis reservas' : 'My bookings', icon: Calendar },
+    { id: 'dashboard', label: isEs ? 'Dashboard' : 'Dashboard', icon: BarChart2 },
     { id: 'favorites', label: isEs ? 'Favoritos' : 'Favorites', icon: Heart },
     { id: 'commented', label: isEs ? 'Comentados' : 'Commented', icon: MessageSquare },
-    { id: 'profile', label: isEs ? 'Mi perfil' : 'My profile', icon: User },
     { id: 'security', label: isEs ? 'Seguridad y datos' : 'Security & data', icon: Shield },
   ]
 
@@ -599,9 +706,21 @@ function DashboardContent({
   }))
 
   return (
-    <div className="space-y-8">
+    <motion.div
+      className="space-y-8"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-100px' }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <motion.div
+        className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
         <StatCard
           label={isEs ? 'Próximos viajes' : 'Upcoming trips'}
           value={upcomingBookings}
@@ -622,10 +741,16 @@ function DashboardContent({
           value={totalBookings}
           color="#a855f7"
         />
-      </div>
+      </motion.div>
 
       {/* Charts Row 1: Category & Monthly */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <motion.div
+        className="grid gap-6 lg:grid-cols-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <SequentialBarChart
           data={categoryData.length ? categoryData : [{ label: '—', value: 0 }]}
           title={isEs ? 'Reservaciones por categoría' : 'Bookings by category'}
@@ -653,10 +778,16 @@ function DashboardContent({
           pngFilename="bookings-by-month"
           stepMs={85}
         />
-      </div>
+      </motion.div>
 
       {/* Charts Row 2: Status & Spending Trend */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <motion.div
+        className="grid gap-6 lg:grid-cols-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
         <SequentialBarChart
           data={statusData.length ? statusData : [{ label: '—', value: 0 }]}
           title={isEs ? 'Estado de reservaciones' : 'Booking status'}
@@ -683,10 +814,16 @@ function DashboardContent({
           stepMs={90}
           yDomain={[0, 'auto']}
         />
-      </div>
+      </motion.div>
 
       {/* Periodicity / Completion Rate */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <motion.div
+        className="grid gap-6 md:grid-cols-3"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
         <SequentialRadialBarChart
           percent={totalBookings > 0 ? (completedBookings / totalBookings) * 100 : 0}
           title={isEs ? 'Tasa de finalización' : 'Completion rate'}
@@ -701,7 +838,13 @@ function DashboardContent({
           coveredDays={completedBookings}
           expectedDays={totalBookings}
         />
-        <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
+        <motion.article
+          className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.45 }}
+        >
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             {isEs ? 'Próximo tour' : 'Next tour'}
           </p>
@@ -726,8 +869,14 @@ function DashboardContent({
               {isEs ? 'Sin tours programados' : 'No upcoming tours'}
             </p>
           )}
-        </article>
-        <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
+        </motion.article>
+        <motion.article
+          className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
             {isEs ? 'Categoría favorita' : 'Favorite category'}
           </p>
@@ -745,12 +894,23 @@ function DashboardContent({
               ? 'Aún no tienes tours'
               : 'No tours yet'}
           </p>
-        </article>
-      </div>
+        </motion.article>
+      </motion.div>
 
       {/* Quick Links to Favorites & Commented */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <section>
+      <motion.div
+        className="grid gap-6 md:grid-cols-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.55 }}
+      >
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-white">
             <Heart className="h-5 w-5 text-rose-500" />
             {isEs ? 'Tours favoritos' : 'Favorite tours'}
@@ -771,9 +931,14 @@ function DashboardContent({
               ))}
             </div>
           )}
-        </section>
+        </motion.section>
 
-        <section>
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
           <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-white">
             <MessageSquare className="h-5 w-5 text-blue-500" />
             {isEs ? 'Tours comentados' : 'Commented tours'}
@@ -792,9 +957,9 @@ function DashboardContent({
               ))}
             </div>
           )}
-        </section>
-      </div>
-    </div>
+        </motion.section>
+      </motion.div>
+    </motion.div>
   )
 }
 
@@ -866,26 +1031,55 @@ function BookingsContent({
   formatBookingDate,
 }: any) {
   return (
-    <div>
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-100px' }}
+      transition={{ duration: 0.5 }}
+    >
       {error && (
-        <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-600 dark:bg-red-500/20 dark:text-red-300">
+        <motion.div
+          className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-600 dark:bg-red-500/20 dark:text-red-300"
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
           {error}
-        </div>
+        </motion.div>
       )}
       {isLoadingBookings ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse">
+            <motion.div
+              key={i}
+              className="animate-pulse"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+            >
               <div className="h-48 rounded-t-2xl bg-zinc-200 dark:bg-zinc-800" />
               <div className="space-y-3 p-4">
                 <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-700" />
                 <div className="h-4 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : bookings.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white/80 py-16 text-center dark:border-white/10 dark:bg-zinc-900/50">
+        <motion.div
+          className="rounded-2xl border border-zinc-200 bg-white/80 py-16 text-center dark:border-white/10 dark:bg-zinc-900/50"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           <Calendar className="mx-auto h-16 w-16 text-zinc-400" />
           <h3 className="mt-4 text-xl font-semibold text-zinc-900 dark:text-white">
             {t('bookings.emptyTitle') || 'No tienes reservaciones aún'}
@@ -900,12 +1094,21 @@ function BookingsContent({
           >
             {t('profile.explore') || 'Explorar experiencias'}
           </Link>
-        </div>
+        </motion.div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
           {bookings.map((booking: any, index: number) => (
-            <div
+            <motion.div
               key={booking.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.08 }}
               className="group relative flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white/80 transition-all duration-300 hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50"
             >
               <div className="relative h-40 overflow-hidden">
@@ -948,37 +1151,60 @@ function BookingsContent({
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   )
 }
 
 function ProfileForm({ form, setForm, savedMsg, setSavedMsg, isEs, onSubmit, profileLoaded }: any) {
   if (!profileLoaded) {
     return (
-      <div className="flex h-64 items-center justify-center">
+      <motion.div
+        className="flex h-64 items-center justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
-      </div>
+      </motion.div>
     )
   }
 
   return (
-    <form
+    <motion.form
       onSubmit={onSubmit}
       className="space-y-5 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
     >
-      <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
+      <motion.h2
+        className="text-xl font-bold text-zinc-900 dark:text-white"
+        initial={{ opacity: 0, y: -10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+      >
         {isEs ? 'Editar mi información' : 'Edit my information'}
-      </h2>
+      </motion.h2>
       {savedMsg && (
-        <div className="rounded-xl border border-emerald-300/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-900/20 dark:text-emerald-200">
+        <motion.div
+          className="rounded-xl border border-emerald-300/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-900/20 dark:text-emerald-200"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
           ✓ {savedMsg}
-        </div>
+        </motion.div>
       )}
-      <div className="grid gap-4 md:grid-cols-2">
+      <motion.div
+        className="grid gap-4 md:grid-cols-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
         <Field
           label={isEs ? 'Nombre' : 'First name'}
           value={form.firstName}
@@ -1004,8 +1230,13 @@ function ProfileForm({ form, setForm, savedMsg, setSavedMsg, isEs, onSubmit, pro
           value={form.country}
           onChange={(v) => setForm({ ...form, country: v })}
         />
-      </div>
-      <div>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300">
           {isEs ? 'Acerca de ti' : 'About you'}
         </label>
@@ -1015,14 +1246,20 @@ function ProfileForm({ form, setForm, savedMsg, setSavedMsg, isEs, onSubmit, pro
           onChange={(e) => setForm({ ...form, summary: e.target.value })}
           className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
         />
-      </div>
-      <button
+      </motion.div>
+      <motion.button
         type="submit"
         className="rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
       >
         {isEs ? 'Guardar cambios' : 'Save changes'}
-      </button>
-    </form>
+      </motion.button>
+    </motion.form>
   )
 }
 
@@ -1038,105 +1275,202 @@ function SecuritySection({
   onDelete,
 }: any) {
   return (
-    <div className="space-y-6">
-      <form
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-100px' }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.form
         onSubmit={onChangePassword}
         className="space-y-4 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <h2 className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-white">
+        <motion.h2
+          className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-white"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+        >
           <Lock className="h-5 w-5 text-orange-500" />
           {isEs ? 'Cambiar contraseña' : 'Change password'}
-        </h2>
+        </motion.h2>
         {pwMsg && (
-          <div
+          <motion.div
             className={`rounded-xl border px-4 py-3 text-sm ${
               pwMsg.type === 'success'
                 ? 'border-emerald-300/60 bg-emerald-50 text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-900/20 dark:text-emerald-200'
                 : 'border-red-500/30 bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-300'
             }`}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
           >
             {pwMsg.message}
-          </div>
+          </motion.div>
         )}
-        <PasswordField
-          name="currentPassword"
-          label={isEs ? 'Contraseña actual' : 'Current password'}
-        />
-        <PasswordField name="newPassword" label={isEs ? 'Nueva contraseña' : 'New password'} />
-        <PasswordField
-          name="confirmPassword"
-          label={isEs ? 'Confirmar contraseña' : 'Confirm password'}
-        />
-        <button
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <PasswordField
+            name="currentPassword"
+            label={isEs ? 'Contraseña actual' : 'Current password'}
+          />
+          <PasswordField name="newPassword" label={isEs ? 'Nueva contraseña' : 'New password'} />
+          <PasswordField
+            name="confirmPassword"
+            label={isEs ? 'Confirmar contraseña' : 'Confirm password'}
+          />
+        </motion.div>
+        <motion.button
           type="submit"
           className="rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           {isEs ? 'Actualizar contraseña' : 'Update password'}
-        </button>
-        <p className="text-xs text-zinc-500 dark:text-gray-400">
+        </motion.button>
+        <motion.p
+          className="text-xs text-zinc-500 dark:text-gray-400"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
           {isEs
             ? 'Usa una contraseña segura con mayúsculas, minúsculas y caracteres especiales.'
             : 'Use a strong password with upper, lower and special characters.'}
-        </p>
-      </form>
+        </motion.p>
+      </motion.form>
 
-      <div className="space-y-4 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50">
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
+      <motion.div
+        className="space-y-4 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+      >
+        <motion.h2
+          className="text-xl font-bold text-zinc-900 dark:text-white"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+        >
           {isEs ? 'Gestión de datos (GDPR)' : 'Data management (GDPR)'}
-        </h2>
+        </motion.h2>
         {gdprMsg && (
-          <div className="rounded-xl border border-emerald-300/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-900/20 dark:text-emerald-200">
+          <motion.div
+            className="rounded-xl border border-emerald-300/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-900/20 dark:text-emerald-200"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
             ✓ {gdprMsg}
-          </div>
+          </motion.div>
         )}
-        <p className="text-sm text-zinc-500 dark:text-gray-400">
+        <motion.p
+          className="text-sm text-zinc-500 dark:text-gray-400"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
           {isEs
             ? 'Descarga una copia de todos tus datos personales. Opción cifrada disponible para mayor seguridad.'
             : 'Download a copy of all your personal data. Encrypted option available for extra security.'}
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <button
+        </motion.p>
+        <motion.div
+          className="flex flex-wrap gap-3"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <motion.button
             onClick={onExport}
             className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <Download className="h-4 w-4" />
             {isEs ? 'Exportar datos (JSON)' : 'Export data (JSON)'}
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             onClick={onExportEncrypted}
             className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <Lock className="h-4 w-4" />
             {isEs ? 'Exportar cifrado (AES-GCM)' : 'Export encrypted (AES-GCM)'}
-          </button>
-        </div>
-        <p className="text-xs text-zinc-500 dark:text-gray-400">
+          </motion.button>
+        </motion.div>
+        <motion.p
+          className="text-xs text-zinc-500 dark:text-gray-400"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
           {isEs
             ? 'Tus datos se cifran en tránsito (TLS) y en reposo (AES-256-GCM). Puedes solicitar su exportación o eliminación en cualquier momento conforme al RGPD (GDPR).'
             : 'Your data is encrypted in transit (TLS) and at rest (AES-256-GCM). You can request its export or deletion at any time under GDPR.'}
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
-      <div className="rounded-2xl border border-red-200/60 bg-red-50/50 p-6 dark:border-red-500/30 dark:bg-red-900/20">
-        <h4 className="text-sm font-semibold text-red-800 dark:text-red-200">
+      <motion.div
+        className="rounded-2xl border border-red-200/60 bg-red-50/50 p-6 dark:border-red-500/30 dark:bg-red-900/20"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <motion.h4
+          className="text-sm font-semibold text-red-800 dark:text-red-200"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+        >
           {isEs ? 'Eliminar cuenta' : 'Delete account'}
-        </h4>
-        <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-red-600/80 dark:text-red-300/80">
+        </motion.h4>
+        <motion.div
+          className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <motion.p
+            className="text-xs text-red-600/80 dark:text-red-300/80"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
             {isEs
               ? 'Esta acción eliminará permanentemente tu cuenta y todos tus datos. No se puede deshacer.'
               : 'This will permanently delete your account and all your data. This cannot be undone.'}
-          </p>
-          <button
+          </motion.p>
+          <motion.button
             onClick={onDelete}
             className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-red-600/10 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-600/20 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <Trash2 className="h-4 w-4" />
             {isEs ? 'Eliminar cuenta' : 'Delete account'}
-          </button>
-        </div>
-      </div>
-    </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   )
 }
 
