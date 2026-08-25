@@ -1,9 +1,19 @@
-// Almacén demo de datos del usuario (favos/tdiversos, comentados) en localStorage.
-// Al conectar BD, migrar a Supabase manteniendo la misma interfaz.
+import { encryptWithUserId, decryptWithUserId, generateLocalUserId } from '@/lib/encryption'
 
 const FAV_KEY = 'amaxing_favorites'
 const COMMENTED_KEY = 'amaxing_commented'
 const PROFILE_KEY = 'amaxing_profile'
+const USER_ID_KEY = 'amaxing_user_id'
+
+function getUserId(): string {
+  if (typeof window === 'undefined') return ''
+  let userId = localStorage.getItem(USER_ID_KEY)
+  if (!userId) {
+    userId = generateLocalUserId()
+    localStorage.setItem(USER_ID_KEY, userId)
+  }
+  return userId
+}
 
 function read<T>(key: string): T[] {
   if (typeof window === 'undefined') return []
@@ -21,6 +31,32 @@ function write(key: string, value: unknown) {
     localStorage.setItem(key, JSON.stringify(value))
   } catch {
     // ignore
+  }
+}
+
+async function readEncrypted<T>(key: string, userId: string): Promise<T | null> {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (parsed._encrypted) {
+      return await decryptWithUserId<T>(userId, parsed)
+    }
+    return parsed as T
+  } catch {
+    return null
+  }
+}
+
+async function writeEncrypted(key: string, value: unknown, userId: string) {
+  if (typeof window === 'undefined') return
+  try {
+    const encrypted = await encryptWithUserId(userId, value as Record<string, unknown>)
+    localStorage.setItem(key, JSON.stringify(encrypted))
+  } catch {
+    // fallback to plain
+    localStorage.setItem(key, JSON.stringify(value))
   }
 }
 
@@ -49,7 +85,6 @@ export function addCommented(tourId: string) {
   if (!current.includes(tourId)) write(COMMENTED_KEY, [...current, tourId])
 }
 
-// Datos editables del perfil (nombre, email, teléfono, país, preferencias).
 export interface ProfileData {
   firstName: string
   lastName: string
@@ -61,50 +96,73 @@ export interface ProfileData {
   summary?: string
 }
 
-export function getProfileData(
+export async function getProfileData(
   user?: { firstName?: string; lastName?: string; email?: string } | null
-): ProfileData {
-  const stored = read<Record<string, unknown>>(PROFILE_KEY)[0] as
-    | Record<string, unknown>
-    | undefined
+): Promise<ProfileData> {
+  const userId = getUserId()
+  const stored = await readEncrypted<Record<string, unknown>>(PROFILE_KEY, userId)
+  const profile =
+    stored ?? (read<Record<string, unknown>>(PROFILE_KEY)[0] as Record<string, unknown> | undefined)
   return {
-    firstName: (stored?.firstName as string) || user?.firstName || '',
-    lastName: (stored?.lastName as string) || user?.lastName || '',
-    email: (stored?.email as string) || user?.email || '',
-    phone: (stored?.phone as string) || '',
-    country: (stored?.country as string) || '',
-    marketingEmail: Boolean(stored?.marketingEmail),
-    marketingPush: Boolean(stored?.marketingPush),
-    summary: (stored?.summary as string) || '',
+    firstName: (profile?.firstName as string) || user?.firstName || '',
+    lastName: (profile?.lastName as string) || user?.lastName || '',
+    email: (profile?.email as string) || user?.email || '',
+    phone: (profile?.phone as string) || '',
+    country: (profile?.country as string) || '',
+    marketingEmail: Boolean(profile?.marketingEmail),
+    marketingPush: Boolean(profile?.marketingPush),
+    summary: (profile?.summary as string) || '',
   }
 }
 
-export function saveProfileData(data: ProfileData) {
-  write(PROFILE_KEY, [data])
+export async function saveProfileData(data: ProfileData) {
+  const userId = getUserId()
+  await writeEncrypted(PROFILE_KEY, data, userId)
 }
 
-// Derechos GDPR: exportar los datos guardados de este usuario.
-export function exportMyData() {
-  const payload = {
+export interface EncryptedExportData {
+  exportedAt: string
+  profile: Record<string, unknown> | null
+  favorites: string[]
+  commented: string[]
+  bookings: unknown[]
+  cart: unknown[]
+  _encrypted?: {
+    ciphertext: string
+    iv: string
+    createdAt: string
+  }
+}
+
+export async function exportMyData(encrypt = false): Promise<EncryptedExportData> {
+  const userId = getUserId()
+  const payload: EncryptedExportData = {
     exportedAt: new Date().toISOString(),
-    profile: read(PROFILE_KEY)[0] ?? null,
+    profile: (await readEncrypted(PROFILE_KEY, userId)) ?? read(PROFILE_KEY)[0] ?? null,
     favorites: getFavorites(),
     commented: getCommented(),
     bookings: read<unknown[]>('amaxing_bookings'),
     cart: read<unknown[]>('amaxing_cart'),
   }
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+
+  let finalPayload = payload
+  if (encrypt && userId) {
+    const encrypted = await encryptWithUserId(userId, payload)
+    finalPayload = { ...payload, _encrypted: encrypted }
+  }
+
+  const blob = new Blob([JSON.stringify(finalPayload, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
   a.download = `datos-usuario-${new Date().toISOString().split('T')[0]}.json`
   a.click()
   URL.revokeObjectURL(url)
+
   return payload
 }
 
-// Derechos GDPR: borrar todos los datos de la app de este usuario.
-export function deleteMyData() {
+export async function deleteMyData() {
   const keys = [
     FAV_KEY,
     COMMENTED_KEY,
@@ -112,6 +170,11 @@ export function deleteMyData() {
     'amaxing_bookings',
     'amaxing_cart',
     'amaxing_password',
+    USER_ID_KEY,
   ]
   keys.forEach((k) => localStorage.removeItem(k))
+}
+
+export async function exportEncryptedData(): Promise<void> {
+  await exportMyData(true)
 }
