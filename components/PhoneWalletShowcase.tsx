@@ -468,8 +468,19 @@ export function HeroPhoneWalletScroll({
 
   const themePulseKey = externalThemePulseKey ?? localThemePulseKey
 
-  const phoneScale = useTransform(progress, [0, 0.35, 0.65, 1], [0.78, 1.08, 1.02, 1])
-  const phoneY = useTransform(progress, [0, 0.35, 0.65, 1], [70, -6, -16, -20])
+  // En mobile reducimos la escala base y la elevación para que el iPhone quepa
+  // completo en viewports angostos sin recortes ni scroll horizontal.
+  const mobileFactor = isMobile ? 0.72 : 1
+  const phoneScale = useTransform(
+    progress,
+    [0, 0.35, 0.65, 1],
+    [0.78 * mobileFactor, 1.08 * mobileFactor, 1.02 * mobileFactor, mobileFactor]
+  )
+  const phoneY = useTransform(
+    progress,
+    [0, 0.35, 0.65, 1],
+    isMobile ? [36, -4, -10, -14] : [70, -6, -16, -20]
+  )
   // Declarado incondicionalmente (rules-of-hooks); se consume solo si !reduceMotion.
   const glowOpacity = useTransform(progress, [0, 0.35, 1], [0.0, 0.35, 0.55])
 
@@ -499,21 +510,21 @@ export function HeroPhoneWalletScroll({
         id: 'mid-left',
         title: 'Web3 / DApp',
         ariaLabel: 'Pantalla periférica mid-left: dashboard de DApp',
-        initialX: isMobile ? -112 : -320,
-        initialY: isMobile ? -30 : -20,
+        initialX: isMobile ? -64 : -320,
+        initialY: isMobile ? -20 : -20,
         initialRotate: -8,
-        width: isMobile ? 190 : 240,
-        height: isMobile ? 170 : 180,
+        width: isMobile ? 138 : 240,
+        height: isMobile ? 128 : 180,
       },
       {
         id: 'mid-right',
         title: 'Blockchain / Explorer',
         ariaLabel: 'Pantalla periférica mid-right: explorador de transacciones',
-        initialX: isMobile ? 112 : 320,
-        initialY: isMobile ? -30 : -20,
+        initialX: isMobile ? 64 : 320,
+        initialY: isMobile ? -20 : -20,
         initialRotate: 8,
-        width: isMobile ? 185 : 230,
-        height: isMobile ? 168 : 172,
+        width: isMobile ? 134 : 230,
+        height: isMobile ? 126 : 172,
       },
       {
         id: 'bottom-left',
@@ -527,6 +538,13 @@ export function HeroPhoneWalletScroll({
       },
     ],
     [isMobile]
+  )
+
+  // Perf mobile: solo 2 pantallas periféricas (menos MotionValues activos y repaints).
+  const perifericasVisibles = useMemo(
+    () =>
+      isMobile ? pantallasPerifericas.filter((p) => p.id.startsWith('mid-')) : pantallasPerifericas,
+    [pantallasPerifericas, isMobile]
   )
 
   const [aiPrompt, setAiPrompt] = useState("Resume este bloque: 'Stake, Swap, Farm' en 1 línea.")
@@ -574,13 +592,13 @@ export function HeroPhoneWalletScroll({
         </div>
       </div>
 
-      <div className="relative min-h-[112vh]">
-        <div className="sticky top-16">
-          <div className="mx-auto flex max-w-6xl items-center justify-center px-4 pb-2 pt-10">
-            <div className="relative h-[700px] w-full max-w-[1100px]">
+      <div className="relative min-h-[92vh] sm:min-h-[112vh]">
+        <div className="sticky top-14 sm:top-16">
+          <div className="mx-auto flex max-w-6xl items-center justify-center px-3 pb-2 pt-6 sm:px-4 sm:pt-10">
+            <div className="relative h-[480px] w-full max-w-[1100px] sm:h-[700px]">
               {/* Pantallas periféricas (6): se animan hacia fuera y hacia abajo conforme avanza el scrollProgress. */}
               <div className="absolute inset-0">
-                {pantallasPerifericas.map((layout, index) => (
+                {perifericasVisibles.map((layout, index) => (
                   <PantallaPeriferica
                     key={layout.id}
                     layout={layout}
@@ -951,7 +969,7 @@ export function HeroPhoneWalletScroll({
               >
                 <div
                   className={clsx(
-                    'relative h-[640px] w-[300px] rounded-[50px] border',
+                    'relative h-[500px] w-[234px] rounded-[42px] border sm:h-[640px] sm:w-[300px] sm:rounded-[50px]',
                     'border-black/10 bg-gradient-to-b from-slate-100 to-slate-200 shadow-[0_40px_120px_rgba(2,6,23,0.35)]',
                     'transition-[background-color,color,border-color] duration-[160ms]',
                     'dark:to-slate-950 dark:border-white/15 dark:from-slate-900'
@@ -961,13 +979,13 @@ export function HeroPhoneWalletScroll({
                 >
                   <div
                     className={clsx(
-                      'absolute inset-[12px] overflow-hidden rounded-[42px] border',
+                      'absolute inset-[10px] overflow-hidden rounded-[34px] border border sm:inset-[12px] sm:rounded-[42px]',
                       'border-black/10 bg-white shadow-inner',
                       'transition-[background-color,color,border-color] duration-[160ms]',
                       'dark:bg-slate-950 dark:border-white/10'
                     )}
                   >
-                    <DynamicIsland autoPlay={autoPlayIsland} />
+                    <DynamicIsland autoPlay={autoPlayIsland && !isMobile} />
                     <div
                       className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/10 to-transparent dark:from-black/25"
                       aria-hidden
@@ -1005,7 +1023,7 @@ export function HeroPhoneWalletScroll({
               </motion.div>
 
               {/* Overlay suave para dar “profundidad” cuando el iPhone sale al frente. */}
-              {!reduceMotion && (
+              {!reduceMotion && !isMobile && (
                 <motion.div
                   className="absolute inset-0 -z-10"
                   style={{
