@@ -18,6 +18,7 @@ import {
   Heart,
 } from 'lucide-react'
 import { useLanguage } from '@/lib/hooks/useLanguage'
+import { OjosOscuridad } from '@/components/moodboard/Icons'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useCartStore } from '@/lib/store/useCartStore'
 import { isFavorite, toggleFavorite } from '@/lib/userData'
@@ -195,9 +196,12 @@ export default function TourDetail({ tour, locale }) {
               <div className="space-y-12 lg:col-span-2">
                 {/* Description */}
                 <div>
-                  <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                    {isEs ? '¿Qué es este tour?' : 'What is this tour?'}
-                  </h2>
+                  <div className="mb-3 flex items-center gap-3">
+                    <OjosOscuridad size={40} />
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {isEs ? '¿Qué es este tour?' : 'What is this tour?'}
+                    </h2>
+                  </div>
                   <ProseReveal className="prose prose-zinc max-w-none leading-relaxed text-gray-600 dark:text-gray-300 dark:prose-dark">
                     {description}
                   </ProseReveal>

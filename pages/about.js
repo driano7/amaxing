@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { Navbar } from '@/components/Navbar'
 import ScrollReveal from '@/components/ui/ScrollReveal'
+import CardStack from '@/components/about/CardStack'
 import dynamic from 'next/dynamic'
 
 const MobileDock = dynamic(() => import('@/components/MobileDock').then((m) => m.MobileDock), {
@@ -425,6 +426,9 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* SOBRE NOSOTROS — card stack animation */}
+        <CardStack />
+
         {/* POR QUÉ CHILANGO */}
         <section className="about-section about-section-tint">
           <div className="wrap">
@@ -558,8 +562,13 @@ export default function AboutPage() {
             >
               💬 Escríbenos por WhatsApp
             </a>
-            <a className="about-btn about-btn-ghost" href="#">
-              📷 Instagram — muy pronto
+            <a
+              className="about-btn about-btn-ghost"
+              href="https://www.instagram.com/donovan_amx/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              📷 Instagram
             </a>
           </div>
           <p className="foot-tagline">El abrazo de la ciudad que amamos.</p>

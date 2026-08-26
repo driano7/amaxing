@@ -7,6 +7,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { getAllNotesAsync } from '@/lib/notes'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AnimatedSection } from '@/components/AnimatedSection'
+import { CabezaFacetada } from '@/components/moodboard/Icons'
 
 const pageTranslations = {
   en: {
@@ -58,8 +59,9 @@ const formatDate = (dateStr, locale) => {
 }
 
 export default function NewsPage({ notes, locale, newsArticles }) {
-  const t = pageTranslations[locale] || pageTranslations.en
   const { currentLanguage } = useLanguage()
+  const lang = currentLanguage || locale || 'en'
+  const t = pageTranslations[lang] || pageTranslations.en
 
   return (
     <>
@@ -70,7 +72,10 @@ export default function NewsPage({ notes, locale, newsArticles }) {
             <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
               {t.title}
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300">{t.subtitle}</p>
+            <div className="mb-3 flex items-center justify-center gap-3">
+              <CabezaFacetada size={40} />
+              <p className="text-lg text-gray-600 dark:text-gray-300">{t.subtitle}</p>
+            </div>
           </div>
 
           {/* Auto-generated Notes Section */}
@@ -115,7 +120,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                         <div className="mb-2 flex items-center gap-2 text-sm text-zinc-500 dark:text-gray-500">
                           <span>{siteMetadata.title}</span>
                           <span>•</span>
-                          <time dateTime={note.date}>{formatDate(note.date, locale)}</time>
+                          <time dateTime={note.date}>{formatDate(note.date, lang)}</time>
                         </div>
 
                         <h3 className="line-clamp-2 mb-3 text-xl font-bold text-gray-900 group-hover:text-orange-500 dark:text-white">
@@ -180,7 +185,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                           <span>{article.source?.name || 'News'}</span>
                           <span>•</span>
                           <time dateTime={article.publishedAt}>
-                            {formatDate(article.publishedAt, locale)}
+                            {formatDate(article.publishedAt, lang)}
                           </time>
                         </div>
 

@@ -43,6 +43,11 @@
     "signatureCocktails": "Cocteles tradicionales",
     "culturalInsights": "Perspectivas culturales"
   },
+  "stories": {
+    "title": "Historias de Viajeros",
+    "subtitle": "Historias reales de viajeros que experimentan la magia de México con Amaxing.",
+    "readStory": "Leer historia"
+  },
   "experienceDetail": {
     "bookExperience": "Reservar Esta Experiencia",
     "includes": "Incluye",

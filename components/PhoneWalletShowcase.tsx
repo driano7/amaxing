@@ -23,6 +23,7 @@ type HeroPhoneWalletScrollProps = {
   peripheralsScrollable?: boolean
   scrollProgress?: MotionValue<number> | number
   themePulseKey?: number
+  accentColor?: string
 }
 
 type PantallaPerifericaLayout = {
@@ -53,6 +54,7 @@ function PantallaMarco({
   scrollable,
   width,
   height,
+  accentColor = '#E4007C',
   children,
 }: {
   title: string
@@ -61,11 +63,13 @@ function PantallaMarco({
   scrollable: boolean
   width: number
   height: number
+  accentColor?: string
   children: (args: {
     setParallaxFromScrollTop: (scrollTop: number) => void
     parallaxY: MotionValue<number>
   }) => ReactNode
 }) {
+  const ac = accentColor
   const parallaxY = useMotionValue(0)
   const setParallaxFromScrollTop = (scrollTop: number) => {
     parallaxY.set(clamp(-scrollTop * 0.03, -18, 0))
@@ -80,7 +84,7 @@ function PantallaMarco({
         'transition-[background-color,color,border-color] duration-[160ms]',
         'bg-white/85 border-black/10 text-slate-900',
         'dark:bg-slate-950/55 dark:border-white/15 dark:text-white',
-        tone === 'accent' && 'ring-1 ring-emerald-400/30'
+        tone === 'accent' && 'ring-1'
       )}
       style={{ width: `${width}px` }}
     >
@@ -90,9 +94,10 @@ function PantallaMarco({
             <span
               className={clsx(
                 'h-2 w-2 rounded-full',
-                tone === 'accent' ? 'bg-emerald-500' : 'bg-slate-400',
-                'dark:bg-emerald-400'
+                tone === 'accent' ? '' : 'bg-slate-400',
+                'dark:bg-slate-400'
               )}
+              style={tone === 'accent' ? { backgroundColor: ac } : undefined}
               aria-hidden
             />
             <p className="text-[11px] font-semibold tracking-wide text-slate-700 dark:text-white/80">
@@ -215,7 +220,16 @@ function PantallaPeriferica({
   )
 }
 
-function WalletMock({ themePulseKey }: { themePulseKey: number }) {
+function WalletMock({
+  themePulseKey,
+  accentColor = '#E4007C',
+}: {
+  themePulseKey: number
+  accentColor?: string
+}) {
+  const ac = accentColor
+  const ac10 = `${ac}1A`
+  const ac15 = `${ac}26`
   const reduceMotion = useReducedMotion()
   const flipControls = useAnimationControls()
   const [connected, setConnected] = useState(false)
@@ -273,10 +287,13 @@ function WalletMock({ themePulseKey }: { themePulseKey: number }) {
           onClick={() => setConnected(true)}
           className={clsx(
             'rounded-full border px-3 py-1 text-[11px] font-semibold',
-            'transition-[background-color,color,border-color] duration-[160ms]',
-            'hover:bg-emerald-500/15 border-emerald-500/30 bg-emerald-500/10 text-emerald-700',
-            'dark:hover:bg-emerald-400/15 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-200'
+            'transition-[background-color,color,border-color] duration-[160ms]'
           )}
+          style={{
+            borderColor: `${ac}4D`,
+            backgroundColor: ac10,
+            color: ac,
+          }}
           aria-label="Connect"
         >
           Connect
@@ -344,8 +361,9 @@ function WalletMock({ themePulseKey }: { themePulseKey: number }) {
                     'rounded-full px-2 py-0.5 text-[10px] font-semibold',
                     tx.status === 'Pending'
                       ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200'
-                      : 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-200'
+                      : 'dark:text-white'
                   )}
+                  style={tx.status !== 'Pending' ? { backgroundColor: ac10, color: ac } : undefined}
                 >
                   {tx.status}
                 </span>
@@ -362,7 +380,15 @@ function WalletMock({ themePulseKey }: { themePulseKey: number }) {
   )
 }
 
-function DynamicIsland({ autoPlay }: { autoPlay: boolean }) {
+function DynamicIsland({
+  autoPlay,
+  accentColor = '#E4007C',
+}: {
+  autoPlay: boolean
+  accentColor?: string
+}) {
+  const ac = accentColor
+  const ac60 = `${ac}99`
   const reduceMotion = useReducedMotion()
   const shouldAnimate = autoPlay && !reduceMotion
 
@@ -388,7 +414,10 @@ function DynamicIsland({ autoPlay }: { autoPlay: boolean }) {
     >
       <div className="flex h-full items-center justify-between gap-2 px-3">
         <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_18px_rgba(52,211,153,0.65)]" />
+          <span
+            className="h-2 w-2 rounded-full"
+            style={{ backgroundColor: ac, boxShadow: `0 0 18px ${ac60}` }}
+          />
           <span className="text-[10px] font-semibold tracking-wide text-white/80">Secure</span>
         </div>
         <div className="flex items-center gap-1">
@@ -406,6 +435,7 @@ export function HeroPhoneWalletScroll({
   peripheralsScrollable = false,
   scrollProgress,
   themePulseKey: externalThemePulseKey,
+  accentColor = '#E4007C',
 }: HeroPhoneWalletScrollProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
   const { resolvedTheme } = useTheme()
@@ -468,20 +498,8 @@ export function HeroPhoneWalletScroll({
 
   const themePulseKey = externalThemePulseKey ?? localThemePulseKey
 
-  // En mobile reducimos la escala base y la elevación para que el iPhone quepa
-  // completo en viewports angostos sin recortes ni scroll horizontal.
-  const mobileFactor = isMobile ? 0.72 : 1
-  const phoneScale = useTransform(
-    progress,
-    [0, 0.35, 0.65, 1],
-    [0.78 * mobileFactor, 1.08 * mobileFactor, 1.02 * mobileFactor, mobileFactor]
-  )
-  const phoneY = useTransform(
-    progress,
-    [0, 0.35, 0.65, 1],
-    isMobile ? [36, -4, -10, -14] : [70, -6, -16, -20]
-  )
-  // Declarado incondicionalmente (rules-of-hooks); se consume solo si !reduceMotion.
+  const phoneScale = useTransform(progress, [0, 0.35, 0.65, 1], [0.78, 1.08, 1.02, 1])
+  const phoneY = useTransform(progress, [0, 0.35, 0.65, 1], [70, -6, -16, -20])
   const glowOpacity = useTransform(progress, [0, 0.35, 1], [0.0, 0.35, 0.55])
 
   const pantallasPerifericas: PantallaPerifericaLayout[] = useMemo(
@@ -510,21 +528,21 @@ export function HeroPhoneWalletScroll({
         id: 'mid-left',
         title: 'Web3 / DApp',
         ariaLabel: 'Pantalla periférica mid-left: dashboard de DApp',
-        initialX: isMobile ? -64 : -320,
-        initialY: isMobile ? -20 : -20,
+        initialX: isMobile ? -112 : -320,
+        initialY: isMobile ? -30 : -20,
         initialRotate: -8,
-        width: isMobile ? 138 : 240,
-        height: isMobile ? 128 : 180,
+        width: isMobile ? 190 : 240,
+        height: isMobile ? 170 : 180,
       },
       {
         id: 'mid-right',
         title: 'Blockchain / Explorer',
         ariaLabel: 'Pantalla periférica mid-right: explorador de transacciones',
-        initialX: isMobile ? 64 : 320,
-        initialY: isMobile ? -20 : -20,
+        initialX: isMobile ? 112 : 320,
+        initialY: isMobile ? -30 : -20,
         initialRotate: 8,
-        width: isMobile ? 134 : 230,
-        height: isMobile ? 126 : 172,
+        width: isMobile ? 185 : 230,
+        height: isMobile ? 168 : 172,
       },
       {
         id: 'bottom-left',
@@ -540,17 +558,18 @@ export function HeroPhoneWalletScroll({
     [isMobile]
   )
 
-  // Perf mobile: solo 2 pantallas periféricas (menos MotionValues activos y repaints).
-  const perifericasVisibles = useMemo(
-    () =>
-      isMobile ? pantallasPerifericas.filter((p) => p.id.startsWith('mid-')) : pantallasPerifericas,
-    [pantallasPerifericas, isMobile]
-  )
-
   const [aiPrompt, setAiPrompt] = useState("Resume este bloque: 'Stake, Swap, Farm' en 1 línea.")
   const [aiOutput, setAiOutput] = useState<string | null>(
     'Acciones: stakea, intercambia y farmea desde un panel Web3.'
   )
+
+  const ac = accentColor
+  const ac10 = `${ac}1A`
+  const ac15 = `${ac}26`
+  const ac20 = `${ac}33`
+  const ac30 = `${ac}4D`
+  const ac60 = `${ac}99`
+
   const runAiMock = () => {
     setAiOutput('Acciones: stakea, intercambia y farmea desde un panel Web3.')
   }
@@ -572,7 +591,7 @@ export function HeroPhoneWalletScroll({
         <div className="grid gap-10 pb-24 pt-16 md:pb-28 md:pt-20">
           <div className="space-y-6">
             <div className="dark:border-white/15 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors duration-[160ms] dark:bg-white/5 dark:text-white/75">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ac }} aria-hidden />
               Tecnologías clave (demo)
             </div>
             <h2 className="text-slate-950 text-3xl font-extrabold tracking-tight transition-colors duration-[160ms] dark:text-white md:text-4xl">
@@ -592,13 +611,13 @@ export function HeroPhoneWalletScroll({
         </div>
       </div>
 
-      <div className="relative min-h-[92vh] sm:min-h-[112vh]">
-        <div className="sticky top-14 sm:top-16">
-          <div className="mx-auto flex max-w-6xl items-center justify-center px-3 pb-2 pt-6 sm:px-4 sm:pt-10">
-            <div className="relative h-[480px] w-full max-w-[1100px] sm:h-[700px]">
+      <div className="relative min-h-[112vh]">
+        <div className="sticky top-16">
+          <div className="mx-auto flex max-w-6xl items-center justify-center px-4 pb-2 pt-10">
+            <div className="relative h-[700px] w-full max-w-[1100px]">
               {/* Pantallas periféricas (6): se animan hacia fuera y hacia abajo conforme avanza el scrollProgress. */}
               <div className="absolute inset-0">
-                {perifericasVisibles.map((layout, index) => (
+                {pantallasPerifericas.map((layout, index) => (
                   <PantallaPeriferica
                     key={layout.id}
                     layout={layout}
@@ -621,6 +640,7 @@ export function HeroPhoneWalletScroll({
                             scrollable={scrollable}
                             width={layout.width}
                             height={layout.height}
+                            accentColor={ac}
                           >
                             {({ parallaxY }) => (
                               <motion.div style={{ y: parallaxY }}>
@@ -650,7 +670,8 @@ export function HeroPhoneWalletScroll({
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 6 }}
                                             transition={{ duration: 0.25, ease: EASE_OUT }}
-                                            className="bg-emerald-500/15 ml-auto max-w-[85%] rounded-2xl px-2 py-1 text-[11px] text-emerald-900 dark:text-emerald-100"
+                                            className="ml-auto max-w-[85%] rounded-2xl px-2 py-1 text-[11px]"
+                                            style={{ backgroundColor: ac15, color: ac }}
                                           >
                                             {aiOutput}
                                           </motion.div>
@@ -673,7 +694,12 @@ export function HeroPhoneWalletScroll({
                                     <button
                                       type="button"
                                       onClick={runAiMock}
-                                      className="hover:bg-emerald-500/15 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold text-emerald-800 transition-colors duration-[160ms] dark:text-emerald-200"
+                                      className="rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors duration-[160ms]"
+                                      style={{
+                                        borderColor: `${ac}4D`,
+                                        backgroundColor: ac10,
+                                        color: ac,
+                                      }}
                                       aria-label="Run AI (mock)"
                                     >
                                       Run
@@ -704,6 +730,7 @@ export function HeroPhoneWalletScroll({
                             scrollable={scrollable}
                             width={layout.width}
                             height={layout.height}
+                            accentColor={ac}
                           >
                             {({ parallaxY }) => (
                               <motion.div style={{ y: parallaxY }} className="space-y-2">
@@ -782,6 +809,7 @@ export function HeroPhoneWalletScroll({
                             scrollable={scrollable}
                             width={layout.width}
                             height={layout.height}
+                            accentColor={ac}
                           >
                             {({ parallaxY }) => (
                               <motion.div style={{ y: parallaxY }} className="space-y-2">
@@ -828,8 +856,12 @@ export function HeroPhoneWalletScroll({
 
                                 <button
                                   type="button"
-                                  className="hover:bg-emerald-500/15 w-full rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[11px] font-semibold text-emerald-800 transition-colors duration-[160ms] dark:text-emerald-200"
-                                  aria-label="Interact (mock)"
+                                  className="w-full rounded-2xl border px-3 py-2 text-[11px] font-semibold transition-colors duration-[160ms]"
+                                  style={{
+                                    borderColor: `${ac}4D`,
+                                    backgroundColor: ac10,
+                                    color: ac,
+                                  }}
                                 >
                                   Interact
                                 </button>
@@ -853,6 +885,7 @@ export function HeroPhoneWalletScroll({
                             scrollable={scrollable}
                             width={layout.width}
                             height={layout.height}
+                            accentColor={ac}
                           >
                             {({ parallaxY }) => (
                               <motion.div style={{ y: parallaxY }} className="space-y-2">
@@ -882,7 +915,7 @@ export function HeroPhoneWalletScroll({
                                             'rounded-full px-2 py-0.5 text-[10px] font-semibold',
                                             t.status === 'PEND'
                                               ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200'
-                                              : 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-200'
+                                              : 'dark:text-white'
                                           )}
                                         >
                                           {t.status}
@@ -906,6 +939,7 @@ export function HeroPhoneWalletScroll({
                             scrollable={scrollable}
                             width={layout.width}
                             height={layout.height}
+                            accentColor={ac}
                           >
                             {({ parallaxY }) => (
                               <motion.div style={{ y: parallaxY }} className="space-y-2">
@@ -924,7 +958,10 @@ export function HeroPhoneWalletScroll({
                                         </span>
                                       </div>
                                       <div className="mt-1 h-2 rounded-full bg-slate-200 dark:bg-white/10">
-                                        <div className="h-2 w-[62%] rounded-full bg-emerald-500/60" />
+                                        <div
+                                          className="h-2 w-[62%] rounded-full"
+                                          style={{ backgroundColor: ac60 }}
+                                        />
                                       </div>
                                     </div>
                                     <div className="rounded-2xl border border-black/10 bg-white/60 p-2 dark:border-white/10 dark:bg-white/5">
@@ -945,8 +982,12 @@ export function HeroPhoneWalletScroll({
 
                                 <button
                                   type="button"
-                                  className="hover:bg-emerald-500/15 w-full rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[11px] font-semibold text-emerald-800 transition-colors duration-[160ms] dark:text-emerald-200"
-                                  aria-label="Confirm swap (mock)"
+                                  className="w-full rounded-2xl border px-3 py-2 text-[11px] font-semibold transition-colors duration-[160ms]"
+                                  style={{
+                                    borderColor: `${ac}4D`,
+                                    backgroundColor: ac10,
+                                    color: ac,
+                                  }}
                                 >
                                   Confirm
                                 </button>
@@ -969,7 +1010,7 @@ export function HeroPhoneWalletScroll({
               >
                 <div
                   className={clsx(
-                    'relative h-[500px] w-[234px] rounded-[42px] border sm:h-[640px] sm:w-[300px] sm:rounded-[50px]',
+                    'relative h-[640px] w-[300px] rounded-[50px] border',
                     'border-black/10 bg-gradient-to-b from-slate-100 to-slate-200 shadow-[0_40px_120px_rgba(2,6,23,0.35)]',
                     'transition-[background-color,color,border-color] duration-[160ms]',
                     'dark:to-slate-950 dark:border-white/15 dark:from-slate-900'
@@ -979,13 +1020,13 @@ export function HeroPhoneWalletScroll({
                 >
                   <div
                     className={clsx(
-                      'absolute inset-[10px] overflow-hidden rounded-[34px] border border sm:inset-[12px] sm:rounded-[42px]',
+                      'absolute inset-[12px] overflow-hidden rounded-[42px] border',
                       'border-black/10 bg-white shadow-inner',
                       'transition-[background-color,color,border-color] duration-[160ms]',
                       'dark:bg-slate-950 dark:border-white/10'
                     )}
                   >
-                    <DynamicIsland autoPlay={autoPlayIsland && !isMobile} />
+                    <DynamicIsland autoPlay={autoPlayIsland} accentColor={ac} />
                     <div
                       className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/10 to-transparent dark:from-black/25"
                       aria-hidden
@@ -993,7 +1034,7 @@ export function HeroPhoneWalletScroll({
 
                     <div className="absolute inset-0 px-4 pb-5 pt-14">
                       <div className="h-full rounded-[30px] border border-black/10 bg-white/80 p-3 transition-colors duration-[160ms] dark:border-white/10 dark:bg-white/5">
-                        <WalletMock themePulseKey={themePulseKey} />
+                        <WalletMock themePulseKey={themePulseKey} accentColor={ac} />
                       </div>
                     </div>
                   </div>
@@ -1023,7 +1064,7 @@ export function HeroPhoneWalletScroll({
               </motion.div>
 
               {/* Overlay suave para dar “profundidad” cuando el iPhone sale al frente. */}
-              {!reduceMotion && !isMobile && (
+              {!reduceMotion && (
                 <motion.div
                   className="absolute inset-0 -z-10"
                   style={{
@@ -1031,8 +1072,14 @@ export function HeroPhoneWalletScroll({
                   }}
                   aria-hidden
                 >
-                  <div className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-3xl dark:bg-emerald-400/10" />
-                  <div className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/10 blur-3xl dark:bg-sky-400/10" />
+                  <div
+                    className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+                    style={{ backgroundColor: ac10 }}
+                  />
+                  <div
+                    className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+                    style={{ backgroundColor: `${ac}08` }}
+                  />
                 </motion.div>
               )}
             </div>

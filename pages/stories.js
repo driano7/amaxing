@@ -5,36 +5,46 @@ import siteMetadata from '@/data/siteMetadata'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import { Waves, CookingPot, Landmark } from 'lucide-react'
+import { RosetaAbstracta } from '@/components/moodboard/Icons'
 
 const stories = [
   {
     id: 'hidden-cenotes-yucatan',
     title: 'Hidden Cenotes of the Yucatán',
+    titleEs: 'Cenotes Ocultos de Yucatán',
     excerpt: 'Exploring secret swimming spots known only to locals.',
+    excerptEs: 'Explorando lugares de nado secretos que solo conocen los locales.',
     image: 'https://images.unsplash.com/photo-1589652731220-a5a7d2b8b4b2?w=800&q=80',
     author: 'Sarah Mitchell',
     publishedAt: '2024-01-15',
     readTime: '8 min read',
+    readTimeEs: '8 min de lectura',
     icon: Waves,
   },
   {
     id: 'oaxaca-night-markets',
     title: "Oaxaca's Night Markets",
+    titleEs: 'Los Mercados Nocturnos de Oaxaca',
     excerpt: 'A culinary journey through the vibrant night markets of Oaxaca.',
+    excerptEs: 'Un viaje culinario por los vibrantes mercados nocturnos de Oaxaca.',
     image: 'https://images.unsplash.com/photo-1550966871-3ed3-cafe8e9d5c7?w=800&q=80',
     author: 'Carlos Mendoza',
     publishedAt: '2024-02-20',
     readTime: '10 min read',
+    readTimeEs: '10 min de lectura',
     icon: CookingPot,
   },
   {
     id: 'lost-temples-palenque',
     title: 'The Lost Temples of Palenque',
+    titleEs: 'Los Templos Perdidos de Palenque',
     excerpt: 'Venturing deep into the jungle to discover Mayan ruins.',
+    excerptEs: 'Adentrándose en la selva para descubrir ruinas mayas.',
     image: 'https://images.unsplash.com/photo-1578662996442-9db785d1c6fd?w=800&q=80',
     author: 'Dr. Elena Ruiz',
     publishedAt: '2024-03-10',
     readTime: '12 min read',
+    readTimeEs: '12 min de lectura',
     icon: Landmark,
   },
 ]
@@ -67,6 +77,9 @@ export default function Stories() {
             <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
               {t('stories.title') || 'Traveler Stories'}
             </h1>
+            <div className="mb-4 flex justify-center">
+              <RosetaAbstracta size={56} />
+            </div>
             <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
               {t('stories.subtitle') ||
                 'Real stories from real travelers experiencing the magic of Mexico with Amaxing.'}
@@ -104,15 +117,21 @@ export default function Stories() {
                       )}
                       <time dateTime={story.publishedAt}>{formatDate(story.publishedAt)}</time>
                       <span>•</span>
-                      <span>{story.readTime}</span>
+                      <span>
+                        {currentLanguage === 'es' && story.readTimeEs
+                          ? story.readTimeEs
+                          : story.readTime}
+                      </span>
                     </div>
 
                     <h3 className="mb-3 text-xl font-bold leading-snug text-gray-900 transition-colors group-hover:text-orange-400 dark:text-white">
-                      {story.title}
+                      {currentLanguage === 'es' && story.titleEs ? story.titleEs : story.title}
                     </h3>
 
                     <p className="line-clamp-2 mb-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
-                      {story.excerpt}
+                      {currentLanguage === 'es' && story.excerptEs
+                        ? story.excerptEs
+                        : story.excerpt}
                     </p>
 
                     <div className="flex items-center justify-between">

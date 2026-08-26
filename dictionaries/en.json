@@ -43,6 +43,11 @@
     "signatureCocktails": "Signature cocktails",
     "culturalInsights": "Cultural insights"
   },
+  "stories": {
+    "title": "Traveler Stories",
+    "subtitle": "Real stories from real travelers experiencing the magic of Mexico with Amaxing.",
+    "readStory": "Read story"
+  },
   "experienceDetail": {
     "bookExperience": "Book This Experience",
     "includes": "Includes",

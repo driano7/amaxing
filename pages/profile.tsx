@@ -44,6 +44,7 @@ import {
   MapPin as MapPinIcon,
 } from 'lucide-react'
 import { CoffeeBackground } from '@/components/CoffeeBackground'
+import { GrecaOjoFelino } from '@/components/moodboard/Icons'
 import {
   SequentialBarChart,
   SequentialLineChart,
@@ -938,6 +939,7 @@ function DashboardContent({
           transition={{ duration: 0.5 }}
         >
           <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-white">
+            <GrecaOjoFelino size={24} />
             <Heart className="h-5 w-5 text-rose-500" />
             {isEs ? 'Tours favoritos' : 'Favorite tours'}
           </h3>
@@ -966,6 +968,7 @@ function DashboardContent({
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-white">
+            <GrecaOjoFelino size={24} />
             <MessageSquare className="h-5 w-5 text-blue-500" />
             {isEs ? 'Tours comentados' : 'Commented tours'}
           </h3>
@@ -1217,11 +1220,12 @@ function ProfileForm({
         transition={{ duration: 0.5 }}
       >
         <motion.h2
-          className="text-xl font-bold text-zinc-900 dark:text-white"
+          className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-white"
           initial={{ opacity: 0, y: -10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
+          <GrecaOjoFelino size={24} />
           {isEs ? 'Editar mi información' : 'Edit my information'}
         </motion.h2>
         {savedMsg && (
@@ -1394,6 +1398,7 @@ function SecuritySection({
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
         >
+          <GrecaOjoFelino size={24} />
           <Lock className="h-5 w-5 text-orange-500" />
           {isEs ? 'Cambiar contraseña' : 'Change password'}
         </motion.h2>
@@ -1459,11 +1464,12 @@ function SecuritySection({
         transition={{ duration: 0.5, delay: 0.15 }}
       >
         <motion.h2
-          className="text-xl font-bold text-zinc-900 dark:text-white"
+          className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-white"
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
         >
+          <GrecaOjoFelino size={24} />
           {isEs ? 'Gestión de datos (GDPR)' : 'Data management (GDPR)'}
         </motion.h2>
         {gdprMsg && (

@@ -25,7 +25,6 @@ const navItemsConfig = [
   { labelKey: 'nav.header.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
   { labelKey: 'nav.header.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
   { labelKey: 'nav.header.about', fallback: 'About Us', href: '/about', icon: 'Users' },
-  { labelKey: 'nav.header.allTours', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
 ]
 
 // Desktop "More" dropdown — empty for now (pricing & moodboard hidden).
@@ -43,7 +42,6 @@ const drawerItemsConfig = [
   { labelKey: 'header.nav.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
   { labelKey: 'header.nav.about', fallback: 'About Us', href: '/about', icon: 'Users' },
   { labelKey: 'header.nav.contact', fallback: 'Contact', href: '/contact', icon: 'Mail' },
-  { labelKey: 'tourCategories.all', fallback: 'All Tours', href: '/tours', icon: 'LayoutGrid' },
 ]
 
 // Mobile drawer "Categories" section — the 4 tour categories with their icons.
