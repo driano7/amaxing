@@ -51,6 +51,7 @@ const defaultTheme = {
 }
 
 export default function App({ Component, pageProps }) {
+  const getLayout = Component.getLayout || ((page) => <LayoutWrapper>{page}</LayoutWrapper>)
   return (
     <ThemeProvider attribute="class" defaultTheme={siteMetadata.theme}>
       <LanguageProvider fallbackLanguage="en">
@@ -69,9 +70,7 @@ export default function App({ Component, pageProps }) {
             </Head>
             {isDevelopment && isSocket && <ClientReload />}
             <Analytics />
-            <LayoutWrapper>
-              <Component {...pageProps} />
-            </LayoutWrapper>
+            {getLayout(<Component {...pageProps} />)}
             <ChatbotAssistant />
             <PageAnalyticsTracker />
           </AnalyticsProvider>

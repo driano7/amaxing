@@ -8,6 +8,7 @@
       "pricing": "Pricing",
       "contact": "Contact",
       "news": "News",
+      "about": "About Us",
       "moodboard": "Moodboard"
     },
     "categories": "Categories",
@@ -239,6 +240,7 @@
       "stories": "Stories",
       "news": "News",
       "contact": "Contact",
+      "about": "About Us",
       "allTours": "All Tours"
     }
   },

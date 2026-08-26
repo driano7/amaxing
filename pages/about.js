@@ -1,21 +1,579 @@
-import { MDXLayoutRenderer } from '@/components/MDXComponents'
-import { getFileBySlug } from '@/lib/mdx'
+import Head from 'next/head'
+import { Navbar } from '@/components/Navbar'
+import ScrollReveal from '@/components/ui/ScrollReveal'
+import dynamic from 'next/dynamic'
 
-const DEFAULT_LAYOUT = 'AuthorLayout'
+const MobileDock = dynamic(() => import('@/components/MobileDock').then((m) => m.MobileDock), {
+  loading: () => null,
+})
+const HubMenu = dynamic(() => import('@/components/HubMenu').then((m) => m.HubMenu), {
+  ssr: false,
+  loading: () => null,
+})
 
-export async function getStaticProps() {
-  const authorDetails = await getFileBySlug('authors', ['default'])
-  return { props: { authorDetails } }
+const COLORS = {
+  pink: '#E4007C',
+  magenta: '#B5006A',
+  cream: '#FAF3EA',
+  teal: '#0E8C7A',
+  amber: '#F2A03D',
+  terracota: '#C1440E',
+  dark: '#2E2E33',
+  offWhite: '#FFF6F1',
+  lightPink: '#FCE4F1',
 }
 
-export default function About({ authorDetails }) {
-  const { mdxSource, frontMatter } = authorDetails
-
+export default function AboutPage() {
   return (
-    <MDXLayoutRenderer
-      layout={frontMatter.layout || DEFAULT_LAYOUT}
-      mdxSource={mdxSource}
-      frontMatter={frontMatter}
-    />
+    <>
+      <Head>
+        <title>Amaxing — Quiénes Somos</title>
+        <meta
+          name="description"
+          content="Amaxing nace del cruce de dos historias en la Ciudad de México. Tours con alma local."
+        />
+      </Head>
+
+      <style jsx global>{`
+        .about-page {
+          background: ${COLORS.cream};
+        }
+        .about-page .wrap {
+          max-width: 880px;
+          margin: 0 auto;
+          padding: 0 32px;
+        }
+
+        .about-hero {
+          background: radial-gradient(
+            120% 140% at 50% -10%,
+            #ff4fa3 0%,
+            ${COLORS.pink} 45%,
+            ${COLORS.magenta} 100%
+          );
+          color: ${COLORS.offWhite};
+          padding: 90px 32px 110px;
+          text-align: center;
+        }
+        .about-mark {
+          width: 96px;
+          height: 96px;
+          margin: 0 auto 28px;
+          filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.18));
+        }
+        .about-kicker {
+          display: inline-block;
+          font-size: 0.78rem;
+          font-weight: 800;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          background: rgba(255, 255, 255, 0.16);
+          padding: 6px 16px;
+          border-radius: 30px;
+          margin-bottom: 22px;
+        }
+        .about-hero h1 {
+          font-family: 'Fraunces', serif;
+          font-weight: 700;
+          font-size: clamp(3rem, 9vw, 5.2rem);
+          letter-spacing: -1px;
+        }
+        .about-tagline-es {
+          font-family: 'Fraunces', serif;
+          font-style: italic;
+          font-weight: 500;
+          font-size: clamp(1.3rem, 3vw, 1.7rem);
+          margin-top: 18px;
+          max-width: 560px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .about-tagline-en {
+          font-size: 1rem;
+          opacity: 0.82;
+          margin-top: 10px;
+          letter-spacing: 0.02em;
+        }
+
+        .about-wave {
+          display: block;
+          width: 100%;
+          height: 60px;
+          margin-top: -2px;
+        }
+
+        .about-section {
+          padding: 72px 0;
+          position: relative;
+        }
+        .about-section-cream {
+          background: ${COLORS.cream};
+        }
+        .about-section-tint {
+          background: ${COLORS.lightPink};
+        }
+
+        .about-section-title {
+          font-family: 'Fraunces', serif;
+          font-weight: 700;
+          font-size: clamp(1.9rem, 4vw, 2.5rem);
+          color: ${COLORS.magenta};
+          margin-bottom: 24px;
+          text-align: center;
+        }
+        .about-lead {
+          font-size: 1.12rem;
+          color: #3f3a38;
+          max-width: 680px;
+          margin: 0 auto 18px;
+          text-align: center;
+        }
+
+        .about-founders {
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+          margin: 40px 0 8px;
+          flex-wrap: wrap;
+        }
+        .about-founder-chip {
+          background: #fffdf9;
+          border-radius: 16px;
+          padding: 18px 26px;
+          box-shadow: 0 4px 14px rgba(46, 46, 51, 0.08);
+          text-align: center;
+          min-width: 180px;
+        }
+        .about-founder-chip .role {
+          font-family: 'Fraunces', serif;
+          font-weight: 700;
+          color: ${COLORS.teal};
+          font-size: 1.05rem;
+        }
+        .about-founder-chip .desc {
+          font-size: 0.88rem;
+          color: #6b5f58;
+          margin-top: 4px;
+        }
+
+        .about-cards {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 24px;
+          margin-top: 40px;
+        }
+        .about-card {
+          background: #fffdf9;
+          border-radius: 20px;
+          overflow: hidden;
+          border: 1px solid rgba(46, 46, 51, 0.08);
+          box-shadow: 0 4px 16px rgba(46, 46, 51, 0.07);
+          transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            border-color 420ms cubic-bezier(0.22, 1, 0.36, 1);
+          cursor: default;
+        }
+        .about-card:hover {
+          transform: translateY(-6px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(181, 0, 106, 0.12), 0 8px 16px rgba(46, 46, 51, 0.08);
+          border-color: rgba(181, 0, 106, 0.2);
+        }
+        .about-card-img {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+          background: linear-gradient(135deg, ${COLORS.lightPink} 0%, #f3e8ff 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          position: relative;
+        }
+        .about-card-img-placeholder {
+          width: 100%;
+          height: 200px;
+          background: linear-gradient(135deg, ${COLORS.lightPink} 0%, #f3e8ff 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 3rem;
+          opacity: 0.5;
+        }
+        .about-card-body {
+          padding: 22px 22px 26px;
+        }
+        .about-card-icon {
+          font-size: 1.6rem;
+          margin-bottom: 8px;
+          display: inline-block;
+          transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .about-card:hover .about-card-icon {
+          transform: scale(1.15) rotate(-4deg);
+        }
+        .about-card h3 {
+          font-family: 'Fraunces', serif;
+          color: ${COLORS.magenta};
+          font-size: 1.2rem;
+          font-weight: 700;
+          margin-bottom: 8px;
+        }
+        .about-card p {
+          font-size: 0.92rem;
+          color: #5b4b44;
+          line-height: 1.6;
+        }
+        .about-card-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 14px;
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: ${COLORS.magenta};
+          opacity: 0;
+          transform: translateX(-8px);
+          transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .about-card:hover .about-card-link {
+          opacity: 1;
+          transform: translateX(0);
+        }
+
+        .about-symbol-block {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 48px;
+          flex-wrap: wrap;
+          margin-top: 10px;
+        }
+        .about-symbol-visual {
+          width: 220px;
+          height: 220px;
+          flex-shrink: 0;
+          filter: drop-shadow(0 8px 20px rgba(46, 46, 51, 0.15));
+        }
+        .about-symbol-text {
+          max-width: 420px;
+        }
+        .about-symbol-text p {
+          font-size: 1.05rem;
+          color: #3f3a38;
+        }
+
+        .about-greca {
+          display: flex;
+          justify-content: center;
+          margin: 8px 0 0;
+        }
+        .about-greca svg {
+          display: block;
+        }
+
+        .about-palette-strip {
+          display: flex;
+          height: 26px;
+          border-radius: 13px;
+          overflow: hidden;
+          max-width: 460px;
+          margin: 36px auto 0;
+          box-shadow: 0 4px 14px rgba(46, 46, 51, 0.1);
+        }
+        .about-palette-strip div {
+          flex: 1;
+        }
+
+        .about-footer {
+          background: ${COLORS.dark};
+          color: #f5eee7;
+          padding: 70px 32px 50px;
+          text-align: center;
+          position: relative;
+        }
+        .about-footer h2 {
+          font-family: 'Fraunces', serif;
+          font-size: clamp(1.7rem, 4vw, 2.3rem);
+          margin-bottom: 14px;
+        }
+        .about-footer .sub {
+          color: #c9beb6;
+          max-width: 520px;
+          margin: 0 auto 34px;
+        }
+
+        .about-cta-row {
+          display: flex;
+          justify-content: center;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+        .about-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 28px;
+          border-radius: 40px;
+          font-weight: 800;
+          font-size: 0.95rem;
+          text-decoration: none;
+          transition: transform 0.15s ease;
+        }
+        .about-btn:hover {
+          transform: translateY(-2px);
+        }
+        .about-btn-primary {
+          background: ${COLORS.pink};
+          color: ${COLORS.offWhite};
+        }
+        .about-btn-ghost {
+          background: transparent;
+          color: #f5eee7;
+          border: 1.5px solid #6b6870;
+        }
+        .about-footer .foot-tagline {
+          margin-top: 46px;
+          font-family: 'Fraunces', serif;
+          font-style: italic;
+          color: #c9beb6;
+          font-size: 0.95rem;
+        }
+
+        @media (max-width: 560px) {
+          .about-symbol-block {
+            flex-direction: column;
+            gap: 24px;
+          }
+          .about-symbol-text {
+            text-align: center;
+          }
+          .about-hero {
+            padding: 60px 20px 80px;
+          }
+          .about-card-img-placeholder {
+            height: 160px;
+          }
+          .about-cards {
+            grid-template-columns: 1fr;
+            gap: 18px;
+          }
+        }
+      `}</style>
+
+      <div className="about-page min-h-screen">
+        {/* HERO */}
+        <header className="about-hero">
+          <svg
+            className="about-mark"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <polygon
+              points="50,10 30,5 38,28 15,45 25,75 50,90 75,75 85,45 62,28 70,5"
+              fill={COLORS.offWhite}
+            />
+            <polygon points="50,10 85,45 50,50" fill={COLORS.pink} opacity="0.92" />
+            <polygon points="50,50 85,45 75,75" fill={COLORS.teal} opacity="0.92" />
+            <polygon points="50,50 75,75 50,90" fill={COLORS.amber} opacity="0.92" />
+            <polygon points="50,90 25,75 50,50" fill={COLORS.terracota} opacity="0.92" />
+            <polygon points="50,50 25,75 15,45" fill={COLORS.magenta} opacity="0.92" />
+            <polygon points="50,50 15,45 50,10" fill={COLORS.offWhite} opacity="0.35" />
+            <path d="M40 48 Q46 40 50 48 Q46 56 40 48 Z" fill={COLORS.dark} />
+            <path d="M50 48 Q56 40 60 48 Q56 56 50 48 Z" fill={COLORS.dark} />
+          </svg>
+          <span className="about-kicker">CDMX · Tours con alma local</span>
+          <h1>Amaxing</h1>
+          <p className="about-tagline-es">El abrazo de la ciudad que amamos.</p>
+          <p className="about-tagline-en">Mexico City, the way we hug it.</p>
+        </header>
+
+        {/* WAVE */}
+        <svg className="about-wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+          <path
+            d="M0,32 C240,64 480,0 720,20 C960,40 1200,64 1440,32 L1440,0 L0,0 Z"
+            fill={COLORS.magenta}
+          />
+          <path
+            d="M0,40 C240,68 480,16 720,32 C960,48 1200,68 1440,40 L1440,60 L0,60 Z"
+            fill={COLORS.cream}
+          />
+        </svg>
+
+        {/* QUIÉNES SOMOS */}
+        <section className="about-section about-section-cream">
+          <div className="wrap">
+            <h2 className="about-section-title">Quiénes somos</h2>
+            <p className="about-lead">
+              Amaxing nace del cruce de dos historias en la Ciudad de México: uno de nosotros es
+              oaxaqueño y hoy vive aquí; el otro es defeño de nacimiento, aunque hace años que no
+              vive en la ciudad. Entre los dos conocemos, casi por azares de la vida, los polos más
+              distintos de esta ciudad — sus mercados, sus azoteas, sus rincones que no salen en
+              ninguna guía. Un día decidimos que valía la pena compartirlo.
+            </p>
+            <div className="about-founders">
+              <div className="about-founder-chip">
+                <div className="role">El oaxaqueño</div>
+                <div className="desc">vive en CDMX, la camina todos los días</div>
+              </div>
+              <div className="about-founder-chip">
+                <div className="role">El defeño</div>
+                <div className="desc">nació aquí, hoy la mira desde lejos y con ganas</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* POR QUÉ CHILANGO */}
+        <section className="about-section about-section-tint">
+          <div className="wrap">
+            <h2 className="about-section-title">Por qué &ldquo;chilango&rdquo;</h2>
+            <p className="about-lead">
+              &ldquo;Chilango&rdquo; se ha usado durante años como una forma de menospreciar a quien
+              vive en esta ciudad. Nosotros creemos que es al revés: ser chilango es haber aprendido
+              a querer una ciudad enorme, ruidosa y contradictoria, y encontrar en ella algo que se
+              parece al hogar. Amaxing existe para mostrar esa versión de la Ciudad de México — la
+              de los sabores, los lugares, los olores y el surrealismo que solo se entienden
+              caminándola con alguien de aquí.
+            </p>
+          </div>
+        </section>
+
+        {/* PARA QUIÉN */}
+        <section className="about-section about-section-cream">
+          <div className="wrap">
+            <h2 className="about-section-title">Para quién</h2>
+            <p className="about-lead">
+              Diseñamos cada recorrido para quien viaja solo o en grupos pequeños y quiere algo más
+              que una lista de fotos.
+            </p>
+            <ScrollReveal className="about-cards" itemClassName="">
+              <div className="about-card">
+                <div className="about-card-img-placeholder">🌮</div>
+                <div className="about-card-body">
+                  <span className="about-card-icon">🌮</span>
+                  <h3>Sabores</h3>
+                  <p>
+                    Comer donde comen los que viven aquí, no donde comen los que solo pasan por
+                    aquí.
+                  </p>
+                  <span className="about-card-link">Ver tours →</span>
+                </div>
+              </div>
+              <div className="about-card">
+                <div className="about-card-img-placeholder">🧭</div>
+                <div className="about-card-body">
+                  <span className="about-card-icon">🧭</span>
+                  <h3>Lugares</h3>
+                  <p>
+                    Barrios con nombre e historia propia, más allá de las tres avenidas de siempre.
+                  </p>
+                  <span className="about-card-link">Ver tours →</span>
+                </div>
+              </div>
+              <div className="about-card">
+                <div className="about-card-img-placeholder">✨</div>
+                <div className="about-card-body">
+                  <span className="about-card-icon">✨</span>
+                  <h3>Surrealismo</h3>
+                  <p>
+                    Esa parte de CDMX que parece inventada, y que solo se entiende viéndola de
+                    cerca.
+                  </p>
+                  <span className="about-card-link">Ver tours →</span>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* NUESTRO SÍMBOLO */}
+        <section className="about-section about-section-tint">
+          <div className="wrap">
+            <h2 className="about-section-title">Nuestro símbolo</h2>
+            <div className="about-symbol-block">
+              <svg
+                className="about-symbol-visual"
+                viewBox="0 0 100 100"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polygon
+                  points="50,10 30,5 38,28 15,45 25,75 50,90 75,75 85,45 62,28 70,5"
+                  fill={COLORS.dark}
+                />
+                <polygon points="50,10 85,45 50,50" fill={COLORS.pink} opacity="0.92" />
+                <polygon points="50,50 85,45 75,75" fill={COLORS.teal} opacity="0.92" />
+                <polygon points="50,50 75,75 50,90" fill={COLORS.amber} opacity="0.92" />
+                <polygon points="50,90 25,75 50,50" fill={COLORS.terracota} opacity="0.92" />
+                <polygon points="50,50 25,75 15,45" fill={COLORS.magenta} opacity="0.92" />
+                <polygon points="50,50 15,45 50,10" fill={COLORS.cream} opacity="0.4" />
+                <path d="M40 48 Q46 40 50 48 Q46 56 40 48 Z" fill={COLORS.cream} />
+                <path d="M50 48 Q56 40 60 48 Q56 56 50 48 Z" fill={COLORS.cream} />
+              </svg>
+              <div className="about-symbol-text">
+                <p>
+                  Elegimos al jaguar — no como caricatura, sino como símbolo. Lo llevamos a su forma
+                  más simple: una mirada que aparece entre planos de piedra tallada, el trazo
+                  geométrico de quien esculpe en madera desde hace generaciones. Es un guiño a ese
+                  oficio popular mexicano, y a la fuerza silenciosa con la que esta ciudad te recibe
+                  cuando ya la conoces.
+                </p>
+              </div>
+            </div>
+            <div className="about-greca">
+              <svg width="320" height="30" viewBox="0 0 320 30">
+                <path
+                  d="M0,15 L0,5 L20,5 L20,15 L40,15 L40,5 L60,5 L60,15 L80,15 L80,5 L100,5 L100,15 L120,15 L120,5 L140,5 L140,15 L160,15 L160,5 L180,5 L180,15 L200,15 L200,5 L220,5 L220,15 L240,15 L240,5 L260,5 L260,15 L280,15 L280,5 L300,5 L300,15 L320,15"
+                  fill="none"
+                  stroke={COLORS.terracota}
+                  strokeWidth="3"
+                />
+              </svg>
+            </div>
+            <div className="about-palette-strip">
+              <div style={{ background: COLORS.pink }} />
+              <div style={{ background: COLORS.teal }} />
+              <div style={{ background: COLORS.amber }} />
+              <div style={{ background: COLORS.terracota }} />
+              <div style={{ background: COLORS.dark }} />
+            </div>
+          </div>
+        </section>
+
+        {/* FOOTER / CTA */}
+        <footer className="about-footer">
+          <h2>¿Lista para conocer la CDMX que no sale en las guías?</h2>
+          <p className="sub">
+            Escríbenos y te ayudamos a armar tu próxima visita a la ciudad — sin trampas para
+            turistas.
+          </p>
+          <div className="about-cta-row">
+            <a
+              className="about-btn about-btn-primary"
+              href="https://wa.me/525512291607"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              💬 Escríbenos por WhatsApp
+            </a>
+            <a className="about-btn about-btn-ghost" href="#">
+              📷 Instagram — muy pronto
+            </a>
+          </div>
+          <p className="foot-tagline">El abrazo de la ciudad que amamos.</p>
+        </footer>
+      </div>
+    </>
   )
 }
+
+AboutPage.getLayout = (page) => (
+  <div className="relative min-h-screen">
+    <Navbar />
+    <main>{page}</main>
+    <MobileDock />
+    <HubMenu showTrigger={false} />
+  </div>
+)
