@@ -16,9 +16,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Download } from 'lucide-react'
+import { useState } from 'react'
+import { Download, FileSpreadsheet, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toPng } from 'html-to-image'
+import * as XLSX from 'xlsx'
 import { SequentialChartDataRenderer } from './SequentialChartDataRenderer'
 import { GrecaOjoFelino } from '@/components/moodboard/Icons'
 
@@ -44,6 +46,28 @@ const downloadChartPng = async (container: HTMLDivElement | null, filename: stri
     // fallback
   }
 }
+
+const escapeCsv = (value: string | number | boolean | null | undefined) => {
+  const text = value === null || value === undefined ? '' : String(value)
+  if (/[,"\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`
+  return text
+}
+const toCsv = (rows: Record<string, any>[]) => {
+  if (!rows.length) return ''
+  const headers = Array.from(new Set(rows.flatMap((r) => Object.keys(r))))
+  const lines = [headers.map(escapeCsv).join(',')]
+  for (const row of rows) lines.push(headers.map((h) => escapeCsv(row[h])).join(','))
+  return `${lines.join('\n')}\n`
+}
+const downloadBlob = (filename: string, blob: Blob) => {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+const toSheetName = (v: string) => v.replace(/[\\/*?:[\]]/g, '').slice(0, 31) || 'Sheet1'
 
 const EmptyChart = ({ text }: { text: string }) => (
   <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-zinc-200/50 text-xs text-zinc-400 dark:border-white/10 dark:text-zinc-500">
@@ -87,6 +111,34 @@ export function SequentialBarChart({
   const shouldReduceMotion = Boolean(useReducedMotion())
   const chartRef = useRef<HTMLDivElement>(null)
   const visible = useInView(chartRef, CHART_IN_VIEW_OPTIONS)
+  const [exporting, setExporting] = useState<'csv' | 'xlsx' | null>(null)
+  const exportCsv = () => {
+    setExporting('csv')
+    try {
+      const csv = toCsv(data as Record<string, any>[])
+      downloadBlob(
+        `${pngFilename || 'chart'}-${new Date().toISOString().slice(0, 10)}.csv`,
+        new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      )
+    } finally {
+      setExporting(null)
+    }
+  }
+  const exportXlsx = () => {
+    setExporting('xlsx')
+    try {
+      const wb = XLSX.utils.book_new()
+      const ws = XLSX.utils.json_to_sheet(data as Record<string, any>[])
+      XLSX.utils.book_append_sheet(wb, ws, toSheetName(title))
+      const arr = XLSX.write(wb, { bookType: 'xlsx', type: 'array', compression: true })
+      downloadBlob(
+        `${pngFilename || 'chart'}-${new Date().toISOString().slice(0, 10)}.xlsx`,
+        new Blob([arr], { type: 'application/octet-stream' })
+      )
+    } finally {
+      setExporting(null)
+    }
+  }
 
   if (!data.length) {
     return (
@@ -98,18 +150,42 @@ export function SequentialBarChart({
               {title}
             </p>
           </div>
-          {showPngButton && pngFilename && (
+          <div className="flex items-center gap-1">
+            {showPngButton && pngFilename && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={() => void downloadChartPng(chartRef.current, pngFilename)}
+              >
+                <Download className="mr-1 h-3.5 w-3.5" />
+                PNG
+              </Button>
+            )}
             <Button
               type="button"
               variant="ghost"
               size="sm"
               className="h-7 px-2 text-xs"
-              onClick={() => void downloadChartPng(chartRef.current, pngFilename)}
+              onClick={exportCsv}
+              disabled={!!exporting}
             >
-              <Download className="mr-1 h-3.5 w-3.5" />
-              PNG
+              <FileText className="mr-1 h-3.5 w-3.5" />
+              {exporting === 'csv' ? '...' : 'CSV'}
             </Button>
-          )}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={exportXlsx}
+              disabled={!!exporting}
+            >
+              <FileSpreadsheet className="mr-1 h-3.5 w-3.5" />
+              {exporting === 'xlsx' ? '...' : 'XLSX'}
+            </Button>
+          </div>
         </div>
         {description && <p className="mb-2 text-xs text-zinc-400">{description}</p>}
         <EmptyChart text="Sin datos disponibles" />
@@ -269,6 +345,34 @@ export function SequentialLineChart({
   const shouldReduceMotion = Boolean(useReducedMotion())
   const chartRef = useRef<HTMLDivElement>(null)
   const visible = useInView(chartRef, CHART_IN_VIEW_OPTIONS)
+  const [exporting, setExporting] = useState<'csv' | 'xlsx' | null>(null)
+  const exportCsv = () => {
+    setExporting('csv')
+    try {
+      const csv = toCsv(data as Record<string, any>[])
+      downloadBlob(
+        `${pngFilename || 'chart'}-${new Date().toISOString().slice(0, 10)}.csv`,
+        new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      )
+    } finally {
+      setExporting(null)
+    }
+  }
+  const exportXlsx = () => {
+    setExporting('xlsx')
+    try {
+      const wb = XLSX.utils.book_new()
+      const ws = XLSX.utils.json_to_sheet(data as Record<string, any>[])
+      XLSX.utils.book_append_sheet(wb, ws, toSheetName(title))
+      const arr = XLSX.write(wb, { bookType: 'xlsx', type: 'array', compression: true })
+      downloadBlob(
+        `${pngFilename || 'chart'}-${new Date().toISOString().slice(0, 10)}.xlsx`,
+        new Blob([arr], { type: 'application/octet-stream' })
+      )
+    } finally {
+      setExporting(null)
+    }
+  }
 
   if (!data.length) {
     return (
@@ -280,18 +384,42 @@ export function SequentialLineChart({
               {title}
             </p>
           </div>
-          {showPngButton && pngFilename && (
+          <div className="flex items-center gap-1">
+            {showPngButton && pngFilename && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={() => void downloadChartPng(chartRef.current, pngFilename)}
+              >
+                <Download className="mr-1 h-3.5 w-3.5" />
+                PNG
+              </Button>
+            )}
             <Button
               type="button"
               variant="ghost"
               size="sm"
               className="h-7 px-2 text-xs"
-              onClick={() => void downloadChartPng(chartRef.current, pngFilename)}
+              onClick={exportCsv}
+              disabled={!!exporting}
             >
-              <Download className="mr-1 h-3.5 w-3.5" />
-              PNG
+              <FileText className="mr-1 h-3.5 w-3.5" />
+              {exporting === 'csv' ? '...' : 'CSV'}
             </Button>
-          )}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={exportXlsx}
+              disabled={!!exporting}
+            >
+              <FileSpreadsheet className="mr-1 h-3.5 w-3.5" />
+              {exporting === 'xlsx' ? '...' : 'XLSX'}
+            </Button>
+          </div>
         </div>
         {description && <p className="mb-2 text-xs text-zinc-400">{description}</p>}
         <EmptyChart text="Sin datos disponibles" />

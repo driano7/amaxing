@@ -139,16 +139,16 @@ export function FlipCard({
       : 'bg-slate-900 text-white shadow-2xl shadow-slate-900/60 border border-white/10'
 
   return (
-    <div className="mx-auto w-full max-w-[420px]" style={{ perspective: 1200 }}>
+    <div className="mx-auto w-full max-w-full sm:max-w-[420px]" style={{ perspective: 1200 }}>
       <div
-        className="relative h-[220px] rounded-[32px] transition-transform duration-700"
+        className="relative h-[190px] rounded-[24px] transition-transform duration-700 sm:h-[220px] sm:rounded-[32px]"
         style={{
           transformStyle: 'preserve-3d',
           transform: isFlipped ? 'rotateY(180deg)' : 'none',
         }}
       >
         <div
-          className={`absolute inset-0 rounded-[32px] bg-gradient-to-br ${frontBase} px-5 py-4 sm:px-6 sm:py-5`}
+          className={`absolute inset-0 rounded-[24px] bg-gradient-to-br ${frontBase} px-4 py-3 sm:rounded-[32px] sm:px-6 sm:py-5`}
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="mb-4 flex items-start justify-between gap-3 sm:mb-6">
@@ -166,7 +166,9 @@ export function FlipCard({
             </div>
             <div className="h-6 w-10 sm:h-7 sm:w-12">{cardTypeLogos[cardType]}</div>
           </div>
-          <p className="text-base font-medium tracking-[0.2em] sm:text-xl">{formattedNumber}</p>
+          <p className="text-sm font-medium tracking-[0.12em] sm:text-xl sm:tracking-[0.2em]">
+            {formattedNumber}
+          </p>
           <div className="mt-6 flex items-center justify-between text-[9px] uppercase text-slate-300 sm:mt-8 sm:text-xs">
             <div className="space-y-1">
               <p className="text-[9px] tracking-[0.35em] text-slate-400 sm:text-[10px]">Titular</p>
@@ -181,7 +183,7 @@ export function FlipCard({
           </div>
         </div>
         <div
-          className={`absolute inset-0 rounded-[32px] ${backBase} px-6 py-5`}
+          className={`absolute inset-0 rounded-[24px] ${backBase} px-4 py-4 sm:rounded-[32px] sm:px-6 sm:py-5`}
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
           <div className="h-10 w-full rounded-2xl bg-slate-800" />

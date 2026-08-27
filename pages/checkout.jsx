@@ -356,13 +356,13 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen overflow-x-hidden bg-white dark:bg-zinc-950">
+      <div className="container mx-auto max-w-full overflow-hidden px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mx-auto max-w-4xl"
+          className="mx-auto w-full max-w-4xl overflow-hidden"
         >
           <Link
             href="/cart"
@@ -386,9 +386,9 @@ export default function CheckoutPage() {
             </div>
           )}
 
-          <div className="grid gap-8 lg:grid-cols-2">
+          <div className="grid gap-6 overflow-hidden lg:grid-cols-2 lg:gap-8">
             {/* Summary */}
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-900/50">
+            <div className="w-full min-w-0 overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-900/50 sm:p-6">
               <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
                 {t('checkout.orderSummary', 'Resumen de tu compra')}
               </h2>
@@ -396,9 +396,9 @@ export default function CheckoutPage() {
                 {items.map((item) => (
                   <div
                     key={item.lineId}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-white/5 dark:bg-zinc-900"
+                    className="flex min-w-0 items-center justify-between gap-2 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-white/5 dark:bg-zinc-900 sm:gap-3"
                   >
-                    <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden sm:gap-3">
                       <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg">
                         <Image
                           src={item.imageUrl || '/static/images/jaguarBaja.png'}
@@ -408,8 +408,8 @@ export default function CheckoutPage() {
                           className="object-cover"
                         />
                       </div>
-                      <div className="min-w-0">
-                        <p className="truncate font-semibold text-gray-900 dark:text-white">
+                      <div className="min-w-0 flex-1 overflow-hidden">
+                        <p className="truncate text-sm font-semibold text-gray-900 dark:text-white sm:text-base">
                           {item.title}
                         </p>
                         <p className="text-xs text-zinc-500 dark:text-gray-400">
@@ -449,7 +449,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Payment */}
-            <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-6">
+            <div className="w-full min-w-0 overflow-hidden rounded-2xl border border-orange-500/20 bg-orange-500/5 p-4 dark:border-orange-500/20 sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
                 <CreditCard className="h-5 w-5 text-orange-500" />
                 {t('checkout.payment', 'Detalles de la tarjeta')}
@@ -485,7 +485,7 @@ export default function CheckoutPage() {
 
               {payMethod === 'card' ? (
                 <>
-                  <div className="mx-auto w-full max-w-full overflow-hidden px-1">
+                  <div className="mx-auto w-full max-w-full overflow-hidden">
                     <FlipCard
                       cardNumber={form.cardNumber}
                       cardHolder={form.cardHolder}

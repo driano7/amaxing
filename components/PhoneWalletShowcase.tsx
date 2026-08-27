@@ -499,11 +499,10 @@ export function HeroPhoneWalletScroll({
   const themePulseKey = externalThemePulseKey ?? localThemePulseKey
 
   const basePhoneScale = useTransform(progress, [0, 0.35, 0.65, 1], [0.78, 1.08, 1.02, 1])
-  const phoneScale = useTransform(basePhoneScale, (v) => v * (isMobile ? 0.65 : 0.75))
+  const phoneScale = useTransform(basePhoneScale, (v) => v * (isMobile ? 0.65 : 0.8625))
   const phoneY = useTransform(progress, [0, 0.35, 0.65, 1], [70, -6, -16, -20])
   const glowOpacity = useTransform(progress, [0, 0.35, 1], [0.0, 0.35, 0.55])
-
-  const scaleFactor = isMobile ? 0.65 : 0.75
+  const scaleFactor = isMobile ? 0.65 : 0.8625
   const pantallasPerifericas: PantallaPerifericaLayout[] = useMemo(
     () => [
       {
@@ -1007,7 +1006,7 @@ export function HeroPhoneWalletScroll({
 
               {/* iPhone grande: cuerpo + pantalla (sin imágenes externas). */}
               <motion.div
-                style={{ scale: phoneScale, y: phoneY }}
+                style={{ scale: phoneScale, y: phoneY, x: isMobile ? -110 : -90 }}
                 className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
               >
                 <div

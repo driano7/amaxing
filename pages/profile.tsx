@@ -546,14 +546,14 @@ export default function Profile() {
                     href="/admin"
                     className="rounded-full bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-orange-600"
                   >
-                    {isEs ? 'Ir a panel admin' : 'Go to admin panel'} →
+                    <span>{isEs ? 'Ir a panel admin →' : 'Go to admin panel →'}</span>
                   </Link>
                 )}
                 <Link
                   href="/empleados"
                   className="rounded-full border border-orange-500 bg-white px-4 py-1.5 text-sm font-semibold text-orange-500 hover:bg-orange-50 dark:bg-zinc-900"
                 >
-                  {isEs ? 'Ir a panel empleado' : 'Go to employee panel'} →
+                  <span>{isEs ? 'Ir a panel empleado →' : 'Go to employee panel →'}</span>
                 </Link>
               </div>
             </motion.div>
