@@ -1,50 +1,66 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 const EASE_OUT = [0.22, 1, 0.36, 1]
 
-const CARDS = [
-  {
-    id: 'oaxaqueno',
-    title: 'El oaxaqueño',
-    image: null,
-    imagePlaceholder: '🏔️',
-    content:
-      'Vive en CDMX, la camina todos los días. Conoce los mercados que abren antes del amanecer, las azoteas donde se toma el mezcal más honesto, y los rincones que ningún mapa digital señala.',
-  },
-  {
-    id: 'defeno',
-    title: 'El defeño',
-    image: null,
-    imagePlaceholder: '🏙️',
-    content:
-      'Nació aquí, hoy la mira desde lejos y con ganas. Esa distancia le da una perspectiva que el que vive aquí a veces pierde: sabe cuáles son los tesoros que un visitante nunca encontraría solo.',
-  },
-  {
-    id: 'maxing',
-    title: 'Amaxing',
-    image: null,
-    imagePlaceholder: '✨',
-    content:
-      'El cruce de dos historias. Entre los dos cubrimos los polos más distintos de esta ciudad — y decidimos que valía la pena compartirlo con quien quiera sentir la CDMX de verdad.',
-  },
-]
-
 export default function CardStack() {
+  const { t } = useLanguage()
+  const CARDS = [
+    {
+      id: 'oaxaqueno',
+      title:
+        t('aboutPage.cardStack.oaxTitle') !== 'aboutPage.cardStack.oaxTitle'
+          ? t('aboutPage.cardStack.oaxTitle')
+          : 'El oaxaqueño',
+      imagePlaceholder: '🏔️',
+      content:
+        t('aboutPage.cardStack.oaxContent') !== 'aboutPage.cardStack.oaxContent'
+          ? t('aboutPage.cardStack.oaxContent')
+          : 'Vive en CDMX, la camina todos los días. Conoce los mercados que abren antes del amanecer, las azoteas donde se toma el mezcal más honesto, y los rincones que ningún mapa digital señala.',
+    },
+    {
+      id: 'defeno',
+      title:
+        t('aboutPage.cardStack.defTitle') !== 'aboutPage.cardStack.defTitle'
+          ? t('aboutPage.cardStack.defTitle')
+          : 'El defeño',
+      imagePlaceholder: '🏙️',
+      content:
+        t('aboutPage.cardStack.defContent') !== 'aboutPage.cardStack.defContent'
+          ? t('aboutPage.cardStack.defContent')
+          : 'Nació aquí, hoy la mira desde lejos y con ganas. Esa distancia le da una perspectiva que el que vive aquí a veces pierde: sabe cuáles son los tesoros que un visitante nunca encontraría solo.',
+    },
+    {
+      id: 'maxing',
+      title:
+        t('aboutPage.cardStack.amxTitle') !== 'aboutPage.cardStack.amxTitle'
+          ? t('aboutPage.cardStack.amxTitle')
+          : 'Amaxing',
+      imagePlaceholder: '✨',
+      content:
+        t('aboutPage.cardStack.amxContent') !== 'aboutPage.cardStack.amxContent'
+          ? t('aboutPage.cardStack.amxContent')
+          : 'El cruce de dos historias. Entre los dos cubrimos los polos más distintos de esta ciudad — y decidimos que valía la pena compartirlo con quien quiera sentir la CDMX de verdad.',
+    },
+  ]
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const animatingRef = useRef(false)
   const intervalRef = useRef(null)
 
-  const moveCard = useCallback((direction) => {
-    if (animatingRef.current) return
-    animatingRef.current = true
-    setIsAnimating(true)
-    window.setTimeout(() => {
-      setActiveIndex((prev) => (prev + direction + CARDS.length) % CARDS.length)
-      setIsAnimating(false)
-      animatingRef.current = false
-    }, 860)
-  }, [])
+  const moveCard = useCallback(
+    (direction) => {
+      if (animatingRef.current) return
+      animatingRef.current = true
+      setIsAnimating(true)
+      window.setTimeout(() => {
+        setActiveIndex((prev) => (prev + direction + CARDS.length) % CARDS.length)
+        setIsAnimating(false)
+        animatingRef.current = false
+      }, 860)
+    },
+    [CARDS.length]
+  )
 
   useEffect(() => {
     intervalRef.current = window.setInterval(() => moveCard(1), 60000)
@@ -80,6 +96,9 @@ export default function CardStack() {
           color: #b5006a;
           margin-bottom: 24px;
           text-align: center;
+        }
+        :global(.dark) .card-stack-title {
+          color: #f472b6;
         }
         .about-card-stack {
           position: relative;
@@ -121,6 +140,10 @@ export default function CardStack() {
           display: flex;
           flex-direction: column;
         }
+        :global(.dark) .about-stack-card {
+          background: #27272a;
+          border-color: rgba(255, 255, 255, 0.08);
+        }
         .about-stack-card-img {
           height: 180px;
           background: linear-gradient(135deg, #fce4f1 0%, #f3e8ff 100%);
@@ -141,10 +164,16 @@ export default function CardStack() {
           color: #b5006a;
           margin-bottom: 10px;
         }
+        :global(.dark) .about-stack-card-body h3 {
+          color: #f472b6;
+        }
         .about-stack-card-body p {
           font-size: 0.95rem;
           color: #5b4b44;
           line-height: 1.65;
+        }
+        :global(.dark) .about-stack-card-body p {
+          color: #a1a1aa;
         }
         .about-card-stack.is-animating .about-stack-item--top {
           animation: about-stack-slide-out 860ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -257,7 +286,11 @@ export default function CardStack() {
       `}</style>
 
       <div className="card-stack-wrap">
-        <h2 className="card-stack-title">Sobre nosotros</h2>
+        <h2 className="card-stack-title">
+          {t('aboutPage.aboutUsTitle') !== 'aboutPage.aboutUsTitle'
+            ? t('aboutPage.aboutUsTitle')
+            : 'Sobre nosotros'}
+        </h2>
         <div
           className={`about-card-stack ${isAnimating ? 'is-animating' : ''}`}
           onMouseEnter={stopAuto}

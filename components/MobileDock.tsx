@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ComponentType } from 're
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Home, Compass, BookOpen, Sparkle, FileText, Newspaper, Users } from 'lucide-react'
+import { Home, Compass, BookOpen, Sparkle, Newspaper, Users, LayoutGrid } from 'lucide-react'
 import Link from '@/components/Link'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 
@@ -90,28 +90,25 @@ export function MobileDock() {
           compact ? 'px-1.5' : 'px-2'
         )}
       >
-        {/* Categorías primero */}
+        {/* Tours — todos los tours */}
         <motion.div
           initial={reducedMotion ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0 }}
         >
-          <button
-            type="button"
-            onClick={() => {
-              resetTimer()
-              window.dispatchEvent(new CustomEvent('open-amaxing-hubmenu'))
-            }}
-            title="Categorías"
-            aria-label="Categorías"
+          <Link
+            href="/tours"
+            aria-label={getLabel({ labelKey: 'tourCategories.all', fallback: 'All Tours' })}
+            title={getLabel({ labelKey: 'tourCategories.all', fallback: 'All Tours' })}
+            onClick={resetTimer}
             className={classNames(
               DOCK_BUTTON_BASE,
               compact ? 'h-10 w-10' : 'h-11 w-11',
-              DOCK_BUTTON_ACTIVE
+              isActiveRoute(router.pathname, '/tours') ? DOCK_BUTTON_ACTIVE : DOCK_BUTTON_INACTIVE
             )}
           >
-            <FileText className={compact ? 'h-4 w-4' : 'h-5 w-5'} />
-          </button>
+            <LayoutGrid className={compact ? 'h-4 w-4' : 'h-5 w-5'} />
+          </Link>
         </motion.div>
 
         {/* Chatbot después */}

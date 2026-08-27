@@ -162,6 +162,7 @@ export default function Profile() {
   const [error, setError] = useState<string | null>(null)
   const [profileLoaded, setProfileLoaded] = useState(false)
 
+  const [role, setRole] = useState<'admin' | 'employee' | 'client' | null>(null)
   const [form, setForm] = useState<ProfileData>({
     firstName: '',
     lastName: '',
@@ -175,6 +176,23 @@ export default function Profile() {
   const [savedMsg, setSavedMsg] = useState('')
   const [pwMsg, setPwMsg] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [gdprMsg, setGdprMsg] = useState('')
+
+  useEffect(() => {
+    if (!user?.email) return
+    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+    fetch('/api/admin/me', {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        'x-demo-email': user.email,
+      },
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.success && d?.data?.role) setRole(d.data.role)
+        else setRole('client')
+      })
+      .catch(() => setRole('client'))
+  }, [user?.email])
 
   const fetchBookings = useCallback(async () => {
     setIsLoadingBookings(true)
@@ -328,6 +346,27 @@ export default function Profile() {
     void logout()
   }
 
+  const isPrivileged = role === 'admin' || role === 'employee'
+  const tabs: { id: Tab; label: string; icon: any }[] = useMemo(() => {
+    const base = [
+      { id: 'profile' as Tab, label: isEs ? 'Mi perfil' : 'My profile', icon: User },
+      { id: 'dashboard' as Tab, label: isEs ? 'Dashboard' : 'Dashboard', icon: BarChart2 },
+    ]
+    if (isPrivileged) return base
+    return [
+      ...base.slice(0, 1),
+      { id: 'bookings' as Tab, label: isEs ? 'Mis reservas' : 'My bookings', icon: Calendar },
+      base[1],
+      { id: 'favorites' as Tab, label: isEs ? 'Favoritos' : 'Favorites', icon: Heart },
+      { id: 'commented' as Tab, label: isEs ? 'Comentados' : 'Commented', icon: MessageSquare },
+      {
+        id: 'security' as Tab,
+        label: isEs ? 'Seguridad y datos' : 'Security & data',
+        icon: Shield,
+      },
+    ]
+  }, [isEs, isPrivileged])
+
   if (isLoading) {
     return <AuthLoader label={isEs ? 'Cargando tu perfil...' : 'Loading your profile...'} />
   }
@@ -359,15 +398,6 @@ export default function Profile() {
       </CoffeeBackground>
     )
   }
-
-  const tabs: { id: Tab; label: string; icon: any }[] = [
-    { id: 'profile', label: isEs ? 'Mi perfil' : 'My profile', icon: User },
-    { id: 'bookings', label: isEs ? 'Mis reservas' : 'My bookings', icon: Calendar },
-    { id: 'dashboard', label: isEs ? 'Dashboard' : 'Dashboard', icon: BarChart2 },
-    { id: 'favorites', label: isEs ? 'Favoritos' : 'Favorites', icon: Heart },
-    { id: 'commented', label: isEs ? 'Comentados' : 'Commented', icon: MessageSquare },
-    { id: 'security', label: isEs ? 'Seguridad y datos' : 'Security & data', icon: Shield },
-  ]
 
   return (
     <CoffeeBackground className="min-h-screen py-12">
@@ -494,6 +524,40 @@ export default function Profile() {
               )
             })}
           </motion.div>
+
+          {isPrivileged && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="dark:bg-orange-950/30 mb-6 rounded-2xl border border-orange-200 bg-orange-50 p-4 dark:border-orange-900/50"
+            >
+              <p className="text-sm font-semibold text-orange-700 dark:text-orange-300">
+                {role === 'admin'
+                  ? isEs
+                    ? 'Perfil socio/admin — gestionas todo el sistema.'
+                    : 'Admin/socio profile — you manage the whole system.'
+                  : isEs
+                  ? 'Perfil empleado — operas tours del día.'
+                  : 'Employee profile — you operate daily tours.'}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {role === 'admin' && (
+                  <Link
+                    href="/admin"
+                    className="rounded-full bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-orange-600"
+                  >
+                    {isEs ? 'Ir a panel admin' : 'Go to admin panel'} →
+                  </Link>
+                )}
+                <Link
+                  href="/empleados"
+                  className="rounded-full border border-orange-500 bg-white px-4 py-1.5 text-sm font-semibold text-orange-500 hover:bg-orange-50 dark:bg-zinc-900"
+                >
+                  {isEs ? 'Ir a panel empleado' : 'Go to employee panel'} →
+                </Link>
+              </div>
+            </motion.div>
+          )}
 
           {/* Content */}
           <AnimatePresence mode="wait">

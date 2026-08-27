@@ -128,6 +128,10 @@ export default function Stories() {
                       {currentLanguage === 'es' && story.titleEs ? story.titleEs : story.title}
                     </h3>
 
+                    <div className="mb-3 flex justify-start">
+                      <RosetaAbstracta size={28} />
+                    </div>
+
                     <p className="line-clamp-2 mb-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
                       {currentLanguage === 'es' && story.excerptEs
                         ? story.excerptEs

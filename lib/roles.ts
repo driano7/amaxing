@@ -10,8 +10,19 @@ const toList = (raw: string | undefined): string[] =>
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean)
 
-export const getAdminEmails = (): string[] => toList(process.env.ADMIN_EMAILS)
-export const getEmployeeEmails = (): string[] => toList(process.env.EMPLOYEE_EMAILS)
+export const getAdminEmails = (): string[] => {
+  const list = toList(process.env.ADMIN_EMAILS)
+  // Fallback demo: asegura que los emails de Donovan siempre resuelvan aunque falte env en Vercel
+  if (!list.includes('donovanriano@gmail.com')) list.push('donovanriano@gmail.com')
+  return list
+}
+export const getEmployeeEmails = (): string[] => {
+  const list = toList(process.env.EMPLOYEE_EMAILS)
+  if (!list.includes('dnvn77@gmail.com')) list.push('dnvn77@gmail.com')
+  // donovan también es empleado (admin implica empleado)
+  if (!list.includes('donovanriano@gmail.com')) list.push('donovanriano@gmail.com')
+  return list
+}
 
 const normalize = (email: string): string => (email || '').trim().toLowerCase()
 

@@ -123,15 +123,19 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                           <time dateTime={note.date}>{formatDate(note.date, lang)}</time>
                         </div>
 
-                        <h3 className="line-clamp-2 mb-3 text-xl font-bold text-gray-900 group-hover:text-orange-500 dark:text-white">
-                          {note.title}
-                        </h3>
-
-                        {note.summary && (
-                          <p className="line-clamp-3 text-sm text-zinc-600 dark:text-gray-300">
-                            {note.summary}
-                          </p>
-                        )}
+                        <div className="flex gap-2">
+                          <CabezaFacetada size={22} className="mt-0.5 shrink-0" />
+                          <div className="min-w-0">
+                            <h3 className="line-clamp-2 mb-3 text-xl font-bold text-gray-900 group-hover:text-orange-500 dark:text-white">
+                              {note.title}
+                            </h3>
+                            {note.summary && (
+                              <p className="line-clamp-3 text-sm text-zinc-600 dark:text-gray-300">
+                                {note.summary}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
                       {note.tags && note.tags.length > 0 && (
@@ -189,15 +193,19 @@ export default function NewsPage({ notes, locale, newsArticles }) {
                           </time>
                         </div>
 
-                        <h3 className="line-clamp-2 mb-3 text-xl font-bold text-gray-900 group-hover:text-orange-500 dark:text-white">
-                          {article.title}
-                        </h3>
-
-                        {article.description && (
-                          <p className="line-clamp-3 text-sm text-zinc-600 dark:text-gray-300">
-                            {article.description}
-                          </p>
-                        )}
+                        <div className="flex gap-2">
+                          <CabezaFacetada size={22} className="mt-0.5 shrink-0" />
+                          <div className="min-w-0">
+                            <h3 className="line-clamp-2 mb-3 text-xl font-bold text-gray-900 group-hover:text-orange-500 dark:text-white">
+                              {article.title}
+                            </h3>
+                            {article.description && (
+                              <p className="line-clamp-3 text-sm text-zinc-600 dark:text-gray-300">
+                                {article.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
                       <div className="border-t border-zinc-200 p-4 dark:border-white/10">

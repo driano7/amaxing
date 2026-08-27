@@ -20,6 +20,7 @@ import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toPng } from 'html-to-image'
 import { SequentialChartDataRenderer } from './SequentialChartDataRenderer'
+import { GrecaOjoFelino } from '@/components/moodboard/Icons'
 
 const CHART_IN_VIEW_OPTIONS = { margin: '0px 0px -10% 0px', amount: 0.5, once: true } as const
 
@@ -91,7 +92,12 @@ export function SequentialBarChart({
     return (
       <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+          <div className="flex items-center gap-2">
+            <GrecaOjoFelino size={18} />
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              {title}
+            </p>
+          </div>
           {showPngButton && pngFilename && (
             <Button
               type="button"
@@ -114,7 +120,10 @@ export function SequentialBarChart({
   return (
     <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+        <div className="flex items-center gap-2">
+          <GrecaOjoFelino size={18} />
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+        </div>
         {showPngButton && pngFilename && (
           <Button
             type="button"
@@ -265,7 +274,12 @@ export function SequentialLineChart({
     return (
       <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+          <div className="flex items-center gap-2">
+            <GrecaOjoFelino size={18} />
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+              {title}
+            </p>
+          </div>
           {showPngButton && pngFilename && (
             <Button
               type="button"
@@ -288,7 +302,10 @@ export function SequentialLineChart({
   return (
     <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+        <div className="flex items-center gap-2">
+          <GrecaOjoFelino size={18} />
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+        </div>
         {showPngButton && pngFilename && (
           <Button
             type="button"
@@ -396,7 +413,10 @@ export function SequentialRadialBarChart({
 
   return (
     <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+      <div className="flex items-center gap-2">
+        <GrecaOjoFelino size={18} />
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+      </div>
       {description && <p className="mt-1 text-xs text-zinc-400">{description}</p>}
       <div className="mt-3 flex items-center gap-3">
         <div className="relative" style={{ width: size, height: size }}>
@@ -447,7 +467,10 @@ export interface StatCardProps {
 export function StatCard({ label, value, icon, color = ORANGE_PRIMARY }: StatCardProps) {
   return (
     <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-3 dark:border-white/10 dark:bg-zinc-900/50">
-      <p className="text-xs font-medium text-zinc-500">{label}</p>
+      <div className="flex items-center gap-2">
+        <GrecaOjoFelino size={16} />
+        <p className="text-xs font-medium text-zinc-500">{label}</p>
+      </div>
       <p className="mt-1 text-lg font-black text-zinc-900 dark:text-white">{value}</p>
       {icon && <div className="mt-2 text-2xl">{icon}</div>}
     </article>

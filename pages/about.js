@@ -1,7 +1,9 @@
 import Head from 'next/head'
 import { Navbar } from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 import CardStack from '@/components/about/CardStack'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 import dynamic from 'next/dynamic'
 
 const MobileDock = dynamic(() => import('@/components/MobileDock').then((m) => m.MobileDock), {
@@ -25,19 +27,26 @@ const COLORS = {
 }
 
 export default function AboutPage() {
+  const { t } = useLanguage()
   return (
     <>
       <Head>
-        <title>Amaxing — Quiénes Somos</title>
+        <title>{`Amaxing — ${t('aboutPage.whoTitle')}`}</title>
         <meta
           name="description"
-          content="Amaxing nace del cruce de dos historias en la Ciudad de México. Tours con alma local."
+          content={
+            t('aboutPage.whoLead') ||
+            'Amaxing nace del cruce de dos historias en la Ciudad de México.'
+          }
         />
       </Head>
 
       <style jsx global>{`
         .about-page {
           background: ${COLORS.cream};
+        }
+        :global(.dark) .about-page {
+          background: #18181b;
         }
         .about-page .wrap {
           max-width: 880px;
@@ -110,8 +119,14 @@ export default function AboutPage() {
         .about-section-cream {
           background: ${COLORS.cream};
         }
+        :global(.dark) .about-section-cream {
+          background: #18181b;
+        }
         .about-section-tint {
           background: ${COLORS.lightPink};
+        }
+        :global(.dark) .about-section-tint {
+          background: #27272a;
         }
 
         .about-section-title {
@@ -122,12 +137,18 @@ export default function AboutPage() {
           margin-bottom: 24px;
           text-align: center;
         }
+        :global(.dark) .about-section-title {
+          color: #f472b6;
+        }
         .about-lead {
           font-size: 1.12rem;
           color: #3f3a38;
           max-width: 680px;
           margin: 0 auto 18px;
           text-align: center;
+        }
+        :global(.dark) .about-lead {
+          color: #d4d4d8;
         }
 
         .about-founders {
@@ -144,6 +165,10 @@ export default function AboutPage() {
           box-shadow: 0 4px 14px rgba(46, 46, 51, 0.08);
           text-align: center;
           min-width: 180px;
+        }
+        :global(.dark) .about-founder-chip {
+          background: #27272a;
+          border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .about-founder-chip .role {
           font-family: 'Fraunces', serif;
@@ -173,6 +198,10 @@ export default function AboutPage() {
             box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1),
             border-color 420ms cubic-bezier(0.22, 1, 0.36, 1);
           cursor: default;
+        }
+        :global(.dark) .about-card {
+          background: #27272a;
+          border-color: rgba(255, 255, 255, 0.08);
         }
         .about-card:hover {
           transform: translateY(-6px) scale(1.02);
@@ -224,6 +253,9 @@ export default function AboutPage() {
           color: #5b4b44;
           line-height: 1.6;
         }
+        :global(.dark) .about-card p {
+          color: #a1a1aa;
+        }
         .about-card-link {
           display: inline-flex;
           align-items: center;
@@ -262,6 +294,9 @@ export default function AboutPage() {
         .about-symbol-text p {
           font-size: 1.05rem;
           color: #3f3a38;
+        }
+        :global(.dark) .about-symbol-text p {
+          color: #d4d4d8;
         }
 
         .about-greca {
@@ -384,10 +419,10 @@ export default function AboutPage() {
             <path d="M40 48 Q46 40 50 48 Q46 56 40 48 Z" fill={COLORS.dark} />
             <path d="M50 48 Q56 40 60 48 Q56 56 50 48 Z" fill={COLORS.dark} />
           </svg>
-          <span className="about-kicker">CDMX · Tours con alma local</span>
-          <h1>Amaxing</h1>
-          <p className="about-tagline-es">El abrazo de la ciudad que amamos.</p>
-          <p className="about-tagline-en">Mexico City, the way we hug it.</p>
+          <span className="about-kicker">{t('aboutPage.kicker')}</span>
+          <h1>{t('aboutPage.heroTitle')}</h1>
+          <p className="about-tagline-es">{t('aboutPage.taglineEs')}</p>
+          <p className="about-tagline-en">{t('aboutPage.taglineEn')}</p>
         </header>
 
         {/* WAVE */}
@@ -405,22 +440,16 @@ export default function AboutPage() {
         {/* QUIÉNES SOMOS */}
         <section className="about-section about-section-cream">
           <div className="wrap">
-            <h2 className="about-section-title">Quiénes somos</h2>
-            <p className="about-lead">
-              Amaxing nace del cruce de dos historias en la Ciudad de México: uno de nosotros es
-              oaxaqueño y hoy vive aquí; el otro es defeño de nacimiento, aunque hace años que no
-              vive en la ciudad. Entre los dos conocemos, casi por azares de la vida, los polos más
-              distintos de esta ciudad — sus mercados, sus azoteas, sus rincones que no salen en
-              ninguna guía. Un día decidimos que valía la pena compartirlo.
-            </p>
+            <h2 className="about-section-title">{t('aboutPage.whoTitle')}</h2>
+            <p className="about-lead">{t('aboutPage.whoLead')}</p>
             <div className="about-founders">
               <div className="about-founder-chip">
-                <div className="role">El oaxaqueño</div>
-                <div className="desc">vive en CDMX, la camina todos los días</div>
+                <div className="role">{t('aboutPage.founderOax')}</div>
+                <div className="desc">{t('aboutPage.founderOaxDesc')}</div>
               </div>
               <div className="about-founder-chip">
-                <div className="role">El defeño</div>
-                <div className="desc">nació aquí, hoy la mira desde lejos y con ganas</div>
+                <div className="role">{t('aboutPage.founderDef')}</div>
+                <div className="desc">{t('aboutPage.founderDefDesc')}</div>
               </div>
             </div>
           </div>
@@ -432,60 +461,42 @@ export default function AboutPage() {
         {/* POR QUÉ CHILANGO */}
         <section className="about-section about-section-tint">
           <div className="wrap">
-            <h2 className="about-section-title">Por qué &ldquo;chilango&rdquo;</h2>
-            <p className="about-lead">
-              &ldquo;Chilango&rdquo; se ha usado durante años como una forma de menospreciar a quien
-              vive en esta ciudad. Nosotros creemos que es al revés: ser chilango es haber aprendido
-              a querer una ciudad enorme, ruidosa y contradictoria, y encontrar en ella algo que se
-              parece al hogar. Amaxing existe para mostrar esa versión de la Ciudad de México — la
-              de los sabores, los lugares, los olores y el surrealismo que solo se entienden
-              caminándola con alguien de aquí.
-            </p>
+            <h2 className="about-section-title">{t('aboutPage.whyTitle')}</h2>
+            <p className="about-lead">{t('aboutPage.whyLead')}</p>
           </div>
         </section>
 
         {/* PARA QUIÉN */}
         <section className="about-section about-section-cream">
           <div className="wrap">
-            <h2 className="about-section-title">Para quién</h2>
-            <p className="about-lead">
-              Diseñamos cada recorrido para quien viaja solo o en grupos pequeños y quiere algo más
-              que una lista de fotos.
-            </p>
+            <h2 className="about-section-title">{t('aboutPage.forWhoTitle')}</h2>
+            <p className="about-lead">{t('aboutPage.forWhoLead')}</p>
             <ScrollReveal className="about-cards" itemClassName="">
               <div className="about-card">
                 <div className="about-card-img-placeholder">🌮</div>
                 <div className="about-card-body">
                   <span className="about-card-icon">🌮</span>
-                  <h3>Sabores</h3>
-                  <p>
-                    Comer donde comen los que viven aquí, no donde comen los que solo pasan por
-                    aquí.
-                  </p>
-                  <span className="about-card-link">Ver tours →</span>
+                  <h3>{t('aboutPage.cardFlavors')}</h3>
+                  <p>{t('aboutPage.cardFlavorsDesc')}</p>
+                  <span className="about-card-link">{t('aboutPage.viewTours')}</span>
                 </div>
               </div>
               <div className="about-card">
                 <div className="about-card-img-placeholder">🧭</div>
                 <div className="about-card-body">
                   <span className="about-card-icon">🧭</span>
-                  <h3>Lugares</h3>
-                  <p>
-                    Barrios con nombre e historia propia, más allá de las tres avenidas de siempre.
-                  </p>
-                  <span className="about-card-link">Ver tours →</span>
+                  <h3>{t('aboutPage.cardPlaces')}</h3>
+                  <p>{t('aboutPage.cardPlacesDesc')}</p>
+                  <span className="about-card-link">{t('aboutPage.viewTours')}</span>
                 </div>
               </div>
               <div className="about-card">
                 <div className="about-card-img-placeholder">✨</div>
                 <div className="about-card-body">
                   <span className="about-card-icon">✨</span>
-                  <h3>Surrealismo</h3>
-                  <p>
-                    Esa parte de CDMX que parece inventada, y que solo se entiende viéndola de
-                    cerca.
-                  </p>
-                  <span className="about-card-link">Ver tours →</span>
+                  <h3>{t('aboutPage.cardSurreal')}</h3>
+                  <p>{t('aboutPage.cardSurrealDesc')}</p>
+                  <span className="about-card-link">{t('aboutPage.viewTours')}</span>
                 </div>
               </div>
             </ScrollReveal>
@@ -495,17 +506,14 @@ export default function AboutPage() {
         {/* CONTACT US */}
         <section className="about-section about-section-cream">
           <div className="wrap">
-            <h2 className="about-section-title">Contáctanos</h2>
+            <h2 className="about-section-title">{t('aboutPage.contactTitle')}</h2>
             <div className="about-cards" style={{ maxWidth: 480, margin: '0 auto' }}>
               <div className="about-card">
                 <div className="about-card-img-placeholder">💬</div>
                 <div className="about-card-body">
                   <span className="about-card-icon">💬</span>
-                  <h3>¿Lista para conocer la CDMX?</h3>
-                  <p>
-                    Escríbenos y te ayudamos a armar tu próxima visita a la ciudad — sin trampas
-                    para turistas.
-                  </p>
+                  <h3>{t('aboutPage.contactCardTitle')}</h3>
+                  <p>{t('aboutPage.contactCardDesc')}</p>
                   <a
                     className="about-card-link"
                     href="https://wa.me/525512291607"
@@ -524,7 +532,7 @@ export default function AboutPage() {
         {/* NUESTRO SÍMBOLO */}
         <section className="about-section about-section-tint">
           <div className="wrap">
-            <h2 className="about-section-title">Nuestro símbolo</h2>
+            <h2 className="about-section-title">{t('aboutPage.symbolTitle')}</h2>
             <div className="about-symbol-block">
               <svg
                 className="about-symbol-visual"
@@ -546,13 +554,7 @@ export default function AboutPage() {
                 <path d="M50 48 Q56 40 60 48 Q56 56 50 48 Z" fill={COLORS.cream} />
               </svg>
               <div className="about-symbol-text">
-                <p>
-                  Elegimos al jaguar — no como caricatura, sino como símbolo. Lo llevamos a su forma
-                  más simple: una mirada que aparece entre planos de piedra tallada, el trazo
-                  geométrico de quien esculpe en madera desde hace generaciones. Es un guiño a ese
-                  oficio popular mexicano, y a la fuerza silenciosa con la que esta ciudad te recibe
-                  cuando ya la conoces.
-                </p>
+                <p>{t('aboutPage.symbolDesc')}</p>
               </div>
             </div>
             <div className="about-greca">
@@ -577,11 +579,8 @@ export default function AboutPage() {
 
         {/* FOOTER / CTA */}
         <footer className="about-footer">
-          <h2>¿Lista para conocer la CDMX que no sale en las guías?</h2>
-          <p className="sub">
-            Escríbenos y te ayudamos a armar tu próxima visita a la ciudad — sin trampas para
-            turistas.
-          </p>
+          <h2>{t('aboutPage.footerTitle')}</h2>
+          <p className="sub">{t('aboutPage.footerSub')}</p>
           <div className="about-cta-row">
             <a
               className="about-btn about-btn-primary"
@@ -589,7 +588,7 @@ export default function AboutPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              💬 Escríbenos por WhatsApp
+              💬 {t('aboutPage.whatsapp')}
             </a>
             <a
               className="about-btn about-btn-ghost"
@@ -597,10 +596,10 @@ export default function AboutPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              📷 Instagram
+              📷 {t('aboutPage.instagram')}
             </a>
           </div>
-          <p className="foot-tagline">El abrazo de la ciudad que amamos.</p>
+          <p className="foot-tagline">{t('aboutPage.footTagline')}</p>
         </footer>
       </div>
     </>
@@ -608,9 +607,10 @@ export default function AboutPage() {
 }
 
 AboutPage.getLayout = (page) => (
-  <div className="relative min-h-screen">
+  <div className="relative flex min-h-screen flex-col">
     <Navbar />
-    <main>{page}</main>
+    <main className="flex-1 pt-20">{page}</main>
+    <Footer />
     <MobileDock />
     <HubMenu showTrigger={false} />
   </div>
