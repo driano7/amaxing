@@ -362,7 +362,7 @@ export default function AboutPage() {
         }
       `}</style>
 
-      <div className="about-page min-h-screen">
+      <div className="about-page min-h-screen pb-24 md:pb-0">
         {/* HERO */}
         <header className="about-hero">
           <svg
@@ -489,6 +489,35 @@ export default function AboutPage() {
                 </div>
               </div>
             </ScrollReveal>
+          </div>
+        </section>
+
+        {/* CONTACT US */}
+        <section className="about-section about-section-cream">
+          <div className="wrap">
+            <h2 className="about-section-title">Contáctanos</h2>
+            <div className="about-cards" style={{ maxWidth: 480, margin: '0 auto' }}>
+              <div className="about-card">
+                <div className="about-card-img-placeholder">💬</div>
+                <div className="about-card-body">
+                  <span className="about-card-icon">💬</span>
+                  <h3>¿Lista para conocer la CDMX?</h3>
+                  <p>
+                    Escríbenos y te ayudamos a armar tu próxima visita a la ciudad — sin trampas
+                    para turistas.
+                  </p>
+                  <a
+                    className="about-card-link"
+                    href="https://wa.me/525512291607"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ opacity: 1, transform: 'none' }}
+                  >
+                    WhatsApp →
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

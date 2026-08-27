@@ -4,47 +4,21 @@ import { useCallback, useEffect, useRef, useState, type ComponentType } from 're
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import { motion, useReducedMotion } from 'framer-motion'
-import {
-  Home,
-  Compass,
-  BookOpen,
-  Sparkle,
-  FileText,
-  Utensils,
-  Skull,
-  MapPin,
-  Palette,
-} from 'lucide-react'
+import { Home, Compass, BookOpen, Sparkle, FileText, Newspaper, Users } from 'lucide-react'
 import Link from '@/components/Link'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 
 const DOCK_ITEMS = [
   { href: '/', icon: Home, labelKey: 'header.nav.home', fallback: 'Home' },
-  { href: '/tours', icon: Compass, labelKey: 'header.nav.tours', fallback: 'Tours' },
   {
-    href: '/tours?category=gastronomy',
-    icon: Utensils,
-    labelKey: 'tourCategories.culinary',
-    fallback: 'Culinary Underworld',
+    href: '/experiences',
+    icon: Compass,
+    labelKey: 'header.nav.experiences',
+    fallback: 'Experiences',
   },
-  {
-    href: '/tours?category=history',
-    icon: Skull,
-    labelKey: 'tourCategories.history',
-    fallback: 'Uncensored History',
-  },
-  {
-    href: '/tours?category=neighborhoods',
-    icon: MapPin,
-    labelKey: 'tourCategories.neighborhoods',
-    fallback: 'Neighborhood Deep Dives',
-  },
-  {
-    href: '/tours?category=museums',
-    icon: Palette,
-    labelKey: 'tourCategories.museums',
-    fallback: 'Art & Museums',
-  },
+  { href: '/stories', icon: BookOpen, labelKey: 'header.nav.stories', fallback: 'Stories' },
+  { href: '/news', icon: Newspaper, labelKey: 'header.nav.news', fallback: 'News' },
+  { href: '/about', icon: Users, labelKey: 'header.nav.about', fallback: 'About Us' },
 ]
 
 const DOCK_BUTTON_BASE = 'flex items-center justify-center rounded-xl transition'

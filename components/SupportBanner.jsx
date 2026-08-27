@@ -276,12 +276,14 @@ export default function SupportBanner() {
               'Prefer to donate on another network or does your country use bank transfers?'
             )}
           </span>
-          <Link
-            href="/contact"
+          <a
+            href="https://wa.me/525512291607"
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-bold text-white underline underline-offset-2 transition hover:text-white/80"
           >
             {st('contact', 'Contact us')}
-          </Link>
+          </a>
         </div>
       </div>
     </section>

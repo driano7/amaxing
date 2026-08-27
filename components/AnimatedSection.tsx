@@ -23,7 +23,7 @@ export function AnimatedSection({
   appleStyle = true,
 }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once: false, margin: '-80px' })
+  const isInView = useInView(ref, { once: true, margin: '-80px' })
 
   const directionMap = {
     up: { y: 50, x: 0 },

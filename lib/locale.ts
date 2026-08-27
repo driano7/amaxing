@@ -42,14 +42,12 @@ export const localePaths: Record<Locale, Record<string, string>> = {
     experiences: '/en/experiences',
     stories: '/en/stories',
     pricing: '/en/pricing',
-    contact: '/en/contact',
   },
   es: {
     home: '/es',
     experiences: '/es/experiencias',
     stories: '/es/historias',
     pricing: '/es/precios',
-    contact: '/es/contacto',
   },
 }
 

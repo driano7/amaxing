@@ -281,7 +281,7 @@ export default function CardStack() {
             onClick={() => moveCard(-1)}
             aria-label="Anterior"
           >
-            ←
+            &#8592;
           </button>
           <div className="card-stack-dots">
             {CARDS.map((card, i) => (
@@ -303,7 +303,7 @@ export default function CardStack() {
             onClick={() => moveCard(1)}
             aria-label="Siguiente"
           >
-            →
+            &#8594;
           </button>
         </div>
       </div>
