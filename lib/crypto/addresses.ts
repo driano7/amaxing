@@ -43,6 +43,35 @@ export const WALLETS: WalletConfig[] = [
   },
 ]
 
+export const MOCK_WALLETS: WalletConfig[] = [
+  {
+    network: 'ETHEREUM',
+    label: 'Ethereum (MOCK TEST)',
+    address: '0x1111111111111111111111111111111111111111',
+    icon: '🧪',
+    hint: 'Dirección mock — cualquier hash con prefijo mock/test confirma al instante',
+  },
+  {
+    network: 'BASE',
+    label: 'Base Sepolia (MOCK)',
+    address: '0x2222222222222222222222222222222222222222',
+    icon: '🧪',
+    hint: 'Testnet Base Sepolia — usa hash mock para simular',
+  },
+  {
+    network: 'LIGHTNING',
+    label: 'Lightning (MOCK)',
+    address: 'lnbc1mock_amaxing_test_invoice',
+    icon: '🧪',
+    hint: 'Invoice mock — pega cualquier lnbc mock y se confirma',
+  },
+]
+
+export const isMockAddress = (address: string): boolean =>
+  address === '0x1111111111111111111111111111111111111111' ||
+  address === '0x2222222222222222222222222222222222222222' ||
+  address.toLowerCase().includes('mock')
+
 // ---------- Reference validation (from Xoco-POS patterns) ----------
 
 export function looksLikeEvmAddress(value: string): boolean {

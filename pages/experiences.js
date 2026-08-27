@@ -35,21 +35,25 @@ export default function Experiences() {
                   href: '/tours?category=gastronomy',
                   icon: Utensils,
                   label: t('tourCategories.culinary') || 'Culinary Underworld',
+                  color: '#0E8C7A',
                 },
                 {
                   href: '/tours?category=history',
                   icon: Skull,
                   label: t('tourCategories.history') || 'Uncensored History',
+                  color: '#F2A03D',
                 },
                 {
                   href: '/tours?category=neighborhoods',
                   icon: MapPin,
                   label: t('tourCategories.neighborhoods') || 'Neighborhood Deep Dives',
+                  color: '#C1440E',
                 },
                 {
                   href: '/tours?category=museums',
                   icon: Palette,
                   label: t('tourCategories.museums') || 'Art & Museums',
+                  color: '#C1440E',
                 },
               ].map((chip) => {
                 const Icon = chip.icon
@@ -57,9 +61,19 @@ export default function Experiences() {
                   <Link
                     key={chip.href}
                     href={chip.href}
-                    className="dark:hover:bg-orange-950/30 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:border-orange-500/30 hover:bg-orange-50 hover:text-orange-600 dark:border-white/10 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-orange-500/30"
+                    className="inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-medium transition-colors dark:bg-zinc-900"
+                    style={{
+                      borderColor: `${chip.color}30`,
+                      color: chip.color,
+                      backgroundColor: `${chip.color}0D`,
+                    }}
                   >
-                    <Icon className="h-4 w-4 text-orange-500" />
+                    <span
+                      className="flex h-6 w-6 items-center justify-center rounded-full"
+                      style={{ backgroundColor: chip.color, color: '#fff' }}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                    </span>
                     {chip.label}
                   </Link>
                 )

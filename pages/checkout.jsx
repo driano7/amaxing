@@ -485,13 +485,15 @@ export default function CheckoutPage() {
 
               {payMethod === 'card' ? (
                 <>
-                  <FlipCard
-                    cardNumber={form.cardNumber}
-                    cardHolder={form.cardHolder}
-                    expiration={form.expiration}
-                    cvv={form.cvv}
-                    isFlipped={focusField === 'cvv'}
-                  />
+                  <div className="mx-auto w-full max-w-full overflow-hidden px-1">
+                    <FlipCard
+                      cardNumber={form.cardNumber}
+                      cardHolder={form.cardHolder}
+                      expiration={form.expiration}
+                      cvv={form.cvv}
+                      isFlipped={focusField === 'cvv'}
+                    />
+                  </div>
 
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
                     <input
@@ -612,6 +614,52 @@ export default function CheckoutPage() {
           </div>
         </motion.div>
       </div>
+      <CryptoPayment
+        open={showCryptoModal}
+        amount={subtotal}
+        currency={locale === 'es' ? 'MXN' : 'USD'}
+        onClose={() => setShowCryptoModal(false)}
+        onConfirmed={async (reference, network) => {
+          setShowCryptoModal(false)
+          setSuccess(true)
+          try {
+            const raw = localStorage.getItem('amaxing_bookings')
+            const existing = raw ? JSON.parse(raw) : []
+            const now = new Date().toISOString()
+            const cryptoBookings = items.map((item, idx) => ({
+              id: `crypto-${Date.now()}-${idx}`,
+              userId: user?.id || 'guest',
+              experienceId: item.experienceId || item.id,
+              experienceTitle: item.title,
+              experienceImage: item.imageUrl || item.image,
+              date: item.date || now.slice(0, 10),
+              time: item.time || '10:00',
+              peopleCount: item.peopleCount || item.quantity || 1,
+              totalPrice: (item.price || 0) * (item.peopleCount || item.quantity || 1),
+              currency: locale === 'es' ? 'MXN' : 'USD',
+              status: 'confirmed',
+              createdAt: now,
+              updatedAt: now,
+              ticketCode: `AMX-T-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+              customerName: user?.firstName
+                ? `${user.firstName} ${user.lastName || ''}`.trim()
+                : 'Cliente cripto',
+              customerEmail: user?.email || null,
+              paymentMethod: 'crypto',
+              paymentReference: reference,
+              cryptoNetwork: network,
+            }))
+            localStorage.setItem(
+              'amaxing_bookings',
+              JSON.stringify([...existing, ...cryptoBookings])
+            )
+            setCreatedBookings(cryptoBookings)
+          } catch {
+            // storage error
+          }
+          clearCart()
+        }}
+      />
     </div>
   )
 }

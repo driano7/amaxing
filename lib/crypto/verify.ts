@@ -41,10 +41,30 @@ function explorerConfig(network: 'ETHEREUM' | 'BASE') {
  * Poll once: check current on-chain status.
  * Call this from a setInterval(5s) in the UI.
  */
+const MOCK_ADDRESSES = [
+  '0x1111111111111111111111111111111111111111',
+  '0x2222222222222222222222222222222222222222',
+]
+const isMock = (v?: string) =>
+  !!v &&
+  (MOCK_ADDRESSES.includes(v) ||
+    v.toLowerCase().includes('mock') ||
+    v.toLowerCase().includes('test'))
+
 export async function verifyPaymentOnce(config: VerifyConfig): Promise<{
   status: PaymentStatus
   message: string
 }> {
+  // Mock testing: cualquier referencia que contenga mock/test confirma al instante
+  if (isMock(config.address) || isMock(config.txHash) || isMock(config.invoice)) {
+    if (config.txHash || config.invoice) {
+      return { status: 'CONFIRMED', message: 'Pago mock confirmado (testing) ✓' }
+    }
+    return {
+      status: 'DETECTED',
+      message: 'Dirección mock detectada — pega un hash mock para confirmar',
+    }
+  }
   try {
     if (config.network === 'LIGHTNING') {
       return await verifyLightning(config.invoice)

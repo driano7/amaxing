@@ -2,9 +2,9 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Copy, Check, Wallet } from 'lucide-react'
+import { X, Copy, Check, Wallet, ScanLine, Upload, FlaskConical } from 'lucide-react'
 import { useLanguage } from '@/lib/hooks/useLanguage'
-import { WALLETS, classifyPaymentReference, type NetworkKey } from '@/lib/crypto/addresses'
+import { WALLETS, MOCK_WALLETS, type NetworkKey } from '@/lib/crypto/addresses'
 import { verifyPaymentOnce, type PaymentStatus } from '@/lib/crypto/verify'
 
 interface CryptoPaymentProps {
@@ -20,6 +20,93 @@ const STATUS_STYLES: Record<PaymentStatus, { color: string; labelEs: string; lab
   DETECTED: { color: '#f97316', labelEs: 'Pago detectado', labelEn: 'Payment detected' },
   CONFIRMED: { color: '#22c55e', labelEs: 'Confirmado', labelEn: 'Confirmed' },
   ERROR: { color: '#ef4444', labelEs: 'Error', labelEn: 'Error' },
+}
+
+function AnyQrScanner({ onScan, onClose }: { onScan: (raw: string) => void; onClose: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const rafRef = useRef<number>(0)
+  const [error, setError] = useState<string | null>(null)
+  const { currentLanguage } = useLanguage()
+  const isEs = currentLanguage === 'es'
+
+  useEffect(() => {
+    let stopped = false
+    const start = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+        })
+        streamRef.current = stream
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          await videoRef.current.play()
+        }
+        if ('BarcodeDetector' in window) {
+          const detector = new (window as any).BarcodeDetector({ formats: ['qr_code'] })
+          const detect = async () => {
+            if (stopped || !videoRef.current) return
+            try {
+              const codes = await detector.detect(videoRef.current)
+              if (codes.length > 0) {
+                onScan(codes[0].rawValue)
+                return
+              }
+            } catch {
+              void 0
+            }
+            rafRef.current = requestAnimationFrame(detect)
+          }
+          rafRef.current = requestAnimationFrame(detect)
+        } else {
+          const { BrowserMultiFormatReader } = await import('@zxing/browser')
+          const reader = new BrowserMultiFormatReader()
+          await reader.decodeFromVideoDevice(undefined, videoRef.current!, (result: any) => {
+            if (result && !stopped) onScan(result.getText())
+          })
+        }
+      } catch (e: any) {
+        setError(
+          e.name === 'NotAllowedError'
+            ? isEs
+              ? 'Permiso denegado'
+              : 'Permission denied'
+            : isEs
+            ? 'No se pudo abrir cámara'
+            : 'Could not open camera'
+        )
+      }
+    }
+    start()
+    return () => {
+      stopped = true
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      if (streamRef.current) streamRef.current.getTracks().forEach((t) => t.stop())
+    }
+  }, [onScan, isEs])
+
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-black p-2 dark:border-white/10">
+      <div className="relative overflow-hidden rounded-lg bg-black">
+        <video ref={videoRef} playsInline muted className="h-48 w-full object-cover" />
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="h-32 w-32 rounded-xl border-2 border-white/60" />
+        </div>
+        {error && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80 p-4">
+            <p className="text-center text-sm text-red-400">{error}</p>
+          </div>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={onClose}
+        className="mt-2 w-full rounded-lg bg-zinc-800 py-2 text-sm font-medium text-white hover:bg-zinc-700"
+      >
+        {isEs ? 'Cerrar escáner' : 'Close scanner'}
+      </button>
+    </div>
+  )
 }
 
 export function CryptoPayment({
@@ -40,6 +127,12 @@ export function CryptoPayment({
         copied: 'Copiado',
         referenceLabel: 'Hash de transacción o wallet de origen',
         changeNetwork: '← Cambiar red',
+        testToggle: 'Modo testing (mock)',
+        testHint: 'Usa direcciones mock — cualquier hash con "mock" confirma al instante',
+        mockBtn: 'Usar hash mock para probar →',
+        scanQr: 'Escanear QR',
+        uploadQr: 'Subir imagen QR',
+        mockBadge: 'TESTING',
       }
     : {
         eyebrow: 'Crypto payment',
@@ -49,6 +142,12 @@ export function CryptoPayment({
         copied: 'Copied',
         referenceLabel: 'Transaction hash or source wallet',
         changeNetwork: '← Change network',
+        testToggle: 'Testing mode (mock)',
+        testHint: 'Use mock addresses — any hash with "mock" confirms instantly',
+        mockBtn: 'Use mock hash to test →',
+        scanQr: 'Scan QR',
+        uploadQr: 'Upload QR image',
+        mockBadge: 'TESTING',
       }
 
   const statusMessageLocalized = (msg: string) => {
@@ -69,11 +168,15 @@ export function CryptoPayment({
     }
   }
 
+  const [isTestMode, setIsTestMode] = useState(false)
+  const walletsToShow = isTestMode ? MOCK_WALLETS : WALLETS
   const [selectedWallet, setSelectedWallet] = useState<(typeof WALLETS)[0] | null>(null)
   const [copied, setCopied] = useState(false)
   const [txHash, setTxHash] = useState('')
   const [status, setStatus] = useState<PaymentStatus>('WAITING')
   const [statusMessage, setStatusMessage] = useState('')
+  const [showQrScanner, setShowQrScanner] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const confirmedRef = useRef(false)
 
@@ -88,7 +191,6 @@ export function CryptoPayment({
     return stopPolling
   }, [stopPolling])
 
-  // Reset when opened
   useEffect(() => {
     if (open) {
       setSelectedWallet(null)
@@ -96,6 +198,7 @@ export function CryptoPayment({
       setStatus('WAITING')
       setStatusMessage('')
       confirmedRef.current = false
+      setShowQrScanner(false)
       stopPolling()
     }
   }, [open, stopPolling])
@@ -103,25 +206,25 @@ export function CryptoPayment({
   const startPolling = useCallback(
     (wallet: (typeof WALLETS)[0], reference: string) => {
       stopPolling()
-      const refType = classifyPaymentReference(reference)
-
       const check = async () => {
         const result = await verifyPaymentOnce({
           network: wallet.network,
           address: wallet.network === 'LIGHTNING' ? undefined : wallet.address,
-          txHash: refType === 'tx_hash' ? reference : undefined,
+          txHash:
+            reference.trim().toLowerCase().startsWith('0x') ||
+            reference.toLowerCase().includes('mock')
+              ? reference
+              : undefined,
           invoice: wallet.network === 'LIGHTNING' ? reference : undefined,
         })
         setStatus(result.status)
         setStatusMessage(result.message)
-
         if (result.status === 'CONFIRMED' && !confirmedRef.current) {
           confirmedRef.current = true
           stopPolling()
           setTimeout(() => onConfirmed(reference, wallet.network), 800)
         }
       }
-
       void check()
       pollRef.current = setInterval(check, 5000)
     },
@@ -133,6 +236,17 @@ export function CryptoPayment({
     startPolling(selectedWallet, txHash.trim())
   }
 
+  const handleMockFill = () => {
+    const mockHash =
+      selectedWallet?.network === 'LIGHTNING'
+        ? 'lnbc1mock_amaxing_test'
+        : 'mock_0x' + 'a'.repeat(64).slice(0, 64)
+    setTxHash(mockHash)
+    setTimeout(() => {
+      if (selectedWallet) startPolling(selectedWallet, mockHash)
+    }, 100)
+  }
+
   const copyAddress = async () => {
     if (!selectedWallet) return
     try {
@@ -140,8 +254,58 @@ export function CryptoPayment({
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // clipboard unavailable
+      void 0
     }
+  }
+
+  const handleQrScanned = (raw: string) => {
+    // Si el QR trae una URL tipo ethereum:0x... o solo la dirección/hash, lo limpiamos
+    let cleaned = raw.trim()
+    if (cleaned.includes(':')) {
+      const parts = cleaned.split(':')
+      cleaned = parts[parts.length - 1].split('?')[0].split('/').pop() || cleaned
+    }
+    setTxHash(cleaned)
+    setShowQrScanner(false)
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    try {
+      // Intenta con BarcodeDetector sobre imagen
+      if ('BarcodeDetector' in window) {
+        const bitmap = await createImageBitmap(file)
+        const detector = new (window as any).BarcodeDetector({ formats: ['qr_code'] })
+        const codes = await detector.detect(bitmap)
+        if (codes.length > 0) {
+          handleQrScanned(codes[0].rawValue)
+          return
+        }
+      }
+      // Fallback: usa zxing para imagen
+      const { BrowserMultiFormatReader } = await import('@zxing/browser')
+      const reader = new BrowserMultiFormatReader()
+      const imgUrl = URL.createObjectURL(file)
+      const img = new Image()
+      img.src = imgUrl
+      await new Promise<void>((res, rej) => {
+        img.onload = () => res()
+        img.onerror = () => rej()
+      })
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      const ctx = canvas.getContext('2d')!
+      ctx.drawImage(img, 0, 0)
+      // zxing puede leer desde canvas via decodeFromCanvas si está disponible, sino intenta con detector
+      URL.revokeObjectURL(imgUrl)
+      // Si no se pudo, avisa
+      setStatusMessage(isEs ? 'No se pudo leer el QR de la imagen' : 'Could not read QR from image')
+    } catch {
+      setStatusMessage(isEs ? 'Error al leer QR' : 'Error reading QR')
+    }
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   return (
@@ -163,7 +327,6 @@ export function CryptoPayment({
             onClick={(e) => e.stopPropagation()}
             className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl dark:bg-zinc-900"
           >
-            {/* Header */}
             <div className="sticky top-0 flex items-center justify-between border-b border-zinc-200 bg-white/95 px-6 py-4 backdrop-blur dark:border-white/10 dark:bg-zinc-900/95">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-orange-500">
@@ -186,9 +349,26 @@ export function CryptoPayment({
             <div className="space-y-5 p-6">
               {!selectedWallet ? (
                 <>
-                  <p className="text-sm text-zinc-600 dark:text-gray-400">{L.chooseNetwork}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-zinc-600 dark:text-gray-400">{L.chooseNetwork}</p>
+                    <label className="flex cursor-pointer items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-300">
+                      <input
+                        type="checkbox"
+                        checked={isTestMode}
+                        onChange={(e) => setIsTestMode(e.target.checked)}
+                        className="h-3 w-3 accent-amber-500"
+                      />
+                      <FlaskConical className="h-3.5 w-3.5" />
+                      {L.testToggle}
+                    </label>
+                  </div>
+                  {isTestMode && (
+                    <p className="rounded-lg bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                      {L.testHint}
+                    </p>
+                  )}
                   <div className="grid gap-3">
-                    {WALLETS.map((wallet) => (
+                    {walletsToShow.map((wallet) => (
                       <button
                         key={`${wallet.network}-${wallet.label}`}
                         type="button"
@@ -196,9 +376,19 @@ export function CryptoPayment({
                         className="flex items-center gap-4 rounded-xl border border-zinc-200 p-4 text-left transition-all hover:border-orange-500/50 hover:bg-orange-500/5 dark:border-white/10 dark:hover:border-orange-500/40"
                       >
                         <span className="text-2xl">{wallet.icon}</span>
-                        <div>
-                          <p className="font-bold text-zinc-900 dark:text-white">{wallet.label}</p>
+                        <div className="flex-1">
+                          <p className="flex items-center gap-2 font-bold text-zinc-900 dark:text-white">
+                            {wallet.label}
+                            {isTestMode && (
+                              <span className="rounded bg-amber-500 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white">
+                                {L.mockBadge}
+                              </span>
+                            )}
+                          </p>
                           <p className="text-xs text-zinc-500">{wallet.hint}</p>
+                          <p className="mt-1 break-all font-mono text-[10px] text-zinc-400">
+                            {wallet.address.slice(0, 20)}…
+                          </p>
                         </div>
                       </button>
                     ))}
@@ -206,11 +396,15 @@ export function CryptoPayment({
                 </>
               ) : (
                 <>
-                  {/* QR + address */}
                   <div className="rounded-2xl border border-zinc-200 p-5 text-center dark:border-white/10">
                     <p className="mb-3 text-xs font-bold uppercase tracking-widest text-zinc-400">
                       {L.scanAndPay(selectedWallet.label)}
                     </p>
+                    {isTestMode && (
+                      <span className="mb-2 inline-block rounded bg-amber-500 px-2 py-0.5 text-[10px] font-black uppercase text-white">
+                        {L.mockBadge} TESTNET
+                      </span>
+                    )}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
@@ -222,21 +416,36 @@ export function CryptoPayment({
                     <p className="mt-3 break-all font-mono text-xs text-zinc-600 dark:text-gray-300">
                       {selectedWallet.address}
                     </p>
-                    <button
-                      type="button"
-                      onClick={copyAddress}
-                      className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-orange-500/40 px-3 py-1.5 text-xs font-bold text-orange-600 transition-colors hover:bg-orange-500/10 dark:text-orange-400"
-                    >
-                      {copied ? (
-                        <Check className="h-3.5 w-3.5" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5" />
-                      )}
-                      {copied ? 'Copiado' : 'Copiar dirección'}
-                    </button>
+                    <div className="mt-3 flex justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={copyAddress}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-orange-500/40 px-3 py-1.5 text-xs font-bold text-orange-600 transition-colors hover:bg-orange-500/10 dark:text-orange-400"
+                      >
+                        {copied ? (
+                          <Check className="h-3.5 w-3.5" />
+                        ) : (
+                          <Copy className="h-3.5 w-3.5" />
+                        )}
+                        {copied ? L.copied : L.copyAddress}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const a = document.createElement('a')
+                          a.href = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(
+                            selectedWallet.address
+                          )}`
+                          a.download = `amaxing-${selectedWallet.network}-qr.png`
+                          a.click()
+                        }}
+                        className="dark:border-white/15 inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-bold text-zinc-600 hover:bg-zinc-50 dark:text-zinc-300"
+                      >
+                        QR PNG
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Reference input */}
                   <div>
                     <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300">
                       {L.referenceLabel}
@@ -258,9 +467,51 @@ export function CryptoPayment({
                         Verificar
                       </button>
                     </div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowQrScanner((v) => !v)}
+                        className="dark:border-white/15 inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-300"
+                      >
+                        <ScanLine className="h-3.5 w-3.5" />
+                        {L.scanQr}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="dark:border-white/15 inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-bold text-zinc-700 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-300"
+                      >
+                        <Upload className="h-3.5 w-3.5" />
+                        {L.uploadQr}
+                      </button>
+                      {isTestMode && (
+                        <button
+                          type="button"
+                          onClick={handleMockFill}
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-600"
+                        >
+                          <FlaskConical className="h-3.5 w-3.5" />
+                          {L.mockBtn}
+                        </button>
+                      )}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileUpload}
+                      />
+                    </div>
+                    {showQrScanner && (
+                      <div className="mt-3">
+                        <AnyQrScanner
+                          onScan={handleQrScanned}
+                          onClose={() => setShowQrScanner(false)}
+                        />
+                      </div>
+                    )}
                   </div>
 
-                  {/* Status indicator */}
                   {(statusMessage || status !== 'WAITING') && (
                     <div
                       className="flex items-center gap-3 rounded-xl border px-4 py-3"
@@ -306,6 +557,7 @@ export function CryptoPayment({
                       stopPolling()
                       setStatus('WAITING')
                       setStatusMessage('')
+                      setShowQrScanner(false)
                     }}
                     className="text-xs font-medium text-zinc-400 hover:text-zinc-600 hover:underline dark:hover:text-gray-300"
                   >

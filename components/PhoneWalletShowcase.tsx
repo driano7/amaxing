@@ -498,10 +498,12 @@ export function HeroPhoneWalletScroll({
 
   const themePulseKey = externalThemePulseKey ?? localThemePulseKey
 
-  const phoneScale = useTransform(progress, [0, 0.35, 0.65, 1], [0.78, 1.08, 1.02, 1])
+  const basePhoneScale = useTransform(progress, [0, 0.35, 0.65, 1], [0.78, 1.08, 1.02, 1])
+  const phoneScale = useTransform(basePhoneScale, (v) => v * (isMobile ? 0.65 : 0.75))
   const phoneY = useTransform(progress, [0, 0.35, 0.65, 1], [70, -6, -16, -20])
   const glowOpacity = useTransform(progress, [0, 0.35, 1], [0.0, 0.35, 0.55])
 
+  const scaleFactor = isMobile ? 0.65 : 0.75
   const pantallasPerifericas: PantallaPerifericaLayout[] = useMemo(
     () => [
       {
@@ -511,8 +513,8 @@ export function HeroPhoneWalletScroll({
         initialX: isMobile ? -96 : -260,
         initialY: isMobile ? -220 : -200,
         initialRotate: -6,
-        width: isMobile ? 170 : 200,
-        height: isMobile ? 150 : 148,
+        width: Math.round((isMobile ? 170 : 200) * scaleFactor),
+        height: Math.round((isMobile ? 150 : 148) * scaleFactor),
       },
       {
         id: 'top-right',
@@ -521,8 +523,8 @@ export function HeroPhoneWalletScroll({
         initialX: isMobile ? 96 : 260,
         initialY: isMobile ? -220 : -200,
         initialRotate: 6,
-        width: isMobile ? 165 : 190,
-        height: isMobile ? 148 : 140,
+        width: Math.round((isMobile ? 165 : 190) * scaleFactor),
+        height: Math.round((isMobile ? 148 : 140) * scaleFactor),
       },
       {
         id: 'mid-left',
@@ -531,8 +533,8 @@ export function HeroPhoneWalletScroll({
         initialX: isMobile ? -112 : -320,
         initialY: isMobile ? -30 : -20,
         initialRotate: -8,
-        width: isMobile ? 190 : 240,
-        height: isMobile ? 170 : 180,
+        width: Math.round((isMobile ? 190 : 240) * scaleFactor),
+        height: Math.round((isMobile ? 170 : 180) * scaleFactor),
       },
       {
         id: 'mid-right',
@@ -541,8 +543,8 @@ export function HeroPhoneWalletScroll({
         initialX: isMobile ? 112 : 320,
         initialY: isMobile ? -30 : -20,
         initialRotate: 8,
-        width: isMobile ? 185 : 230,
-        height: isMobile ? 168 : 172,
+        width: Math.round((isMobile ? 185 : 230) * scaleFactor),
+        height: Math.round((isMobile ? 168 : 172) * scaleFactor),
       },
       {
         id: 'bottom-left',
@@ -551,11 +553,11 @@ export function HeroPhoneWalletScroll({
         initialX: isMobile ? -86 : -240,
         initialY: isMobile ? 220 : 200,
         initialRotate: -4,
-        width: isMobile ? 160 : 185,
-        height: isMobile ? 146 : 136,
+        width: Math.round((isMobile ? 160 : 185) * scaleFactor),
+        height: Math.round((isMobile ? 146 : 136) * scaleFactor),
       },
     ],
-    [isMobile]
+    [isMobile, scaleFactor]
   )
 
   const [aiPrompt, setAiPrompt] = useState("Resume este bloque: 'Stake, Swap, Farm' en 1 línea.")
@@ -1033,7 +1035,7 @@ export function HeroPhoneWalletScroll({
                     />
 
                     <div className="absolute inset-0 px-4 pb-5 pt-14">
-                      <div className="h-full rounded-[30px] border border-black/10 bg-white/80 p-3 transition-colors duration-[160ms] dark:border-white/10 dark:bg-white/5">
+                      <div className="h-full rounded-[30px] border border-black/10 bg-white/80 p-3 transition-colors duration-[160ms] dark:border-white/10 dark:bg-zinc-900">
                         <WalletMock themePulseKey={themePulseKey} accentColor={ac} />
                       </div>
                     </div>
