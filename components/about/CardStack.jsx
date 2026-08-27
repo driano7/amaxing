@@ -224,28 +224,38 @@ export default function CardStack() {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 12px;
-          margin-top: 20px;
+          gap: 16px;
+          margin-top: 28px;
+          position: relative;
+          z-index: 40;
         }
         .card-stack-btn {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          border: 1px solid rgba(181, 0, 106, 0.25);
-          background: rgba(252, 228, 241, 0.5);
+          width: 48px;
+          height: 48px;
+          border-radius: 9999px;
+          border: 1.5px solid rgba(181, 0, 106, 0.3);
+          background: #ffffff;
           color: #b5006a;
-          font-size: 1.1rem;
+          font-size: 1.4rem;
+          font-weight: 700;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
+          box-shadow: 0 4px 14px rgba(181, 0, 106, 0.12);
           transition: all 220ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        :global(.dark) .card-stack-btn {
+          background: #27272a;
+          border-color: rgba(244, 114, 182, 0.4);
+          color: #f472b6;
         }
         .card-stack-btn:hover {
           background: #b5006a;
           color: #fff6f1;
           border-color: #b5006a;
           transform: scale(1.08);
+          box-shadow: 0 6px 18px rgba(181, 0, 106, 0.2);
         }
         .card-stack-btn:active {
           transform: scale(0.95);

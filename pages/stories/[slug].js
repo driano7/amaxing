@@ -18,11 +18,13 @@ import { PageSEO } from '@/components/SEO'
 
 export default function StoryDetail({ story, locale }) {
   const { t, currentLanguage } = useLanguage()
+  const lang = currentLanguage || locale || 'en'
+  const isEs = lang === 'es'
 
   const formatDate = (dateStr) => {
     if (!dateStr) return ''
     const date = new Date(dateStr)
-    return date.toLocaleDateString(locale === 'es' ? 'es-MX' : 'en-US', {
+    return date.toLocaleDateString(isEs ? 'es-MX' : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -55,7 +57,7 @@ export default function StoryDetail({ story, locale }) {
                 <div className="mb-4 flex items-center gap-3">
                   <BookOpen className="h-5 w-5 text-orange-500" />
                   <span className="text-sm font-medium uppercase tracking-wider text-gray-200">
-                    {locale === 'es' ? 'Historia' : 'Story'}
+                    {isEs ? 'Historia' : 'Story'}
                   </span>
                 </div>
                 <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
@@ -135,7 +137,7 @@ export default function StoryDetail({ story, locale }) {
                 className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
               >
                 <ArrowLeft className="h-4 w-4" />
-                {locale === 'es' ? 'Volver a Historias' : 'Back to Stories'}
+                {isEs ? 'Volver a Historias' : 'Back to Stories'}
               </Link>
             </motion.div>
           </div>

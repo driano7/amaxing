@@ -50,7 +50,7 @@ export default function TourDetail({ tour, locale }) {
   const { user } = useAuth()
   const { addItem } = useCartStore()
 
-  const isEs = currentLanguage === 'es' || locale === 'es'
+  const isEs = currentLanguage === 'es'
   const [fav, setFav] = useState(false)
 
   useEffect(() => {

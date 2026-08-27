@@ -10,7 +10,7 @@ import ProseReveal from '@/components/ProseReveal'
 export default function ExperienceDetail({ experience, locale }) {
   const { t, currentLanguage } = useLanguage()
 
-  const isEs = currentLanguage === 'es' || locale === 'es'
+  const isEs = currentLanguage === 'es'
   const title = isEs ? experience.titleEs || experience.title : experience.title
   const tagline = isEs ? experience.taglineEs || experience.tagline : experience.tagline
   const description = isEs

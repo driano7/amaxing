@@ -174,9 +174,7 @@ export default function Home({ posts, locale }) {
         </div>
 
         {/* iPhone showcase (adaptado de Criptec) */}
-        <div className="-ml-[35%] w-[135%]">
-          <HeroPhoneWalletScroll />
-        </div>
+        <HeroPhoneWalletScroll />
 
         <GdprBanner className="mt-2" />
       </div>

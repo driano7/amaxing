@@ -503,28 +503,86 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* CONTACT US */}
+        {/* CONTACT US — 3 apple-style cards */}
         <section className="about-section about-section-cream">
           <div className="wrap">
             <h2 className="about-section-title">{t('aboutPage.contactTitle')}</h2>
-            <div className="about-cards" style={{ maxWidth: 480, margin: '0 auto' }}>
-              <div className="about-card">
-                <div className="about-card-img-placeholder">💬</div>
-                <div className="about-card-body">
-                  <span className="about-card-icon">💬</span>
-                  <h3>{t('aboutPage.contactCardTitle')}</h3>
-                  <p>{t('aboutPage.contactCardDesc')}</p>
+            <div className="grid gap-5 md:grid-cols-3">
+              {/* WhatsApp */}
+              <article className="rounded-[2rem] border border-zinc-200/70 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
+                <div className="mb-4 flex h-44 items-center justify-center rounded-[1.4rem] border border-emerald-500/20 bg-gradient-to-br from-emerald-400/20 via-white to-emerald-500/10 dark:from-emerald-900/20 dark:via-zinc-900 dark:to-emerald-800/10">
+                  <span className="text-5xl">💬</span>
+                </div>
+                <div className="px-2 pb-2">
+                  <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[11px] font-semibold text-zinc-500 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-400">
+                    WhatsApp
+                  </div>
+                  <h3 className="text-xl font-bold leading-tight text-zinc-900 dark:text-white">
+                    {t('aboutPage.contactCardTitle')}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    {t('aboutPage.contactCardDesc')}
+                  </p>
                   <a
-                    className="about-card-link"
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-emerald-600 underline decoration-emerald-500/30 underline-offset-4 hover:text-emerald-500 dark:text-emerald-400"
                     href="https://wa.me/525512291607"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ opacity: 1, transform: 'none' }}
                   >
                     WhatsApp →
                   </a>
                 </div>
-              </div>
+              </article>
+              {/* Instagram */}
+              <article className="rounded-[2rem] border border-zinc-200/70 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
+                <div className="mb-4 flex h-44 items-center justify-center rounded-[1.4rem] border border-pink-500/20 bg-gradient-to-br from-pink-500/20 via-white to-fuchsia-500/10 dark:from-pink-900/20 dark:via-zinc-900 dark:to-fuchsia-800/10">
+                  <span className="text-5xl">📷</span>
+                </div>
+                <div className="px-2 pb-2">
+                  <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[11px] font-semibold text-zinc-500 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-400">
+                    Instagram
+                  </div>
+                  <h3 className="text-xl font-bold leading-tight text-zinc-900 dark:text-white">
+                    Síguenos
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    Historias, reels y detrás de cámaras de cada tour.
+                  </p>
+                  <a
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-pink-600 underline decoration-pink-500/30 underline-offset-4 hover:text-pink-500 dark:text-pink-400"
+                    href="https://www.instagram.com/donovan_amx/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Instagram →
+                  </a>
+                </div>
+              </article>
+              {/* Email */}
+              <article className="rounded-[2rem] border border-zinc-200/70 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
+                <div className="mb-4 flex h-44 items-center justify-center rounded-[1.4rem] border border-sky-500/20 bg-gradient-to-br from-sky-400/20 via-white to-blue-500/10 dark:from-sky-900/20 dark:via-zinc-900 dark:to-blue-800/10">
+                  <span className="text-5xl">✉️</span>
+                </div>
+                <div className="px-2 pb-2">
+                  <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[11px] font-semibold text-zinc-500 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-400">
+                    Email
+                  </div>
+                  <h3 className="text-xl font-bold leading-tight text-zinc-900 dark:text-white">
+                    Escríbenos
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    Para grupos, prensa o colaboraciones.
+                  </p>
+                  <a
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-sky-600 underline decoration-sky-500/30 underline-offset-4 hover:text-sky-500 dark:text-sky-400"
+                    href="mailto:dnvn@duck.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    dnvn@duck.com →
+                  </a>
+                </div>
+              </article>
             </div>
           </div>
         </section>
