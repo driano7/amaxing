@@ -17,6 +17,8 @@ export interface CreateBookingInput {
   customerName?: string
   customerEmail?: string
   currency?: string
+  participantNames?: string[]
+  isGuest?: boolean
 }
 
 export async function getBookingsByUser(userId: string) {

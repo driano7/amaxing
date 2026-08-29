@@ -18,6 +18,8 @@ export interface Booking {
   currency?: string
   location?: string
   meetingPoint?: string
+  participantNames?: string[]
+  isGuest?: boolean
 }
 
 export interface CreateBookingInput {

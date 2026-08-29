@@ -18,23 +18,52 @@ export async function getSession(req: NextApiRequest): Promise<AuthSession | nul
   if (!authHeader?.startsWith('Bearer ')) {
     return null
   }
+  const token = authHeader.substring(7).trim()
+  if (!token) return null
 
-  const token = authHeader.substring(7)
-
-  // In a real app, verify JWT token here
-  // For demo, we'll decode from localStorage or use mock
-  try {
-    // This is a simplified version - in production, verify JWT properly
-    const userData = localStorage.getItem('authUser')
-    if (userData) {
-      const user = JSON.parse(userData)
-      return { user, token }
-    }
-  } catch (e) {
-    // Ignore
+  // Soporte para x-demo-email (desarrollo) — ver lib/roles.ts
+  const demoEmail = req.headers['x-demo-email']
+  if (typeof demoEmail === 'string' && demoEmail.includes('@')) {
+    return { user: { id: 'demo-user', email: demoEmail }, token }
   }
 
+  // Si es un JWT real (contiene '.'), decodificar payload sin verificar firma (solo claims)
+  // Para mock_jwt_token_* no hay payload, se retorna null -> el caller tratará como invitado
+  if (token.includes('.')) {
+    try {
+      const payloadB64 = token.split('.')[1]
+      const payloadJson = Buffer.from(payloadB64, 'base64').toString('utf-8')
+      const payload = JSON.parse(payloadJson)
+      const email = payload.email || payload.sub || ''
+      const id = payload.sub || payload.id || payload.userId || email || token
+      if (email || id) {
+        return {
+          user: {
+            id: String(id),
+            email: String(email || `${id}@guest.local`),
+            firstName: payload.firstName || payload.given_name || undefined,
+            lastName: payload.lastName || payload.family_name || undefined,
+          },
+          token,
+        }
+      }
+    } catch {
+      // token malformado -> guest
+    }
+  }
+
+  // Para tokens mock (mock_jwt_token_*) intentamos recuperar usuario desde
+  // un header opcional o dejamos que el caller use body.customerEmail como fallback.
+  // No usamos localStorage en servidor (no existe en Node) — ver bug previo.
   return null
+}
+
+export async function getSessionOptional(req: NextApiRequest): Promise<AuthSession | null> {
+  try {
+    return await getSession(req)
+  } catch {
+    return null
+  }
 }
 
 export async function requireAuth(

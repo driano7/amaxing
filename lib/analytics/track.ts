@@ -16,10 +16,19 @@ export interface PageAnalyticsEntry {
 function getSessionUserId(): string | null {
   if (typeof window === 'undefined') return null
   try {
-    const raw = localStorage.getItem('amaxing_auth')
-    if (raw) {
-      const user = JSON.parse(raw)
-      if (user?.id || user?.email) return String(user.id || user.email)
+    // Intentar múltiples claves (el auth real usa authUser, legacy amaxing_auth, user_id)
+    const keys = ['authUser', 'amaxing_auth', 'amaxing_user_id', 'user_id']
+    for (const k of keys) {
+      const raw = localStorage.getItem(k)
+      if (!raw) continue
+      try {
+        const parsed = JSON.parse(raw)
+        if (parsed?.id || parsed?.email) return String(parsed.id || parsed.email)
+        if (typeof parsed === 'string' && parsed) return parsed
+      } catch {
+        // si no es JSON, es un id plano (ej. user_id = "user_123")
+        if (raw && raw.length > 2) return raw
+      }
     }
   } catch {
     // not logged in

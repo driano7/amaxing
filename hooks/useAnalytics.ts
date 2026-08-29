@@ -43,7 +43,7 @@ export function useAnalytics(options: UseAnalyticsOptions = {}) {
   const hasTrackedPageRef = useRef<boolean>(false)
   const bounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Generar o recuperar sessionId + userId
+  // Generar o recuperar sessionId + userId (guest => null, funciona sin cuenta)
   useEffect(() => {
     let existingSessionId = sessionStorage.getItem('analytics_session_id')
     if (!existingSessionId) {
@@ -52,8 +52,45 @@ export function useAnalytics(options: UseAnalyticsOptions = {}) {
     }
     setSessionId(existingSessionId)
 
-    const storedUserId = localStorage.getItem('user_id')
-    if (storedUserId) setUserId(storedUserId)
+    // Resolver userId de múltiples fuentes (authUser es la real). Si no hay sesión, queda null -> analítica pasiva guest.
+    const candidates = ['user_id', 'authUser', 'amaxing_auth']
+    for (const key of candidates) {
+      const raw = localStorage.getItem(key)
+      if (!raw) continue
+      try {
+        const parsed = JSON.parse(raw)
+        const uid = parsed?.id || parsed?.email || parsed?.userId
+        if (uid) {
+          setUserId(String(uid))
+          break
+        }
+      } catch {
+        if (raw && raw.length > 2 && key === 'user_id') {
+          setUserId(raw)
+          break
+        }
+      }
+    }
+    // Escuchar cambios de auth (login/logout) para actualizar userId sin recargar
+    const onAuthChange = () => {
+      const raw = localStorage.getItem('authUser')
+      if (raw) {
+        try {
+          const u = JSON.parse(raw)
+          setUserId(u?.id || u?.email || null)
+        } catch {
+          setUserId(null)
+        }
+      } else {
+        setUserId(null)
+      }
+    }
+    window.addEventListener('authChange', onAuthChange)
+    window.addEventListener('storage', onAuthChange)
+    return () => {
+      window.removeEventListener('authChange', onAuthChange)
+      window.removeEventListener('storage', onAuthChange)
+    }
   }, [])
 
   // Track scroll depth

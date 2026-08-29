@@ -22,6 +22,11 @@ export function getBookingsByUser(userId: string): Booking[] {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }
 
+// Guest helper: id prefix for anonymous checkouts (no cuenta, no persistencia PII)
+export function isGuestId(userId: string): boolean {
+  return typeof userId === 'string' && userId.startsWith('guest_')
+}
+
 export function getBookingsByExperienceAndDate(experienceId: string, date: string): Booking[] {
   const bookings = getStoredBookings()
   return bookings.filter((b) => b.experienceId === experienceId && b.date === date)
@@ -51,7 +56,9 @@ export function buildQrPayload(booking: Booking): Record<string, unknown> {
     totalPrice: booking.totalPrice,
     currency: booking.currency || 'USD',
     customerName: booking.customerName || null,
-    customerEmail: booking.customerEmail || null,
+    // Para guest no persistimos email en el QR payload — solo nombre
+    customerEmail: isGuestId(booking.userId) ? null : booking.customerEmail || null,
+    participantNames: booking.participantNames || null,
     status: booking.status,
     meetingPoint: booking.meetingPoint || null,
     location: booking.location || null,
@@ -67,12 +74,21 @@ export function createBookingInStorage(input: {
   customerName?: string
   customerEmail?: string
   currency?: string
+  // Para invitado: lista de nombres por participante (1 por ticket); si viene,
+  // el primer nombre es el comprador y el resto acompañantes — se usa para QR
+  participantNames?: string[]
 }): Booking {
   const bookings = getStoredBookings()
 
   const now = new Date().toISOString()
   const bookingCode = generateBookingCode()
   const meta = getTourMeta(input.experienceId)
+
+  const isGuest = isGuestId(input.userId)
+  const participantNames =
+    Array.isArray(input.participantNames) && input.participantNames.length > 0
+      ? input.participantNames.slice(0, input.peopleCount)
+      : undefined
 
   const base: Booking = {
     id: `booking_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -91,8 +107,11 @@ export function createBookingInStorage(input: {
     updatedAt: now,
     ticketCode: bookingCode,
     customerName: input.customerName,
-    customerEmail: input.customerEmail,
+    // Para guest no persistimos email en storage (métricas siguen con userId guest_*)
+    customerEmail: isGuest ? undefined : input.customerEmail,
     currency: input.currency || 'USD',
+    participantNames,
+    isGuest,
   }
 
   const booking: Booking = {
@@ -116,6 +135,7 @@ export function createBookingsInStorage(
     customerName?: string
     customerEmail?: string
     currency?: string
+    participantNames?: string[]
   }>
 ): Booking[] {
   const bookings = getStoredBookings()
@@ -125,6 +145,12 @@ export function createBookingsInStorage(
     const now = new Date().toISOString()
     const bookingCode = generateBookingCode()
     const meta = getTourMeta(input.experienceId)
+
+    const isGuest = isGuestId(input.userId)
+    const participantNames =
+      Array.isArray(input.participantNames) && input.participantNames.length > 0
+        ? input.participantNames.slice(0, input.peopleCount)
+        : undefined
 
     const base: Booking = {
       id: `booking_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -143,8 +169,10 @@ export function createBookingsInStorage(
       updatedAt: now,
       ticketCode: bookingCode,
       customerName: input.customerName,
-      customerEmail: input.customerEmail,
+      customerEmail: isGuest ? undefined : input.customerEmail,
       currency: input.currency || 'USD',
+      participantNames,
+      isGuest,
     }
 
     const booking: Booking = {

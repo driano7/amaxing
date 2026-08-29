@@ -11,6 +11,8 @@ import {
   Loader2,
   Ticket as TicketIcon,
   Lock,
+  User,
+  Mail,
 } from 'lucide-react'
 import { useCartStore } from '@/lib/store/useCartStore'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -25,6 +27,7 @@ export default function CheckoutPage() {
   const { user, token, isLoading } = useAuth()
   const { t, currentLanguage } = useLanguage()
   const locale = currentLanguage === 'es' ? 'es' : 'en'
+  const isGuest = !isLoading && !user
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState(null)
@@ -44,6 +47,76 @@ export default function CheckoutPage() {
     cvv: '',
   })
   const [focusField, setFocusField] = useState(null)
+
+  // ── Guest + Nombres de participantes ──────────────────────────────
+  const [guestEmail, setGuestEmail] = useState('')
+  const [guestEmailTouched, setGuestEmailTouched] = useState(false)
+  // lineId -> string[] (longitud = peopleCount)
+  const [participantNames, setParticipantNames] = useState({})
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail.trim())
+  const authDisplayName = user
+    ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email
+    : ''
+
+  // Inicializa / sincroniza participantNames cuando cambian items o user
+  useEffect(() => {
+    if (items.length === 0) {
+      setParticipantNames({})
+      return
+    }
+    setParticipantNames((prev) => {
+      const next = { ...prev }
+      let changed = false
+      for (const item of items) {
+        const count = Math.max(1, Number(item.peopleCount) || 1)
+        const existing = Array.isArray(next[item.lineId]) ? next[item.lineId] : []
+        if (existing.length !== count) {
+          const resized = Array.from({ length: count }, (_, i) => existing[i] || '')
+          // Autocompletar primer nombre si estoy autenticado y está vacío
+          if (user && resized[0] === '' && authDisplayName) {
+            resized[0] = authDisplayName
+          }
+          next[item.lineId] = resized
+          changed = true
+        } else if (user && existing[0] === '' && authDisplayName) {
+          // Si ya existe pero el primero está vacío y ahora hay usuario, autocompletar
+          next[item.lineId] = [authDisplayName, ...existing.slice(1)]
+          changed = true
+        }
+      }
+      // Limpiar lineIds que ya no existen
+      for (const key of Object.keys(next)) {
+        if (!items.some((it) => it.lineId === key)) {
+          delete next[key]
+          changed = true
+        }
+      }
+      return changed ? next : prev
+    })
+  }, [items, user, authDisplayName])
+
+  // Si el usuario edita su nombre en perfil y vuelve, no pisar nombres ya escritos manualmente
+  const updateParticipantName = (lineId, idx, value) => {
+    setParticipantNames((prev) => {
+      const arr = Array.isArray(prev[lineId]) ? [...prev[lineId]] : []
+      arr[idx] = value
+      return { ...prev, [lineId]: arr }
+    })
+  }
+
+  const allNamesValid = items.every((item) => {
+    const arr = participantNames[item.lineId] || []
+    if (arr.length !== Math.max(1, Number(item.peopleCount) || 1)) return false
+    return arr.every((n) => typeof n === 'string' && n.trim().length >= 2)
+  })
+
+  const canPayCard = (() => {
+    if (items.some((it) => !it.date || !it.time)) return false
+    if (!allNamesValid) return false
+    if (isGuest && !emailOk) return false
+    return true
+  })()
 
   const handleCardInput = (field) => (e) => {
     let value = e.target.value
@@ -66,25 +139,27 @@ export default function CheckoutPage() {
 
   const formatPrice = (price) => formatPriceByLocale(price, locale)
 
-  // Redirige al login si no hay sesión
-  useEffect(() => {
-    if (!isLoading && !user) {
-      window.location.href = '/login?redirect=/checkout'
-    }
-  }, [isLoading, user])
-
   // Al volver de Stripe con status=success + session_id, confirmar y crear bookings
+  // Funciona tanto para guest como para auth (sin token requerido)
   useEffect(() => {
     const status = new URLSearchParams(window.location.search).get('status')
     const sessionId = new URLSearchParams(window.location.search).get('session_id')
 
     if (status === 'success' && sessionId) {
       window.history.replaceState({}, document.title, '/checkout')
-      if (!token) return
       void confirmPayment(sessionId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
+
+  const buildItemsPayload = () =>
+    items.map((item) => ({
+      experienceId: item.experienceId,
+      date: item.date,
+      time: item.time,
+      peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+      participantNames: participantNames[item.lineId] || [],
+    }))
 
   const createCheckoutSession = async () => {
     const invalidItems = items.filter((item) => !item.date || !item.time)
@@ -96,25 +171,43 @@ export default function CheckoutPage() {
       )
       return
     }
+    if (isGuest && !emailOk) {
+      setGuestEmailTouched(true)
+      setError(
+        locale === 'es'
+          ? 'Ingresa un email válido para enviar tus tickets.'
+          : 'Enter a valid email to receive your tickets.'
+      )
+      return
+    }
+    if (!allNamesValid) {
+      setError(
+        locale === 'es'
+          ? 'Escribe el nombre de cada persona que irá al tour (para el ticket).'
+          : 'Enter the name of every guest for the ticket.'
+      )
+      return
+    }
 
     setIsSubmitting(true)
     setError(null)
     try {
+      const headers = { 'Content-Type': 'application/json' }
+      if (token) headers.Authorization = `Bearer ${token}`
+
+      const guestNameForStripe = isGuest
+        ? (participantNames[items[0]?.lineId]?.[0] || '').trim() || 'Invitado'
+        : undefined
+
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
         body: JSON.stringify({
-          items: items.map((item) => ({
-            experienceId: item.experienceId,
-            date: item.date,
-            time: item.time,
-            peopleCount: item.peopleCount,
-          })),
-          customerEmail: user?.email,
-          customerName: user?.firstName
+          items: buildItemsPayload(),
+          customerEmail: isGuest ? guestEmail.trim() : user?.email,
+          customerName: isGuest
+            ? guestNameForStripe
+            : user?.firstName
             ? `${user.firstName} ${user.lastName || ''}`.trim()
             : undefined,
           locale,
@@ -125,6 +218,20 @@ export default function CheckoutPage() {
 
       if (!response.ok) {
         throw new Error(data.error || 'No pudimos iniciar el pago')
+      }
+
+      // Guardar snapshot de participantNames/guestEmail para que confirm los recupere si el usuario recarga
+      try {
+        sessionStorage.setItem(
+          'amaxing_checkout_snapshot',
+          JSON.stringify({
+            participantNames,
+            guestEmail: guestEmail.trim(),
+            currency: locale === 'es' ? 'MXN' : 'USD',
+          })
+        )
+      } catch {
+        void 0
       }
 
       window.location.href = data.url
@@ -140,22 +247,55 @@ export default function CheckoutPage() {
       setIsSubmitting(true)
       setError(null)
       try {
+        const headers = { 'Content-Type': 'application/json' }
+        if (token) headers.Authorization = `Bearer ${token}`
+
+        // Recuperar snapshot si el estado en memoria se perdió al volver de Stripe mock
+        let pNames = participantNames
+        let gEmail = guestEmail
+        let currency = locale === 'es' ? 'MXN' : 'USD'
+        try {
+          const snapRaw = sessionStorage.getItem('amaxing_checkout_snapshot')
+          if (snapRaw) {
+            const snap = JSON.parse(snapRaw)
+            if (snap.participantNames) pNames = snap.participantNames
+            if (snap.guestEmail) gEmail = snap.guestEmail
+            if (snap.currency) currency = snap.currency
+          }
+        } catch {
+          void 0
+        }
+
+        const bodyItems = items.length
+          ? buildItemsPayload()
+          : (() => {
+              // Fallback: si items vacío en memoria (recarga), crear con snapshot no es posible — pedir al servidor que lea metadata
+              return undefined
+            })()
+
+        // Si usamos snapshot para pNames, reconstruir items con esos nombres
+        const itemsWithNames =
+          bodyItems && Object.keys(pNames).length
+            ? bodyItems.map((it) => ({
+                ...it,
+                participantNames:
+                  pNames[items.find((x) => x.experienceId === it.experienceId)?.lineId] ||
+                  it.participantNames,
+              }))
+            : bodyItems
+
         const response = await fetch('/api/stripe/confirm', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
           body: JSON.stringify({
             sessionId,
-            // En modo mock (sin Stripe) el servidor necesita los items del carrito
-            // para crear los bookings. En modo real se ignoran (se leen de la sesión).
-            items: items.map((item) => ({
-              experienceId: item.experienceId,
-              date: item.date,
-              time: item.time,
-              peopleCount: item.peopleCount,
-            })),
+            items: itemsWithNames,
+            guestEmail: isGuest || !token ? gEmail?.trim() : undefined,
+            guestName: isGuest || !token ? (pNames[items[0]?.lineId]?.[0] || '').trim() : undefined,
+            currency,
+            participantNamesMap: Object.fromEntries(
+              items.map((it) => [it.experienceId, pNames[it.lineId] || []])
+            ),
           }),
         })
 
@@ -169,7 +309,10 @@ export default function CheckoutPage() {
         setCreatedBookings(bookings)
         setSuccess(true)
 
-        // Persistir en localStorage para que profile/tickets los muestren con QR y recogida.
+        // Persistir en localStorage para que profile/tickets los muestren con QR
+        // Para guest: se guarda con userId guest_* y sin email (ver storage.ts isGuest)
+        // Esto permite métricas admin/empleado sin guardar PII. El guest puede descargar
+        // los tickets en esta misma vista; no es necesario guardarlos a largo plazo.
         try {
           const existing = localStorage.getItem('amaxing_bookings')
           const parsed = existing ? JSON.parse(existing) : []
@@ -181,6 +324,38 @@ export default function CheckoutPage() {
           /* storage lleno o no disponible */
         }
 
+        // Analítica pasiva: conversión purchase (funciona sin cuenta — userId null para guest)
+        try {
+          const sid = sessionStorage.getItem('analytics_session_id')
+          await fetch('/api/analytics/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              eventType: 'purchase',
+              conversionEvent: 'purchase',
+              conversionValue: subtotal,
+              sessionId: sid,
+              userId: user?.id || null,
+              pagePath: '/checkout',
+              pageCategory: 'checkout',
+              timeOnPage: 0,
+              scrollDepth: 0,
+              bounce: false,
+              exitPage: false,
+              userAgent: navigator.userAgent,
+              referrerUrl: document.referrer || '',
+              eventData: { isGuest: !!data.isGuest, itemCount, currency },
+            }),
+          })
+        } catch {
+          void 0
+        }
+
+        try {
+          sessionStorage.removeItem('amaxing_checkout_snapshot')
+        } catch {
+          void 0
+        }
         clearCart()
       } catch (err) {
         console.error('Confirm error:', err)
@@ -190,10 +365,8 @@ export default function CheckoutPage() {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [token, clearCart]
+    [token, clearCart, items, participantNames, guestEmail, locale, subtotal, itemCount, user]
   )
-
-  const handleManualCheckout = () => setSuccess(false)
 
   if (isLoading) {
     return (
@@ -203,17 +376,10 @@ export default function CheckoutPage() {
     )
   }
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
-        <div className="text-zinc-500 dark:text-gray-400">
-          {t('checkout.notLoggedIn', 'Redirigiendo al login...')}
-        </div>
-      </div>
-    )
-  }
-
   if (success) {
+    const isGuestSuccess = createdBookings.some(
+      (b) => b.isGuest || String(b.userId).startsWith('guest_')
+    )
     return (
       <div className="min-h-screen bg-white dark:bg-zinc-950">
         <div className="container mx-auto px-4 py-12">
@@ -227,10 +393,14 @@ export default function CheckoutPage() {
               {t('checkoutSuccess.title', '¡Reservas confirmadas!')}
             </h1>
             <p className="mt-3 text-zinc-600 dark:text-gray-300">
-              {t(
-                'checkoutSuccess.detailsSent',
-                'Se generaron los tickets con su QR. Puedes verlos en tu perfil o descargarlos aquí.'
-              )}
+              {isGuestSuccess
+                ? locale === 'es'
+                  ? 'Tus tickets con QR están listos. No guardamos tu email ni tus datos — descarga tus tickets ahora.'
+                  : 'Your QR tickets are ready. We did not store your email or data — download your tickets now.'
+                : t(
+                    'checkoutSuccess.detailsSent',
+                    'Se generaron los tickets con su QR. Puedes verlos en tu perfil o descargarlos aquí.'
+                  )}
             </p>
 
             <div className="mt-8 space-y-4">
@@ -250,6 +420,11 @@ export default function CheckoutPage() {
                         {booking.peopleCount === 1
                           ? t('checkout.person', 'persona')
                           : t('checkout.persons', 'personas')}
+                        {booking.participantNames?.length
+                          ? ` — ${booking.participantNames.join(', ')}`
+                          : booking.customerName
+                          ? ` — ${booking.customerName}`
+                          : ''}
                       </p>
                     </div>
                   </div>
@@ -264,19 +439,45 @@ export default function CheckoutPage() {
             </div>
 
             <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-              <Link
-                href="/profile"
-                className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
-              >
-                {t('checkoutSuccess.viewBookings', 'Ir a mi perfil')}
-              </Link>
-              <Link
-                href="/tours"
-                className="inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-white px-8 py-3 font-semibold text-gray-900 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white"
-              >
-                {t('cart.exploreTours', 'Explorar más tours')}
-              </Link>
+              {isGuestSuccess ? (
+                <>
+                  <Link
+                    href="/tours"
+                    className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
+                  >
+                    {t('cart.exploreTours', 'Explorar más tours')}
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-white px-8 py-3 font-semibold text-gray-900 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+                  >
+                    {locale === 'es' ? 'Crear cuenta' : 'Create account'}
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/profile"
+                    className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
+                  >
+                    {t('checkoutSuccess.viewBookings', 'Ir a mi perfil')}
+                  </Link>
+                  <Link
+                    href="/tours"
+                    className="inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-white px-8 py-3 font-semibold text-gray-900 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+                  >
+                    {t('cart.exploreTours', 'Explorar más tours')}
+                  </Link>
+                </>
+              )}
             </div>
+            {isGuestSuccess && (
+              <p className="mt-6 text-xs text-zinc-500 dark:text-gray-500">
+                {locale === 'es'
+                  ? 'Métricas de demanda, ingresos y mejores horarios se generan de forma agregada para el equipo — sin guardar tu email.'
+                  : 'Demand, revenue and best-slot metrics are aggregated for the team — without storing your email.'}
+              </p>
+            )}
           </motion.div>
         </div>
 
@@ -296,29 +497,39 @@ export default function CheckoutPage() {
               const raw = localStorage.getItem('amaxing_bookings')
               const existing = raw ? JSON.parse(raw) : []
               const now = new Date().toISOString()
-              const cryptoBookings = items.map((item, idx) => ({
-                id: `crypto-${Date.now()}-${idx}`,
-                userId: user?.id || 'guest',
-                experienceId: item.id,
-                experienceTitle: item.title,
-                experienceImage: item.image,
-                date: item.date || now.slice(0, 10),
-                time: item.time || '10:00',
-                peopleCount: item.quantity || 1,
-                totalPrice: item.price * (item.quantity || 1),
-                currency: locale === 'es' ? 'MXN' : 'USD',
-                status: 'confirmed',
-                createdAt: now,
-                updatedAt: now,
-                ticketCode: `AMX-T-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-                customerName: user?.firstName
-                  ? `${user.firstName} ${user.lastName || ''}`.trim()
-                  : 'Cliente cripto',
-                customerEmail: user?.email || null,
-                paymentMethod: 'crypto',
-                paymentReference: reference,
-                cryptoNetwork: network,
-              }))
+              const cryptoBookings = items.map((item, idx) => {
+                const pNames = participantNames[item.lineId] || []
+                return {
+                  id: `crypto-${Date.now()}-${idx}`,
+                  userId:
+                    user?.id || `guest_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                  experienceId: item.experienceId || item.id,
+                  experienceTitle: item.title,
+                  experienceImage: item.imageUrl || item.image,
+                  date: item.date || now.slice(0, 10),
+                  time: item.time || '10:00',
+                  peopleCount: item.peopleCount || item.quantity || 1,
+                  totalPrice: (item.price || 0) * (item.peopleCount || item.quantity || 1),
+                  currency: locale === 'es' ? 'MXN' : 'USD',
+                  status: 'confirmed',
+                  createdAt: now,
+                  updatedAt: now,
+                  ticketCode: `AMX-T-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+                  customerName:
+                    pNames[0] ||
+                    (user?.firstName
+                      ? `${user.firstName} ${user.lastName || ''}`.trim()
+                      : isGuest
+                      ? 'Invitado'
+                      : 'Cliente cripto'),
+                  customerEmail: user?.email || undefined,
+                  participantNames: pNames.length ? pNames : undefined,
+                  isGuest: !user,
+                  paymentMethod: 'crypto',
+                  paymentReference: reference,
+                  cryptoNetwork: network,
+                }
+              })
               localStorage.setItem(
                 'amaxing_bookings',
                 JSON.stringify([...existing, ...cryptoBookings])
@@ -385,6 +596,147 @@ export default function CheckoutPage() {
               {error}
             </div>
           )}
+
+          {/* Identidad: guest vs auth */}
+          <div className="mb-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-white/10 dark:bg-zinc-900/50">
+            {isGuest ? (
+              <div>
+                <div className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-white">
+                  <User className="h-4 w-4 text-orange-500" />
+                  {locale === 'es'
+                    ? 'Paga como invitado — sin crear cuenta'
+                    : 'Pay as guest — no account needed'}
+                  <span className="bg-orange-500/15 rounded-full px-2 py-0.5 text-xs font-semibold text-orange-600 dark:text-orange-300">
+                    {locale === 'es' ? 'Invitado' : 'Guest'}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-zinc-500 dark:text-gray-400">
+                  {locale === 'es'
+                    ? 'No guardamos tu email ni tus datos. Solo lo usamos para enviarte el ticket con QR y generar métricas agregadas para el equipo.'
+                    : 'We do not store your email or data. We only use it to send your QR ticket and generate aggregated metrics for the team.'}
+                </p>
+                <div className="mt-3">
+                  <label className="mb-1 flex items-center gap-1 text-xs font-medium text-zinc-600 dark:text-gray-300">
+                    <Mail className="h-3.5 w-3.5" /> Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
+                    onBlur={() => setGuestEmailTouched(true)}
+                    placeholder={locale === 'es' ? 'tu@email.com' : 'you@email.com'}
+                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none dark:bg-zinc-900 dark:text-white ${
+                      guestEmailTouched && !emailOk
+                        ? 'border-red-500 focus:border-red-500'
+                        : 'border-zinc-300 focus:border-orange-500 dark:border-white/10'
+                    }`}
+                  />
+                  {guestEmailTouched && !emailOk && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {locale === 'es' ? 'Ingresa un email válido' : 'Enter a valid email'}
+                    </p>
+                  )}
+                  <p className="mt-2 text-xs text-zinc-500 dark:text-gray-500">
+                    {locale === 'es'
+                      ? '¿Prefieres guardar tus reservas?'
+                      : 'Want to save your bookings?'}{' '}
+                    <Link
+                      href="/login?redirect=/checkout"
+                      className="font-medium text-orange-500 hover:text-orange-400"
+                    >
+                      {locale === 'es' ? 'Crea tu cuenta' : 'Create account'}
+                    </Link>
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-white">
+                    <User className="h-4 w-4 text-emerald-500" />
+                    {locale === 'es' ? 'Reservando como' : 'Booking as'} {user.email}
+                  </p>
+                  <p className="mt-1 text-xs text-zinc-500 dark:text-gray-400">
+                    {locale === 'es'
+                      ? 'Autocompletamos tu nombre para el primer ticket — puedes editarlo.'
+                      : 'We prefilled your name for the first ticket — you can edit it.'}
+                  </p>
+                </div>
+                <Link
+                  href="/profile"
+                  className="text-xs font-medium text-orange-500 hover:text-orange-400"
+                >
+                  {locale === 'es' ? 'Ver perfil' : 'View profile'}
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Nombres de participantes por tour */}
+          <div className="mb-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 p-4 dark:border-orange-500/10 sm:p-5">
+            <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white">
+              <TicketIcon className="h-5 w-5 text-orange-500" />
+              {locale === 'es' ? '¿Quién va al tour?' : 'Who is going?'}
+            </h2>
+            <p className="mt-1 text-xs text-zinc-600 dark:text-gray-400">
+              {locale === 'es'
+                ? 'Necesitamos el nombre de cada persona para generar su ticket con QR. El primer nombre es el comprador.'
+                : 'We need each guest name to generate their QR ticket. The first name is the buyer.'}
+            </p>
+            <div className="mt-4 space-y-4">
+              {items.map((item) => (
+                <div
+                  key={item.lineId}
+                  className="rounded-xl border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-900"
+                >
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {item.title} — {item.date} • {item.time} • {item.peopleCount}{' '}
+                    {item.peopleCount === 1
+                      ? t('checkout.person', 'persona')
+                      : t('checkout.persons', 'personas')}
+                  </p>
+                  <div className="mt-3 grid gap-2">
+                    {Array.from({ length: Math.max(1, Number(item.peopleCount) || 1) }).map(
+                      (_, idx) => (
+                        <div key={idx}>
+                          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-gray-300">
+                            {locale === 'es' ? `Persona ${idx + 1}` : `Guest ${idx + 1}`}{' '}
+                            {idx === 0 && (
+                              <span className="text-orange-500">
+                                * {locale === 'es' ? '(comprador)' : '(buyer)'}
+                              </span>
+                            )}
+                          </label>
+                          <input
+                            type="text"
+                            value={participantNames[item.lineId]?.[idx] || ''}
+                            onChange={(e) =>
+                              updateParticipantName(item.lineId, idx, e.target.value)
+                            }
+                            placeholder={
+                              idx === 0 && user
+                                ? authDisplayName
+                                : locale === 'es'
+                                ? 'Nombre completo'
+                                : 'Full name'
+                            }
+                            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-zinc-400 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-950 dark:text-white"
+                          />
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {!allNamesValid && (
+              <p className="mt-3 text-xs text-amber-600 dark:text-amber-400">
+                {locale === 'es'
+                  ? 'Completa todos los nombres (mínimo 2 caracteres cada uno).'
+                  : 'Fill every name (at least 2 characters each).'}
+              </p>
+            )}
+          </div>
 
           <div className="grid gap-6 overflow-hidden lg:grid-cols-2 lg:gap-8">
             {/* Summary */}
@@ -549,21 +901,31 @@ export default function CheckoutPage() {
                   </p>
 
                   <div className="mt-4 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-xs text-orange-600 dark:text-orange-300">
-                    {t(
-                      'checkout.qrNote',
-                      'Después del pago recibirás un ticket con código QR por cada experiencia.'
-                    )}
+                    {isGuest
+                      ? locale === 'es'
+                        ? 'Pagando como invitado: tu email no se guarda. Recibirás el ticket con QR para mostrar en el tour.'
+                        : 'Paying as guest: your email is not stored. You will receive the QR ticket to show on tour.'
+                      : t(
+                          'checkout.qrNote',
+                          'Después del pago recibirás un ticket con código QR por cada experiencia.'
+                        )}
                   </div>
 
                   <button
                     onClick={() => void createCheckoutSession()}
-                    disabled={isSubmitting}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                    disabled={isSubmitting || !canPayCard}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
                         {t('checkout.redirectingStripe', 'Redirigiendo a Stripe...')}
+                      </>
+                    ) : isGuest ? (
+                      <>
+                        <Lock className="h-5 w-5" />
+                        {locale === 'es' ? 'Pagar como invitado' : 'Pay as guest'}{' '}
+                        {formatPrice(subtotal)}
                       </>
                     ) : (
                       <>
@@ -572,6 +934,32 @@ export default function CheckoutPage() {
                       </>
                     )}
                   </button>
+                  {isGuest && (
+                    <Link
+                      href="/register?redirect=/checkout"
+                      className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-orange-500/30 bg-white py-3 text-sm font-semibold text-orange-600 transition-colors hover:bg-orange-50 dark:border-orange-500/20 dark:bg-zinc-900 dark:text-orange-300 dark:hover:bg-zinc-800"
+                    >
+                      <User className="h-4 w-4" />
+                      {locale === 'es'
+                        ? 'O crea tu cuenta y guarda tus tickets'
+                        : 'Or create account to save tickets'}
+                    </Link>
+                  )}
+                  {!canPayCard && !isSubmitting && (
+                    <p className="mt-2 text-center text-xs text-amber-600 dark:text-amber-400">
+                      {isGuest && !emailOk
+                        ? locale === 'es'
+                          ? 'Ingresa tu email'
+                          : 'Enter your email'
+                        : !allNamesValid
+                        ? locale === 'es'
+                          ? 'Completa los nombres de todos los participantes'
+                          : 'Complete all participant names'
+                        : locale === 'es'
+                        ? 'Selecciona fecha y hora para cada tour'
+                        : 'Select date and time for every tour'}
+                    </p>
+                  )}
 
                   <p className="mt-3 text-center text-xs text-zinc-500 dark:text-gray-500">
                     {t(
@@ -592,16 +980,39 @@ export default function CheckoutPage() {
                         ? 'Ethereum, Base y Lightning Network. Escanea el QR, envía el pago y pega tu hash para verificarlo en cadena.'
                         : 'Ethereum, Base and Lightning Network. Scan the QR, send the payment and paste your hash to verify on-chain.'}
                     </p>
+                    {!allNamesValid && (
+                      <p className="mt-3 text-xs font-medium text-amber-600 dark:text-amber-400">
+                        {locale === 'es'
+                          ? 'Primero completa los nombres arriba.'
+                          : 'First complete the names above.'}
+                      </p>
+                    )}
                   </div>
 
                   <button
                     onClick={() => setShowCryptoModal(true)}
-                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                    disabled={!allNamesValid || (isGuest && !emailOk)}
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Lock className="h-5 w-5" />
-                    {locale === 'es' ? 'Pagar con cripto' : 'Pay with crypto'}{' '}
+                    {isGuest
+                      ? locale === 'es'
+                        ? 'Pagar con cripto como invitado'
+                        : 'Pay with crypto as guest'
+                      : locale === 'es'
+                      ? 'Pagar con cripto'
+                      : 'Pay with crypto'}{' '}
                     {formatPrice(subtotal)}
                   </button>
+                  {isGuest && (
+                    <Link
+                      href="/register?redirect=/checkout"
+                      className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-orange-500/30 bg-white py-3 text-sm font-semibold text-orange-600 transition-colors hover:bg-orange-50 dark:border-orange-500/20 dark:bg-zinc-900 dark:text-orange-300 dark:hover:bg-zinc-800"
+                    >
+                      <User className="h-4 w-4" />
+                      {locale === 'es' ? 'O crea tu cuenta' : 'Or create account'}
+                    </Link>
+                  )}
 
                   <p className="mt-3 text-center text-xs text-zinc-500 dark:text-gray-500">
                     {locale === 'es'
@@ -626,34 +1037,74 @@ export default function CheckoutPage() {
             const raw = localStorage.getItem('amaxing_bookings')
             const existing = raw ? JSON.parse(raw) : []
             const now = new Date().toISOString()
-            const cryptoBookings = items.map((item, idx) => ({
-              id: `crypto-${Date.now()}-${idx}`,
-              userId: user?.id || 'guest',
-              experienceId: item.experienceId || item.id,
-              experienceTitle: item.title,
-              experienceImage: item.imageUrl || item.image,
-              date: item.date || now.slice(0, 10),
-              time: item.time || '10:00',
-              peopleCount: item.peopleCount || item.quantity || 1,
-              totalPrice: (item.price || 0) * (item.peopleCount || item.quantity || 1),
-              currency: locale === 'es' ? 'MXN' : 'USD',
-              status: 'confirmed',
-              createdAt: now,
-              updatedAt: now,
-              ticketCode: `AMX-T-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-              customerName: user?.firstName
-                ? `${user.firstName} ${user.lastName || ''}`.trim()
-                : 'Cliente cripto',
-              customerEmail: user?.email || null,
-              paymentMethod: 'crypto',
-              paymentReference: reference,
-              cryptoNetwork: network,
-            }))
+            const cryptoBookings = items.map((item, idx) => {
+              const pNames = participantNames[item.lineId] || []
+              return {
+                id: `crypto-${Date.now()}-${idx}`,
+                userId: user?.id || `guest_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                experienceId: item.experienceId || item.id,
+                experienceTitle: item.title,
+                experienceImage: item.imageUrl || item.image,
+                date: item.date || now.slice(0, 10),
+                time: item.time || '10:00',
+                peopleCount: item.peopleCount || item.quantity || 1,
+                totalPrice: (item.price || 0) * (item.peopleCount || item.quantity || 1),
+                currency: locale === 'es' ? 'MXN' : 'USD',
+                status: 'confirmed',
+                createdAt: now,
+                updatedAt: now,
+                ticketCode: `AMX-T-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+                customerName:
+                  pNames[0] ||
+                  (user?.firstName
+                    ? `${user.firstName} ${user.lastName || ''}`.trim()
+                    : isGuest
+                    ? 'Invitado'
+                    : 'Cliente cripto'),
+                customerEmail: user?.email || undefined,
+                participantNames: pNames.length ? pNames : undefined,
+                isGuest: !user,
+                paymentMethod: 'crypto',
+                paymentReference: reference,
+                cryptoNetwork: network,
+              }
+            })
             localStorage.setItem(
               'amaxing_bookings',
               JSON.stringify([...existing, ...cryptoBookings])
             )
             setCreatedBookings(cryptoBookings)
+            // métrica cripto también
+            try {
+              const sid = sessionStorage.getItem('analytics_session_id')
+              await fetch('/api/analytics/track', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  eventType: 'purchase',
+                  conversionEvent: 'purchase',
+                  conversionValue: subtotal,
+                  sessionId: sid,
+                  userId: user?.id || null,
+                  pagePath: '/checkout',
+                  pageCategory: 'checkout',
+                  timeOnPage: 0,
+                  scrollDepth: 0,
+                  bounce: false,
+                  exitPage: false,
+                  userAgent: navigator.userAgent,
+                  referrerUrl: document.referrer || '',
+                  eventData: {
+                    isGuest: !user,
+                    paymentMethod: 'crypto',
+                    itemCount,
+                    currency: locale === 'es' ? 'MXN' : 'USD',
+                  },
+                }),
+              })
+            } catch {
+              void 0
+            }
           } catch {
             // storage error
           }

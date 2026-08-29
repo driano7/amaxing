@@ -26,27 +26,12 @@ export default function MockCheckoutPage() {
   const [isPaying, setIsPaying] = useState(false)
   const [error, setError] = useState(null)
 
-  // Redirige al login si no hay sesión
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace(`/login?redirect=/checkout/mock?session_id=${sessionId}`)
-    }
-  }, [isLoading, user, router, sessionId])
-
+  // Invitado puede pagar sin cuenta: no redirigir. Solo mostramos badge guest.
+  // Si está logueado, se muestra nombre; si no, se permite continuar igual.
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
         <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
-      </div>
-    )
-  }
-
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
-        <div className="text-zinc-500 dark:text-gray-400">
-          {t('checkout.notLoggedIn', 'Redirigiendo al login...')}
-        </div>
       </div>
     )
   }
@@ -81,6 +66,18 @@ export default function MockCheckoutPage() {
                 ? 'Estás en el modo de prueba. Usa la tarjeta de prueba para simular el pago.'
                 : 'You are in test mode. Use the test card to simulate the payment.'}
             </p>
+            {!user && (
+              <p className="mt-2 text-xs font-medium text-orange-600 dark:text-orange-300">
+                {locale === 'es'
+                  ? 'Pagando como invitado — no necesitas crear cuenta. Tu email no se guardará.'
+                  : 'Paying as guest — no account needed. Your email will not be stored.'}
+              </p>
+            )}
+            {user && (
+              <p className="mt-2 text-xs text-zinc-500 dark:text-gray-400">
+                {locale === 'es' ? `Pagando como ${user.email}` : `Paying as ${user.email}`}
+              </p>
+            )}
           </div>
 
           {/* Card Preview */}

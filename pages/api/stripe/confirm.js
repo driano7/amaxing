@@ -1,6 +1,6 @@
 import { getStripeClient } from '@/lib/stripe'
 import { createBookings } from '@/lib/booking/server'
-import { getSession } from '@/lib/auth/session'
+import { getSessionOptional } from '@/lib/auth/session'
 
 export const config = { runtime: 'nodejs' }
 
@@ -18,19 +18,17 @@ const createMockBookings = (sessionId, user) => {
 }
 // ───────────────────────────────────────────────────────────────────────────────
 
-// Convierte la sesión de Stripe en bookings persistidos (tickets con QR) para
-// el usuario logueado. Se llama desde /checkout?status=success&session_id=...
+// Convierte la sesión de Stripe en bookings persistidos (tickets con QR).
+// Soporta dos paths:
+//  - Autenticado: Authorization Bearer + session.user.id -> userId real
+//  - Invitado: sin token, con guestEmail/guestName + participantNames -> guest_<random> (no guarda PII más allá del ticket temporal, pero sí genera métricas)
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const session = await getSession(req)
-  if (!session?.user?.id) {
-    return res.status(401).json({ error: 'No autorizado' })
-  }
-
-  const { sessionId, items } = req.body || {}
+  const session = await getSessionOptional(req)
+  const { sessionId, items, guestEmail, guestName, participantNamesMap, currency } = req.body || {}
 
   if (typeof sessionId !== 'string' || !sessionId) {
     return res.status(400).json({ error: 'Falta session_id' })
@@ -39,32 +37,60 @@ export default async function handler(req, res) {
   try {
     // ─── MOCK MODE: sin Stripe ───
     if (isMockSession(sessionId)) {
-      // Los items vienen del carrito (el cliente los re-envía en el body)
       const mockItems = Array.isArray(items) ? items : []
       if (mockItems.length === 0) {
         return res.status(400).json({ error: 'No hay items en la sesión' })
       }
 
-      const customerEmail = session.user.email || ''
-      const customerName = session.user.firstName
-        ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
-        : ''
+      const isGuest = !session?.user?.id
+      if (isGuest) {
+        const email = typeof guestEmail === 'string' ? guestEmail.trim() : ''
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+        if (!emailOk) {
+          return res.status(400).json({ error: 'Email de invitado requerido' })
+        }
+      }
 
-      const bookings = createBookings(
-        mockItems.map((item) => ({
-          userId: session.user.id,
-          experienceId: item.experienceId,
-          date: item.date,
-          time: item.time,
-          peopleCount: Math.max(1, Number(item.peopleCount) || 1),
-          customerName,
-          customerEmail,
-          currency: 'USD',
-        }))
+      const customerEmail =
+        session?.user?.email || (typeof guestEmail === 'string' ? guestEmail.trim() : '')
+      const customerName = session?.user?.firstName
+        ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
+        : typeof guestName === 'string' && guestName.trim()
+        ? guestName.trim()
+        : Array.isArray(mockItems[0]?.participantNames) && mockItems[0].participantNames[0]
+        ? mockItems[0].participantNames[0]
+        : 'Invitado'
+
+      const userId =
+        session?.user?.id || `guest_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+
+      const bookings = await createBookings(
+        mockItems.map((item) => {
+          const pNames = Array.isArray(item.participantNames)
+            ? item.participantNames
+            : Array.isArray(participantNamesMap?.[item.experienceId])
+            ? participantNamesMap[item.experienceId]
+            : undefined
+          return {
+            userId,
+            experienceId: item.experienceId,
+            date: item.date,
+            time: item.time,
+            peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+            customerName: Array.isArray(pNames) && pNames[0] ? pNames[0] : customerName,
+            customerEmail: session?.user?.id ? customerEmail : undefined,
+            currency: typeof currency === 'string' ? currency : 'USD',
+            participantNames: pNames,
+          }
+        })
       )
 
-      console.log('[stripe.mock] Bookings creados (mock):', bookings.length)
-      return res.status(200).json({ ok: true, bookings, mock: true })
+      console.log(
+        '[stripe.mock] Bookings creados (mock):',
+        bookings.length,
+        isGuest ? '(guest)' : '(auth)'
+      )
+      return res.status(200).json({ ok: true, bookings, mock: true, isGuest })
     }
 
     // ─── MODO REAL: Stripe ───
@@ -88,23 +114,36 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'No hay items en la sesión' })
     }
 
+    const isGuestReal = !session?.user?.id
     const customerEmail =
-      session.user.email || checkout.customer_details?.email || checkout.customer_email || ''
-    const customerName = session.user.firstName
+      session?.user?.email ||
+      checkout.customer_details?.email ||
+      checkout.customer_email ||
+      guestEmail ||
+      ''
+    const customerName = session?.user?.firstName
       ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
-      : checkout.metadata?.customer_name || ''
+      : checkout.metadata?.customer_name || guestName || ''
+    const userId =
+      session?.user?.id || `guest_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 
-    const bookings = createBookings(
-      parsedItems.map((item) => ({
-        userId: session.user.id,
-        experienceId: item.experienceId,
-        date: item.date,
-        time: item.time,
-        peopleCount: Math.max(1, Number(item.peopleCount) || 1),
-        customerName,
-        customerEmail,
-        currency: 'USD',
-      }))
+    const bookings = await createBookings(
+      parsedItems.map((item) => {
+        const pNames = Array.isArray(participantNamesMap?.[item.experienceId])
+          ? participantNamesMap[item.experienceId]
+          : undefined
+        return {
+          userId,
+          experienceId: item.experienceId,
+          date: item.date,
+          time: item.time,
+          peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+          customerName: Array.isArray(pNames) && pNames[0] ? pNames[0] : customerName,
+          customerEmail: isGuestReal ? undefined : customerEmail,
+          currency: typeof currency === 'string' ? currency : 'USD',
+          participantNames: pNames,
+        }
+      })
     )
 
     return res.status(200).json({ ok: true, bookings })
