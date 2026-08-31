@@ -121,13 +121,61 @@ export default function ChatbotAssistant() {
   const scrollRef = useRef(null)
   const inputRef = useRef(null)
   const recognitionRef = useRef(null)
+  const quickRecognitionRef = useRef(null)
   const [isRecording, setIsRecording] = useState(false)
   const [micError, setMicError] = useState('')
   const [micSupported, setMicSupported] = useState(true)
   const [quickInput, setQuickInput] = useState('')
   const quickInputRef = useRef(null)
   const [isQuickRecording, setIsQuickRecording] = useState(false)
+  const audioContextRef = useRef(null)
+  const analyserRef = useRef(null)
+  const [audioLevels, setAudioLevels] = useState([8, 12, 20, 14, 9])
   const reducedMotion = useReducedMotion()
+
+  // Visualizador de voz: barras que suben y bajan con el nivel de audio
+  const VoiceWave = ({ active }) => {
+    const bars = [0, 1, 2, 3, 4]
+    return (
+      <div className="flex h-4 items-center justify-center gap-[2px]">
+        {bars.map((i) => (
+          <motion.span
+            key={i}
+            className={`inline-block w-[3px] rounded-full ${active ? 'bg-white' : 'bg-orange-500'}`}
+            animate={active ? { height: [6, audioLevels[i] || 8, 6] } : { height: 6 }}
+            transition={
+              active
+                ? { duration: 0.35, repeat: Infinity, delay: i * 0.07, ease: 'easeInOut' }
+                : { duration: 0.2 }
+            }
+            style={{ height: active ? audioLevels[i] : 6 }}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  const ProcessingAnim = () => (
+    <div className="flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-orange-500/10 via-pink-500/10 to-orange-500/10 px-3 py-2 dark:from-orange-500/10 dark:via-pink-500/10">
+      <span className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75"></span>
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500"></span>
+      </span>
+      <div className="flex gap-1">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="h-1.5 w-1.5 rounded-full bg-orange-500"
+            animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+          />
+        ))}
+      </div>
+      <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
+        Procesando con Gemini...
+      </span>
+    </div>
+  )
 
   // Detectar móvil para mover el panel sobre el MobileDock
   useEffect(() => {
@@ -146,6 +194,58 @@ export default function ChatbotAssistant() {
     setMicSupported(Boolean(SR))
   }, [])
 
+  // Analizador de audio para la onda de voz
+  useEffect(() => {
+    if (!isRecording && !isQuickRecording) {
+      if (audioContextRef.current) {
+        try {
+          audioContextRef.current.close()
+        } catch {
+          /* noop */
+        }
+        audioContextRef.current = null
+      }
+      setAudioLevels([8, 12, 20, 14, 9])
+      return
+    }
+    let raf = 0
+    const startAnalyser = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        const ctx = new (window.AudioContext || window.webkitAudioContext)()
+        audioContextRef.current = ctx
+        const analyser = ctx.createAnalyser()
+        analyser.fftSize = 64
+        const source = ctx.createMediaStreamSource(stream)
+        source.connect(analyser)
+        analyserRef.current = analyser
+        const data = new Uint8Array(analyser.frequencyBinCount)
+        const tick = () => {
+          analyser.getByteFrequencyData(data)
+          const levels = [0, 1, 2, 3, 4].map((i) => 6 + Math.round(((data[i * 4] || 0) / 255) * 18))
+          setAudioLevels(levels)
+          raf = requestAnimationFrame(tick)
+        }
+        tick()
+        // cerrar stream al desmontar se maneja con el ctx
+      } catch {
+        /* noop */
+      }
+    }
+    startAnalyser()
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+      if (audioContextRef.current) {
+        try {
+          audioContextRef.current.close()
+        } catch {
+          /* noop */
+        }
+        audioContextRef.current = null
+      }
+    }
+  }, [isRecording, isQuickRecording])
+
   const handleMicToggle = useCallback(async () => {
     const SR =
       typeof window !== 'undefined'
@@ -162,6 +262,7 @@ export default function ChatbotAssistant() {
             : 'Voice not supported. Try Chrome/Edge.'
         )
       } catch {
+        /* noop */
         setMicError(
           isEs
             ? 'Permiso de micrófono denegado. Actívalo en el navegador.'
@@ -175,6 +276,7 @@ export default function ChatbotAssistant() {
       try {
         recognitionRef.current?.stop()
       } catch {
+        /* noop */
         void 0
       }
       setIsRecording(false)
@@ -186,6 +288,7 @@ export default function ChatbotAssistant() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       stream.getTracks().forEach((t) => t.stop())
     } catch {
+      /* noop */
       setMicError(
         isEs
           ? 'Necesitamos permiso del micrófono para dictar.'
@@ -222,6 +325,7 @@ export default function ChatbotAssistant() {
     try {
       rec.start()
     } catch {
+      /* noop */
       void 0
     }
   }, [isRecording, isEs])
@@ -241,14 +345,16 @@ export default function ChatbotAssistant() {
             : 'Voice not supported. Try Chrome/Edge.'
         )
       } catch {
+        /* noop */
         setMicError(isEs ? 'Permiso de micrófono denegado.' : 'Mic permission denied.')
       }
       return
     }
     if (isQuickRecording) {
       try {
-        recognitionRef.current?.stop()
+        quickRecognitionRef.current?.stop()
       } catch {
+        /* noop */
         /* noop */
       }
       setIsQuickRecording(false)
@@ -258,6 +364,7 @@ export default function ChatbotAssistant() {
       const s = await navigator.mediaDevices.getUserMedia({ audio: true })
       s.getTracks().forEach((t) => t.stop())
     } catch {
+      /* noop */
       setMicError(
         isEs ? 'Necesitamos permiso del micrófono para dictar.' : 'Mic permission needed.'
       )
@@ -276,6 +383,7 @@ export default function ChatbotAssistant() {
       setIsQuickRecording(false)
       const err = e?.error || ''
       if (err === 'not-allowed') setMicError(isEs ? 'Permiso denegado.' : 'Permission denied.')
+      else if (err === 'no-speech') setMicError(isEs ? 'No se detectó voz.' : 'No speech detected.')
       else setMicError(isEs ? 'Error de micrófono.' : 'Mic error.')
     }
     rec.onresult = (event) => {
@@ -286,10 +394,11 @@ export default function ChatbotAssistant() {
       }
       setIsQuickRecording(false)
     }
-    recognitionRef.current = rec
+    quickRecognitionRef.current = rec
     try {
       rec.start()
     } catch {
+      /* noop */
       /* noop */
     }
   }, [isQuickRecording, isEs])
@@ -336,6 +445,7 @@ export default function ChatbotAssistant() {
         const parsed = JSON.parse(saved)
         if (Array.isArray(parsed) && parsed.length) setAnswers(parsed)
       } catch {
+        /* noop */
         /* ignore */
       }
     }
@@ -477,15 +587,11 @@ export default function ChatbotAssistant() {
                   )}
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors ${
                     isQuickRecording
-                      ? 'animate-pulse border-red-500 bg-red-500 text-white'
+                      ? 'border-red-500 bg-red-500 text-white'
                       : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
                   }`}
                 >
-                  {isQuickRecording ? (
-                    <MicOff className="h-3.5 w-3.5" />
-                  ) : (
-                    <Mic className="h-3.5 w-3.5" />
-                  )}
+                  {isQuickRecording ? <VoiceWave active={true} /> : <Mic className="h-3.5 w-3.5" />}
                 </button>
                 <button
                   type="button"
@@ -530,17 +636,7 @@ export default function ChatbotAssistant() {
               className={msg.role === 'assistant' ? 'flex justify-start' : 'flex justify-end'}
             >
               {msg.isLoading ? (
-                <div className="flex items-end gap-1 rounded-2xl bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
-                  <Sparkle className="h-3.5 w-3.5 animate-bounce text-orange-500" />
-                  <Sparkle
-                    className="h-3.5 w-3.5 animate-bounce text-orange-500"
-                    style={{ animationDelay: '0.1s' }}
-                  />
-                  <Sparkle
-                    className="h-3.5 w-3.5 animate-bounce text-orange-500"
-                    style={{ animationDelay: '0.2s' }}
-                  />
-                </div>
+                <ProcessingAnim />
               ) : (
                 <div
                   className={`max-w-[82%] rounded-2xl px-4 py-2.5 text-sm ${
@@ -643,11 +739,11 @@ export default function ChatbotAssistant() {
             }
             className={`flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
               isRecording
-                ? 'animate-pulse border-red-500 bg-red-500 text-white'
+                ? 'border-red-500 bg-red-500 text-white'
                 : 'border-zinc-200 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
             }`}
           >
-            {isRecording ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+            {isRecording ? <VoiceWave active={true} /> : <Mic className="h-3.5 w-3.5" />}
           </button>
           <button
             type="submit"
