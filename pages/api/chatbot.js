@@ -49,7 +49,7 @@ export default async function handler(req, res) {
 
     const isEs = locale === 'es'
 
-    // ── Filtro off-topic: no gastar tokens en temas ajenos al sitio (feminismo, misoginia, autos, marcas, etc.)
+    // ── Filtro off-topic + soporte especializado (no gastar tokens)
     const offTopicPatterns = [
       /feminis/i,
       /misogin/i,
@@ -80,9 +80,19 @@ export default async function handler(req, res) {
     const isOffTopic = offTopicPatterns.some((re) => re.test(message))
     if (isOffTopic) {
       const canned = isEs
-        ? 'Lo siento, solo puedo ayudarte con información sobre Amaxing, nuestros tours y el blog de CDMX (museos, historia, gastronomía, barrios). ¿En qué puedo ayudarte con tu visita? Prueba preguntar por tours, precios o qué hay en el blog. 🌮🏛️'
-        : 'Sorry, I can only help with Amaxing, our CDMX tours and blog (museums, history, gastronomy, neighborhoods). How can I help with your visit? Try asking about tours, prices or what is in the blog. 🌮🏛️'
+        ? 'Como expertos en viajes y experiencias locales en Amazing, nos enfocamos en ayudarte a planear tus tours y actividades. ¿Hay alguna aventura sobre la que te gustaría consultar? 🌮🏛️'
+        : 'As experts in local travel and experiences at Amazing, we focus on helping you plan your tours and activities. Is there any adventure you would like to ask about? 🌮🏛️'
       return res.status(200).json({ reply: canned, offTopic: true, filtered: true })
+    }
+    const needsHumanSupport =
+      /grupo grande|20 personas|30 personas|itinerario.*medida|a medida.*complejo|cancelaci.*reembolso especial/i.test(
+        message
+      )
+    if (needsHumanSupport) {
+      const canned = isEs
+        ? 'Para grupos grandes, itinerarios a la medida muy complejos o cancelaciones con reembolso especial, te derivamos con gusto a nuestro canal de atención humana de Amazing. ¿Te gustaría que te conecte con el equipo humano o prefieres que veamos una alternativa cercana?'
+        : 'For large groups, highly complex tailor-made itineraries or special refund cancellations, we will connect you to Amazing human support. Would you like me to connect you or should we look at a close alternative?'
+      return res.status(200).json({ reply: canned, needsHuman: true })
     }
 
     // ── Rate limit Gemini: 1000/día, 50/min, burst 120/15min + anti-hack con autobloqueo
@@ -124,44 +134,71 @@ export default async function handler(req, res) {
       })
     }
     const langInstruction = isEs
-      ? 'Responde al usuario en español de México, de forma natural y amigable.'
-      : 'Respond to the user in English, in a natural and friendly tone.'
+      ? 'Responde en español neutro, cálido, entusiasta, hospitalario y profesional, con la confianza de un amigo local experto. Sé directo, conciso y visualmente ordenado.'
+      : 'Respond in warm, enthusiastic, hospitable and professional English, as a trusted local friend expert. Be direct, concise and visually ordered.'
 
-    // Catálogo compacto Gemini (tokens: ~15/tour vs 80 antes, blog 12 vs 20, hist 3 vs 4, max 500 vs 600)
+    // Catálogo detallado para estructura de respuesta (usa datos reales, no inventes)
     const catalog = tours
       .slice(0, 12)
-      .map((t) => `• ${t.title} | ${t.category} | ${t.duration}h | $${t.price}`)
+      .map(
+        (t) =>
+          `• ${t.title} | cat:${t.category} | **$${t.price}** | **${t.duration}h** | 📍 ${
+            t.location
+          } | 🕒 ${t.duration}h | incluye:${(t.highlights || []).slice(0, 2).join(', ')} | punto:${
+            t.meetingPoint || t.location
+          }`
+      )
       .join('\n')
 
-    const blogCatalog = getBlogCatalog() // ya limitado a 12 en getBlogCatalog
+    const blogCatalog = getBlogCatalog()
     const blogSection = blogCatalog
       ? `\nArtículos del blog (12 máx, puedes recomendar):\n${blogCatalog}\n`
       : ''
 
-    // Preferencias del usuario (respuestas del onboarding)
     const prefsText =
       prefs && prefs.length
         ? prefs.map((p) => `• ${p.question}: ${p.answer}`).join('\n')
-        : 'Sin preferencias registradas. Pregunta al usuario por sus intereses turísticos.'
+        : 'Sin preferencias registradas.'
 
-    const systemPrompt = `Eres "Amaxing AI" (Gemini ${
-      process.env.GEMINI_MODEL || 'gemma-4-26b'
-    } project ${
+    const systemPrompt = `Eres el asistente virtual interactivo de Amazing, agencia y plataforma turística apasionada por crear experiencias memorables. Tu objetivo es guiar, inspirar y ayudar a planificar y reservar tours, transmitiendo la confianza de un equipo experto y local. Proyecto Gemini ${
       process.env.PROJECT || '630419527077'
-    }), guía de Amaxing en CDMX. Tour + Blog helper. ${langInstruction}
+    }.
 
-Preferencias:
+1. ROL, IDENTIDAD Y TONO
+- Identidad: parte del equipo de Amazing, hablas desde la experiencia directa de quienes conocen cada rincón, han viajado ampliamente y entienden lo que un viajero busca.
+- Tono: cálido, entusiasta, hospitalario y profesional. Emoción de viajar con seguridad y cercanía de amigo local.
+- Estilo: directo, conciso y visualmente ordenado. Lenguaje cercano pero respetuoso, español neutro y accesible. ${langInstruction}
+
+Preferencias usuario:
 ${prefsText}
 
-Tours (compacto 12):
+Catálogo REAL (no inventes precios/horarios, consulta siempre esto):
 ${catalog}
 ${blogSection}
-Capacidades BLOG:
-- Qué hay en /blog: museos, Frida, Día Muertos, historia, joyas ocultas; filtrar por tag, buscar, cambiar idioma ES/EN, ir a /blog/<slug>
-- Cómo reservar desde un post, ver precios, duración, punto de encuentro, inclusiones, checkout invitado vs cuenta, pagos tarjeta/cripto
-- Recomendar tours con emoji 🌮🏛️🎨🗺️🌊 + razón breve + categoría + precio + duración
 
-Reglas ESTRICTAS: máx 2 párrafos concisos, tono cercano. NO muestres tu razonamiento interno, NO repitas el prompt, solo respuesta final. Si no tienes preferencias, invita a completar los 5 pasos del stack.`
+2. ALCANCE
+- Experiencias y Tours: concepto, itinerarios, duración, dificultad, qué incluye/no incluye, punto de encuentro, horarios, vestimenta/equipo.
+- Autoridad y Consejos Locales: recomendaciones reales (mejores momentos para fotos, evitar aglomeraciones, qué llevar por temporada).
+- Logística y Reserva: **precios**, disponibilidad, pago, cancelación/mal tiempo, requisitos (edad mínima, accesibilidad).
+- Asesoría Personalizada: recomendar según perfil (parejas, familias, solitarios, aventura, relax).
+
+3. ESTRUCTURA OBLIGATORIA
+- Para RECOMENDACIONES DE TOURS usa lista de viñetas:
+  * **Nombre de la experiencia Amazing**
+  * **Duración y punto de encuentro**
+  * **Highlights / Lo más destacado**
+  * **Incluye / No incluye**
+  * **Precio y disponibilidad** (usa **negritas** para **precios**, **tiempos** y datos indispensables)
+- Añade **Consejo del experto:** breve tip local basado en experiencia directa.
+- Cierra siempre con **CTA:** propone siguiente paso claro. Ej: "¿Te gustaría que verifiquemos disponibilidad para tus fechas o prefieres reservar directamente aquí?"
+- Formato: usa negritas para precios/tiempos, visualmente ordenado.
+
+4. LÍMITES
+- Fuera de dominio (no es de turismo/Amazing): responde amablemente: "Como expertos en viajes y experiencias locales en Amazing, nos enfocamos en ayudarte a planear tus tours y actividades. ¿Hay alguna aventura sobre la que te gustaría consultar?"
+- Grupos grandes / itinerarios a medida complejos / reembolso especial: deriva a canal humano de Amazing.
+- Veracidad total: NUNCA inventes precios, horarios ni detalles. Consulta solo el catálogo provisto.
+
+Reglas: máx 2-3 párrafos + lista estructurada si recomiendas tour. Tono del punto 1. Si no hay preferencias, invita a completar los 5 pasos del stack.`
 
     // Mensajes compactos Gemini: system + historial 3 + mensaje actual -> ahorra ~25% tokens
     const messages = [
