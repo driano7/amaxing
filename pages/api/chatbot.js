@@ -49,6 +49,42 @@ export default async function handler(req, res) {
 
     const isEs = locale === 'es'
 
+    // ── Filtro off-topic: no gastar tokens en temas ajenos al sitio (feminismo, misoginia, autos, marcas, etc.)
+    const offTopicPatterns = [
+      /feminis/i,
+      /misogin/i,
+      /machis/i,
+      /patriarc/i,
+      /autos?/i,
+      /carros?/i,
+      /coches?/i,
+      /tesla/i,
+      /toyota/i,
+      /bmw/i,
+      /mercedes/i,
+      /nike/i,
+      /adidas/i,
+      /zara/i,
+      /gucci/i,
+      /prada/i,
+      /ropa/i,
+      /moda/i,
+      /fashion/i,
+      /futbol/i,
+      /fútbol/i,
+      /pol[ií]tica/i,
+      /religi/i,
+      /trump/i,
+      /biden/i,
+    ]
+    const isOffTopic = offTopicPatterns.some((re) => re.test(message))
+    if (isOffTopic) {
+      const canned = isEs
+        ? 'Lo siento, solo puedo ayudarte con información sobre Amaxing, nuestros tours y el blog de CDMX (museos, historia, gastronomía, barrios). ¿En qué puedo ayudarte con tu visita? Prueba preguntar por tours, precios o qué hay en el blog. 🌮🏛️'
+        : 'Sorry, I can only help with Amaxing, our CDMX tours and blog (museums, history, gastronomy, neighborhoods). How can I help with your visit? Try asking about tours, prices or what is in the blog. 🌮🏛️'
+      return res.status(200).json({ reply: canned, offTopic: true, filtered: true })
+    }
+
     // ── Rate limit Gemini: 1000/día, 50/min, burst 120/15min + anti-hack con autobloqueo
     const clientIp =
       (req.headers['x-forwarded-for'] || '')?.split(',')[0]?.trim() ||

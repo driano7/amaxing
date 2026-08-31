@@ -124,6 +124,9 @@ export default function ChatbotAssistant() {
   const [isRecording, setIsRecording] = useState(false)
   const [micError, setMicError] = useState('')
   const [micSupported, setMicSupported] = useState(true)
+  const [quickInput, setQuickInput] = useState('')
+  const quickInputRef = useRef(null)
+  const [isQuickRecording, setIsQuickRecording] = useState(false)
   const reducedMotion = useReducedMotion()
 
   // Detectar móvil para mover el panel sobre el MobileDock
@@ -222,6 +225,80 @@ export default function ChatbotAssistant() {
       void 0
     }
   }, [isRecording, isEs])
+
+  const handleQuickMicToggle = useCallback(async () => {
+    const SR =
+      typeof window !== 'undefined'
+        ? window.SpeechRecognition || window.webkitSpeechRecognition
+        : null
+    if (!SR) {
+      try {
+        const s = await navigator.mediaDevices.getUserMedia({ audio: true })
+        s.getTracks().forEach((t) => t.stop())
+        setMicError(
+          isEs
+            ? 'Tu navegador no soporta dictado. Prueba Chrome/Edge.'
+            : 'Voice not supported. Try Chrome/Edge.'
+        )
+      } catch {
+        setMicError(isEs ? 'Permiso de micrófono denegado.' : 'Mic permission denied.')
+      }
+      return
+    }
+    if (isQuickRecording) {
+      try {
+        recognitionRef.current?.stop()
+      } catch {
+        /* noop */
+      }
+      setIsQuickRecording(false)
+      return
+    }
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ audio: true })
+      s.getTracks().forEach((t) => t.stop())
+    } catch {
+      setMicError(
+        isEs ? 'Necesitamos permiso del micrófono para dictar.' : 'Mic permission needed.'
+      )
+      return
+    }
+    const rec = new SR()
+    rec.lang = isEs ? 'es-MX' : 'en-US'
+    rec.interimResults = false
+    rec.maxAlternatives = 1
+    rec.onstart = () => {
+      setIsQuickRecording(true)
+      setMicError('')
+    }
+    rec.onend = () => setIsQuickRecording(false)
+    rec.onerror = (e) => {
+      setIsQuickRecording(false)
+      const err = e?.error || ''
+      if (err === 'not-allowed') setMicError(isEs ? 'Permiso denegado.' : 'Permission denied.')
+      else setMicError(isEs ? 'Error de micrófono.' : 'Mic error.')
+    }
+    rec.onresult = (event) => {
+      const transcript = event.results?.[0]?.[0]?.transcript || ''
+      if (transcript) {
+        setQuickInput(transcript)
+        if (quickInputRef.current) quickInputRef.current.focus()
+      }
+      setIsQuickRecording(false)
+    }
+    recognitionRef.current = rec
+    try {
+      rec.start()
+    } catch {
+      /* noop */
+    }
+  }, [isQuickRecording, isEs])
+
+  const handleQuickSend = () => {
+    if (!quickInput.trim() || isLoading) return
+    handleSend(quickInput.trim())
+    setQuickInput('')
+  }
 
   const t = (es, en) => (isEs ? es : en)
 
@@ -362,6 +439,72 @@ export default function ChatbotAssistant() {
               )
             })}
           </div>
+
+          {/* Recuadro texto/voz debajo de Naturaleza — solo para la pregunta de intereses */}
+          {q.id === 'interests' && (
+            <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-2.5 dark:border-orange-500/20 dark:bg-orange-500/10">
+              <p className="mb-1.5 text-[11px] font-semibold text-zinc-700 dark:text-zinc-300">
+                {t('¿Prefieres preguntar directo?', 'Prefer to ask directly?')}
+              </p>
+              <p className="mb-2 text-[10px] leading-tight text-zinc-500 dark:text-zinc-400">
+                {t(
+                  'Escribe o usa el micrófono. Solo respondemos sobre Amaxing, tours y blog.',
+                  'Type or use the mic. We only answer about Amaxing, tours and blog.'
+                )}
+              </p>
+              <div className="flex items-center gap-1.5">
+                <input
+                  ref={quickInputRef}
+                  type="text"
+                  value={quickInput}
+                  onChange={(e) => setQuickInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleQuickSend()
+                    }
+                  }}
+                  placeholder={t('Pregunta sobre el sitio...', 'Ask about the site...')}
+                  className="flex-1 rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:border-orange-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                />
+                <button
+                  type="button"
+                  onClick={handleQuickMicToggle}
+                  aria-label={t('Dictar', 'Dictate')}
+                  title={t(
+                    'Al tocar, el navegador pedirá permiso de micrófono',
+                    'Tapping will ask for mic permission'
+                  )}
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                    isQuickRecording
+                      ? 'animate-pulse border-red-500 bg-red-500 text-white'
+                      : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
+                  }`}
+                >
+                  {isQuickRecording ? (
+                    <MicOff className="h-3.5 w-3.5" />
+                  ) : (
+                    <Mic className="h-3.5 w-3.5" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleQuickSend}
+                  disabled={!quickInput.trim() || isLoading}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                  aria-label={t('Enviar', 'Send')}
+                >
+                  <Send className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <p className="mt-1.5 text-[9px] leading-none text-zinc-400 dark:text-zinc-500">
+                {t(
+                  '🎤 Requiere permiso del navegador para dictado por voz.',
+                  '🎤 Requires browser permission for voice dictation.'
+                )}
+              </p>
+            </div>
+          )}
 
           {step === QUESTIONS.length && (
             <motion.button
