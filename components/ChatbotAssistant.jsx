@@ -748,6 +748,15 @@ export default function ChatbotAssistant() {
           <button
             type="submit"
             disabled={isLoading}
+            onClick={(e) => {
+              // Fallback por si el submit no dispara (algunos móviles)
+              const v = inputRef.current?.value || ''
+              if (v.trim() && !isLoading) {
+                e.preventDefault()
+                handleSend(v)
+                if (inputRef.current) inputRef.current.value = ''
+              }
+            }}
             className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
           >
             <Send className="h-3.5 w-3.5" />
