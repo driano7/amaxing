@@ -36,6 +36,8 @@ import {
   Baby,
   Shield,
   Users2,
+  Mic,
+  MicOff,
 } from 'lucide-react'
 import { useChatbot } from '@/hooks/useChatbot'
 import { useLanguage } from '@/lib/hooks/useLanguage'
@@ -117,6 +119,11 @@ export default function ChatbotAssistant() {
   const [answers, setAnswers] = useState([])
   const [isMobile, setIsMobile] = useState(false)
   const scrollRef = useRef(null)
+  const inputRef = useRef(null)
+  const recognitionRef = useRef(null)
+  const [isRecording, setIsRecording] = useState(false)
+  const [micError, setMicError] = useState('')
+  const [micSupported, setMicSupported] = useState(true)
   const reducedMotion = useReducedMotion()
 
   // Detectar móvil para mover el panel sobre el MobileDock
@@ -126,6 +133,95 @@ export default function ChatbotAssistant() {
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
+
+  // Soporte dictado: SpeechRecognition
+  useEffect(() => {
+    const SR =
+      typeof window !== 'undefined'
+        ? window.SpeechRecognition || window.webkitSpeechRecognition
+        : null
+    setMicSupported(Boolean(SR))
+  }, [])
+
+  const handleMicToggle = useCallback(async () => {
+    const SR =
+      typeof window !== 'undefined'
+        ? window.SpeechRecognition || window.webkitSpeechRecognition
+        : null
+    if (!SR) {
+      // Fallback: pedir permiso de micro para mostrar el diálogo del navegador
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        stream.getTracks().forEach((t) => t.stop())
+        setMicError(
+          isEs
+            ? 'Tu navegador no soporta dictado por voz. Prueba Chrome/Edge.'
+            : 'Voice not supported. Try Chrome/Edge.'
+        )
+      } catch {
+        setMicError(
+          isEs
+            ? 'Permiso de micrófono denegado. Actívalo en el navegador.'
+            : 'Mic permission denied. Enable it in browser.'
+        )
+      }
+      return
+    }
+
+    if (isRecording) {
+      try {
+        recognitionRef.current?.stop()
+      } catch {
+        void 0
+      }
+      setIsRecording(false)
+      return
+    }
+
+    // Pedir permiso explícito (muestra prompt del sitio) antes de iniciar SpeechRecognition
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      stream.getTracks().forEach((t) => t.stop())
+    } catch {
+      setMicError(
+        isEs
+          ? 'Necesitamos permiso del micrófono para dictar.'
+          : 'Mic permission needed for dictation.'
+      )
+      return
+    }
+
+    const rec = new SR()
+    rec.lang = isEs ? 'es-MX' : 'en-US'
+    rec.interimResults = false
+    rec.maxAlternatives = 1
+    rec.onstart = () => {
+      setIsRecording(true)
+      setMicError('')
+    }
+    rec.onend = () => setIsRecording(false)
+    rec.onerror = (e) => {
+      setIsRecording(false)
+      const err = e?.error || ''
+      if (err === 'not-allowed') setMicError(isEs ? 'Permiso denegado.' : 'Permission denied.')
+      else if (err === 'no-speech') setMicError(isEs ? 'No se detectó voz.' : 'No speech detected.')
+      else setMicError(isEs ? 'Error de micrófono.' : 'Mic error.')
+    }
+    rec.onresult = (event) => {
+      const transcript = event.results?.[0]?.[0]?.transcript || ''
+      if (transcript && inputRef.current) {
+        inputRef.current.value = transcript
+        inputRef.current.focus()
+      }
+      setIsRecording(false)
+    }
+    recognitionRef.current = rec
+    try {
+      rec.start()
+    } catch {
+      void 0
+    }
+  }, [isRecording, isEs])
 
   const t = (es, en) => (isEs ? es : en)
 
@@ -198,7 +294,7 @@ export default function ChatbotAssistant() {
       type="button"
       onClick={onClick}
       disabled={isLoading}
-      className="inline-flex items-center justify-center rounded-full border border-zinc-200/50 bg-zinc-100/60 px-3.5 py-1.5 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+      className="inline-flex items-center justify-center rounded-full border border-zinc-200/50 bg-zinc-100/60 px-2.5 py-1 text-[11px] font-medium text-zinc-800 transition-colors hover:bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
     >
       {label}
     </button>
@@ -222,30 +318,31 @@ export default function ChatbotAssistant() {
   }
 
   const renderContent = () => {
-    // ---- Onboarding flow ----
+    // ---- Onboarding flow (stack compacto 5 opciones) ----
     if (!onboardingDone && step > 0 && step <= QUESTIONS.length) {
       const q = QUESTIONS[step - 1]
       const progress = ((step - 1) / QUESTIONS.length) * 100
 
       return (
-        <div className="flex flex-col gap-5 overflow-y-auto p-5">
+        <div className="flex flex-col gap-3 overflow-y-auto p-3">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-base font-semibold text-zinc-900 dark:text-white">
+            <h3 className="text-sm font-semibold leading-snug text-zinc-900 dark:text-white">
               {t(q.es, q.en)}
             </h3>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              {step} {t('de', 'of')} {QUESTIONS.length}
+            <span className="shrink-0 text-xs text-zinc-500 dark:text-zinc-400">
+              {step}/{QUESTIONS.length}
             </span>
           </div>
 
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
             <div
               className="h-full rounded-full bg-orange-500 transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5">
+          {/* Stack vertical ultra-compacto: 5 opciones, mínimo espacio */}
+          <div className="flex flex-col gap-1">
             {q.options.map((opt) => {
               const Icon = opt.icon
               return (
@@ -253,12 +350,14 @@ export default function ChatbotAssistant() {
                   key={opt.value}
                   type="button"
                   onClick={() => handleSelectOption(opt)}
-                  className="group flex flex-col items-center gap-1.5 rounded-xl border border-zinc-200/60 bg-zinc-50/70 p-3 text-center transition-all duration-200 hover:border-orange-400 hover:bg-orange-500/10 hover:text-orange-600 dark:border-zinc-700 dark:bg-zinc-800/70 dark:hover:text-orange-400"
+                  className="group flex items-center gap-2 rounded-lg border border-zinc-200/60 bg-zinc-50/70 px-2.5 py-1.5 text-left transition-all duration-150 hover:border-orange-400 hover:bg-orange-500/10 dark:border-zinc-700 dark:bg-zinc-800/70"
                 >
-                  <span className="bg-orange-500/15 flex h-8 w-8 items-center justify-center rounded-full text-orange-500">
-                    <Icon className="h-4 w-4" />
+                  <span className="bg-orange-500/15 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-orange-500">
+                    <Icon className="h-3 w-3" />
                   </span>
-                  <span className="text-xs font-medium">{t(opt.es, opt.en)}</span>
+                  <span className="text-[11px] font-medium leading-none text-zinc-800 dark:text-zinc-100">
+                    {t(opt.es, opt.en)}
+                  </span>
                 </button>
               )
             })}
@@ -269,7 +368,7 @@ export default function ChatbotAssistant() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={finishOnboarding}
-              className="mt-2 w-full rounded-full bg-orange-500 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+              className="mt-1 w-full rounded-full bg-orange-500 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
             >
               {t('¡Ver mis recomendaciones!', 'Show my recommendations!')}
             </motion.button>
@@ -314,8 +413,8 @@ export default function ChatbotAssistant() {
           ))}
         </div>
 
-        {/* Quick actions */}
-        <div className="flex flex-wrap gap-2 px-4 py-2">
+        {/* Quick actions — stack compacto */}
+        <div className="flex flex-wrap gap-1 px-3 py-1.5">
           <QuickAction
             label={t('Recomiéndame tours', 'Recommend me tours')}
             onClick={() =>
@@ -323,6 +422,16 @@ export default function ChatbotAssistant() {
                 isEs
                   ? 'Recomiéndame tours de México que me encantarían'
                   : 'Recommend Mexico tours I would love'
+              )
+            }
+          />
+          <QuickAction
+            label={t('Qué hay en el blog?', 'What is in the blog?')}
+            onClick={() =>
+              handleSend(
+                isEs
+                  ? '¿Qué puedo hacer en el blog? Muéstrame artículos'
+                  : 'What can I do in the blog? Show me articles'
               )
             }
           />
@@ -340,7 +449,7 @@ export default function ChatbotAssistant() {
           />
         </div>
 
-        {/* Input */}
+        {/* Input + Mic — stack compacto con permiso explícito */}
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -348,23 +457,65 @@ export default function ChatbotAssistant() {
             handleSend(input.value)
             input.value = ''
           }}
-          className="flex items-center gap-2 border-t border-zinc-200/60 px-4 py-3 dark:border-zinc-800"
+          className="flex items-center gap-1 border-t border-zinc-200/60 px-2.5 py-2 dark:border-zinc-800"
         >
           <input
+            ref={inputRef}
             name="chat"
             type="text"
-            placeholder={t('Escribe un mensaje...', 'Type a message...')}
+            placeholder={
+              isRecording
+                ? t('Escuchando...', 'Listening...')
+                : t('Escribe o usa el micrófono...', 'Type or use microphone...')
+            }
             disabled={isLoading}
             className="flex-1 bg-transparent text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none dark:text-zinc-100"
           />
           <button
+            type="button"
+            onClick={handleMicToggle}
+            aria-label={t('Dictar con micrófono', 'Dictate with microphone')}
+            title={
+              !micSupported
+                ? t(
+                    'Dictado no soportado — el sitio pedirá permiso de micrófono',
+                    'Dictation not supported — site will ask for mic permission'
+                  )
+                : isRecording
+                ? t('Detener', 'Stop')
+                : t('Dictar (pedirá permiso)', 'Dictate (will ask permission)')
+            }
+            className={`flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
+              isRecording
+                ? 'animate-pulse border-red-500 bg-red-500 text-white'
+                : 'border-zinc-200 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
+            }`}
+          >
+            {isRecording ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+          </button>
+          <button
             type="submit"
             disabled={isLoading}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-3.5 w-3.5" />
           </button>
         </form>
+        <p className="px-2.5 pb-1 text-[10px] leading-none text-zinc-400 dark:text-zinc-500">
+          {t(
+            'Al tocar 🎤 el navegador pedirá permiso de micrófono para dictado. Úsalo para preguntar qué hacer en el blog (/blog), tours, precios, etc.',
+            'Tapping 🎤 will ask for mic permission for dictation. Use it to ask about the blog (/blog), tours, prices, etc.'
+          )}
+        </p>
+        {micError && <p className="px-2.5 pb-1.5 text-xs text-red-500">{micError}</p>}
+        {isRecording && (
+          <p className="px-2.5 pb-1.5 text-xs text-orange-500">
+            {t(
+              'Permiso concedido — habla ahora. Procesando tu petición...',
+              'Permission granted — speak now. Processing your request...'
+            )}
+          </p>
+        )}
       </>
     )
   }
