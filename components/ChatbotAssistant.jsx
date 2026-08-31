@@ -596,9 +596,10 @@ export default function ChatbotAssistant() {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            const input = e.currentTarget.elements.chat
-            handleSend(input.value)
-            input.value = ''
+            const val = inputRef.current?.value || ''
+            if (!val.trim()) return
+            handleSend(val)
+            if (inputRef.current) inputRef.current.value = ''
           }}
           className="flex items-center gap-1 border-t border-zinc-200/60 px-2.5 py-2 dark:border-zinc-800"
         >
@@ -606,12 +607,24 @@ export default function ChatbotAssistant() {
             ref={inputRef}
             name="chat"
             type="text"
+            autoComplete="off"
+            enterKeyHint="send"
             placeholder={
               isRecording
                 ? t('Escuchando...', 'Listening...')
                 : t('Escribe o usa el micrófono...', 'Type or use microphone...')
             }
             disabled={isLoading}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                const v = e.target.value
+                if (v.trim() && !isLoading) {
+                  handleSend(v)
+                  e.target.value = ''
+                }
+              }
+            }}
             className="flex-1 bg-transparent text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none dark:text-zinc-100"
           />
           <button
