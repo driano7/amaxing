@@ -245,23 +245,29 @@ function WalletMock({
     })
   }, [flipControls, reduceMotion, themePulseKey])
 
-  const tokens = [
-    { symbol: 'ETH', name: 'Ethereum', balance: '0.84', usd: '2,195.20', icon: <SiEthereum /> },
+  const tours = [
     {
-      symbol: 'USDC',
-      name: 'USD Coin',
-      balance: '1,250.00',
-      usd: '1,250.00',
-      icon: <RiCoinsLine />,
+      symbol: '🌮',
+      name: 'Taco Tour',
+      balance: 'Centro Histórico',
+      usd: '$45',
+      icon: <span>🌮</span>,
     },
-    { symbol: 'DAI', name: 'Dai', balance: '620.50', usd: '620.50', icon: <RiCoinsLine /> },
-    { symbol: 'BNB', name: 'BNB', balance: '6.80', usd: '3,210.00', icon: <SiBinance /> },
+    { symbol: '🏛️', name: 'Museo Frida', balance: 'Coyoacán', usd: '$60', icon: <span>🏛️</span> },
+    {
+      symbol: '🎨',
+      name: 'Arte Urbano',
+      balance: 'Roma/Condesa',
+      usd: '$55',
+      icon: <span>🎨</span>,
+    },
+    { symbol: '🛶', name: 'Xochimilco', balance: 'Trajineras', usd: '$40', icon: <span>🛶</span> },
   ]
 
-  const txs = [
-    { hash: '0x3a9f…b21c', label: 'Swap USDC → DAI', status: 'Success', amount: '-240 USDC' },
-    { hash: '0x9c10…8fd2', label: 'Stake BNB', status: 'Pending', amount: '-0.80 BNB' },
-    { hash: '0x7d55…a011', label: 'Receive ETH', status: 'Success', amount: '+0.12 ETH' },
+  const bookings = [
+    { hash: 'AMX-7K9', label: 'Reserva Taco Tour', status: 'Confirmado', amount: '2 personas' },
+    { hash: 'AMX-3Q2', label: 'Museo Frida', status: 'Pendiente', amount: '3 personas' },
+    { hash: 'AMX-9P1', label: 'Xochimilco', status: 'Confirmado', amount: '4 personas' },
   ]
 
   return (
@@ -276,10 +282,10 @@ function WalletMock({
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-0.5">
           <p className="text-[11px] font-semibold tracking-wide text-slate-700 dark:text-white/75">
-            Wallet
+            Amaxing Tours
           </p>
           <p className="text-xs font-bold text-slate-900 dark:text-white">
-            {connected ? 'Connected' : 'Not connected'}
+            {connected ? '3 tours guardados' : 'Explora CDMX'}
           </p>
         </div>
         <button
@@ -294,14 +300,14 @@ function WalletMock({
             backgroundColor: ac10,
             color: ac,
           }}
-          aria-label="Connect"
+          aria-label="Explorar"
         >
-          Connect
+          {connected ? 'Guardado' : 'Explorar'}
         </button>
       </div>
 
       <div className="mt-3 space-y-2">
-        {tokens.map((t) => (
+        {tours.map((t) => (
           <div
             key={t.symbol}
             className={clsx(
@@ -323,15 +329,13 @@ function WalletMock({
                 {t.icon}
               </span>
               <div className="leading-tight">
-                <p className="text-xs font-bold">{t.symbol}</p>
-                <p className="dark:text-white/65 text-[11px] text-slate-600">
-                  {t.balance} {t.symbol}
-                </p>
+                <p className="text-xs font-bold">{t.name}</p>
+                <p className="dark:text-white/65 text-[11px] text-slate-600">{t.balance}</p>
               </div>
             </div>
             <div className="text-right leading-tight">
-              <p className="text-xs font-bold">${t.usd}</p>
-              <p className="dark:text-white/65 text-[11px] text-slate-600">{t.name}</p>
+              <p className="text-xs font-bold">{t.usd}</p>
+              <p className="dark:text-white/65 text-[11px] text-slate-600">{t.symbol}</p>
             </div>
           </div>
         ))}
@@ -339,10 +343,10 @@ function WalletMock({
 
       <div className="mt-3">
         <p className="text-[11px] font-semibold tracking-wide text-slate-700 dark:text-white/75">
-          Latest txs
+          Mis reservas
         </p>
         <div className="mt-2 space-y-2">
-          {txs.map((tx) => (
+          {bookings.map((tx) => (
             <div
               key={tx.hash}
               className={clsx(
@@ -502,66 +506,67 @@ export function HeroPhoneWalletScroll({
   const phoneScale = useTransform(basePhoneScale, (v) => v * (isMobile ? 0.65 : 0.8625))
   const phoneY = useTransform(progress, [0, 0.35, 0.65, 1], [70, -6, -16, -20])
   const glowOpacity = useTransform(progress, [0, 0.35, 1], [0.0, 0.35, 0.55])
+  const cardScaleFactor = (isMobile ? 0.65 : 0.8625) * 0.85
   const scaleFactor = isMobile ? 0.65 : 0.8625
   const pantallasPerifericas: PantallaPerifericaLayout[] = useMemo(
     () => [
       {
         id: 'top-left',
-        title: 'AI / LLM demo',
-        ariaLabel: 'Pantalla periférica top-left: demo AI / LLM',
+        title: 'Gastronomía CDMX',
+        ariaLabel: 'Pantalla periférica top-left: tours gastronómicos',
         initialX: isMobile ? -96 : -260,
         initialY: isMobile ? -220 : -200,
         initialRotate: -6,
-        width: Math.round((isMobile ? 170 : 200) * scaleFactor),
-        height: Math.round((isMobile ? 150 : 148) * scaleFactor),
+        width: Math.round((isMobile ? 170 : 200) * cardScaleFactor),
+        height: Math.round((isMobile ? 150 : 148) * cardScaleFactor),
       },
       {
         id: 'top-right',
-        title: 'ML / Entrenamiento',
-        ariaLabel: 'Pantalla periférica top-right: métricas de entrenamiento ML',
+        title: 'Historia Viva',
+        ariaLabel: 'Pantalla periférica top-right: historia y cultura',
         initialX: isMobile ? 96 : 260,
         initialY: isMobile ? -220 : -200,
         initialRotate: 6,
-        width: Math.round((isMobile ? 165 : 190) * scaleFactor),
-        height: Math.round((isMobile ? 148 : 140) * scaleFactor),
+        width: Math.round((isMobile ? 165 : 190) * cardScaleFactor),
+        height: Math.round((isMobile ? 148 : 140) * cardScaleFactor),
       },
       {
         id: 'mid-left',
-        title: 'Web3 / DApp',
-        ariaLabel: 'Pantalla periférica mid-left: dashboard de DApp',
+        title: 'Barrios Mágicos',
+        ariaLabel: 'Pantalla periférica mid-left: barrios Roma Condesa',
         initialX: isMobile ? -112 : -320,
         initialY: isMobile ? -30 : -20,
         initialRotate: -8,
-        width: Math.round((isMobile ? 190 : 240) * scaleFactor),
-        height: Math.round((isMobile ? 170 : 180) * scaleFactor),
+        width: Math.round((isMobile ? 190 : 240) * cardScaleFactor),
+        height: Math.round((isMobile ? 170 : 180) * cardScaleFactor),
       },
       {
         id: 'mid-right',
-        title: 'Blockchain / Explorer',
-        ariaLabel: 'Pantalla periférica mid-right: explorador de transacciones',
+        title: 'Museos & Arte',
+        ariaLabel: 'Pantalla periférica mid-right: museos y arte',
         initialX: isMobile ? 112 : 320,
         initialY: isMobile ? -30 : -20,
         initialRotate: 8,
-        width: Math.round((isMobile ? 185 : 230) * scaleFactor),
-        height: Math.round((isMobile ? 168 : 172) * scaleFactor),
+        width: Math.round((isMobile ? 185 : 230) * cardScaleFactor),
+        height: Math.round((isMobile ? 168 : 172) * cardScaleFactor),
       },
       {
         id: 'bottom-left',
-        title: 'Stablecoins / Swap',
-        ariaLabel: 'Pantalla periférica bottom-left: swap de stablecoins',
+        title: 'Mis Reservas',
+        ariaLabel: 'Pantalla periférica bottom-left: reservas y tickets',
         initialX: isMobile ? -86 : -240,
         initialY: isMobile ? 220 : 200,
         initialRotate: -4,
-        width: Math.round((isMobile ? 160 : 185) * scaleFactor),
-        height: Math.round((isMobile ? 146 : 136) * scaleFactor),
+        width: Math.round((isMobile ? 160 : 185) * cardScaleFactor),
+        height: Math.round((isMobile ? 146 : 136) * cardScaleFactor),
       },
     ],
-    [isMobile, scaleFactor]
+    [isMobile, cardScaleFactor]
   )
 
-  const [aiPrompt, setAiPrompt] = useState("Resume este bloque: 'Stake, Swap, Farm' en 1 línea.")
+  const [aiPrompt, setAiPrompt] = useState('Recomienda un tour gastronómico para 2 personas')
   const [aiOutput, setAiOutput] = useState<string | null>(
-    'Acciones: stakea, intercambia y farmea desde un panel Web3.'
+    'Taco Tour Centro Histórico, 3h, $45 — incluye guía local y degustación.'
   )
 
   const ac = accentColor
@@ -572,7 +577,7 @@ export function HeroPhoneWalletScroll({
   const ac60 = `${ac}99`
 
   const runAiMock = () => {
-    setAiOutput('Acciones: stakea, intercambia y farmea desde un panel Web3.')
+    setAiOutput('Taco Tour Centro Histórico, 3h, $45 — incluye guía local y degustación.')
   }
   const clearAiMock = () => setAiOutput(null)
 
@@ -593,14 +598,14 @@ export function HeroPhoneWalletScroll({
           <div className="space-y-6">
             <div className="dark:border-white/15 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors duration-[160ms] dark:bg-white/5 dark:text-white/75">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ac }} aria-hidden />
-              Tecnologías clave (demo)
+              Experiencias locales (demo)
             </div>
             <h2 className="text-slate-950 text-3xl font-extrabold tracking-tight transition-colors duration-[160ms] dark:text-white md:text-4xl">
-              Blockchain, Web3, AI/LLM, ML y stablecoins — en una sola vista.
+              Gastronomía, Historia, Barrios y Museos — todo tu viaje en una sola vista.
             </h2>
             <p className="max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white/70">
-              Nos enfocamos en tecnologías aplicadas a negocio: blockchain y Web3, automatización
-              con AI/LLM, entrenamiento ML y flujos con stablecoins.
+              Nos enfocamos en experiencias locales: sabores de mercado, historia viva, arte en
+              museos y la vida de barrios mágicos de la CDMX.
             </p>
 
             {/* Integración externa: ejemplo de cómo pasar scrollProgress desde un trigger propio.
@@ -722,8 +727,8 @@ export function HeroPhoneWalletScroll({
                       }
 
                       if (layout.id === 'top-right') {
-                        const loss = '0.042'
-                        const acc = '98.6%'
+                        const rating = '4.9'
+                        const reviews = '1,248'
                         return (
                           <PantallaMarco
                             title={layout.title}
@@ -738,25 +743,25 @@ export function HeroPhoneWalletScroll({
                                 <div className="grid grid-cols-2 gap-2">
                                   <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
                                     <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      loss
+                                      calificación
                                     </p>
                                     <p className="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">
-                                      {loss}
+                                      {rating} ★
                                     </p>
                                   </div>
                                   <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
                                     <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      accuracy
+                                      reseñas
                                     </p>
                                     <p className="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">
-                                      {acc}
+                                      {reviews}
                                     </p>
                                   </div>
                                 </div>
 
                                 <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
                                   <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                    training curve
+                                    Teotihuacán al amanecer
                                   </p>
                                   <svg
                                     viewBox="0 0 120 42"
@@ -816,10 +821,10 @@ export function HeroPhoneWalletScroll({
                               <motion.div style={{ y: parallaxY }} className="space-y-2">
                                 <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
                                   <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                    actions
+                                    barrios
                                   </p>
                                   <div className="mt-2 grid grid-cols-3 gap-2">
-                                    {['Stake', 'Swap', 'Farm'].map((a) => (
+                                    {['Roma', 'Condesa', 'Centro'].map((a) => (
                                       <div
                                         key={a}
                                         className="rounded-2xl border border-black/10 bg-white/60 px-2 py-1 text-center text-[11px] font-semibold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-white/80"
@@ -833,24 +838,24 @@ export function HeroPhoneWalletScroll({
                                 <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
                                   <div className="flex items-center justify-between">
                                     <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      balances
+                                      próximos
                                     </p>
                                     <span className="dark:text-white/55 text-[10px] text-slate-500">
-                                      mock
+                                      hoy
                                     </span>
                                   </div>
                                   <div className="mt-2 space-y-1 text-[11px] text-slate-700 dark:text-white/70">
                                     <div className="flex items-center justify-between">
-                                      <span>stETH</span>
-                                      <span className="font-semibold">1.10</span>
+                                      <span>Taco Tour</span>
+                                      <span className="font-semibold">10:00</span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                      <span>USDC</span>
-                                      <span className="font-semibold">1,250</span>
+                                      <span>Museo Frida</span>
+                                      <span className="font-semibold">11:30</span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                      <span>BNB</span>
-                                      <span className="font-semibold">6.80</span>
+                                      <span>Xochimilco</span>
+                                      <span className="font-semibold">16:00</span>
                                     </div>
                                   </div>
                                 </div>
@@ -873,11 +878,11 @@ export function HeroPhoneWalletScroll({
                       }
 
                       if (layout.id === 'mid-right') {
-                        const txs = [
-                          { hash: '0xa4f…91b', eth: '0.12', status: 'OK' },
-                          { hash: '0x1c0…aa2', eth: '0.03', status: 'OK' },
-                          { hash: '0x90d…7f1', eth: '1.04', status: 'PEND' },
-                          { hash: '0x8e2…19c', eth: '0.07', status: 'OK' },
+                        const reservas = [
+                          { id: 'AMX-7K9', tour: 'Museo Frida', hora: '11:30', estado: 'OK' },
+                          { id: 'AMX-3Q2', tour: 'Barrio Roma', hora: '10:00', estado: 'OK' },
+                          { id: 'AMX-9P1', tour: 'Xochimilco', hora: '16:00', estado: 'PEND' },
+                          { id: 'AMX-4X8', tour: 'Taco Tour', hora: '09:00', estado: 'OK' },
                         ]
                         return (
                           <PantallaMarco
@@ -893,23 +898,23 @@ export function HeroPhoneWalletScroll({
                                 <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
                                   <div className="flex items-center justify-between">
                                     <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      latest txs
+                                      próximas reservas
                                     </p>
                                     <span className="dark:text-white/55 text-[10px] text-slate-500">
-                                      L2
+                                      hoy
                                     </span>
                                   </div>
                                   <div className="mt-2 space-y-1">
-                                    {txs.map((t) => (
+                                    {reservas.map((t) => (
                                       <div
-                                        key={t.hash}
+                                        key={t.id}
                                         className="flex items-center justify-between rounded-2xl border border-black/10 bg-white/60 px-2 py-1 text-[11px] dark:border-white/10 dark:bg-white/5"
                                       >
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
-                                          {t.hash}
+                                          {t.id}
                                         </span>
                                         <span className="dark:text-white/65 text-slate-600">
-                                          {t.eth} ETH
+                                          {t.hora}
                                         </span>
                                         <span
                                           className={clsx(
@@ -946,16 +951,16 @@ export function HeroPhoneWalletScroll({
                               <motion.div style={{ y: parallaxY }} className="space-y-2">
                                 <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
                                   <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                    swap
+                                    reserva
                                   </p>
                                   <div className="mt-2 space-y-2">
                                     <div className="rounded-2xl border border-black/10 bg-white/60 p-2 dark:border-white/10 dark:bg-white/5">
                                       <div className="flex items-center justify-between text-[11px]">
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
-                                          USDC
+                                          Taco Tour
                                         </span>
                                         <span className="dark:text-white/65 text-slate-600">
-                                          250.00
+                                          2 pers.
                                         </span>
                                       </div>
                                       <div className="mt-1 h-2 rounded-full bg-slate-200 dark:bg-white/10">
@@ -968,14 +973,14 @@ export function HeroPhoneWalletScroll({
                                     <div className="rounded-2xl border border-black/10 bg-white/60 p-2 dark:border-white/10 dark:bg-white/5">
                                       <div className="flex items-center justify-between text-[11px]">
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
-                                          DAI
+                                          Museo Frida
                                         </span>
                                         <span className="dark:text-white/65 text-slate-600">
-                                          249.62
+                                          3 pers.
                                         </span>
                                       </div>
                                       <p className="dark:text-white/55 mt-1 text-[10px] text-slate-500">
-                                        fee 0.15%
+                                        11:30 • Confirmado
                                       </p>
                                     </div>
                                   </div>
