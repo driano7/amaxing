@@ -128,6 +128,7 @@ export default function ChatbotAssistant() {
   const [quickInput, setQuickInput] = useState('')
   const quickInputRef = useRef(null)
   const [isQuickRecording, setIsQuickRecording] = useState(false)
+  const [stackCollapsed, setStackCollapsed] = useState(false)
   const audioContextRef = useRef(null)
   const analyserRef = useRef(null)
   const [audioLevels, setAudioLevels] = useState([8, 12, 20, 14, 9])
@@ -405,9 +406,23 @@ export default function ChatbotAssistant() {
 
   const handleQuickSend = () => {
     if (!quickInput.trim() || isLoading) return
+    setStackCollapsed(true)
     handleSend(quickInput.trim())
     setQuickInput('')
   }
+
+  // Cuando el usuario escribe o usa voz, colapsar el stack y mostrar animaciones
+  useEffect(() => {
+    if (
+      quickInput.length > 0 ||
+      isQuickRecording ||
+      isRecording ||
+      isLoading ||
+      messages.length > 0
+    ) {
+      setStackCollapsed(true)
+    }
+  }, [quickInput, isQuickRecording, isRecording, isLoading, messages.length])
 
   const t = (es, en) => (isEs ? es : en)
 
@@ -528,27 +543,88 @@ export default function ChatbotAssistant() {
             />
           </div>
 
-          {/* Stack vertical ultra-compacto: 5 opciones, mínimo espacio */}
-          <div className="flex flex-col gap-1">
-            {q.options.map((opt) => {
-              const Icon = opt.icon
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => handleSelectOption(opt)}
-                  className="group flex items-center gap-2 rounded-lg border border-zinc-200/60 bg-zinc-50/70 px-2.5 py-1.5 text-left transition-all duration-150 hover:border-orange-400 hover:bg-orange-500/10 dark:border-zinc-700 dark:bg-zinc-800/70"
-                >
-                  <span className="bg-orange-500/15 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-orange-500">
-                    <Icon className="h-3 w-3" />
-                  </span>
-                  <span className="text-[11px] font-medium leading-none text-zinc-800 dark:text-zinc-100">
-                    {t(opt.es, opt.en)}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
+          {/* Botón para colapsar/expandir stack cuando se usa texto/voz */}
+          {stackCollapsed ? (
+            <button
+              type="button"
+              onClick={() => setStackCollapsed(false)}
+              className="flex w-full items-center justify-between rounded-lg border border-orange-500/20 bg-orange-500/5 px-3 py-2 text-left dark:border-orange-500/20"
+            >
+              <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                {t('Stack colapsado — 5 opciones', 'Stack collapsed — 5 options')}
+              </span>
+              <span className="text-xs font-bold text-orange-500">{t('Ver', 'Show')} ▾</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setStackCollapsed(true)}
+              className="self-end text-[10px] font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
+            >
+              {t('Colapsar', 'Collapse')} ▴
+            </button>
+          )}
+
+          <AnimatePresence initial={false}>
+            {!stackCollapsed ? (
+              <motion.div
+                key="stack"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden"
+              >
+                {/* Stack vertical ultra-compacto: 5 opciones, mínimo espacio */}
+                <div className="flex flex-col gap-1">
+                  {q.options.map((opt) => {
+                    const Icon = opt.icon
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => handleSelectOption(opt)}
+                        className="group flex items-center gap-2 rounded-lg border border-zinc-200/60 bg-zinc-50/70 px-2.5 py-1.5 text-left transition-all duration-150 hover:border-orange-400 hover:bg-orange-500/10 dark:border-zinc-700 dark:bg-zinc-800/70"
+                      >
+                        <span className="bg-orange-500/15 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-orange-500">
+                          <Icon className="h-3 w-3" />
+                        </span>
+                        <span className="text-[11px] font-medium leading-none text-zinc-800 dark:text-zinc-100">
+                          {t(opt.es, opt.en)}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="voice-anim"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800"
+              >
+                {isQuickRecording || isRecording ? (
+                  <>
+                    <VoiceWave active={true} />
+                    <p className="text-xs font-medium text-orange-500">
+                      {t('Escuchando...', 'Listening...')}
+                    </p>
+                  </>
+                ) : isLoading ? (
+                  <ProcessingAnim />
+                ) : (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    {t(
+                      'Escribe abajo o usa el micrófono para preguntar',
+                      'Type below or use mic to ask'
+                    )}
+                  </p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Recuadro texto/voz debajo de Naturaleza — solo para la pregunta de intereses */}
           {q.id === 'interests' && (
