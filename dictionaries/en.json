@@ -83,7 +83,13 @@
     "localGuide": "Expert local guide",
     "luxuryTransport": "Luxury transportation",
     "signatureCocktails": "Signature cocktails",
-    "culturalInsights": "Cultural insights"
+    "culturalInsights": "Cultural insights",
+    "customBanner": {
+      "title": "Looking for something different?",
+      "subtitle": "We create tailor-made tours: tell us your interests, timing and group size and we design your perfect CDMX experience.",
+      "cta": "Request custom tour",
+      "note": "We reply within 24h with proposal and price."
+    }
   },
   "stories": {
     "title": "Traveler Stories",

@@ -83,7 +83,13 @@
     "localGuide": "Guía experto local",
     "luxuryTransport": "Transporte de lujo",
     "signatureCocktails": "Cocteles tradicionales",
-    "culturalInsights": "Perspectivas culturales"
+    "culturalInsights": "Perspectivas culturales",
+    "customBanner": {
+      "title": "¿No encuentras lo que buscas?",
+      "subtitle": "Creamos tours a la medida: cuéntanos tus intereses, tiempos y grupo y diseñamos tu experiencia perfecta en CDMX.",
+      "cta": "Solicitar tour a la medida",
+      "note": "Te respondemos en 24h con propuesta y precio."
+    }
   },
   "stories": {
     "title": "Historias de Viajeros",
