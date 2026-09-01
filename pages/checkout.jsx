@@ -35,9 +35,20 @@ export default function CheckoutPage() {
   const [createdBookings, setCreatedBookings] = useState([])
   const [selectedTicket, setSelectedTicket] = useState(null)
 
-  // Método de pago: tarjeta (Stripe) o cripto
+  // Método de pago: tarjeta (Stripe), cripto o efectivo
   const [payMethod, setPayMethod] = useState('card')
   const [showCryptoModal, setShowCryptoModal] = useState(false)
+
+  // Detectar si viene del carrito con ?cash=1 o localStorage flag
+  useEffect(() => {
+    try {
+      const cashParam = new URLSearchParams(window.location.search).get('cash')
+      const cashFlag = localStorage.getItem('amaxing_pay_cash')
+      if (cashParam === '1' || cashFlag === '1') setPayMethod('cash')
+    } catch (e) {
+      void 0
+    }
+  }, [])
 
   // Form de la tarjeta (vista previa visual en la flip card)
   const [form, setForm] = useState({
@@ -230,7 +241,7 @@ export default function CheckoutPage() {
             currency: locale === 'es' ? 'MXN' : 'USD',
           })
         )
-      } catch {
+      } catch (e) {
         void 0
       }
 
@@ -262,7 +273,7 @@ export default function CheckoutPage() {
             if (snap.guestEmail) gEmail = snap.guestEmail
             if (snap.currency) currency = snap.currency
           }
-        } catch {
+        } catch (e) {
           void 0
         }
 
@@ -320,7 +331,7 @@ export default function CheckoutPage() {
             'amaxing_bookings',
             JSON.stringify([...(Array.isArray(parsed) ? parsed : []), ...bookings])
           )
-        } catch {
+        } catch (e) {
           /* storage lleno o no disponible */
         }
 
@@ -347,13 +358,13 @@ export default function CheckoutPage() {
               eventData: { isGuest: !!data.isGuest, itemCount, currency },
             }),
           })
-        } catch {
+        } catch (e) {
           void 0
         }
 
         try {
           sessionStorage.removeItem('amaxing_checkout_snapshot')
-        } catch {
+        } catch (e) {
           void 0
         }
         clearCart()
@@ -535,7 +546,7 @@ export default function CheckoutPage() {
                 JSON.stringify([...existing, ...cryptoBookings])
               )
               setCreatedBookings(cryptoBookings)
-            } catch {
+            } catch (e) {
               // storage error
             }
             clearCart()
@@ -808,11 +819,11 @@ export default function CheckoutPage() {
               </h2>
 
               {/* Selector de método */}
-              <div className="mb-5 grid grid-cols-2 gap-3">
+              <div className="mb-5 grid grid-cols-3 gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setPayMethod('card')}
-                  className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-all ${
+                  className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
                     payMethod === 'card'
                       ? 'border-orange-500 bg-orange-500/10 text-orange-600 dark:text-orange-400'
                       : 'dark:border-white/15 border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:text-gray-400'
@@ -824,7 +835,7 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => setPayMethod('crypto')}
-                  className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-all ${
+                  className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
                     payMethod === 'crypto'
                       ? 'border-orange-500 bg-orange-500/10 text-orange-600 dark:text-orange-400'
                       : 'dark:border-white/15 border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:text-gray-400'
@@ -833,9 +844,211 @@ export default function CheckoutPage() {
                   <span aria-hidden="true">₿</span>
                   {locale === 'es' ? 'Cripto' : 'Crypto'}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setPayMethod('cash')}
+                  className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
+                    payMethod === 'cash'
+                      ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                      : 'dark:border-white/15 border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:text-gray-400'
+                  }`}
+                >
+                  💵 {locale === 'es' ? 'Efectivo' : 'Cash'}
+                </button>
               </div>
 
-              {payMethod === 'card' ? (
+              {payMethod === 'cash' ? (
+                <>
+                  <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-5 text-center dark:border-emerald-500/20 dark:bg-emerald-500/10">
+                    <p className="text-3xl">💵</p>
+                    <h3 className="mt-2 font-bold text-gray-900 dark:text-white">
+                      {locale === 'es' ? 'Reserva en efectivo' : 'Cash reservation'}
+                    </h3>
+                    <p className="mt-1 text-sm text-zinc-600 dark:text-gray-400">
+                      {locale === 'es'
+                        ? 'Reserva ahora sin pagar. Recogerás tu ticket en el punto de encuentro. Te confirmamos por WhatsApp 2 horas antes y pagas en efectivo allí.'
+                        : 'Reserve now without paying. Pick up your ticket at the meeting point. We confirm via WhatsApp 2 hours before and you pay in cash there.'}
+                    </p>
+                    <div className="mt-3 rounded-lg bg-white/80 p-3 text-left dark:bg-zinc-900">
+                      <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                        {locale === 'es' ? '¿Cómo funciona?' : 'How it works?'}
+                      </p>
+                      <ul className="mt-1 list-inside list-disc text-xs text-zinc-600 dark:text-gray-400">
+                        <li>
+                          {locale === 'es'
+                            ? 'Ticket con QR se genera al reservar (estado: pendiente de pago)'
+                            : 'QR ticket is generated on booking (status: pending payment)'}
+                        </li>
+                        <li>
+                          {locale === 'es'
+                            ? 'Confirmación por WhatsApp 2h antes con punto exacto'
+                            : 'Confirmation via WhatsApp 2h before with exact meeting point'}
+                        </li>
+                        <li>
+                          {locale === 'es'
+                            ? 'Pago en efectivo al llegar al punto'
+                            : 'Cash payment on arrival at the meeting point'}
+                        </li>
+                      </ul>
+                    </div>
+                    {!allNamesValid && (
+                      <p className="mt-3 text-xs font-medium text-amber-600 dark:text-amber-400">
+                        {locale === 'es'
+                          ? 'Primero completa los nombres arriba.'
+                          : 'First complete the names above.'}
+                      </p>
+                    )}
+                    {isGuest && !emailOk && (
+                      <p className="mt-2 text-xs font-medium text-amber-600 dark:text-amber-400">
+                        {locale === 'es'
+                          ? 'Ingresa tu email para el ticket.'
+                          : 'Enter your email for the ticket.'}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (
+                        !allNamesValid ||
+                        (isGuest && !emailOk) ||
+                        items.some((it) => !it.date || !it.time)
+                      ) {
+                        if (isGuest && !emailOk) setGuestEmailTouched(true)
+                        setError(
+                          !allNamesValid
+                            ? locale === 'es'
+                              ? 'Completa los nombres de todos los participantes'
+                              : 'Complete all participant names'
+                            : locale === 'es'
+                            ? 'Ingresa tu email'
+                            : 'Enter your email'
+                        )
+                        return
+                      }
+                      setIsSubmitting(true)
+                      try {
+                        const now = new Date().toISOString()
+                        const cashBookings = items.map((item, idx) => {
+                          const pNames = participantNames[item.lineId] || []
+                          return {
+                            id: `cash-${Date.now()}-${idx}`,
+                            userId:
+                              user?.id ||
+                              `guest_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                            experienceId: item.experienceId,
+                            experienceTitle: item.title,
+                            experienceImage: item.imageUrl,
+                            date: item.date,
+                            time: item.time,
+                            peopleCount: item.peopleCount,
+                            totalPrice: (item.price || 0) * item.peopleCount,
+                            currency: locale === 'es' ? 'MXN' : 'USD',
+                            status: 'pending',
+                            paymentMethod: 'cash',
+                            paymentStatus: 'pending_cash',
+                            createdAt: now,
+                            updatedAt: now,
+                            ticketCode: `AMX-T-${Math.random()
+                              .toString(36)
+                              .slice(2, 8)
+                              .toUpperCase()}`,
+                            customerName:
+                              pNames[0] ||
+                              (user ? authDisplayName : isGuest ? 'Invitado' : 'Cliente'),
+                            customerEmail: isGuest ? guestEmail.trim() : user?.email,
+                            participantNames: pNames,
+                            isGuest: !user,
+                            meetingPoint: item.location,
+                            notes:
+                              locale === 'es'
+                                ? 'Pago en efectivo al recoger - Confirmación WhatsApp 2h antes'
+                                : 'Cash on pickup - WhatsApp confirmation 2h before',
+                          }
+                        })
+                        // Guardar localmente (mock) y también intentar persistir vía API sin requerir JWT
+                        try {
+                          const existing = localStorage.getItem('amaxing_bookings')
+                          const parsed = existing ? JSON.parse(existing) : []
+                          localStorage.setItem(
+                            'amaxing_bookings',
+                            JSON.stringify([...parsed, ...cashBookings])
+                          )
+                        } catch (e) {
+                          void 0
+                        }
+                        // Métrica
+                        try {
+                          const sid = sessionStorage.getItem('analytics_session_id')
+                          await fetch('/api/analytics/track', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              eventType: 'purchase',
+                              conversionEvent: 'purchase',
+                              conversionValue: subtotal,
+                              sessionId: sid,
+                              userId: user?.id || null,
+                              pagePath: '/checkout',
+                              pageCategory: 'checkout',
+                              eventData: {
+                                isGuest: !user,
+                                paymentMethod: 'cash',
+                                itemCount,
+                                currency: locale === 'es' ? 'MXN' : 'USD',
+                              },
+                            }),
+                          })
+                        } catch (e) {
+                          void 0
+                        }
+                        setCreatedBookings(cashBookings)
+                        setSuccess(true)
+                        try {
+                          localStorage.removeItem('amaxing_pay_cash')
+                        } catch (e) {
+                          void 0
+                        }
+                        clearCart()
+                      } catch (e) {
+                        setError(e.message || 'Error al crear reserva en efectivo')
+                      } finally {
+                        setIsSubmitting(false)
+                      }
+                    }}
+                    disabled={isSubmitting || !allNamesValid || (isGuest && !emailOk)}
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-4 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        {locale === 'es' ? 'Reservando...' : 'Booking...'}
+                      </>
+                    ) : (
+                      <>
+                        💵{' '}
+                        {locale === 'es'
+                          ? 'Confirmar reserva en efectivo'
+                          : 'Confirm cash reservation'}{' '}
+                        {formatPrice(subtotal)}
+                      </>
+                    )}
+                  </button>
+                  <p className="mt-2 text-center text-xs text-zinc-500 dark:text-gray-500">
+                    {locale === 'es'
+                      ? 'Se generará tu ticket con QR para recoger y pagar en el punto.'
+                      : 'Your QR ticket will be generated for pickup and cash payment at the meeting point.'}
+                  </p>
+                  {isGuest && (
+                    <Link
+                      href="/register?redirect=/checkout"
+                      className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-white py-3 text-sm font-semibold text-emerald-600 transition-colors hover:bg-emerald-50 dark:border-emerald-500/20 dark:bg-zinc-900 dark:text-emerald-400"
+                    >
+                      <User className="h-4 w-4" />
+                      {locale === 'es' ? 'O crea tu cuenta' : 'Or create account'}
+                    </Link>
+                  )}
+                </>
+              ) : payMethod === 'card' ? (
                 <>
                   <div className="mx-auto w-full max-w-full overflow-hidden">
                     <FlipCard
@@ -1102,10 +1315,10 @@ export default function CheckoutPage() {
                   },
                 }),
               })
-            } catch {
+            } catch (e) {
               void 0
             }
-          } catch {
+          } catch (e) {
             // storage error
           }
           clearCart()

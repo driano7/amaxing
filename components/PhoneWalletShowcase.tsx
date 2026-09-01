@@ -330,12 +330,12 @@ function WalletMock({
               </span>
               <div className="leading-tight">
                 <p className="text-xs font-bold">{t.name}</p>
-                <p className="dark:text-white/65 text-[11px] text-slate-600">{t.balance}</p>
+                <p className="text-[11px] text-slate-600 dark:text-zinc-900">{t.balance}</p>
               </div>
             </div>
             <div className="text-right leading-tight">
               <p className="text-xs font-bold">{t.usd}</p>
-              <p className="dark:text-white/65 text-[11px] text-slate-600">{t.symbol}</p>
+              <p className="text-[11px] text-slate-600 dark:text-zinc-900">{t.symbol}</p>
             </div>
           </div>
         ))}
@@ -372,7 +372,7 @@ function WalletMock({
                   {tx.status}
                 </span>
               </div>
-              <div className="dark:text-white/65 mt-1 flex items-center justify-between gap-2 text-[11px] text-slate-600">
+              <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-slate-600 dark:text-zinc-900">
                 <span>{tx.hash}</span>
                 <span className="font-semibold text-slate-700 dark:text-white/80">{tx.amount}</span>
               </div>
@@ -399,7 +399,7 @@ function DynamicIsland({
   return (
     <motion.div
       className={clsx(
-        'absolute left-1/2 top-3 -translate-x-1/2',
+        'absolute left-[10%] top-3 -translate-x-1/2',
         'rounded-full border border-black/10 bg-black/90 shadow-[0_18px_50px_rgba(0,0,0,0.35)]',
         'dark:border-white/10 dark:bg-black/80'
       )}
@@ -596,14 +596,14 @@ export function HeroPhoneWalletScroll({
       <div className="mx-auto max-w-6xl px-4">
         <div className="grid gap-10 pb-24 pt-16 md:pb-28 md:pt-20">
           <div className="space-y-6">
-            <div className="dark:border-white/15 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors duration-[160ms] dark:bg-white/5 dark:text-white/75">
+            <div className="dark:border-white/15 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors duration-[160ms] dark:bg-white/5 dark:text-white">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ac }} aria-hidden />
               Experiencias locales (demo)
             </div>
             <h2 className="text-slate-950 text-3xl font-extrabold tracking-tight transition-colors duration-[160ms] dark:text-white md:text-4xl">
               Gastronomía, Historia, Barrios y Museos — todo tu viaje en una sola vista.
             </h2>
-            <p className="max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white/70">
+            <p className="max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white">
               Nos enfocamos en experiencias locales: sabores de mercado, historia viva, arte en
               museos y la vida de barrios mágicos de la CDMX.
             </p>
@@ -913,7 +913,7 @@ export function HeroPhoneWalletScroll({
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
                                           {t.id}
                                         </span>
-                                        <span className="dark:text-white/65 text-slate-600">
+                                        <span className="text-slate-600 dark:text-zinc-900">
                                           {t.hora}
                                         </span>
                                         <span
@@ -959,7 +959,7 @@ export function HeroPhoneWalletScroll({
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
                                           Taco Tour
                                         </span>
-                                        <span className="dark:text-white/65 text-slate-600">
+                                        <span className="text-slate-600 dark:text-zinc-900">
                                           2 pers.
                                         </span>
                                       </div>
@@ -975,7 +975,7 @@ export function HeroPhoneWalletScroll({
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
                                           Museo Frida
                                         </span>
-                                        <span className="dark:text-white/65 text-slate-600">
+                                        <span className="text-slate-600 dark:text-zinc-900">
                                           3 pers.
                                         </span>
                                       </div>

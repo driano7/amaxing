@@ -653,22 +653,7 @@ export default function ChatbotAssistant() {
                   placeholder={t('Pregunta sobre el sitio...', 'Ask about the site...')}
                   className="flex-1 rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:border-orange-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
                 />
-                <button
-                  type="button"
-                  onClick={handleQuickMicToggle}
-                  aria-label={t('Dictar', 'Dictate')}
-                  title={t(
-                    'Al tocar, el navegador pedirá permiso de micrófono',
-                    'Tapping will ask for mic permission'
-                  )}
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors ${
-                    isQuickRecording
-                      ? 'border-red-500 bg-red-500 text-white'
-                      : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
-                  }`}
-                >
-                  {isQuickRecording ? <VoiceWave active={true} /> : <Mic className="h-3.5 w-3.5" />}
-                </button>
+
                 <button
                   type="button"
                   onClick={handleQuickSend}
@@ -781,11 +766,7 @@ export default function ChatbotAssistant() {
             type="text"
             autoComplete="off"
             enterKeyHint="send"
-            placeholder={
-              isRecording
-                ? t('Escuchando...', 'Listening...')
-                : t('Escribe o usa el micrófono...', 'Type or use microphone...')
-            }
+            placeholder={t('Escribe tu pregunta...', 'Type your question...')}
             disabled={isLoading}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -802,6 +783,7 @@ export default function ChatbotAssistant() {
           <button
             type="button"
             onClick={handleMicToggle}
+            style={{ display: 'none' }}
             aria-label={t('Dictar con micrófono', 'Dictate with microphone')}
             title={
               !micSupported

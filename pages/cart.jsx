@@ -14,6 +14,7 @@ export default function CartPage() {
   const { t, currentLanguage } = useLanguage()
   const locale = currentLanguage === 'es' ? 'es' : 'en'
   const [isCheckingOut, setIsCheckingOut] = useState(false)
+  const [payInCash, setPayInCash] = useState(false)
 
   const formatPrice = (price) => formatPriceByLocale(price, locale)
 
@@ -249,25 +250,76 @@ export default function CartPage() {
                     )}
                   </p>
                 )}
+                <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-900">
+                  <input
+                    type="checkbox"
+                    checked={payInCash}
+                    onChange={(e) => {
+                      const v = e.target.checked
+                      setPayInCash(v)
+                      try {
+                        if (v) localStorage.setItem('amaxing_pay_cash', '1')
+                        else localStorage.removeItem('amaxing_pay_cash')
+                      } catch {
+                        void 0
+                      }
+                    }}
+                    className="h-5 w-5 rounded border-zinc-300 text-orange-500 focus:ring-orange-500"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                      {locale === 'es' ? 'Pagar en efectivo' : 'Pay in cash'}
+                    </p>
+                    <p className="text-xs text-zinc-500 dark:text-gray-400">
+                      {locale === 'es'
+                        ? 'Reserva ahora, paga al recoger en el punto. Confirmamos por WhatsApp 2h antes.'
+                        : 'Reserve now, pay on pickup. We confirm via WhatsApp 2h before.'}
+                    </p>
+                  </div>
+                </label>
+
                 <Link
-                  href="/checkout"
+                  href={payInCash ? '/checkout?cash=1' : '/checkout'}
                   onClick={(e) => {
                     if (!allItemsReady) {
                       e.preventDefault()
                       setIsCheckingOut(true)
                       setTimeout(() => setIsCheckingOut(false), 2500)
+                    } else if (payInCash) {
+                      try {
+                        localStorage.setItem('amaxing_pay_cash', '1')
+                      } catch {
+                        void 0
+                      }
                     }
                   }}
                   className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
                 >
-                  {t('cart.checkout', 'Proceder al Checkout')}
+                  {payInCash
+                    ? locale === 'es'
+                      ? 'Reservar y pagar en efectivo'
+                      : 'Reserve and pay in cash'
+                    : t('cart.checkout', 'Proceder al Checkout')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="/checkout"
+                  href={payInCash ? '/checkout?cash=1' : '/checkout'}
+                  onClick={() => {
+                    if (payInCash) {
+                      try {
+                        localStorage.setItem('amaxing_pay_cash', '1')
+                      } catch {
+                        void 0
+                      }
+                    }
+                  }}
                   className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-orange-500 bg-white py-3 text-sm font-semibold text-orange-600 transition-colors hover:bg-orange-50 dark:border-orange-500/30 dark:bg-zinc-900 dark:text-orange-400"
                 >
-                  {t('cart.checkoutGuest', 'Pagar como invitado — sin crear cuenta')}
+                  {payInCash
+                    ? locale === 'es'
+                      ? 'Reservar como invitado (efectivo)'
+                      : 'Reserve as guest (cash)'
+                    : t('cart.checkoutGuest', 'Pagar como invitado — sin crear cuenta')}
                 </Link>
                 <p className="mt-2 text-center text-xs text-zinc-500 dark:text-gray-500">
                   {t('cart.guestNote', 'No guardamos tu email. Solo para tu ticket con QR.')}
