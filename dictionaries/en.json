@@ -311,6 +311,8 @@
     "select": "Select",
     "completeDates": "Select a date and time for every experience before continuing",
     "checkout": "Proceed to Checkout",
+    "checkoutGuest": "Pay as guest — no account needed",
+    "guestNote": "We don't store your email. Just for your QR ticket.",
     "setupRequired": "Setup required",
     "peopleCount": "people",
     "remove": "Remove",

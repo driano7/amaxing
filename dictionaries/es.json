@@ -311,6 +311,8 @@
     "select": "Selecciona",
     "completeDates": "Selecciona fecha y hora para cada experiencia antes de continuar",
     "checkout": "Proceder al Checkout",
+    "checkoutGuest": "Pagar como invitado — sin crear cuenta",
+    "guestNote": "No guardamos tu email. Solo para tu ticket con QR.",
     "setupRequired": "Configuración requerida",
     "peopleCount": "personas",
     "remove": "Eliminar",

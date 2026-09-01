@@ -1006,7 +1006,7 @@ export function HeroPhoneWalletScroll({
 
               {/* iPhone grande: cuerpo + pantalla (sin imágenes externas). */}
               <motion.div
-                style={{ scale: phoneScale, y: phoneY, x: isMobile ? -110 : -90 }}
+                style={{ scale: phoneScale, y: phoneY, x: isMobile ? -132 : -108 }}
                 className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
               >
                 <div

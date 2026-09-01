@@ -173,7 +173,7 @@ export default function ChatbotAssistant() {
         ))}
       </div>
       <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
-        Procesando con Gemini...
+        Procesando...
       </span>
     </div>
   )
@@ -551,7 +551,7 @@ export default function ChatbotAssistant() {
               className="flex w-full items-center justify-between rounded-lg border border-orange-500/20 bg-orange-500/5 px-3 py-2 text-left dark:border-orange-500/20"
             >
               <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                {t('Stack colapsado — 5 opciones', 'Stack collapsed — 5 options')}
+                {t('Continúa con la encuesta', 'Continue with the survey')}
               </span>
               <span className="text-xs font-bold text-orange-500">{t('Ver', 'Show')} ▾</span>
             </button>

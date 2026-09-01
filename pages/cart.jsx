@@ -263,6 +263,15 @@ export default function CartPage() {
                   {t('cart.checkout', 'Proceder al Checkout')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
+                <Link
+                  href="/checkout"
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-orange-500 bg-white py-3 text-sm font-semibold text-orange-600 transition-colors hover:bg-orange-50 dark:border-orange-500/30 dark:bg-zinc-900 dark:text-orange-400"
+                >
+                  {t('cart.checkoutGuest', 'Pagar como invitado — sin crear cuenta')}
+                </Link>
+                <p className="mt-2 text-center text-xs text-zinc-500 dark:text-gray-500">
+                  {t('cart.guestNote', 'No guardamos tu email. Solo para tu ticket con QR.')}
+                </p>
               </div>
             </>
           )}
