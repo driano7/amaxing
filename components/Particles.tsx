@@ -91,8 +91,8 @@ export function Particles({
               y: Math.random() * rect.height,
               vx: (Math.random() - 0.5) * speed,
               vy: (Math.random() - 0.5) * speed,
-              radius: 1.2 + Math.random() * 1.8,
-              alpha: isLightTheme ? 0.82 + Math.random() * 0.18 : 0.5 + Math.random() * 0.45,
+              radius: 1.4 + Math.random() * 2.0,
+              alpha: isLightTheme ? 0.85 + Math.random() * 0.15 : 0.65 + Math.random() * 0.3,
               color: accentColor,
             }
           : {
@@ -100,8 +100,8 @@ export function Particles({
               y: Math.random() * rect.height,
               vx: (Math.random() - 0.5) * speed,
               vy: (Math.random() - 0.5) * speed,
-              radius: 0.8 + Math.random() * 1.6,
-              alpha: 0.15 + Math.random() * 0.45,
+              radius: 1.0 + Math.random() * 1.8,
+              alpha: isLightTheme ? 0.35 + Math.random() * 0.35 : 0.4 + Math.random() * 0.4,
               color: baseColor,
             }),
       }))

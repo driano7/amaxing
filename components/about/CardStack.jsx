@@ -65,7 +65,7 @@ export default function CardStack() {
 
   useEffect(() => {
     if (stoppedRef.current) return
-    intervalRef.current = window.setInterval(() => moveCard(1), 15000)
+    intervalRef.current = window.setInterval(() => moveCard(1), 10000)
     return () => clearInterval(intervalRef.current)
   }, [moveCard])
 

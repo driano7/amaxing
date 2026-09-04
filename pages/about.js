@@ -503,11 +503,11 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* CONTACT US — 3 apple-style cards */}
+        {/* CONTACT US — 3 apple-style cards with appear/disappear on scroll */}
         <section className="about-section about-section-cream">
           <div className="wrap">
             <h2 className="about-section-title">{t('aboutPage.contactTitle')}</h2>
-            <div className="grid gap-5 md:grid-cols-3">
+            <ScrollReveal className="grid gap-5 md:grid-cols-3" itemClassName="">
               {/* WhatsApp */}
               <article className="rounded-[2rem] border border-zinc-200/70 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
                 <div className="mb-4 flex h-44 items-center justify-center rounded-[1.4rem] border border-emerald-500/20 bg-gradient-to-br from-emerald-400/20 via-white to-emerald-500/10 dark:from-emerald-900/20 dark:via-zinc-900 dark:to-emerald-800/10">
@@ -583,7 +583,7 @@ export default function AboutPage() {
                   </a>
                 </div>
               </article>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
