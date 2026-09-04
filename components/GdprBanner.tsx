@@ -77,18 +77,37 @@ export function GdprBanner({ className = '' }: GdprBannerProps) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="mt-4 grid gap-4 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50 sm:grid-cols-2 lg:grid-cols-3">
-              {details.map((item, i) => {
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.09, delayChildren: 0.1 },
+                },
+              }}
+              className="mt-4 grid gap-4 rounded-2xl border border-zinc-200 bg-white/80 p-6 dark:border-white/10 dark:bg-zinc-900/50 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {details.map((item) => {
                 const Icon = item.icon
                 return (
                   <motion.article
                     key={item.title}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.08 * i, duration: 0.35 }}
+                    variants={{
+                      hidden: { opacity: 0, y: 18, scale: 0.97, filter: 'blur(4px)' },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        filter: 'blur(0px)',
+                        transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+                      },
+                    }}
                     className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-900"
                   >
                     <Icon className="mb-2 h-5 w-5 text-emerald-500" />
@@ -102,9 +121,16 @@ export function GdprBanner({ className = '' }: GdprBannerProps) {
                 )
               })}
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.08 * details.length, duration: 0.35 }}
+                variants={{
+                  hidden: { opacity: 0, y: 18, scale: 0.97, filter: 'blur(4px)' },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    filter: 'blur(0px)',
+                    transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+                  },
+                }}
                 className="flex flex-col justify-center rounded-xl border border-orange-500/30 bg-orange-500/10 p-4"
               >
                 <p className="text-sm font-semibold text-zinc-900 dark:text-white">
@@ -121,7 +147,7 @@ export function GdprBanner({ className = '' }: GdprBannerProps) {
                   {`${t('gdpr.manageCta')} →`}
                 </Link>
               </motion.div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

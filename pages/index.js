@@ -1,27 +1,14 @@
 import Link from '@/components/Link'
 import { PageSEO } from '@/components/SEO'
-import Tag from '@/components/Tag'
 import { HeroSection } from '@/components/ui/HeroSection'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import siteMetadata from '@/data/siteMetadata'
-import { getAllFilesFrontMatter } from '@/lib/mdx'
-import { getLocaleFromRequest } from '@/lib/utils/locale'
-import formatDate from '@/lib/utils/formatDate'
 import Image from '@/components/Image'
 import projectsData from '@/data/projectsData'
 import { GdprBanner } from '@/components/GdprBanner'
 import { HeroPhoneWalletScroll } from '@/components/PhoneWalletShowcase'
 
-const MAX_DISPLAY = 5
-
-export async function getServerSideProps({ req, query }) {
-  const locale = getLocaleFromRequest(req, query)
-  const posts = await getAllFilesFrontMatter('blog', locale)
-
-  return { props: { posts, locale } }
-}
-
-export default function Home({ posts, locale }) {
+export default function Home() {
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
@@ -96,80 +83,6 @@ export default function Home({ posts, locale }) {
               </Link>
             </div>
           </div>
-
-          {/* Blog Posts */}
-          {posts.length > 0 && (
-            <div className="mb-16">
-              <h2 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
-                Latest Stories
-              </h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-                {posts.slice(0, MAX_DISPLAY).map((frontMatter, index) => {
-                  const { slug, date, title, summary, tags, images } = frontMatter
-                  const cover = Array.isArray(images) && images.length > 0 ? images[0] : null
-                  return (
-                    <AnimatedSection
-                      key={slug}
-                      delay={index * 0.08}
-                      direction="up"
-                      className="w-full"
-                    >
-                      <Link
-                        href={`/blog/${slug}`}
-                        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200/50 bg-white/70 backdrop-blur-md transition-all duration-300 hover:border-orange-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-black/40 dark:hover:bg-black/50 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
-                      >
-                        {cover && (
-                          <div className="relative h-44 w-full overflow-hidden">
-                            <Image
-                              src={cover}
-                              alt={title}
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-                            <time
-                              dateTime={date}
-                              className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm"
-                            >
-                              {formatDate(date)}
-                            </time>
-                          </div>
-                        )}
-                        <div className="flex flex-1 flex-col p-6">
-                          {!cover && (
-                            <time
-                              dateTime={date}
-                              className="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400"
-                            >
-                              {formatDate(date)}
-                            </time>
-                          )}
-                          <h3 className="mb-2 text-lg font-bold leading-snug text-gray-900 transition-colors group-hover:text-orange-500 dark:text-white">
-                            {title}
-                          </h3>
-                          {tags?.length > 0 && (
-                            <div className="mb-3 flex flex-wrap gap-2">
-                              {tags.slice(0, 3).map((tag) => (
-                                <Tag key={tag} text={tag} />
-                              ))}
-                            </div>
-                          )}
-                          <p className="line-clamp-3 mb-4 text-sm text-gray-600 dark:text-gray-400">
-                            {summary}
-                          </p>
-                          <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-orange-500 transition-colors group-hover:text-orange-400">
-                            {locale === 'es' ? 'Leer más' : 'Read more'}
-                            <span aria-hidden="true">&rarr;</span>
-                          </span>
-                        </div>
-                      </Link>
-                    </AnimatedSection>
-                  )
-                })}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Safety & Help Section */}
@@ -182,8 +95,11 @@ export default function Home({ posts, locale }) {
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {projectsData
-              .filter((p) => p.title !== 'Most Dangerous Zones in Mexico City')
-              .slice(1)
+              .filter((p) =>
+                ['Police can help you', 'Emergency Phones', 'What to do in an earthquake'].includes(
+                  p.title
+                )
+              )
               .map((project, index) => (
                 <AnimatedSection
                   key={project.title}
