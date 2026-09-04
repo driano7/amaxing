@@ -9,7 +9,7 @@ const Particles = dynamic(() => import('./Particles').then((m) => m.Particles), 
 
 export function Background() {
   return (
-    <div className="fixed inset-0 -z-10">
+    <div className="pointer-events-none fixed inset-0 z-0">
       <Particles quantity={144} accentRatio={0.2} accentColor="222, 29, 141" />
     </div>
   )

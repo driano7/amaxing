@@ -24,18 +24,20 @@ const Background = dynamic(() => import('./Background').then((m) => m.Background
 
 const LayoutWrapper = ({ children }) => {
   return (
-    <SectionContainer>
-      {/* Structured data global (Organization + WebSite), estilo Banff */}
-      <JsonLd data={[buildOrganizationEntity(), buildWebSiteEntity()]} />
-      <div className="relative flex min-h-screen flex-col justify-between pb-24 md:pb-0">
-        <Navbar />
-        <main className="mb-auto pt-20">{children}</main>
-        <Footer />
-      </div>
-      <MobileDock />
-      <HubMenu showTrigger={false} />
+    <>
       <Background />
-    </SectionContainer>
+      <SectionContainer>
+        {/* Structured data global (Organization + WebSite), estilo Banff */}
+        <JsonLd data={[buildOrganizationEntity(), buildWebSiteEntity()]} />
+        <div className="relative z-10 flex min-h-screen flex-col justify-between pb-24 md:pb-0">
+          <Navbar />
+          <main className="mb-auto pt-20">{children}</main>
+          <Footer />
+        </div>
+        <MobileDock />
+        <HubMenu showTrigger={false} />
+      </SectionContainer>
+    </>
   )
 }
 
