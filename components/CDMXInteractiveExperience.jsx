@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import Link from '@/components/Link'
 import { CDMX_PAGE_HEADER, CDMX_MAPS_DATA } from '@/data/cdmxMapsData'
 
 // SVG Icons minimalistas para el Dock Móvil y Badges
@@ -110,24 +111,21 @@ export default function CDMXInteractiveExperience() {
       }
     )
 
-    Object.values(cardRefs.current).forEach((el) => {
-      if (el) observer.observe(el)
-    })
+    // Observe with small delay to ensure refs are mounted (fixes mobile animation not triggering)
+    const timeout = setTimeout(() => {
+      Object.values(cardRefs.current).forEach((el) => {
+        if (el) observer.observe(el)
+      })
+    }, 100)
 
-    return () => observer.disconnect()
+    return () => {
+      clearTimeout(timeout)
+      observer.disconnect()
+    }
   }, [])
 
-  const scrollToMapCard = (id) => {
-    const element = cardRefs.current[id]
-    if (element) {
-      const yOffset = -120
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-      window.scrollTo({ top: y, behavior: 'smooth' })
-    }
-  }
-
   return (
-    <div className="dark:bg-slate-950 relative min-h-screen w-full bg-slate-50 pb-28 text-slate-900 dark:text-slate-100 lg:pb-20">
+    <div className="relative min-h-screen w-full bg-transparent pb-12 text-slate-900 dark:text-slate-100">
       {/* 1. Header Principal: Título + Descripción General */}
       <header className="mx-auto max-w-5xl px-4 pt-16 pb-12 text-center sm:px-6 lg:pt-24 lg:pb-16">
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
@@ -154,10 +152,10 @@ export default function CDMXInteractiveExperience() {
                   key={map.id}
                   data-id={map.id}
                   ref={(el) => (cardRefs.current[map.id] = el)}
-                  className={`relative rounded-3xl border bg-white p-6 transition-all duration-300 dark:bg-slate-900 sm:p-8 ${
+                  className={`relative rounded-3xl border bg-white p-6 transition-all duration-500 dark:bg-slate-900 sm:p-8 ${
                     isActive
-                      ? 'scale-[1.01] border-slate-300 shadow-2xl shadow-slate-200 dark:border-slate-700 dark:shadow-black/60'
-                      : 'border-slate-200/70 hover:opacity-80 dark:border-slate-800/80 lg:opacity-40'
+                      ? 'scale-[1.02] border-slate-300 opacity-100 shadow-2xl shadow-slate-200 dark:border-slate-700 dark:shadow-black/60'
+                      : 'scale-[0.98] border-slate-200/70 opacity-60 dark:border-slate-800/80 lg:opacity-40'
                   }`}
                 >
                   <div className="mb-4 flex items-center justify-between gap-4">
@@ -180,6 +178,15 @@ export default function CDMXInteractiveExperience() {
                   <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
                     {map.cardDescription}
                   </p>
+
+                  <Link
+                    href={`/maps/${map.id}`}
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: map.accentColor }}
+                  >
+                    Ver más
+                    <span aria-hidden>→</span>
+                  </Link>
 
                   {/* Highlights / Puntos clave */}
                   <div className="mt-6 border-t border-slate-100 pt-6 dark:border-slate-800">
@@ -238,31 +245,6 @@ export default function CDMXInteractiveExperience() {
           </div>
         </div>
       </main>
-
-      {/* 3. Dock Flotante Inferior (Barra móvil y de navegación rápida) */}
-      <nav
-        aria-label="Navegación de mapas"
-        className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-slate-200/80 bg-white/90 p-1.5 shadow-2xl backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/90 sm:gap-2 sm:p-2"
-      >
-        {CDMX_MAPS_DATA.map((map) => {
-          const isSelected = map.id === activeMapId
-          return (
-            <button
-              key={map.id}
-              onClick={() => scrollToMapCard(map.id)}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold transition-all duration-200 ${
-                isSelected
-                  ? 'scale-105 text-white shadow-md'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white'
-              }`}
-              style={isSelected ? { backgroundColor: map.accentColor } : {}}
-            >
-              <DockIcon name={map.dockIcon} className="h-4 w-4" />
-              <span className="hidden sm:inline">{map.dockLabel}</span>
-            </button>
-          )
-        })}
-      </nav>
     </div>
   )
 }

@@ -3,7 +3,7 @@
     "nav": {
       "home": "Inicio",
       "experiences": "Experiencias",
-      "journeys": "Jornadas",
+      "journeys": "Caminatas",
       "tours": "Tours",
       "stories": "Historias",
       "guides": "Guías",
@@ -294,7 +294,7 @@
   "nav": {
     "header": {
       "home": "Inicio",
-      "journeys": "Jornadas",
+      "journeys": "Caminatas",
       "maps": "Mapas",
       "guides": "Guías",
       "stories": "Historias",

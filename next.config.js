@@ -11,7 +11,7 @@ const ContentSecurityPolicy = `
   media-src 'none';
   connect-src *;
   font-src 'self';
-  frame-src giscus.app
+  frame-src giscus.app https://www.google.com https://maps.google.com
 `
 
 const securityHeaders = [
@@ -80,8 +80,10 @@ module.exports = withBundleAnalyzer({
       { source: '/experiences/:slug*', destination: '/journeys/:slug*', permanent: false },
       { source: '/stories', destination: '/guides', permanent: false },
       { source: '/stories/:slug*', destination: '/guides/:slug*', permanent: false },
-      { source: '/news', destination: '/local-picks', permanent: false },
-      { source: '/news/:slug*', destination: '/local-picks/:slug*', permanent: false },
+      { source: '/news', destination: '/local', permanent: false },
+      { source: '/news/:slug*', destination: '/local/:slug*', permanent: false },
+      { source: '/local-picks', destination: '/local', permanent: false },
+      { source: '/local-picks/:slug*', destination: '/local/:slug*', permanent: false },
     ]
   },
   async headers() {

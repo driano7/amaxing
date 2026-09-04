@@ -39,7 +39,7 @@ export function Particles({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const rafRef = useRef<number | null>(null)
   const dotsRef = useRef<Dot[]>([])
-  const { theme } = useTheme()
+  const { theme, resolvedTheme } = useTheme()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -56,7 +56,8 @@ export function Particles({
     const dpr = window.devicePixelRatio || 1
     const particleCount = Math.max(0, Math.floor(quantity))
     const normalizedAccentRatio = Math.min(1, Math.max(0, accentRatio))
-    const isLightTheme = theme === 'light'
+    const effectiveTheme = resolvedTheme || theme
+    const isLightTheme = effectiveTheme === 'light'
 
     const resize = () => {
       const rect = container.getBoundingClientRect()
@@ -71,7 +72,7 @@ export function Particles({
       canvas.style.height = `${Math.floor(rect.height)}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      const baseColor = getParticleColor(theme)
+      const baseColor = getParticleColor(effectiveTheme)
       const accentCount = Math.round(effectiveParticleCount * normalizedAccentRatio)
       const accentMap = Array.from(
         { length: effectiveParticleCount },
@@ -137,7 +138,7 @@ export function Particles({
         window.cancelAnimationFrame(rafRef.current)
       }
     }
-  }, [quantity, speed, theme, accentRatio, accentColor])
+  }, [quantity, speed, theme, resolvedTheme, accentRatio, accentColor])
 
   return (
     <div ref={containerRef} className={`pointer-events-none absolute inset-0 ${className || ''}`}>

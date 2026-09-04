@@ -23,6 +23,10 @@ import {
   Newspaper,
   Mail,
   Tag,
+  Star,
+  MapPinned,
+  Users,
+  Home,
 } from 'lucide-react'
 import { navItemsConfig, headerDropdownConfig } from '@/data/hubMenuLinks'
 import enDict from '@/dictionaries/en.json'
@@ -35,11 +39,16 @@ const iconComponents = {
   MapPin,
   Palette,
   LayoutGrid,
+  ChevronDown,
   Compass,
   BookOpen,
   Newspaper,
   Mail,
   Tag,
+  Star,
+  MapPinned,
+  Users,
+  Home,
 }
 
 const dictionaries = { en: enDict, es: esDict }

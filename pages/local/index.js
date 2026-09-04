@@ -91,12 +91,12 @@ export default function LocalPicksPage({ picks, locale }) {
                     className="w-full"
                   >
                     <Link
-                      href={`/local-picks/${pick.slug}`}
+                      href={`/local/${pick.slug}`}
                       className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-zinc-200/50 bg-white/70 backdrop-blur-md transition-all duration-300 hover:scale-[1.02] hover:border-amber-500/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-black/40 dark:hover:bg-zinc-900/70"
                     >
                       <div className="relative h-48 w-full overflow-hidden">
                         <Image
-                          src={pick.images?.[0] || '/static/images/local-picks/cover.jpg'}
+                          src={pick.images?.[0] || '/static/images/local/cover.jpg'}
                           alt={pick.title}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
@@ -158,7 +158,7 @@ export default function LocalPicksPage({ picks, locale }) {
                 {guides.map((g) => (
                   <Link
                     key={g.slug}
-                    href={`/local-picks/${g.slug}`}
+                    href={`/local/${g.slug}`}
                     className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-6 hover:bg-amber-500/20 dark:border-amber-500/20"
                   >
                     <h3 className="font-bold text-zinc-900 dark:text-white">{g.title}</h3>

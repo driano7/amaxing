@@ -47,6 +47,7 @@ export default function CardStack() {
   const [isAnimating, setIsAnimating] = useState(false)
   const animatingRef = useRef(false)
   const intervalRef = useRef(null)
+  const stoppedRef = useRef(false)
 
   const moveCard = useCallback(
     (direction) => {
@@ -63,11 +64,24 @@ export default function CardStack() {
   )
 
   useEffect(() => {
-    intervalRef.current = window.setInterval(() => moveCard(1), 60000)
+    if (stoppedRef.current) return
+    intervalRef.current = window.setInterval(() => moveCard(1), 15000)
     return () => clearInterval(intervalRef.current)
   }, [moveCard])
 
   const stopAuto = () => clearInterval(intervalRef.current)
+
+  const handlePrev = () => {
+    stoppedRef.current = true
+    clearInterval(intervalRef.current)
+    moveCard(-1)
+  }
+
+  const handleNext = () => {
+    stoppedRef.current = true
+    clearInterval(intervalRef.current)
+    moveCard(1)
+  }
 
   const first = CARDS[activeIndex]
   const second = CARDS[(activeIndex + 1) % CARDS.length]
@@ -321,7 +335,7 @@ export default function CardStack() {
           <button
             type="button"
             className="card-stack-btn"
-            onClick={() => moveCard(-1)}
+            onClick={handlePrev}
             aria-label="Anterior"
           >
             &#8592;
@@ -343,7 +357,7 @@ export default function CardStack() {
           <button
             type="button"
             className="card-stack-btn"
-            onClick={() => moveCard(1)}
+            onClick={handleNext}
             aria-label="Siguiente"
           >
             &#8594;
