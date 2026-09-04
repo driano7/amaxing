@@ -2,6 +2,7 @@
 import { getFileBySlug, bundleMdxSource } from '@/lib/mdx'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { getAllLocalPickSlugs, getLocalPickBySlug } from '@/lib/localPicks'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 export async function getStaticPaths() {
   const slugs = getAllLocalPickSlugs()
@@ -13,42 +14,36 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const { slug } = params
-  // Try es first, then en — files are hyphen-based like 2026-09-09-es.mdx
-  const candidates = [`${slug}-es`, `${slug}-en`, `${slug}.es`, `${slug}.en`, slug]
-  let post = null
-  for (const cand of candidates) {
-    try {
-      post = await getFileBySlug('local-picks', cand)
-      break
-    } catch {
-      // try next
+  const loadOne = async (locale) => {
+    const cands = [`${slug}-${locale}`, `${slug}.${locale}`, slug]
+    for (const cand of cands) {
+      try {
+        const p = await getFileBySlug('local-picks', cand)
+        if (p) return p
+      } catch (e) {
+        void e
+      }
     }
-  }
-  // Fallback to lib/localPicks direct read (handles hyphen)
-  if (!post) {
-    const direct = getLocalPickBySlug(slug, 'es') || getLocalPickBySlug(slug, 'en')
+    const direct = getLocalPickBySlug(slug, locale)
     if (direct) {
       const { frontMatter, content } = direct
       const bundled = await bundleMdxSource(content, slug, `${slug}.mdx`)
-      return {
-        props: {
-          post: {
-            mdxSource: bundled.mdxSource,
-            toc: bundled.toc,
-            frontMatter: bundled.frontMatter,
-          },
-        },
-        revalidate: 3600,
-      }
+      return { mdxSource: bundled.mdxSource, toc: bundled.toc, frontMatter: bundled.frontMatter }
     }
-    return { notFound: true }
+    return null
   }
-  return { props: { post }, revalidate: 3600 }
+  const postEs = await loadOne('es')
+  const postEn = await loadOne('en')
+  if (!postEs && !postEn) return { notFound: true }
+  return { props: { postEs, postEn }, revalidate: 3600 }
 }
 
-export default function LocalPickPage({ post }) {
+export default function LocalPickPage({ postEs, postEn }) {
+  const { currentLanguage } = useLanguage()
+  const isEn = currentLanguage === 'en'
+  const post = isEn ? postEn || postEs : postEs || postEn
+  if (!post) return null
   const { mdxSource, frontMatter } = post
-  // Ensure slug clean for layout
   frontMatter.slug = frontMatter.slug.replace(/[.-](en|es)$/, '')
   return <MDXLayoutRenderer layout="PostLayout" mdxSource={mdxSource} frontMatter={frontMatter} />
 }

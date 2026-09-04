@@ -7,10 +7,13 @@ import Image from '@/components/Image'
 import projectsData from '@/data/projectsData'
 import { GdprBanner } from '@/components/GdprBanner'
 import { HeroPhoneWalletScroll } from '@/components/PhoneWalletShowcase'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 import ExperiencesCtaBanner from '@/components/ExperiencesCtaBanner'
 
 export default function Home() {
+  const { currentLanguage } = useLanguage()
+  const isEn = currentLanguage === 'en'
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
@@ -21,75 +24,87 @@ export default function Home() {
       </div>
       <div className="bg-transparent text-gray-900 dark:text-gray-100">
         <div className="container mx-auto px-4 py-16">
-          {/* Local Picks Preview */}
-          <div className="mb-8 rounded-xl border border-amber-500/20 bg-amber-500/10 p-8 dark:border-amber-500/20 dark:bg-amber-500/5">
-            <div className="mb-2 flex items-center gap-2 text-amber-600 dark:text-amber-400">
-              <span className="text-2xl">★</span>
-              <span className="text-xs font-bold uppercase tracking-widest">Local Picks</span>
-            </div>
-            <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
-              Local Picks — This Month in CDMX
-            </h2>
-            <p className="mb-6 text-gray-600 dark:text-gray-300">
-              Monthly local guide for visitors staying 2-7 days. New openings, seasonal events and
-              hidden gems curated by chilangos.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/local"
-                className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/20 px-6 py-2 font-medium text-amber-600 backdrop-blur-sm transition-all duration-300 hover:bg-amber-500 hover:text-white dark:text-amber-400"
-              >
-                View Local Picks
-              </Link>
-            </div>
-          </div>
-
           {/* Guides Preview — similar UI */}
           <div className="mb-8 rounded-xl border border-teal-500/20 bg-teal-500/10 p-8 dark:border-teal-500/20 dark:bg-teal-500/5">
             <div className="mb-2 flex items-center gap-2 text-teal-600 dark:text-teal-400">
               <span className="text-2xl">🧭</span>
-              <span className="text-xs font-bold uppercase tracking-widest">Guides</span>
+              <span className="text-xs font-bold uppercase tracking-widest">
+                {isEn ? 'Guides' : 'Guías'}
+              </span>
             </div>
             <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
-              Guides — 5 Journeys de Cultura Fácil
+              {isEn ? 'Guides — 5 Easy Culture Journeys' : 'Guías — 5 Journeys de Cultura Fácil'}
             </h2>
             <p className="mb-6 text-gray-600 dark:text-gray-300">
-              Recorridos autoguiados de 60–90 min: Condesa, Centro, Chapultepec II, Chimalistac y
-              UNAM. Cultura fácil para caminar solo con tu celular.
+              {isEn
+                ? 'Self-guided walks 60–90 min: Condesa, Centro, Chapultepec II, Chimalistac and UNAM. Easy culture to explore with just your phone.'
+                : 'Recorridos autoguiados de 60–90 min: Condesa, Centro, Chapultepec II, Chimalistac y UNAM. Cultura fácil para caminar solo con tu celular.'}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/guides"
                 className="inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-500/20 px-6 py-2 font-medium text-teal-600 backdrop-blur-sm transition-all duration-300 hover:bg-teal-500 hover:text-white dark:text-teal-400"
               >
-                View Guides
+                {isEn ? 'View Guides' : 'Ver Guías'}
               </Link>
             </div>
           </div>
 
           {/* Maps Preview — similar UI */}
-          <div className="mb-16 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-8 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+          <div className="mb-8 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-8 dark:border-emerald-500/20 dark:bg-emerald-500/5">
             <div className="mb-2 flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
               <span className="text-2xl">🗺️</span>
-              <span className="text-xs font-bold uppercase tracking-widest">Maps</span>
+              <span className="text-xs font-bold uppercase tracking-widest">
+                {isEn ? 'Maps' : 'Mapas'}
+              </span>
             </div>
             <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
-              Maps — Guía Interactiva CDMX 2026
+              {isEn ? 'Maps — CDMX Interactive Guide 2026' : 'Mapas — Guía Interactiva CDMX 2026'}
             </h2>
             <p className="mb-6 text-gray-600 dark:text-gray-300">
-              Cinco mapas curados: fondas, zonas de precaución, bares relax, joyas escondidas y top
-              atracciones. Cada punto verificado para visitantes de 2 a 7 días.
+              {isEn
+                ? 'Five curated maps: fondas, caution zones, relax bars, hidden gems and top attractions. Every point verified for 2- to 7-day visitors.'
+                : 'Cinco mapas curados: fondas, zonas de precaución, bares relax, joyas escondidas y top atracciones. Cada punto verificado para visitantes de 2 a 7 días.'}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/maps"
                 className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/20 px-6 py-2 font-medium text-emerald-600 backdrop-blur-sm transition-all duration-300 hover:bg-emerald-500 hover:text-white dark:text-emerald-400"
               >
-                View Maps
+                {isEn ? 'View Maps' : 'Ver Mapas'}
+              </Link>
+            </div>
+          </div>
+
+          {/* Local Picks Preview */}
+          <div className="mb-8 rounded-xl border border-amber-500/20 bg-amber-500/10 p-8 dark:border-amber-500/20 dark:bg-amber-500/5">
+            <div className="mb-2 flex items-center gap-2 text-amber-600 dark:text-amber-400">
+              <span className="text-2xl">★</span>
+              <span className="text-xs font-bold uppercase tracking-widest">
+                {isEn ? 'Local Picks' : 'Selección Local'}
+              </span>
+            </div>
+            <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
+              {isEn ? 'Local Picks — This Month in CDMX' : 'Selección Local — Este Mes en CDMX'}
+            </h2>
+            <p className="mb-6 text-gray-600 dark:text-gray-300">
+              {isEn
+                ? 'Monthly local guide for visitors staying 2-7 days. New openings, seasonal events and hidden gems curated by chilangos.'
+                : 'Guía local mensual para visitantes de 2 a 7 días. Nuevas aperturas, eventos de temporada y joyas ocultas curadas por chilangos.'}
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href="/local"
+                className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/20 px-6 py-2 font-medium text-amber-600 backdrop-blur-sm transition-all duration-300 hover:bg-amber-500 hover:text-white dark:text-amber-400"
+              >
+                {isEn ? 'View Local Picks' : 'Ver Selección Local'}
               </Link>
             </div>
           </div>
         </div>
+
+        {/* Desvanecido azul morado antes de Safety & Help */}
+        <div className="from-violet-500/15 dark:via-indigo-900/15 h-24 bg-gradient-to-b via-indigo-500/10 to-transparent dark:from-violet-900/20 dark:to-transparent" />
 
         {/* Safety & Help Section */}
         <div className="mb-16">

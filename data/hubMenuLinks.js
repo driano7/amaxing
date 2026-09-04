@@ -32,27 +32,8 @@ const navItemsConfig = [
   { labelKey: 'nav.header.about', fallback: 'About Us', href: '/about', icon: 'Users' },
 ]
 
-// Desktop "More" dropdown — 3 Local que sustituyen a News (MDX por noticia)
-const headerDropdownConfig = [
-  {
-    labelKey: 'localPicks.pick1',
-    fallback: 'Night paddle + pulque',
-    href: '/local/2026-09-08',
-    icon: 'Star',
-  },
-  {
-    labelKey: 'localPicks.pick2',
-    fallback: 'Escandón',
-    href: '/local/2026-09-07',
-    icon: 'Star',
-  },
-  {
-    labelKey: 'localPicks.pick3',
-    fallback: 'El Maíz Invisible',
-    href: '/local/2026-09-06',
-    icon: 'Star',
-  },
-]
+// Desktop "More" dropdown — removido por petición (antes 3 Local Picks)
+const headerDropdownConfig = []
 
 // Mobile drawer main list (HubMenu + MobileDock) — nueva navegación
 const drawerItemsConfig = [

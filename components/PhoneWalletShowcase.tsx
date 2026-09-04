@@ -595,7 +595,7 @@ export function HeroPhoneWalletScroll({
     >
       {/* Nota: la altura extra permite que el scroll drivee el zoom y el movimiento. */}
       <div className="mx-auto max-w-6xl px-4">
-        <div className="grid gap-5 pb-11 pt-8 md:pb-14 md:pt-10">
+        <div className="grid gap-4 pb-8 pt-6 md:pb-10 md:pt-7">
           <div className="space-y-6">
             <div className="dark:border-white/15 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors duration-[160ms] dark:bg-white/5 dark:text-white">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ac }} aria-hidden />
@@ -604,7 +604,7 @@ export function HeroPhoneWalletScroll({
             <h2 className="text-slate-950 text-3xl font-extrabold tracking-tight transition-colors duration-[160ms] dark:text-white md:text-4xl">
               Gastronomía, Historia, Barrios y Museos — todo tu viaje en una sola vista.
             </h2>
-            <p className="h-[49%] max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white">
+            <p className="h-[34%] max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white">
               Nos enfocamos en experiencias locales: sabores de mercado, historia viva, arte en
               museos y la vida de barrios mágicos de la CDMX.
             </p>
@@ -618,7 +618,7 @@ export function HeroPhoneWalletScroll({
         </div>
       </div>
 
-      <div className="relative min-h-[112vh]">
+      <div className="relative min-h-[90vh]">
         <div className="sticky top-16">
           <div className="mx-auto flex max-w-6xl items-center justify-center px-4 pb-2 pt-10">
             <div className="relative h-[700px] w-full max-w-[1100px]">

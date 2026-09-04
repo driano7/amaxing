@@ -1,6 +1,7 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 import { getFileBySlug, bundleMdxSource } from '@/lib/mdx'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 
 export async function getStaticPaths() {
   const slugs = [
@@ -18,44 +19,38 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const { slug } = params
-  // Try locale-aware candidates like local-picks (es default)
-  const candidates = [`${slug}`, `${slug}.en`, `${slug}.es`]
-  let post = null
-  let lastError = null
-  for (const cand of candidates) {
-    try {
-      // maps MDX are in data/maps with .en suffix for EN
-      post = await getFileBySlug('maps', cand)
-      if (post) break
-    } catch (e) {
-      lastError = e
+  const loadOne = async (locale) => {
+    const suffix = locale === 'en' ? '.en' : ''
+    const cands = locale === 'en' ? [`${slug}.en`, `${slug}`] : [slug, `${slug}.en`]
+    // Try data/maps first, then content/maps
+    for (const cand of cands) {
+      try {
+        const p = await getFileBySlug('maps', cand)
+        if (p) return p
+      } catch (e) {
+        void e
+      }
     }
-  }
-  // Fallback: direct fs read for data/maps or content/maps (*.mdx with .en.mdx)
-  if (!post) {
+    // Fallback direct fs for both data and content
     try {
       const fs = await import('fs')
       const path = await import('path')
-      const matter = (await import('gray-matter')).default
-      const possible = [`${slug}.mdx`, `${slug}.en.mdx`, `${slug}.es.mdx`]
-      const searchDirs = [
+      const possible =
+        locale === 'en' ? [`${slug}.en.mdx`, `${slug}.mdx`] : [`${slug}.mdx`, `${slug}.en.mdx`]
+      const dirs = [
         path.join(process.cwd(), 'data', 'maps'),
         path.join(process.cwd(), 'content', 'maps'),
       ]
-      for (const dir of searchDirs) {
+      for (const dir of dirs) {
         for (const file of possible) {
           const full = path.join(dir, file)
           if (fs.existsSync(full)) {
             const raw = fs.readFileSync(full, 'utf8')
             const bundled = await bundleMdxSource(raw, slug, file)
             return {
-              props: {
-                post: {
-                  mdxSource: bundled.mdxSource,
-                  toc: bundled.toc,
-                  frontMatter: bundled.frontMatter,
-                },
-              },
+              mdxSource: bundled.mdxSource,
+              toc: bundled.toc,
+              frontMatter: bundled.frontMatter,
             }
           }
         }
@@ -63,16 +58,19 @@ export async function getStaticProps({ params }) {
     } catch (e) {
       void e
     }
-    return { notFound: true }
+    return null
   }
-  return {
-    props: {
-      post,
-    },
-  }
+  const postEs = await loadOne('es')
+  const postEn = await loadOne('en')
+  if (!postEs && !postEn) return { notFound: true }
+  return { props: { postEs, postEn }, revalidate: 3600 }
 }
 
-export default function MapDetailPage({ post }) {
+export default function MapDetailPage({ postEs, postEn }) {
+  const { currentLanguage } = useLanguage()
+  const isEn = currentLanguage === 'en'
+  const post = isEn ? postEn || postEs : postEs || postEn
+  if (!post) return null
   const { mdxSource, frontMatter } = post
   return <MDXLayoutRenderer layout="PostLayout" mdxSource={mdxSource} frontMatter={frontMatter} />
 }

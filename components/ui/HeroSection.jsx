@@ -14,15 +14,14 @@ export function HeroSection() {
     : 'Amaxing • Plataforma de Turismo y Cultura'
   const title = isEn ? 'Discover Mexico with Amaxing' : 'Descubre México con Amaxing'
   const subtitle = isEn
-    ? 'Amaxing is the platform of authentic experiences, interactive maps and cultural curation developed by Donovan Riaño to explore Mexico without clichés.'
-    : 'Amaxing es la plataforma de experiencias auténticas, mapas interactivos y curaduría cultural desarrollada por Donovan Riaño para explorar México sin clichés.'
-  const cta = t('hero.cta') || 'Book a Trip'
+    ? 'Amaxing is the specialized tool any tourist would want at hand at any moment while traveling — interactive maps, tours, recommendations, places to avoid, the complete culture. Developed with care to explore Mexico City without clichés or complications.'
+    : 'Amaxing es la herramienta especializada en lo que cualquier turista desearía tener a la mano en cualquier momento al viajar, mapas interactivos, recorridos, recomendaciones, lugares a evitar, la cultura completa. Desarrollada con cariño para explorar Ciudad de México sin clichés ni complicaciones.'
   const scrollHint = t('hero.scrollHint') || 'Scroll to explore'
 
   return (
-    <section className="relative min-h-[100dvh] w-full overflow-hidden bg-zinc-50 dark:bg-zinc-950">
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-zinc-100/80 via-zinc-50 to-zinc-50 dark:from-zinc-950/50 dark:via-zinc-950 dark:to-zinc-950" />
-      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,rgba(222,29,141,0.03),transparent_50%),linear-gradient(to_bottom,rgba(222,29,141,0.03),transparent_50%)]" />
+    <section className="relative min-h-[100dvh] w-full overflow-hidden border-0 bg-white/40 backdrop-blur-[2px] dark:bg-black/20">
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/30 via-transparent to-transparent dark:from-zinc-900/20 dark:via-transparent dark:to-transparent" />
+      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,rgba(222,29,141,0.02),transparent_50%),linear-gradient(to_bottom,rgba(222,29,141,0.02),transparent_50%)]" />
 
       {/* Color waves background (from Criptec) */}
       <HeroMouseBackground />
@@ -76,22 +75,6 @@ export function HeroSection() {
             <p className="mt-2 text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
               {isEn ? 'By Donovan Riaño' : 'Por Donovan Riaño'}
             </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="mt-12 flex justify-center"
-          >
-            <motion.a
-              href="https://wa.me/525512291607"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="rounded-full border border-orange-500/30 bg-orange-500/20 px-8 py-4 font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-white"
-            >
-              {cta}
-            </motion.a>
           </motion.div>
         </div>
       </div>
