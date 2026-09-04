@@ -38,11 +38,12 @@ export async function getStaticProps({ params }) {
             frontMatter: bundled.frontMatter,
           },
         },
+        revalidate: 3600,
       }
     }
     return { notFound: true }
   }
-  return { props: { post } }
+  return { props: { post }, revalidate: 3600 }
 }
 
 export default function LocalPickPage({ post }) {

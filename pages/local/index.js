@@ -33,10 +33,11 @@ const pageTranslations = {
   },
 }
 
-export async function getServerSideProps({ req }) {
-  const locale = req?.cookies?.NEXT_LOCALE === 'es' ? 'es' : 'en'
-  const picks = await getAllLocalPicksAsync(locale)
-  return { props: { picks, locale } }
+export async function getStaticProps() {
+  const picksEs = await getAllLocalPicksAsync('es')
+  const picksEn = await getAllLocalPicksAsync('en')
+  // Pre-generated at build, revalidate cada hora para nuevos picks sin rebuild
+  return { props: { picksEs, picksEn }, revalidate: 3600 }
 }
 
 const formatDate = (dateStr, locale) => {
@@ -49,9 +50,10 @@ const formatDate = (dateStr, locale) => {
   })
 }
 
-export default function LocalPicksPage({ picks, locale }) {
+export default function LocalPicksPage({ picksEs, picksEn }) {
   const { currentLanguage } = useLanguage()
-  const lang = currentLanguage || locale || 'en'
+  const lang = currentLanguage === 'en' ? 'en' : 'es'
+  const picks = lang === 'es' ? picksEs : picksEn
   const t = pageTranslations[lang] || pageTranslations.en
 
   const monthPicks = picks.filter((p) => !p.isMonthlyGuide)
@@ -97,10 +99,11 @@ export default function LocalPicksPage({ picks, locale }) {
                     >
                       <div className="relative h-48 w-full overflow-hidden">
                         <Image
-                          src={pick.images?.[0] || '/static/images/local/cover.jpg'}
+                          src={pick.images?.[0] || '/static/images/local-picks/cover.jpg'}
                           alt={pick.title}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
+                          priority={index < 2}
                           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         />
                         <div className="absolute left-3 top-3 flex gap-2">

@@ -595,7 +595,7 @@ export function HeroPhoneWalletScroll({
     >
       {/* Nota: la altura extra permite que el scroll drivee el zoom y el movimiento. */}
       <div className="mx-auto max-w-6xl px-4">
-        <div className="grid gap-8 pb-20 pt-12 md:pb-24 md:pt-16">
+        <div className="grid gap-7 pb-16 pt-11 md:pb-20 md:pt-14">
           <div className="space-y-6">
             <div className="dark:border-white/15 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors duration-[160ms] dark:bg-white/5 dark:text-white">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ac }} aria-hidden />
@@ -604,7 +604,7 @@ export function HeroPhoneWalletScroll({
             <h2 className="text-slate-950 text-3xl font-extrabold tracking-tight transition-colors duration-[160ms] dark:text-white md:text-4xl">
               Gastronomía, Historia, Barrios y Museos — todo tu viaje en una sola vista.
             </h2>
-            <p className="h-[80%] max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white">
+            <p className="h-[70%] max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white">
               Nos enfocamos en experiencias locales: sabores de mercado, historia viva, arte en
               museos y la vida de barrios mágicos de la CDMX.
             </p>

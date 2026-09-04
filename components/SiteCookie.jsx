@@ -17,12 +17,16 @@ export default function SiteCookie() {
       if (!localStorage.getItem(cacheKey)) {
         localStorage.setItem(cacheKey, String(Date.now()))
       }
-      // Prefetch critical images for guides/local (local static now)
+      // Prefetch critical images for guides/local (local static now - para carga instantánea al regresar)
       const critical = [
         '/static/images/guides/condesa.jpg',
         '/static/images/guides/centro.jpg',
         '/static/images/guides/chapultepec.jpg',
+        '/static/images/guides/chimalistac.jpg',
+        '/static/images/guides/unam.jpg',
         '/static/images/local-picks/mercado-san-juan.jpg',
+        '/static/images/local-picks/casa-barragan.jpg',
+        '/static/images/local-picks/pulqueria.jpg',
       ]
       critical.forEach((src) => {
         const link = document.createElement('link')
