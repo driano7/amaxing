@@ -22,7 +22,14 @@ export async function getServerSideProps({ params, req, query }) {
     }
   }
 
-  const candidates = [`${slug}.${locale}`, `${slug}.en`, `${slug}.es`]
+  const candidates = [
+    `${slug}-${locale}`,
+    `${slug}.${locale}`,
+    `${slug}-en`,
+    `${slug}.en`,
+    `${slug}-es`,
+    `${slug}.es`,
+  ]
   let post = null
   for (const candidate of candidates) {
     try {

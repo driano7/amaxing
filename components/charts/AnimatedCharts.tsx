@@ -503,7 +503,7 @@ export function SequentialLineChart({
                     }}
                     isAnimationActive={!shouldReduceMotion}
                     animationDuration={800}
-                    animationEasing="easeOut"
+                    animationEasing="ease-out"
                   />
                 ))}
               </LineChart>

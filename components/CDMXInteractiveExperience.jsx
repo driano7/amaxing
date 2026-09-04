@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from '@/components/Link'
+import { useRouter } from 'next/router'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 import { CDMX_PAGE_HEADER, CDMX_MAPS_DATA } from '@/data/cdmxMapsData'
 
 // SVG Icons minimalistas para el Dock Móvil y Badges
@@ -91,6 +93,10 @@ function DockIcon({ name, className = 'w-5 h-5' }) {
 }
 
 export default function CDMXInteractiveExperience() {
+  const router = useRouter()
+  const { currentLanguage } = useLanguage()
+  const isEn = (currentLanguage || router.locale) === 'en'
+  const lang = isEn ? 'en' : 'es'
   const [activeMapId, setActiveMapId] = useState(CDMX_MAPS_DATA[0].id)
   const cardRefs = useRef({})
 
@@ -130,13 +136,13 @@ export default function CDMXInteractiveExperience() {
       <header className="mx-auto max-w-5xl px-4 pt-16 pb-12 text-center sm:px-6 lg:pt-24 lg:pb-16">
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
           <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-          {CDMX_PAGE_HEADER.badge}
+          {CDMX_PAGE_HEADER[lang].badge}
         </div>
         <h1 className="text-3xl font-black leading-[1.15] tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl">
-          {CDMX_PAGE_HEADER.title}
+          {CDMX_PAGE_HEADER[lang].title}
         </h1>
         <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-xl">
-          {CDMX_PAGE_HEADER.description}
+          {CDMX_PAGE_HEADER[lang].description}
         </p>
       </header>
 
@@ -147,6 +153,17 @@ export default function CDMXInteractiveExperience() {
           <div className="space-y-16 lg:col-span-5 lg:space-y-36 lg:py-6">
             {CDMX_MAPS_DATA.map((map, index) => {
               const isActive = map.id === activeMapId
+              const eyebrow =
+                lang === 'en' ? map.eyebrow_en || map.eyebrow : map.eyebrow_es || map.eyebrow
+              const title = lang === 'en' ? map.title_en || map.title : map.title_es || map.title
+              const cardDescription =
+                lang === 'en'
+                  ? map.cardDescription_en || map.cardDescription
+                  : map.cardDescription_es || map.cardDescription
+              const highlights =
+                lang === 'en'
+                  ? map.highlights_en || map.highlights
+                  : map.highlights_es || map.highlights
               return (
                 <article
                   key={map.id}
@@ -164,7 +181,7 @@ export default function CDMXInteractiveExperience() {
                       style={{ backgroundColor: map.accentColor }}
                     >
                       <DockIcon name={map.dockIcon} className="h-3.5 w-3.5" />
-                      {map.eyebrow}
+                      {eyebrow}
                     </span>
                     <span className="font-mono text-xs font-bold text-slate-400 dark:text-slate-500">
                       {`0${index + 1} / 0${CDMX_MAPS_DATA.length}`}
@@ -172,11 +189,11 @@ export default function CDMXInteractiveExperience() {
                   </div>
 
                   <h2 className="text-2xl font-bold leading-snug tracking-tight text-slate-900 dark:text-white sm:text-3xl">
-                    {map.title}
+                    {title}
                   </h2>
 
                   <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
-                    {map.cardDescription}
+                    {cardDescription}
                   </p>
 
                   <Link
@@ -184,17 +201,17 @@ export default function CDMXInteractiveExperience() {
                     className="mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90"
                     style={{ backgroundColor: map.accentColor }}
                   >
-                    Ver más
+                    {isEn ? 'See more' : 'Ver más'}
                     <span aria-hidden>→</span>
                   </Link>
 
                   {/* Highlights / Puntos clave */}
                   <div className="mt-6 border-t border-slate-100 pt-6 dark:border-slate-800">
                     <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      Destacados del mapa
+                      {isEn ? 'Map highlights' : 'Destacados del mapa'}
                     </h3>
                     <ul className="space-y-2.5">
-                      {map.highlights.map((item, idx) => (
+                      {highlights.map((item, idx) => (
                         <li
                           key={idx}
                           className="flex items-start text-xs text-slate-700 dark:text-slate-200 sm:text-sm"
@@ -212,7 +229,7 @@ export default function CDMXInteractiveExperience() {
                   <div className="mt-6 block h-80 w-full overflow-hidden rounded-2xl border border-slate-200 shadow-inner dark:border-slate-800 lg:hidden">
                     <iframe
                       src={map.embedUrl}
-                      title={map.title}
+                      title={title}
                       className="h-full w-full border-0"
                       loading="lazy"
                     />
@@ -227,11 +244,12 @@ export default function CDMXInteractiveExperience() {
             <div className="relative h-[calc(100vh-140px)] max-h-[820px] min-h-[560px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
               {CDMX_MAPS_DATA.map((map) => {
                 const isCurrent = map.id === activeMapId
+                const t = lang === 'en' ? map.title_en || map.title : map.title_es || map.title
                 return (
                   <iframe
                     key={map.id}
                     src={map.embedUrl}
-                    title={map.title}
+                    title={t}
                     className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-500 ease-in-out ${
                       isCurrent
                         ? 'pointer-events-auto z-10 opacity-100'
