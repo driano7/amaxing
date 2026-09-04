@@ -54,7 +54,10 @@ export function Particles({
       return
     }
 
-    const dpr = window.devicePixelRatio || 1
+    const dpr = Math.min(
+      window.devicePixelRatio || 1,
+      window.matchMedia('(min-width: 1024px)').matches ? 2 : 1.5
+    )
     const particleCount = Math.max(0, Math.floor(quantity))
     const normalizedAccentRatio = Math.min(1, Math.max(0, accentRatio))
     const effectiveTheme = resolvedTheme || theme
@@ -63,9 +66,16 @@ export function Particles({
     const resize = () => {
       const rect = container.getBoundingClientRect()
       const isDesktopViewport = window.matchMedia('(min-width: 1024px)').matches
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (prefersReduced) {
+        // Minimal particles for accessibility
+        dotsRef.current = []
+        return
+      }
       const effectiveParticleCount = isDesktopViewport
         ? Math.round(particleCount * 1.15)
-        : particleCount
+        : Math.round(particleCount * 0.35)
+      const effectiveSpeed = isDesktopViewport ? speed : speed * 0.7
 
       canvas.width = Math.max(1, Math.floor(rect.width * dpr))
       canvas.height = Math.max(1, Math.floor(rect.height * dpr))
@@ -90,18 +100,18 @@ export function Particles({
           ? {
               x: Math.random() * rect.width,
               y: Math.random() * rect.height,
-              vx: (Math.random() - 0.5) * speed,
-              vy: (Math.random() - 0.5) * speed,
-              radius: 1.4 + Math.random() * 2.0,
+              vx: (Math.random() - 0.5) * effectiveSpeed,
+              vy: (Math.random() - 0.5) * effectiveSpeed,
+              radius: isDesktopViewport ? 1.4 + Math.random() * 2.0 : 1.0 + Math.random() * 1.4,
               alpha: isLightTheme ? 0.85 + Math.random() * 0.15 : 0.65 + Math.random() * 0.3,
               color: accentColor,
             }
           : {
               x: Math.random() * rect.width,
               y: Math.random() * rect.height,
-              vx: (Math.random() - 0.5) * speed,
-              vy: (Math.random() - 0.5) * speed,
-              radius: 1.0 + Math.random() * 1.8,
+              vx: (Math.random() - 0.5) * effectiveSpeed,
+              vy: (Math.random() - 0.5) * effectiveSpeed,
+              radius: isDesktopViewport ? 1.0 + Math.random() * 1.8 : 0.7 + Math.random() * 1.2,
               alpha: isLightTheme ? 0.35 + Math.random() * 0.35 : 0.4 + Math.random() * 0.4,
               color: baseColor,
             }),
@@ -132,9 +142,18 @@ export function Particles({
     resize()
     rafRef.current = window.requestAnimationFrame(draw)
     window.addEventListener('resize', resize)
+    const handleVisibility = () => {
+      if (document.hidden) {
+        if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
+      } else {
+        rafRef.current = window.requestAnimationFrame(draw)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
 
     return () => {
       window.removeEventListener('resize', resize)
+      document.removeEventListener('visibilitychange', handleVisibility)
       if (rafRef.current) {
         window.cancelAnimationFrame(rafRef.current)
       }

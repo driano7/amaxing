@@ -6,11 +6,16 @@ import { HeroMouseBackground } from '@/components/HeroMouseBackground'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 
 export function HeroSection() {
-  const { t } = useLanguage()
-
-  const titleStart = t('hero.titleStart') || 'Discover the'
-  const titleHighlight = t('hero.titleHighlight') || 'Mexico They Never Show You.'
-  const subtitle = t('hero.subtitle') || 'Exclusive luxury tours crafted for discerning travelers.'
+  const { t, currentLanguage } = useLanguage()
+  const isEn = currentLanguage === 'en'
+  // Identidad Amaxing — badge, H1 y párrafo según locale
+  const badge = isEn
+    ? 'Amaxing • Tourism & Culture Platform'
+    : 'Amaxing • Plataforma de Turismo y Cultura'
+  const title = isEn ? 'Discover Mexico with Amaxing' : 'Descubre México con Amaxing'
+  const subtitle = isEn
+    ? 'Amaxing is the platform of authentic experiences, interactive maps and cultural curation developed by Donovan Riaño to explore Mexico without clichés.'
+    : 'Amaxing es la plataforma de experiencias auténticas, mapas interactivos y curaduría cultural desarrollada por Donovan Riaño para explorar México sin clichés.'
   const cta = t('hero.cta') || 'Book a Trip'
   const scrollHint = t('hero.scrollHint') || 'Scroll to explore'
 
@@ -28,6 +33,18 @@ export function HeroSection() {
       <div className="container relative z-10 mx-auto flex min-h-[100dvh] items-center justify-center px-6">
         <div className="hero-content mx-auto max-w-5xl text-center">
           <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-6 flex justify-center"
+          >
+            <span className="inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-orange-600 backdrop-blur-md dark:border-orange-500/30 dark:text-orange-400">
+              <span className="h-2 w-2 rounded-full bg-orange-500" aria-hidden />
+              {badge}
+            </span>
+          </motion.div>
+
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -41,15 +58,9 @@ export function HeroSection() {
                 ease: [0.25, 0.1, 0.25, 1.0],
                 staggerChildren: 0.15,
               }}
-              className="text-5xl font-bold leading-tight tracking-tight text-zinc-900 dark:text-white md:text-7xl lg:text-[8rem]"
+              className="text-5xl font-bold leading-tight tracking-tight text-zinc-900 dark:text-white md:text-7xl lg:text-[5.5rem]"
             >
-              <motion.span className="mb-4 block font-serif">{titleStart}</motion.span>
-              <motion.span
-                className="font-serif text-orange-500"
-                style={{ willChange: 'transform, opacity' }}
-              >
-                {titleHighlight}
-              </motion.span>
+              <span className="block font-serif">{title}</span>
             </motion.h1>
           </motion.div>
 
@@ -57,9 +68,14 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
-            className="mx-auto mt-8 max-w-3xl"
+            className="mx-auto mt-6 max-w-3xl"
           >
-            <p className="text-lg text-zinc-600 dark:text-gray-300 md:text-xl">{subtitle}</p>
+            <p className="text-lg leading-relaxed text-zinc-600 dark:text-gray-300 md:text-xl">
+              {subtitle}
+            </p>
+            <p className="mt-2 text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+              {isEn ? 'By Donovan Riaño' : 'Por Donovan Riaño'}
+            </p>
           </motion.div>
 
           <motion.div

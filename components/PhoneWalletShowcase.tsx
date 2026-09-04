@@ -622,392 +622,394 @@ export function HeroPhoneWalletScroll({
         <div className="sticky top-16">
           <div className="mx-auto flex max-w-6xl items-center justify-center px-4 pb-2 pt-10">
             <div className="relative h-[700px] w-full max-w-[1100px]">
-              {/* Pantallas periféricas (6): se animan hacia fuera y hacia abajo conforme avanza el scrollProgress. */}
+              {/* Pantallas periféricas: en móvil solo 3 para evitar trabarse */}
               <div className="absolute inset-0">
-                {pantallasPerifericas.map((layout, index) => (
-                  <PantallaPeriferica
-                    key={layout.id}
-                    layout={layout}
-                    progress={progress}
-                    index={index}
-                    themePulseKey={themePulseKey}
-                    delayBetweenPeripherals={delayBetweenPeripherals}
-                    peripheralsScrollable={peripheralsScrollable}
-                    spreadMedium={spreadMedium}
-                    spreadLong={spreadLong}
-                    viewportWidth={viewportWidth}
-                  >
-                    {({ scrollable }) => {
-                      if (layout.id === 'top-left') {
-                        return (
-                          <PantallaMarco
-                            title={layout.title}
-                            ariaLabel={layout.ariaLabel}
-                            tone="accent"
-                            scrollable={scrollable}
-                            width={layout.width}
-                            height={layout.height}
-                            accentColor={ac}
-                          >
-                            {({ parallaxY }) => (
-                              <motion.div style={{ y: parallaxY }}>
-                                <div className="space-y-2">
-                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      Prompt
-                                    </p>
-                                    <p className="mt-1 text-[11px] leading-snug text-slate-900 dark:text-white">
-                                      {aiPrompt}
-                                    </p>
-                                  </div>
-
-                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      Output
-                                    </p>
-                                    <div className="mt-1 space-y-1">
-                                      <div className="max-w-[85%] rounded-2xl bg-slate-900 px-2 py-1 text-[11px] text-white dark:bg-white/10">
-                                        Listo. ¿Ejecutar?
-                                      </div>
-                                      <AnimatePresence initial={false}>
-                                        {aiOutput ? (
-                                          <motion.div
-                                            key="out"
-                                            initial={{ opacity: 0, y: 6 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: 6 }}
-                                            transition={{ duration: 0.25, ease: EASE_OUT }}
-                                            className="ml-auto max-w-[85%] rounded-2xl px-2 py-1 text-[11px]"
-                                            style={{ backgroundColor: ac15, color: ac }}
-                                          >
-                                            {aiOutput}
-                                          </motion.div>
-                                        ) : (
-                                          <motion.div
-                                            key="empty"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="dark:text-white/55 text-[11px] text-slate-500"
-                                          >
-                                            (sin output)
-                                          </motion.div>
-                                        )}
-                                      </AnimatePresence>
+                {(isMobile ? pantallasPerifericas.slice(0, 3) : pantallasPerifericas).map(
+                  (layout, index) => (
+                    <PantallaPeriferica
+                      key={layout.id}
+                      layout={layout}
+                      progress={progress}
+                      index={index}
+                      themePulseKey={themePulseKey}
+                      delayBetweenPeripherals={delayBetweenPeripherals}
+                      peripheralsScrollable={peripheralsScrollable}
+                      spreadMedium={spreadMedium}
+                      spreadLong={spreadLong}
+                      viewportWidth={viewportWidth}
+                    >
+                      {({ scrollable }) => {
+                        if (layout.id === 'top-left') {
+                          return (
+                            <PantallaMarco
+                              title={layout.title}
+                              ariaLabel={layout.ariaLabel}
+                              tone="accent"
+                              scrollable={scrollable}
+                              width={layout.width}
+                              height={layout.height}
+                              accentColor={ac}
+                            >
+                              {({ parallaxY }) => (
+                                <motion.div style={{ y: parallaxY }}>
+                                  <div className="space-y-2">
+                                    <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                      <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                        Prompt
+                                      </p>
+                                      <p className="mt-1 text-[11px] leading-snug text-slate-900 dark:text-white">
+                                        {aiPrompt}
+                                      </p>
                                     </div>
-                                  </div>
 
-                                  <div className="flex items-center justify-end gap-2">
-                                    <button
-                                      type="button"
-                                      onClick={runAiMock}
-                                      className="rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors duration-[160ms]"
-                                      style={{
-                                        borderColor: `${ac}4D`,
-                                        backgroundColor: ac10,
-                                        color: ac,
-                                      }}
-                                      aria-label="Run AI (mock)"
-                                    >
-                                      Run
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={clearAiMock}
-                                      className="rounded-full border border-black/10 bg-white/70 px-3 py-1 text-[11px] font-semibold text-slate-700 transition-colors duration-[160ms] hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10"
-                                      aria-label="Clear output (mock)"
-                                    >
-                                      Clear
-                                    </button>
-                                  </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </PantallaMarco>
-                        )
-                      }
-
-                      if (layout.id === 'top-right') {
-                        const rating = '4.9'
-                        const reviews = '1,248'
-                        return (
-                          <PantallaMarco
-                            title={layout.title}
-                            ariaLabel={layout.ariaLabel}
-                            scrollable={scrollable}
-                            width={layout.width}
-                            height={layout.height}
-                            accentColor={ac}
-                          >
-                            {({ parallaxY }) => (
-                              <motion.div style={{ y: parallaxY }} className="space-y-2">
-                                <div className="grid grid-cols-2 gap-2">
-                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      calificación
-                                    </p>
-                                    <p className="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">
-                                      {rating} ★
-                                    </p>
-                                  </div>
-                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      reseñas
-                                    </p>
-                                    <p className="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">
-                                      {reviews}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                  <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                    Teotihuacán al amanecer
-                                  </p>
-                                  <svg
-                                    viewBox="0 0 120 42"
-                                    className="mt-2 h-10 w-full"
-                                    aria-hidden
-                                  >
-                                    <defs>
-                                      <linearGradient id="mlGrad" x1="0" y1="0" x2="1" y2="0">
-                                        <stop offset="0" stopColor="rgb(16 185 129 / 0.65)" />
-                                        <stop offset="1" stopColor="rgb(59 130 246 / 0.55)" />
-                                      </linearGradient>
-                                    </defs>
-                                    <path
-                                      d="M2 34 C 18 22, 30 26, 44 20 S 70 16, 84 12 S 106 10, 118 8"
-                                      fill="none"
-                                      stroke="url(#mlGrad)"
-                                      strokeWidth="3"
-                                      strokeLinecap="round"
-                                    />
-                                    <path
-                                      d="M2 34 C 18 22, 30 26, 44 20 S 70 16, 84 12 S 106 10, 118 8"
-                                      fill="none"
-                                      stroke="rgb(16 185 129 / 0.18)"
-                                      strokeWidth="7"
-                                      strokeLinecap="round"
-                                    />
-                                    <g
-                                      fill="currentColor"
-                                      className="text-slate-800 dark:text-white/75"
-                                    >
-                                      <circle cx="44" cy="20" r="2" />
-                                      <circle cx="84" cy="12" r="2" />
-                                      <circle cx="118" cy="8" r="2" />
-                                    </g>
-                                  </svg>
-                                  <p className="mt-1 text-[10px] text-slate-600 dark:text-white/60">
-                                    mock curve (no libs)
-                                  </p>
-                                </div>
-                              </motion.div>
-                            )}
-                          </PantallaMarco>
-                        )
-                      }
-
-                      if (layout.id === 'mid-left') {
-                        return (
-                          <PantallaMarco
-                            title={layout.title}
-                            ariaLabel={layout.ariaLabel}
-                            scrollable={scrollable}
-                            width={layout.width}
-                            height={layout.height}
-                            accentColor={ac}
-                          >
-                            {({ parallaxY }) => (
-                              <motion.div style={{ y: parallaxY }} className="space-y-2">
-                                <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                  <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                    barrios
-                                  </p>
-                                  <div className="mt-2 grid grid-cols-3 gap-2">
-                                    {['Roma', 'Condesa', 'Centro'].map((a) => (
-                                      <div
-                                        key={a}
-                                        className="rounded-2xl border border-black/10 bg-white/60 px-2 py-1 text-center text-[11px] font-semibold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-white/80"
-                                      >
-                                        {a}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                  <div className="flex items-center justify-between">
-                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      próximos
-                                    </p>
-                                    <span className="dark:text-white/55 text-[10px] text-slate-500">
-                                      hoy
-                                    </span>
-                                  </div>
-                                  <div className="mt-2 space-y-1 text-[11px] text-slate-700 dark:text-white/70">
-                                    <div className="flex items-center justify-between">
-                                      <span>Taco Tour</span>
-                                      <span className="font-semibold">10:00</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                      <span>Museo Frida</span>
-                                      <span className="font-semibold">11:30</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                      <span>Xochimilco</span>
-                                      <span className="font-semibold">16:00</span>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <button
-                                  type="button"
-                                  className="w-full rounded-2xl border px-3 py-2 text-[11px] font-semibold transition-colors duration-[160ms]"
-                                  style={{
-                                    borderColor: `${ac}4D`,
-                                    backgroundColor: ac10,
-                                    color: ac,
-                                  }}
-                                >
-                                  Interact
-                                </button>
-                              </motion.div>
-                            )}
-                          </PantallaMarco>
-                        )
-                      }
-
-                      if (layout.id === 'mid-right') {
-                        const reservas = [
-                          { id: 'AMX-7K9', tour: 'Museo Frida', hora: '11:30', estado: 'OK' },
-                          { id: 'AMX-3Q2', tour: 'Barrio Roma', hora: '10:00', estado: 'OK' },
-                          { id: 'AMX-9P1', tour: 'Xochimilco', hora: '16:00', estado: 'PEND' },
-                          { id: 'AMX-4X8', tour: 'Taco Tour', hora: '09:00', estado: 'OK' },
-                        ]
-                        return (
-                          <PantallaMarco
-                            title={layout.title}
-                            ariaLabel={layout.ariaLabel}
-                            scrollable={scrollable}
-                            width={layout.width}
-                            height={layout.height}
-                            accentColor={ac}
-                          >
-                            {({ parallaxY }) => (
-                              <motion.div style={{ y: parallaxY }} className="space-y-2">
-                                <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                  <div className="flex items-center justify-between">
-                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                      próximas reservas
-                                    </p>
-                                    <span className="dark:text-white/55 text-[10px] text-slate-500">
-                                      hoy
-                                    </span>
-                                  </div>
-                                  <div className="mt-2 space-y-1">
-                                    {reservas.map((t) => (
-                                      <div
-                                        key={t.id}
-                                        className="flex items-center justify-between rounded-2xl border border-black/10 bg-white/60 px-2 py-1 text-[11px] dark:border-white/10 dark:bg-white/5"
-                                      >
-                                        <span className="dark:text-white/85 font-semibold text-slate-800">
-                                          {t.id}
-                                        </span>
-                                        <span className="text-slate-600 dark:text-white/70">
-                                          {t.hora}
-                                        </span>
-                                        <span
-                                          className={clsx(
-                                            'rounded-full px-2 py-0.5 text-[10px] font-semibold',
-                                            t.status === 'PEND'
-                                              ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200'
-                                              : 'dark:text-white'
+                                    <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                      <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                        Output
+                                      </p>
+                                      <div className="mt-1 space-y-1">
+                                        <div className="max-w-[85%] rounded-2xl bg-slate-900 px-2 py-1 text-[11px] text-white dark:bg-white/10">
+                                          Listo. ¿Ejecutar?
+                                        </div>
+                                        <AnimatePresence initial={false}>
+                                          {aiOutput ? (
+                                            <motion.div
+                                              key="out"
+                                              initial={{ opacity: 0, y: 6 }}
+                                              animate={{ opacity: 1, y: 0 }}
+                                              exit={{ opacity: 0, y: 6 }}
+                                              transition={{ duration: 0.25, ease: EASE_OUT }}
+                                              className="ml-auto max-w-[85%] rounded-2xl px-2 py-1 text-[11px]"
+                                              style={{ backgroundColor: ac15, color: ac }}
+                                            >
+                                              {aiOutput}
+                                            </motion.div>
+                                          ) : (
+                                            <motion.div
+                                              key="empty"
+                                              initial={{ opacity: 0 }}
+                                              animate={{ opacity: 1 }}
+                                              exit={{ opacity: 0 }}
+                                              className="dark:text-white/55 text-[11px] text-slate-500"
+                                            >
+                                              (sin output)
+                                            </motion.div>
                                           )}
-                                        >
-                                          {t.status}
-                                        </span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </PantallaMarco>
-                        )
-                      }
-
-                      if (layout.id === 'bottom-left') {
-                        return (
-                          <PantallaMarco
-                            title={layout.title}
-                            ariaLabel={layout.ariaLabel}
-                            tone="accent"
-                            scrollable={scrollable}
-                            width={layout.width}
-                            height={layout.height}
-                            accentColor={ac}
-                          >
-                            {({ parallaxY }) => (
-                              <motion.div style={{ y: parallaxY }} className="space-y-2">
-                                <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
-                                  <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
-                                    reserva
-                                  </p>
-                                  <div className="mt-2 space-y-2">
-                                    <div className="rounded-2xl border border-black/10 bg-white/60 p-2 dark:border-white/10 dark:bg-white/5">
-                                      <div className="flex items-center justify-between text-[11px]">
-                                        <span className="dark:text-white/85 font-semibold text-slate-800">
-                                          Taco Tour
-                                        </span>
-                                        <span className="text-slate-600 dark:text-white/70">
-                                          2 pers.
-                                        </span>
-                                      </div>
-                                      <div className="mt-1 h-2 rounded-full bg-slate-200 dark:bg-white/10">
-                                        <div
-                                          className="h-2 w-[62%] rounded-full"
-                                          style={{ backgroundColor: ac60 }}
-                                        />
+                                        </AnimatePresence>
                                       </div>
                                     </div>
-                                    <div className="rounded-2xl border border-black/10 bg-white/60 p-2 dark:border-white/10 dark:bg-white/5">
-                                      <div className="flex items-center justify-between text-[11px]">
-                                        <span className="dark:text-white/85 font-semibold text-slate-800">
-                                          Museo Frida
-                                        </span>
-                                        <span className="text-slate-600 dark:text-white/70">
-                                          3 pers.
-                                        </span>
-                                      </div>
-                                      <p className="dark:text-white/55 mt-1 text-[10px] text-slate-500">
-                                        11:30 • Confirmado
+
+                                    <div className="flex items-center justify-end gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={runAiMock}
+                                        className="rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors duration-[160ms]"
+                                        style={{
+                                          borderColor: `${ac}4D`,
+                                          backgroundColor: ac10,
+                                          color: ac,
+                                        }}
+                                        aria-label="Run AI (mock)"
+                                      >
+                                        Run
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={clearAiMock}
+                                        className="rounded-full border border-black/10 bg-white/70 px-3 py-1 text-[11px] font-semibold text-slate-700 transition-colors duration-[160ms] hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10"
+                                        aria-label="Clear output (mock)"
+                                      >
+                                        Clear
+                                      </button>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </PantallaMarco>
+                          )
+                        }
+
+                        if (layout.id === 'top-right') {
+                          const rating = '4.9'
+                          const reviews = '1,248'
+                          return (
+                            <PantallaMarco
+                              title={layout.title}
+                              ariaLabel={layout.ariaLabel}
+                              scrollable={scrollable}
+                              width={layout.width}
+                              height={layout.height}
+                              accentColor={ac}
+                            >
+                              {({ parallaxY }) => (
+                                <motion.div style={{ y: parallaxY }} className="space-y-2">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                      <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                        calificación
+                                      </p>
+                                      <p className="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">
+                                        {rating} ★
+                                      </p>
+                                    </div>
+                                    <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                      <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                        reseñas
+                                      </p>
+                                      <p className="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">
+                                        {reviews}
                                       </p>
                                     </div>
                                   </div>
-                                </div>
 
-                                <button
-                                  type="button"
-                                  className="w-full rounded-2xl border px-3 py-2 text-[11px] font-semibold transition-colors duration-[160ms]"
-                                  style={{
-                                    borderColor: `${ac}4D`,
-                                    backgroundColor: ac10,
-                                    color: ac,
-                                  }}
-                                >
-                                  Confirm
-                                </button>
-                              </motion.div>
-                            )}
-                          </PantallaMarco>
-                        )
-                      }
+                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                      Teotihuacán al amanecer
+                                    </p>
+                                    <svg
+                                      viewBox="0 0 120 42"
+                                      className="mt-2 h-10 w-full"
+                                      aria-hidden
+                                    >
+                                      <defs>
+                                        <linearGradient id="mlGrad" x1="0" y1="0" x2="1" y2="0">
+                                          <stop offset="0" stopColor="rgb(16 185 129 / 0.65)" />
+                                          <stop offset="1" stopColor="rgb(59 130 246 / 0.55)" />
+                                        </linearGradient>
+                                      </defs>
+                                      <path
+                                        d="M2 34 C 18 22, 30 26, 44 20 S 70 16, 84 12 S 106 10, 118 8"
+                                        fill="none"
+                                        stroke="url(#mlGrad)"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
+                                      />
+                                      <path
+                                        d="M2 34 C 18 22, 30 26, 44 20 S 70 16, 84 12 S 106 10, 118 8"
+                                        fill="none"
+                                        stroke="rgb(16 185 129 / 0.18)"
+                                        strokeWidth="7"
+                                        strokeLinecap="round"
+                                      />
+                                      <g
+                                        fill="currentColor"
+                                        className="text-slate-800 dark:text-white/75"
+                                      >
+                                        <circle cx="44" cy="20" r="2" />
+                                        <circle cx="84" cy="12" r="2" />
+                                        <circle cx="118" cy="8" r="2" />
+                                      </g>
+                                    </svg>
+                                    <p className="mt-1 text-[10px] text-slate-600 dark:text-white/60">
+                                      mock curve (no libs)
+                                    </p>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </PantallaMarco>
+                          )
+                        }
 
-                      return null
-                    }}
-                  </PantallaPeriferica>
-                ))}
+                        if (layout.id === 'mid-left') {
+                          return (
+                            <PantallaMarco
+                              title={layout.title}
+                              ariaLabel={layout.ariaLabel}
+                              scrollable={scrollable}
+                              width={layout.width}
+                              height={layout.height}
+                              accentColor={ac}
+                            >
+                              {({ parallaxY }) => (
+                                <motion.div style={{ y: parallaxY }} className="space-y-2">
+                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                      barrios
+                                    </p>
+                                    <div className="mt-2 grid grid-cols-3 gap-2">
+                                      {['Roma', 'Condesa', 'Centro'].map((a) => (
+                                        <div
+                                          key={a}
+                                          className="rounded-2xl border border-black/10 bg-white/60 px-2 py-1 text-center text-[11px] font-semibold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-white/80"
+                                        >
+                                          {a}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                    <div className="flex items-center justify-between">
+                                      <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                        próximos
+                                      </p>
+                                      <span className="dark:text-white/55 text-[10px] text-slate-500">
+                                        hoy
+                                      </span>
+                                    </div>
+                                    <div className="mt-2 space-y-1 text-[11px] text-slate-700 dark:text-white/70">
+                                      <div className="flex items-center justify-between">
+                                        <span>Taco Tour</span>
+                                        <span className="font-semibold">10:00</span>
+                                      </div>
+                                      <div className="flex items-center justify-between">
+                                        <span>Museo Frida</span>
+                                        <span className="font-semibold">11:30</span>
+                                      </div>
+                                      <div className="flex items-center justify-between">
+                                        <span>Xochimilco</span>
+                                        <span className="font-semibold">16:00</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    className="w-full rounded-2xl border px-3 py-2 text-[11px] font-semibold transition-colors duration-[160ms]"
+                                    style={{
+                                      borderColor: `${ac}4D`,
+                                      backgroundColor: ac10,
+                                      color: ac,
+                                    }}
+                                  >
+                                    Interact
+                                  </button>
+                                </motion.div>
+                              )}
+                            </PantallaMarco>
+                          )
+                        }
+
+                        if (layout.id === 'mid-right') {
+                          const reservas = [
+                            { id: 'AMX-7K9', tour: 'Museo Frida', hora: '11:30', estado: 'OK' },
+                            { id: 'AMX-3Q2', tour: 'Barrio Roma', hora: '10:00', estado: 'OK' },
+                            { id: 'AMX-9P1', tour: 'Xochimilco', hora: '16:00', estado: 'PEND' },
+                            { id: 'AMX-4X8', tour: 'Taco Tour', hora: '09:00', estado: 'OK' },
+                          ]
+                          return (
+                            <PantallaMarco
+                              title={layout.title}
+                              ariaLabel={layout.ariaLabel}
+                              scrollable={scrollable}
+                              width={layout.width}
+                              height={layout.height}
+                              accentColor={ac}
+                            >
+                              {({ parallaxY }) => (
+                                <motion.div style={{ y: parallaxY }} className="space-y-2">
+                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                    <div className="flex items-center justify-between">
+                                      <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                        próximas reservas
+                                      </p>
+                                      <span className="dark:text-white/55 text-[10px] text-slate-500">
+                                        hoy
+                                      </span>
+                                    </div>
+                                    <div className="mt-2 space-y-1">
+                                      {reservas.map((t) => (
+                                        <div
+                                          key={t.id}
+                                          className="flex items-center justify-between rounded-2xl border border-black/10 bg-white/60 px-2 py-1 text-[11px] dark:border-white/10 dark:bg-white/5"
+                                        >
+                                          <span className="dark:text-white/85 font-semibold text-slate-800">
+                                            {t.id}
+                                          </span>
+                                          <span className="text-slate-600 dark:text-white/70">
+                                            {t.hora}
+                                          </span>
+                                          <span
+                                            className={clsx(
+                                              'rounded-full px-2 py-0.5 text-[10px] font-semibold',
+                                              t.status === 'PEND'
+                                                ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200'
+                                                : 'dark:text-white'
+                                            )}
+                                          >
+                                            {t.status}
+                                          </span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </PantallaMarco>
+                          )
+                        }
+
+                        if (layout.id === 'bottom-left') {
+                          return (
+                            <PantallaMarco
+                              title={layout.title}
+                              ariaLabel={layout.ariaLabel}
+                              tone="accent"
+                              scrollable={scrollable}
+                              width={layout.width}
+                              height={layout.height}
+                              accentColor={ac}
+                            >
+                              {({ parallaxY }) => (
+                                <motion.div style={{ y: parallaxY }} className="space-y-2">
+                                  <div className="rounded-2xl border border-black/10 bg-white/70 p-2 dark:border-white/10 dark:bg-white/5">
+                                    <p className="text-[10px] font-semibold text-slate-700 dark:text-white/70">
+                                      reserva
+                                    </p>
+                                    <div className="mt-2 space-y-2">
+                                      <div className="rounded-2xl border border-black/10 bg-white/60 p-2 dark:border-white/10 dark:bg-white/5">
+                                        <div className="flex items-center justify-between text-[11px]">
+                                          <span className="dark:text-white/85 font-semibold text-slate-800">
+                                            Taco Tour
+                                          </span>
+                                          <span className="text-slate-600 dark:text-white/70">
+                                            2 pers.
+                                          </span>
+                                        </div>
+                                        <div className="mt-1 h-2 rounded-full bg-slate-200 dark:bg-white/10">
+                                          <div
+                                            className="h-2 w-[62%] rounded-full"
+                                            style={{ backgroundColor: ac60 }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="rounded-2xl border border-black/10 bg-white/60 p-2 dark:border-white/10 dark:bg-white/5">
+                                        <div className="flex items-center justify-between text-[11px]">
+                                          <span className="dark:text-white/85 font-semibold text-slate-800">
+                                            Museo Frida
+                                          </span>
+                                          <span className="text-slate-600 dark:text-white/70">
+                                            3 pers.
+                                          </span>
+                                        </div>
+                                        <p className="dark:text-white/55 mt-1 text-[10px] text-slate-500">
+                                          11:30 • Confirmado
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    className="w-full rounded-2xl border px-3 py-2 text-[11px] font-semibold transition-colors duration-[160ms]"
+                                    style={{
+                                      borderColor: `${ac}4D`,
+                                      backgroundColor: ac10,
+                                      color: ac,
+                                    }}
+                                  >
+                                    Confirm
+                                  </button>
+                                </motion.div>
+                              )}
+                            </PantallaMarco>
+                          )
+                        }
+
+                        return null
+                      }}
+                    </PantallaPeriferica>
+                  )
+                )}
               </div>
 
               {/* iPhone grande: cuerpo + pantalla (sin imágenes externas). */}

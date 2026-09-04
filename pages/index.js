@@ -8,11 +8,17 @@ import projectsData from '@/data/projectsData'
 import { GdprBanner } from '@/components/GdprBanner'
 import { HeroPhoneWalletScroll } from '@/components/PhoneWalletShowcase'
 
+import ExperiencesCtaBanner from '@/components/ExperiencesCtaBanner'
+
 export default function Home() {
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
       <HeroSection />
+      {/* CTA Banner Experiences — entre hero y posts recientes */}
+      <div className="bg-transparent py-10">
+        <ExperiencesCtaBanner />
+      </div>
       <div className="bg-transparent text-gray-900 dark:text-gray-100">
         <div className="container mx-auto px-4 py-16">
           {/* Local Picks Preview */}
