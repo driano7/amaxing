@@ -33,6 +33,11 @@ const PageAnalyticsTracker = dynamic(() => import('@/components/PageAnalyticsTra
   loading: () => null,
 })
 
+const SiteCookie = dynamic(() => import('@/components/SiteCookie'), {
+  ssr: false,
+  loading: () => null,
+})
+
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isSocket = process.env.SOCKET
 
@@ -70,6 +75,7 @@ export default function App({ Component, pageProps }) {
             </Head>
             {isDevelopment && isSocket && <ClientReload />}
             <Analytics />
+            <SiteCookie />
             {getLayout(<Component {...pageProps} />)}
             <ChatbotAssistant />
             <PageAnalyticsTracker />

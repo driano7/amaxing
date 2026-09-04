@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 export const CDMX_PAGE_HEADER = {
   es: {
     badge: 'Guía Interactiva CDMX 2026',

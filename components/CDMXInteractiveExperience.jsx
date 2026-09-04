@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 import { useEffect, useRef, useState } from 'react'
 import Link from '@/components/Link'
 import { useRouter } from 'next/router'

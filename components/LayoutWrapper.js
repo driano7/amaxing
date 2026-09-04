@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 import siteMetadata from '@/data/siteMetadata'
 import Logo from '@/data/jaguarColor.svg'
 import Link from './Link'
@@ -22,10 +23,16 @@ const Background = dynamic(() => import('./Background').then((m) => m.Background
   loading: () => null,
 })
 
+const SiteCookie = dynamic(() => import('./SiteCookie').then((m) => m.default), {
+  ssr: false,
+  loading: () => null,
+})
+
 const LayoutWrapper = ({ children }) => {
   return (
     <>
       <Background />
+      <SiteCookie />
       <SectionContainer>
         {/* Structured data global (Organization + WebSite), estilo Banff */}
         <JsonLd data={[buildOrganizationEntity(), buildWebSiteEntity()]} />

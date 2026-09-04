@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 import { getFileBySlug, bundleMdxSource } from '@/lib/mdx'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 
@@ -30,27 +31,32 @@ export async function getStaticProps({ params }) {
       lastError = e
     }
   }
-  // Fallback: direct fs read for data/maps/*.mdx pattern with .en.mdx
+  // Fallback: direct fs read for data/maps or content/maps (*.mdx with .en.mdx)
   if (!post) {
     try {
       const fs = await import('fs')
       const path = await import('path')
       const matter = (await import('gray-matter')).default
       const possible = [`${slug}.mdx`, `${slug}.en.mdx`, `${slug}.es.mdx`]
-      for (const file of possible) {
-        const full = path.join(process.cwd(), 'data', 'maps', file)
-        if (fs.existsSync(full)) {
-          const raw = fs.readFileSync(full, 'utf8')
-          const { data } = matter(raw)
-          const bundled = await bundleMdxSource(raw, slug, file)
-          return {
-            props: {
-              post: {
-                mdxSource: bundled.mdxSource,
-                toc: bundled.toc,
-                frontMatter: bundled.frontMatter,
+      const searchDirs = [
+        path.join(process.cwd(), 'data', 'maps'),
+        path.join(process.cwd(), 'content', 'maps'),
+      ]
+      for (const dir of searchDirs) {
+        for (const file of possible) {
+          const full = path.join(dir, file)
+          if (fs.existsSync(full)) {
+            const raw = fs.readFileSync(full, 'utf8')
+            const bundled = await bundleMdxSource(raw, slug, file)
+            return {
+              props: {
+                post: {
+                  mdxSource: bundled.mdxSource,
+                  toc: bundled.toc,
+                  frontMatter: bundled.frontMatter,
+                },
               },
-            },
+            }
           }
         }
       }

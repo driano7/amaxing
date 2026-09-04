@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 import { PageSEO } from '@/components/SEO'
 import CDMXInteractiveExperience from '@/components/CDMXInteractiveExperience'
 

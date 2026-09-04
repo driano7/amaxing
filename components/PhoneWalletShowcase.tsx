@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 'use client'
 
 import type { ReactNode } from 'react'
@@ -399,7 +400,7 @@ function DynamicIsland({
   return (
     <motion.div
       className={clsx(
-        'absolute left-[10%] top-3 -translate-x-1/2',
+        'absolute left-[35%] top-3 -translate-x-1/2',
         'rounded-full border border-black/10 bg-black/90 shadow-[0_18px_50px_rgba(0,0,0,0.35)]',
         'dark:border-white/10 dark:bg-black/80'
       )}
@@ -514,7 +515,7 @@ export function HeroPhoneWalletScroll({
         id: 'top-left',
         title: 'Gastronomía CDMX',
         ariaLabel: 'Pantalla periférica top-left: tours gastronómicos',
-        initialX: isMobile ? -96 : -260,
+        initialX: isMobile ? -120 : -325,
         initialY: isMobile ? -220 : -200,
         initialRotate: -6,
         width: Math.round((isMobile ? 170 : 200) * cardScaleFactor),
@@ -524,7 +525,7 @@ export function HeroPhoneWalletScroll({
         id: 'top-right',
         title: 'Historia Viva',
         ariaLabel: 'Pantalla periférica top-right: historia y cultura',
-        initialX: isMobile ? 96 : 260,
+        initialX: isMobile ? 72 : 195,
         initialY: isMobile ? -220 : -200,
         initialRotate: 6,
         width: Math.round((isMobile ? 165 : 190) * cardScaleFactor),
@@ -534,7 +535,7 @@ export function HeroPhoneWalletScroll({
         id: 'mid-left',
         title: 'Barrios Mágicos',
         ariaLabel: 'Pantalla periférica mid-left: barrios Roma Condesa',
-        initialX: isMobile ? -112 : -320,
+        initialX: isMobile ? -140 : -400,
         initialY: isMobile ? -30 : -20,
         initialRotate: -8,
         width: Math.round((isMobile ? 190 : 240) * cardScaleFactor),
@@ -544,7 +545,7 @@ export function HeroPhoneWalletScroll({
         id: 'mid-right',
         title: 'Museos & Arte',
         ariaLabel: 'Pantalla periférica mid-right: museos y arte',
-        initialX: isMobile ? 112 : 320,
+        initialX: isMobile ? 84 : 240,
         initialY: isMobile ? -30 : -20,
         initialRotate: 8,
         width: Math.round((isMobile ? 185 : 230) * cardScaleFactor),
@@ -554,7 +555,7 @@ export function HeroPhoneWalletScroll({
         id: 'bottom-left',
         title: 'Mis Reservas',
         ariaLabel: 'Pantalla periférica bottom-left: reservas y tickets',
-        initialX: isMobile ? -86 : -240,
+        initialX: isMobile ? -108 : -300,
         initialY: isMobile ? 220 : 200,
         initialRotate: -4,
         width: Math.round((isMobile ? 160 : 185) * cardScaleFactor),
@@ -594,7 +595,7 @@ export function HeroPhoneWalletScroll({
     >
       {/* Nota: la altura extra permite que el scroll drivee el zoom y el movimiento. */}
       <div className="mx-auto max-w-6xl px-4">
-        <div className="grid gap-10 pb-24 pt-16 md:pb-28 md:pt-20">
+        <div className="grid gap-8 pb-20 pt-12 md:pb-24 md:pt-16">
           <div className="space-y-6">
             <div className="dark:border-white/15 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors duration-[160ms] dark:bg-white/5 dark:text-white">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ac }} aria-hidden />
@@ -603,7 +604,7 @@ export function HeroPhoneWalletScroll({
             <h2 className="text-slate-950 text-3xl font-extrabold tracking-tight transition-colors duration-[160ms] dark:text-white md:text-4xl">
               Gastronomía, Historia, Barrios y Museos — todo tu viaje en una sola vista.
             </h2>
-            <p className="max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white">
+            <p className="h-[80%] max-w-prose text-base leading-relaxed text-slate-600 transition-colors duration-[160ms] dark:text-white">
               Nos enfocamos en experiencias locales: sabores de mercado, historia viva, arte en
               museos y la vida de barrios mágicos de la CDMX.
             </p>

@@ -17,6 +17,10 @@ const Background = dynamic(() => import('@/components/Background').then((m) => m
   ssr: false,
   loading: () => null,
 })
+const SiteCookie = dynamic(() => import('@/components/SiteCookie').then((m) => m.default), {
+  ssr: false,
+  loading: () => null,
+})
 
 const COLORS = {
   pink: '#E4007C',
@@ -675,6 +679,7 @@ export default function AboutPage() {
 AboutPage.getLayout = (page) => (
   <div className="relative flex min-h-screen flex-col">
     <Background />
+    <SiteCookie />
     <Navbar />
     <main className="relative z-10 flex-1 pt-20">{page}</main>
     <Footer />

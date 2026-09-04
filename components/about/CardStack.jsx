@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 

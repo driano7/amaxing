@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 export const GUIDES_PAGE_HEADER = {
   es: {
     badge: '5 Journeys de Cultura Fácil',
@@ -42,7 +43,7 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#0E8C7A',
     dockIcon: 'racetrack',
-    image: 'https://images.unsplash.com/photo-1518638150340-f706e86654b8?w=1200&q=80',
+    image: '/static/images/guides/condesa.jpg',
   },
   {
     id: 'centro-palacios',
@@ -72,12 +73,12 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#C1440E',
     dockIcon: 'palace',
-    image: 'https://images.unsplash.com/photo-1582072702363-6e86a4126fed?w=1200&q=80',
+    image: '/static/images/guides/centro.jpg',
   },
   {
     id: 'chapultepec-ii',
     slug_es: 'chapultepec-agua',
-    slug_en: 'chapultepec-water',
+    slug_en: 'chapultepec-agua',
     title_es: 'Chapultepec II — Agua, Bosque y Murales',
     title_en: 'Chapultepec II — Water, Forest & Murals',
     neighborhood_es: 'Chapultepec · 2ª Sección',
@@ -102,7 +103,7 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#2E86AB',
     dockIcon: 'water',
-    image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=80',
+    image: '/static/images/guides/chapultepec.jpg',
   },
   {
     id: 'chimalistac-puentes',
@@ -132,7 +133,7 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#7B2BD9',
     dockIcon: 'bridge',
-    image: 'https://images.unsplash.com/photo-1476514525535-07fb6b4ae8dd?w=1200&q=80',
+    image: '/static/images/guides/chimalistac.jpg',
   },
   {
     id: 'unam-murals',
@@ -162,6 +163,6 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#F2A03D',
     dockIcon: 'university',
-    image: 'https://images.unsplash.com/photo-1564982752979-96a74a72fede?w=1200&q=80',
+    image: '/static/images/guides/unam.jpg',
   },
 ]
