@@ -13,6 +13,10 @@ const HubMenu = dynamic(() => import('@/components/HubMenu').then((m) => m.HubMe
   ssr: false,
   loading: () => null,
 })
+const Background = dynamic(() => import('@/components/Background').then((m) => m.Background), {
+  ssr: false,
+  loading: () => null,
+})
 
 const COLORS = {
   pink: '#E4007C',
@@ -43,10 +47,10 @@ export default function AboutPage() {
 
       <style jsx global>{`
         .about-page {
-          background: ${COLORS.cream};
+          background: transparent;
         }
         :global(.dark) .about-page {
-          background: #18181b;
+          background: transparent;
         }
         .about-page .wrap {
           max-width: 880px;
@@ -117,16 +121,20 @@ export default function AboutPage() {
           position: relative;
         }
         .about-section-cream {
-          background: ${COLORS.cream};
+          background: rgba(250, 243, 234, 0.82);
+          backdrop-filter: blur(8px);
         }
         :global(.dark) .about-section-cream {
-          background: #18181b;
+          background: rgba(24, 24, 27, 0.82);
+          backdrop-filter: blur(8px);
         }
         .about-section-tint {
-          background: ${COLORS.lightPink};
+          background: rgba(252, 228, 241, 0.82);
+          backdrop-filter: blur(8px);
         }
         :global(.dark) .about-section-tint {
-          background: #27272a;
+          background: rgba(39, 39, 42, 0.82);
+          backdrop-filter: blur(8px);
         }
 
         .about-section-title {
@@ -666,8 +674,9 @@ export default function AboutPage() {
 
 AboutPage.getLayout = (page) => (
   <div className="relative flex min-h-screen flex-col">
+    <Background />
     <Navbar />
-    <main className="flex-1 pt-20">{page}</main>
+    <main className="relative z-10 flex-1 pt-20">{page}</main>
     <Footer />
     <MobileDock />
     <HubMenu showTrigger={false} />

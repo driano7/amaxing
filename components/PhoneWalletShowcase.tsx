@@ -330,12 +330,12 @@ function WalletMock({
               </span>
               <div className="leading-tight">
                 <p className="text-xs font-bold">{t.name}</p>
-                <p className="text-[11px] text-slate-600 dark:text-zinc-900">{t.balance}</p>
+                <p className="text-[11px] text-slate-600 dark:text-white/70">{t.balance}</p>
               </div>
             </div>
             <div className="text-right leading-tight">
               <p className="text-xs font-bold">{t.usd}</p>
-              <p className="text-[11px] text-slate-600 dark:text-zinc-900">{t.symbol}</p>
+              <p className="text-[11px] text-slate-600 dark:text-white/70">{t.symbol}</p>
             </div>
           </div>
         ))}
@@ -372,7 +372,7 @@ function WalletMock({
                   {tx.status}
                 </span>
               </div>
-              <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-slate-600 dark:text-zinc-900">
+              <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-slate-600 dark:text-white/70">
                 <span>{tx.hash}</span>
                 <span className="font-semibold text-slate-700 dark:text-white/80">{tx.amount}</span>
               </div>
@@ -588,7 +588,7 @@ export function HeroPhoneWalletScroll({
         'relative overflow-x-hidden',
         'transition-colors duration-[160ms]',
         'bg-gradient-to-b from-white via-white to-slate-50',
-        'dark:from-slate-950 dark:via-slate-950 dark:to-slate-900/40'
+        'dark:from-black dark:via-zinc-900 dark:to-zinc-900'
       )}
       aria-label="Hero con iPhone, wallet mock y pantallas periféricas animadas por scroll"
     >
@@ -913,7 +913,7 @@ export function HeroPhoneWalletScroll({
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
                                           {t.id}
                                         </span>
-                                        <span className="text-slate-600 dark:text-zinc-900">
+                                        <span className="text-slate-600 dark:text-white/70">
                                           {t.hora}
                                         </span>
                                         <span
@@ -959,7 +959,7 @@ export function HeroPhoneWalletScroll({
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
                                           Taco Tour
                                         </span>
-                                        <span className="text-slate-600 dark:text-zinc-900">
+                                        <span className="text-slate-600 dark:text-white/70">
                                           2 pers.
                                         </span>
                                       </div>
@@ -975,7 +975,7 @@ export function HeroPhoneWalletScroll({
                                         <span className="dark:text-white/85 font-semibold text-slate-800">
                                           Museo Frida
                                         </span>
-                                        <span className="text-slate-600 dark:text-zinc-900">
+                                        <span className="text-slate-600 dark:text-white/70">
                                           3 pers.
                                         </span>
                                       </div>

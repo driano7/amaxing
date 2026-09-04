@@ -263,22 +263,20 @@ export default function InteractiveGuidesSplitScroll() {
             })}
           </div>
 
-          {/* Columna Derecha: Foto Sticky Sincronizada (Desktop) */}
-          <div className="sticky top-24 hidden lg:col-span-7 lg:block">
-            <div className="relative h-[calc(100vh-140px)] max-h-[820px] min-h-[560px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-900 shadow-2xl dark:border-slate-800">
-              {SELF_GUIDES_DATA.map((guide) => {
-                const isCurrent = guide.id === activeGuideId
-                const title = lang === 'en' ? guide.title_en : guide.title_es
-                return (
-                  <div
-                    key={guide.id}
-                    className={`absolute inset-0 h-full w-full transition-opacity duration-700 ease-in-out ${
-                      isCurrent ? 'z-10 opacity-100' : 'pointer-events-none z-0 opacity-0'
-                    }`}
-                  >
+          {/* Columna Derecha: Foto Sticky Sincronizada (Desktop) — solo activo para carga rápida */}
+          {(() => {
+            const activeGuide =
+              SELF_GUIDES_DATA.find((g) => g.id === activeGuideId) || SELF_GUIDES_DATA[0]
+            const activeTitle = lang === 'en' ? activeGuide.title_en : activeGuide.title_es
+            const activeNeighborhood =
+              lang === 'en' ? activeGuide.neighborhood_en : activeGuide.neighborhood_es
+            return (
+              <div className="sticky top-24 hidden lg:col-span-7 lg:block">
+                <div className="relative h-[calc(100vh-140px)] max-h-[820px] min-h-[560px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-900 shadow-2xl dark:border-slate-800">
+                  <div key={activeGuide.id} className="absolute inset-0 h-full w-full">
                     <Image
-                      src={guide.image}
-                      alt={title}
+                      src={activeGuide.image}
+                      alt={activeTitle}
                       fill
                       sizes="50vw"
                       className="object-cover"
@@ -288,17 +286,19 @@ export default function InteractiveGuidesSplitScroll() {
                     <div className="absolute bottom-8 left-8 right-8 rounded-2xl border border-white/20 bg-white/10 p-6 text-white backdrop-blur-md dark:bg-black/40">
                       <span
                         className="text-xs font-bold uppercase tracking-wider"
-                        style={{ color: guide.accentColor }}
+                        style={{ color: activeGuide.accentColor }}
                       >
-                        {lang === 'en' ? guide.neighborhood_en : guide.neighborhood_es}
+                        {activeNeighborhood}
                       </span>
-                      <h4 className="mt-1 text-xl font-bold leading-tight text-white">{title}</h4>
+                      <h4 className="mt-1 text-xl font-bold leading-tight text-white">
+                        {activeTitle}
+                      </h4>
                     </div>
                   </div>
-                )
-              })}
-            </div>
-          </div>
+                </div>
+              </div>
+            )
+          })()}
         </div>
       </main>
 

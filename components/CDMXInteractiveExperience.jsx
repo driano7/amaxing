@@ -239,28 +239,27 @@ export default function CDMXInteractiveExperience() {
             })}
           </div>
 
-          {/* Columna Derecha: Contenedor Sticky con iframe de Google My Maps (Desktop) */}
-          <div className="sticky top-24 hidden lg:col-span-7 lg:block">
-            <div className="relative h-[calc(100vh-140px)] max-h-[820px] min-h-[560px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
-              {CDMX_MAPS_DATA.map((map) => {
-                const isCurrent = map.id === activeMapId
-                const t = lang === 'en' ? map.title_en || map.title : map.title_es || map.title
-                return (
+          {/* Columna Derecha: Contenedor Sticky con iframe de Google My Maps (Desktop) — solo activo para carga rápida */}
+          {(() => {
+            const activeMap = CDMX_MAPS_DATA.find((m) => m.id === activeMapId) || CDMX_MAPS_DATA[0]
+            const activeTitle =
+              lang === 'en'
+                ? activeMap.title_en || activeMap.title
+                : activeMap.title_es || activeMap.title
+            return (
+              <div className="sticky top-24 hidden lg:col-span-7 lg:block">
+                <div className="relative h-[calc(100vh-140px)] max-h-[820px] min-h-[560px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
                   <iframe
-                    key={map.id}
-                    src={map.embedUrl}
-                    title={t}
-                    className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-500 ease-in-out ${
-                      isCurrent
-                        ? 'pointer-events-auto z-10 opacity-100'
-                        : 'pointer-events-none z-0 opacity-0'
-                    }`}
+                    key={activeMap.id}
+                    src={activeMap.embedUrl}
+                    title={activeTitle}
+                    className="absolute inset-0 h-full w-full border-0"
                     loading="lazy"
                   />
-                )
-              })}
-            </div>
-          </div>
+                </div>
+              </div>
+            )
+          })()}
         </div>
       </main>
     </div>
