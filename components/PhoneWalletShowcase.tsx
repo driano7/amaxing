@@ -482,7 +482,7 @@ export function HeroPhoneWalletScroll({
   const internalProgress = useMotionValue(0)
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ['start start', 'end start'],
+    offset: ['start start', 'end center'],
   })
 
   const progress: MotionValue<number> = useMemo(() => {
@@ -503,10 +503,10 @@ export function HeroPhoneWalletScroll({
 
   const themePulseKey = externalThemePulseKey ?? localThemePulseKey
 
-  const basePhoneScale = useTransform(progress, [0, 0.35, 0.65, 1], [0.78, 1.08, 1.02, 1])
+  const basePhoneScale = useTransform(progress, [0, 0.25, 0.5, 1], [0.78, 1.08, 1.02, 1])
   const phoneScale = useTransform(basePhoneScale, (v) => v * (isMobile ? 0.65 : 0.8625))
-  const phoneY = useTransform(progress, [0, 0.35, 0.65, 1], [70, -6, -16, -20])
-  const glowOpacity = useTransform(progress, [0, 0.35, 1], [0.0, 0.35, 0.55])
+  const phoneY = useTransform(progress, [0, 0.25, 0.5, 1], [70, -6, -16, -20])
+  const glowOpacity = useTransform(progress, [0, 0.25, 1], [0.0, 0.35, 0.55])
   const cardScaleFactor = (isMobile ? 0.65 : 0.8625) * 0.85
   const scaleFactor = isMobile ? 0.65 : 0.8625
   const pantallasPerifericas: PantallaPerifericaLayout[] = useMemo(
@@ -618,8 +618,8 @@ export function HeroPhoneWalletScroll({
         </div>
       </div>
 
-      <div className="relative min-h-[90vh]">
-        <div className="sticky top-16">
+      <div className="relative min-h-[70vh] touch-pan-y" style={{ overscrollBehavior: 'contain' }}>
+        <div className="sticky top-10">
           <div className="mx-auto flex max-w-6xl items-center justify-center px-4 pb-2 pt-10">
             <div className="relative h-[700px] w-full max-w-[1100px]">
               {/* Pantallas periféricas: en móvil solo 3 para evitar trabarse */}

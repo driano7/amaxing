@@ -2,13 +2,12 @@
 'use client'
 
 import Link from '@/components/Link'
-import { useRouter } from 'next/router'
+import { useLanguage } from '@/lib/hooks/useLanguage'
 import { Compass, Sparkles, ArrowRight, MessageCircle } from 'lucide-react'
 
 export default function ExperiencesCtaBanner() {
-  const router = useRouter()
-  const isEn = router.locale === 'en'
-  // Fallback to es if locale undefined (LanguageProvider handles es/en)
+  const { currentLanguage } = useLanguage()
+  const isEn = currentLanguage === 'en'
   const lang = isEn ? 'en' : 'es'
 
   const content = {
@@ -40,22 +39,22 @@ export default function ExperiencesCtaBanner() {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4">
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 shadow-xl dark:border-slate-800 md:p-10">
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200/50 bg-gradient-to-br from-slate-900/70 via-slate-800/70 to-slate-900/70 p-8 shadow-xl backdrop-blur-md dark:border-slate-800/50 md:p-10">
         {/* subtle glow */}
         <div className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full bg-orange-500/20 blur-3xl" />
         <div className="pointer-events-none absolute -left-10 -bottom-10 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" />
 
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white/80 backdrop-blur">
-              <Compass className="h-3.5 w-3.5 text-orange-400" />
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white/70 backdrop-blur">
+              <Compass className="h-3.5 w-3.5 text-orange-400/80" />
               {content.badge}
-              <Sparkles className="h-3 w-3 text-orange-400" />
+              <Sparkles className="h-3 w-3 text-orange-400/80" />
             </div>
-            <h2 className="text-2xl font-black leading-tight tracking-tight text-white md:text-3xl">
+            <h2 className="text-2xl font-black leading-tight tracking-tight text-white/90 md:text-3xl">
               {content.title}
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-white/70 md:text-base">
+            <p className="mt-2 text-sm leading-relaxed text-white/60 md:text-base">
               {content.description}
             </p>
           </div>

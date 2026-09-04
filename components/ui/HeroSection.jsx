@@ -19,9 +19,9 @@ export function HeroSection() {
   const scrollHint = t('hero.scrollHint') || 'Scroll to explore'
 
   return (
-    <section className="relative min-h-[100dvh] w-full overflow-hidden border-0 bg-white/40 backdrop-blur-[2px] dark:bg-black/20">
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/30 via-transparent to-transparent dark:from-zinc-900/20 dark:via-transparent dark:to-transparent" />
-      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,rgba(222,29,141,0.02),transparent_50%),linear-gradient(to_bottom,rgba(222,29,141,0.02),transparent_50%)]" />
+    <section className="relative min-h-[100dvh] w-full overflow-hidden border-0 bg-white/20 backdrop-blur-[1px] dark:bg-black/10">
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 via-transparent to-transparent dark:from-zinc-900/10 dark:via-transparent dark:to-transparent" />
+      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,rgba(222,29,141,0.015),transparent_50%),linear-gradient(to_bottom,rgba(222,29,141,0.015),transparent_50%)]" />
 
       {/* Color waves background (from Criptec) */}
       <HeroMouseBackground />
@@ -57,9 +57,9 @@ export function HeroSection() {
                 ease: [0.25, 0.1, 0.25, 1.0],
                 staggerChildren: 0.15,
               }}
-              className="text-5xl font-bold leading-tight tracking-tight text-zinc-900 dark:text-white md:text-7xl lg:text-[5.5rem]"
+              className="text-5xl font-bold leading-tight tracking-tight text-zinc-900/80 dark:text-white/80 md:text-7xl lg:text-[5.5rem]"
             >
-              <span className="block font-serif">{title}</span>
+              <span className="block font-serif opacity-90">{title}</span>
             </motion.h1>
           </motion.div>
 
@@ -71,9 +71,6 @@ export function HeroSection() {
           >
             <p className="text-lg leading-relaxed text-zinc-600 dark:text-gray-300 md:text-xl">
               {subtitle}
-            </p>
-            <p className="mt-2 text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
-              {isEn ? 'By Donovan Riaño' : 'Por Donovan Riaño'}
             </p>
           </motion.div>
         </div>

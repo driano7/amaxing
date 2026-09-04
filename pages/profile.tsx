@@ -51,6 +51,7 @@ import {
   SequentialRadialBarChart,
   StatCard,
 } from '@/components/charts/AnimatedCharts'
+import { buildDemographics } from '@/lib/analytics/ml-metrics'
 
 type Tab = 'profile' | 'bookings' | 'dashboard' | 'favorites' | 'commented' | 'security'
 
@@ -796,6 +797,8 @@ function DashboardContent({
     date: b.date ? formatBookingDate(b.date, isEs ? 'es' : 'en') : '',
   }))
 
+  const demographics = buildDemographics(bookings)
+
   return (
     <motion.div
       className="space-y-8"
@@ -988,9 +991,75 @@ function DashboardContent({
         </motion.article>
       </motion.div>
 
+      {/* Demographics — edades, sexo, nacionalidades/estados */}
+      <motion.div
+        className="grid gap-6 lg:grid-cols-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.52 }}
+      >
+        <SequentialBarChart
+          data={demographics.ages.length ? demographics.ages : [{ label: '—', value: 0 }]}
+          title={isEs ? 'Distribución por edad' : 'Age distribution'}
+          description={isEs ? 'Rangos de edad de tus clientes' : 'Age ranges of your clients'}
+          dataKey="value"
+          nameKey="label"
+          color="#f97316"
+          pngFilename="clientes-por-edad"
+          stepMs={70}
+        />
+        <SequentialBarChart
+          data={demographics.sexes.length ? demographics.sexes : [{ label: '—', value: 0 }]}
+          title={isEs ? 'Distribución por sexo' : 'Sex distribution'}
+          description={isEs ? 'Proporción de clientes por sexo' : 'Client proportion by sex'}
+          dataKey="value"
+          nameKey="label"
+          color="#a855f7"
+          pngFilename="clientes-por-sexo"
+          stepMs={70}
+        />
+      </motion.div>
+      <motion.div
+        className="grid gap-6 lg:grid-cols-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.54 }}
+      >
+        <SequentialBarChart
+          data={
+            demographics.nationalities.length
+              ? demographics.nationalities
+              : [{ label: '—', value: 0 }]
+          }
+          title={isEs ? 'Nacionalidades' : 'Nationalities'}
+          description={
+            isEs ? 'Países de origen de tus clientes' : 'Countries of origin of your clients'
+          }
+          dataKey="value"
+          nameKey="label"
+          color="#22c55e"
+          pngFilename="clientes-por-nacionalidad"
+          stepMs={70}
+        />
+        <SequentialBarChart
+          data={demographics.states.length ? demographics.states : [{ label: '—', value: 0 }]}
+          title={isEs ? 'Estados / Regiones' : 'States / Regions'}
+          description={
+            isEs ? 'Estados de México y regiones de origen' : 'Mexican states and regions of origin'
+          }
+          dataKey="value"
+          nameKey="label"
+          color="#3b82f6"
+          pngFilename="clientes-por-estado"
+          stepMs={70}
+        />
+      </motion.div>
+
       {/* Quick Links to Favorites & Commented */}
       <motion.div
-        className="grid gap-6 md:grid-cols-2"
+        className="grid w-full min-w-0 gap-6 overflow-hidden md:grid-cols-2"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -1001,6 +1070,7 @@ function DashboardContent({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
+          className="min-w-0 overflow-hidden"
         >
           <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-white">
             <GrecaOjoFelino size={24} />
@@ -1017,7 +1087,7 @@ function DashboardContent({
               </p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="w-full min-w-0 space-y-2 overflow-hidden">
               {favTours.slice(0, 3).map((tour: any) => (
                 <MiniTourCard key={tour.id} tour={tour} isEs={isEs} />
               ))}
@@ -1030,6 +1100,7 @@ function DashboardContent({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
+          className="min-w-0 overflow-hidden"
         >
           <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-white">
             <GrecaOjoFelino size={24} />
@@ -1044,7 +1115,7 @@ function DashboardContent({
               </p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="w-full min-w-0 space-y-2 overflow-hidden">
               {commentedTours.slice(0, 3).map((tour: any) => (
                 <MiniTourCard key={tour.id} tour={tour} isEs={isEs} />
               ))}
@@ -1096,17 +1167,17 @@ function MiniTourCard({ tour, isEs }: any) {
   const title = isEs ? tour.titleEs || tour.title : tour.title
   return (
     <Link href={`/tours/${tour.id}`}>
-      <a className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white/80 p-2 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50">
+      <a className="flex w-full min-w-0 items-center gap-3 overflow-hidden rounded-xl border border-zinc-200 bg-white/80 p-2 transition-colors hover:border-orange-500/30 dark:border-white/10 dark:bg-zinc-900/50">
         <Image
           src={tour.imageUrl}
           alt={title}
           width={56}
           height={56}
-          className="rounded-lg object-cover"
+          className="h-14 w-14 shrink-0 rounded-lg object-cover"
         />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1 overflow-hidden">
           <p className="truncate font-medium text-zinc-900 dark:text-white">{title}</p>
-          <p className="text-sm text-zinc-500 dark:text-gray-400">${tour.price}</p>
+          <p className="truncate text-sm text-zinc-500 dark:text-gray-400">${tour.price}</p>
         </div>
       </a>
     </Link>

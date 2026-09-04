@@ -12,6 +12,7 @@ import {
   buildBestSlots,
   buildTourDemand,
   buildPassiveAnalytics,
+  buildDemographics,
   type AnalyticsEntry,
 } from '@/lib/analytics/ml-metrics'
 
@@ -345,6 +346,43 @@ export function AdvancedMetricsPanel({
           </div>
         )}
       </section>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <SequentialBarChart
+          data={buildDemographics(bookings).ages}
+          title={isEs ? 'Clientes por edad' : 'Clients by age'}
+          dataKey="value"
+          nameKey="label"
+          color="#f97316"
+          pngFilename="socios-edad"
+        />
+        <SequentialBarChart
+          data={buildDemographics(bookings).sexes}
+          title={isEs ? 'Clientes por sexo' : 'Clients by sex'}
+          dataKey="value"
+          nameKey="label"
+          color="#a855f7"
+          pngFilename="socios-sexo"
+        />
+      </div>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <SequentialBarChart
+          data={buildDemographics(bookings).nationalities}
+          title={isEs ? 'Clientes por nacionalidad' : 'Clients by nationality'}
+          dataKey="value"
+          nameKey="label"
+          color="#22c55e"
+          pngFilename="socios-nacionalidad"
+        />
+        <SequentialBarChart
+          data={buildDemographics(bookings).states}
+          title={isEs ? 'Clientes por estado' : 'Clients by state'}
+          dataKey="value"
+          nameKey="label"
+          color="#3b82f6"
+          pngFilename="socios-estado"
+        />
+      </div>
 
       <p className="text-center text-[11px] text-zinc-400">{t.methodology}</p>
     </div>

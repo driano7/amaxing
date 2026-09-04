@@ -196,22 +196,48 @@ export function SequentialBarChart({
   return (
     <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <GrecaOjoFelino size={18} />
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+          <p className="truncate text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            {title}
+          </p>
         </div>
-        {showPngButton && pngFilename && (
+        <div className="flex shrink-0 items-center gap-1">
+          {showPngButton && pngFilename && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => void downloadChartPng(chartRef.current, pngFilename)}
+            >
+              <Download className="mr-1 h-3.5 w-3.5" />
+              PNG
+            </Button>
+          )}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             className="h-7 px-2 text-xs"
-            onClick={() => void downloadChartPng(chartRef.current, pngFilename)}
+            onClick={exportCsv}
+            disabled={!!exporting}
           >
-            <Download className="mr-1 h-3.5 w-3.5" />
-            PNG
+            <FileText className="mr-1 h-3.5 w-3.5" />
+            {exporting === 'csv' ? '...' : 'CSV'}
           </Button>
-        )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            onClick={exportXlsx}
+            disabled={!!exporting}
+          >
+            <FileSpreadsheet className="mr-1 h-3.5 w-3.5" />
+            {exporting === 'xlsx' ? '...' : 'XLSX'}
+          </Button>
+        </div>
       </div>
       {description && <p className="mb-2 text-xs text-zinc-400">{description}</p>}
       <div ref={chartRef} className="h-[220px]" style={{ height }}>
@@ -430,22 +456,48 @@ export function SequentialLineChart({
   return (
     <article className="rounded-lg border border-zinc-200/50 bg-white/80 p-4 dark:border-white/10 dark:bg-zinc-900/50">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <GrecaOjoFelino size={18} />
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{title}</p>
+          <p className="truncate text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            {title}
+          </p>
         </div>
-        {showPngButton && pngFilename && (
+        <div className="flex shrink-0 items-center gap-1">
+          {showPngButton && pngFilename && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => void downloadChartPng(chartRef.current, pngFilename)}
+            >
+              <Download className="mr-1 h-3.5 w-3.5" />
+              PNG
+            </Button>
+          )}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             className="h-7 px-2 text-xs"
-            onClick={() => void downloadChartPng(chartRef.current, pngFilename)}
+            onClick={exportCsv}
+            disabled={!!exporting}
           >
-            <Download className="mr-1 h-3.5 w-3.5" />
-            PNG
+            <FileText className="mr-1 h-3.5 w-3.5" />
+            {exporting === 'csv' ? '...' : 'CSV'}
           </Button>
-        )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            onClick={exportXlsx}
+            disabled={!!exporting}
+          >
+            <FileSpreadsheet className="mr-1 h-3.5 w-3.5" />
+            {exporting === 'xlsx' ? '...' : 'XLSX'}
+          </Button>
+        </div>
       </div>
       {description && <p className="mb-2 text-xs text-zinc-400">{description}</p>}
       <div ref={chartRef} className="h-[220px]" style={{ height }}>

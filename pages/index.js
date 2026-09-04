@@ -18,10 +18,6 @@ export default function Home() {
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
       <HeroSection />
-      {/* CTA Banner Experiences — entre hero y posts recientes */}
-      <div className="bg-transparent py-10">
-        <ExperiencesCtaBanner />
-      </div>
       <div className="bg-transparent text-gray-900 dark:text-gray-100">
         <div className="container mx-auto px-4 py-16">
           {/* Guides Preview — similar UI */}
@@ -74,6 +70,11 @@ export default function Home() {
                 {isEn ? 'View Maps' : 'Ver Mapas'}
               </Link>
             </div>
+          </div>
+
+          {/* CTA Banner Experiences — entre mapas y selección local */}
+          <div className="mb-8">
+            <ExperiencesCtaBanner />
           </div>
 
           {/* Local Picks Preview */}

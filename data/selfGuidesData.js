@@ -43,7 +43,7 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#0E8C7A',
     dockIcon: 'racetrack',
-    image: '/static/images/guides/condesa.jpg',
+    image: '/static/images/polanco.jpeg',
   },
   {
     id: 'centro-palacios',
@@ -73,7 +73,7 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#C1440E',
     dockIcon: 'palace',
-    image: '/static/images/guides/centro.jpg',
+    image: '/static/images/bellas.jpeg',
   },
   {
     id: 'chapultepec-ii',
@@ -103,7 +103,7 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#2E86AB',
     dockIcon: 'water',
-    image: '/static/images/guides/chapultepec.jpg',
+    image: '/static/images/chapu.jpeg',
   },
   {
     id: 'chimalistac-puentes',
@@ -133,7 +133,7 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#7B2BD9',
     dockIcon: 'bridge',
-    image: '/static/images/guides/chimalistac.jpg',
+    image: '/static/images/fridaYDiego/Las-dos-fridas-autorretrato.png',
   },
   {
     id: 'unam-murals',
@@ -163,6 +163,6 @@ export const SELF_GUIDES_DATA = [
     ],
     accentColor: '#F2A03D',
     dockIcon: 'university',
-    image: '/static/images/guides/unam.jpg',
+    image: '/static/images/BestMuseums2/muacc.jpg',
   },
 ]
