@@ -26,22 +26,27 @@ export default function Home({ posts, locale }) {
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
       <HeroSection />
-      <div className="bg-white text-gray-900 dark:bg-zinc-950 dark:text-gray-100">
+      <div className="bg-transparent text-gray-900 dark:text-gray-100">
         <div className="container mx-auto px-4 py-16">
-          {/* News Preview */}
-          <div className="mb-16 rounded-xl border border-zinc-200 bg-zinc-100 p-8 dark:border-white/10 dark:bg-zinc-900">
+          {/* Local Picks Preview */}
+          <div className="mb-16 rounded-xl border border-amber-500/20 bg-amber-500/10 p-8 dark:border-amber-500/20 dark:bg-amber-500/5">
+            <div className="mb-2 flex items-center gap-2 text-amber-600 dark:text-amber-400">
+              <span className="text-2xl">★</span>
+              <span className="text-xs font-bold uppercase tracking-widest">Local Picks</span>
+            </div>
             <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
-              Travel News & Insights
+              Local Picks — This Month in CDMX
             </h2>
             <p className="mb-6 text-gray-600 dark:text-gray-300">
-              Latest updates on Mexico tourism from the last 3 months
+              Monthly local guide for visitors staying 2-7 days. New openings, seasonal events and
+              hidden gems curated by chilangos.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
-                href="/news"
-                className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/20 px-6 py-2 font-medium text-orange-500 backdrop-blur-sm transition-all duration-300 hover:bg-orange-500 hover:text-white"
+                href="/local-picks"
+                className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/20 px-6 py-2 font-medium text-amber-600 backdrop-blur-sm transition-all duration-300 hover:bg-amber-500 hover:text-white dark:text-amber-400"
               >
-                View All News
+                View Local Picks
               </Link>
             </div>
           </div>
@@ -65,7 +70,7 @@ export default function Home({ posts, locale }) {
                     >
                       <Link
                         href={`/blog/${slug}`}
-                        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all duration-300 hover:border-orange-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-zinc-900/50 dark:hover:bg-zinc-900/70 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+                        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200/50 bg-white/70 backdrop-blur-md transition-all duration-300 hover:border-orange-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-black/40 dark:hover:bg-black/50 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
                       >
                         {cover && (
                           <div className="relative h-44 w-full overflow-hidden">
@@ -139,7 +144,7 @@ export default function Home({ posts, locale }) {
               >
                 <Link
                   href={project.href}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all duration-300 hover:border-orange-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-zinc-900/50 dark:hover:bg-zinc-900/70 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200/50 bg-white/70 backdrop-blur-md transition-all duration-300 hover:border-orange-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-black/40 dark:hover:bg-black/50 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
                 >
                   <div className="relative h-40 overflow-hidden">
                     <Image

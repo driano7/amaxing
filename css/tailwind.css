@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    @apply bg-white dark:bg-black;
+  }
+  body {
+    @apply bg-transparent;
+  }
+  /* Ensure particles are visible behind semi-transparent cards */
+  main {
+    @apply bg-transparent;
+  }
+}
+
 .task-list-item::before {
   @apply hidden;
 }
@@ -11,7 +24,7 @@
 }
 
 .footnotes {
-  @apply pt-8 mt-12 border-t border-gray-200 dark:border-gray-700;
+  @apply mt-12 border-t border-gray-200 pt-8 dark:border-gray-700;
 }
 
 .csl-entry {

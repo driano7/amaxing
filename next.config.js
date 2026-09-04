@@ -73,6 +73,17 @@ module.exports = withBundleAnalyzer({
     // Skip type checking during build to avoid false errors.
     ignoreBuildErrors: true,
   },
+  async redirects() {
+    return [
+      { source: '/home', destination: '/', permanent: false },
+      { source: '/experiences', destination: '/journeys', permanent: false },
+      { source: '/experiences/:slug*', destination: '/journeys/:slug*', permanent: false },
+      { source: '/stories', destination: '/guides', permanent: false },
+      { source: '/stories/:slug*', destination: '/guides/:slug*', permanent: false },
+      { source: '/news', destination: '/local-picks', permanent: false },
+      { source: '/news/:slug*', destination: '/local-picks/:slug*', permanent: false },
+    ]
+  },
   async headers() {
     return [
       {

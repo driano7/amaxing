@@ -168,11 +168,11 @@ export function Navbar() {
     scrollY,
     [0, 50],
     isDarkTheme
-      ? ['rgba(10, 10, 10, 0)', 'rgba(10, 10, 10, 0.7)']
-      : ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.7)']
+      ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.6)']
+      : ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.8)']
   )
 
-  const backdropBlur = useTransform(scrollY, [0, 50], ['blur-none', 'blur-xl'])
+  const backdropBlur = useTransform(scrollY, [0, 50], ['blur(0px)', 'blur(12px)'])
 
   return (
     <>
@@ -196,9 +196,11 @@ export function Navbar() {
         <header
           className={classNames(
             'pointer-events-auto flex w-[min(1100px,100%)] items-center gap-4 rounded-3xl border px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur-md transition-all duration-500',
-            // Light mode: white bg, dark text. Dark mode: dark bg, white text
-            'border-zinc-200/50 bg-white/80 text-zinc-900 dark:border-zinc-800/50 dark:bg-zinc-950/80 dark:text-white',
-            isVisible ? 'shadow-2xl' : 'border-transparent bg-transparent shadow-none'
+            // Xoco style: more transparent, less gray, blur in both themes
+            'border-black/5 bg-white/80 text-zinc-900 dark:border-white/10 dark:bg-black/60 dark:text-white',
+            isVisible
+              ? 'shadow-2xl backdrop-blur-md'
+              : 'border-transparent bg-transparent shadow-none backdrop-blur-none'
           )}
         >
           <div className="flex shrink-0 items-center gap-2.5">

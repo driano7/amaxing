@@ -13,32 +13,34 @@
  *   - tourCategoriesConfig  -> HubMenu "Categories" section
  */
 
-// Desktop header items.
+// Desktop header items — nueva navegación: /home, /journeys, /maps, /guides, /about
 const navItemsConfig = [
+  { labelKey: 'nav.header.home', fallback: 'Home', href: '/', icon: 'Home' },
   {
-    labelKey: 'nav.header.experiences',
-    fallback: 'Experiences',
-    href: '/experiences',
+    labelKey: 'nav.header.journeys',
+    fallback: 'Journeys',
+    href: '/journeys',
     icon: 'Compass',
   },
-  { labelKey: 'nav.header.stories', fallback: 'Stories', href: '/stories', icon: 'BookOpen' },
-  { labelKey: 'nav.header.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
+  { labelKey: 'nav.header.maps', fallback: 'Maps', href: '/maps', icon: 'MapPinned' },
+  { labelKey: 'nav.header.guides', fallback: 'Guides', href: '/guides', icon: 'BookOpen' },
   { labelKey: 'nav.header.about', fallback: 'About Us', href: '/about', icon: 'Users' },
 ]
 
 // Desktop "More" dropdown — empty for now (pricing & moodboard hidden).
 const headerDropdownConfig = []
 
-// Mobile drawer main list (HubMenu + MobileDock).
+// Mobile drawer main list (HubMenu + MobileDock) — nueva navegación
 const drawerItemsConfig = [
+  { labelKey: 'header.nav.home', fallback: 'Home', href: '/', icon: 'Home' },
   {
-    labelKey: 'header.nav.experiences',
-    fallback: 'Experiences',
-    href: '/experiences',
+    labelKey: 'header.nav.journeys',
+    fallback: 'Journeys',
+    href: '/journeys',
     icon: 'Compass',
   },
-  { labelKey: 'header.nav.stories', fallback: 'Stories', href: '/stories', icon: 'BookOpen' },
-  { labelKey: 'header.nav.news', fallback: 'News', href: '/news', icon: 'Newspaper' },
+  { labelKey: 'header.nav.maps', fallback: 'Maps', href: '/maps', icon: 'MapPinned' },
+  { labelKey: 'header.nav.guides', fallback: 'Guides', href: '/guides', icon: 'BookOpen' },
   { labelKey: 'header.nav.about', fallback: 'About Us', href: '/about', icon: 'Users' },
 ]
 

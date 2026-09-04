@@ -19,7 +19,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
   const author = authorDetails?.[0] || {}
 
   return (
-    <div className="bg-white text-gray-900 dark:bg-zinc-950 dark:text-gray-100">
+    <div className="bg-transparent text-gray-900 dark:text-gray-100">
       <SectionContainer>
         <BlogSEO
           url={`${siteMetadata.siteUrl}/blog/${slug}`}
@@ -27,7 +27,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, toc
           {...frontMatter}
         />
         <ScrollTopAndComment />
-        <article>
+        <article className="rounded-2xl border border-black/5 bg-white/70 p-6 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-black/40 sm:p-8">
           <header className="pt-8 pb-6 text-center">
             <Link
               href="/blog"

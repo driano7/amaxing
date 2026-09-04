@@ -94,7 +94,7 @@ export default function Stories() {
                 direction="up"
                 className="w-full"
               >
-                <article className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all duration-300 hover:border-orange-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-zinc-900/50 dark:hover:bg-zinc-900/70 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+                <article className="dark:bg-black/40/50 group overflow-hidden rounded-2xl border border-zinc-200/50 bg-white/70 backdrop-blur-md transition-all duration-300 hover:border-orange-500/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:border-white/10 dark:hover:bg-zinc-900/70 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
                   <Link
                     href={`/stories/${story.id}`}
                     className="relative block h-56 w-full overflow-hidden rounded-t-2xl"

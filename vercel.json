@@ -3,6 +3,10 @@
     {
       "path": "/api/news/sync",
       "schedule": "0 9 1 * *"
+    },
+    {
+      "path": "/api/local-picks/sync",
+      "schedule": "0 9 1 * *"
     }
   ]
 }

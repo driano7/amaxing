@@ -3,11 +3,15 @@
     "nav": {
       "home": "Home",
       "experiences": "Experiences",
+      "journeys": "Journeys",
       "tours": "Tours",
       "stories": "Stories",
+      "guides": "Guides",
+      "maps": "Maps",
       "pricing": "Pricing",
       "contact": "Contact",
       "news": "News",
+      "localPicks": "Local Picks",
       "about": "About Us",
       "moodboard": "Moodboard"
     },
@@ -289,9 +293,13 @@
   },
   "nav": {
     "header": {
-      "experiences": "Experiences",
+      "home": "Home",
+      "journeys": "Journeys",
+      "maps": "Maps",
+      "guides": "Guides",
       "stories": "Stories",
       "news": "News",
+      "localPicks": "Local Picks",
       "contact": "Contact",
       "about": "About Us",
       "allTours": "All Tours"

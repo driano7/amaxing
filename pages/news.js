@@ -66,7 +66,7 @@ export default function NewsPage({ notes, locale, newsArticles }) {
   return (
     <>
       <PageSEO title={t.title} description={t.subtitle} />
-      <div className="min-h-screen bg-white dark:bg-zinc-950">
+      <div className="min-h-screen bg-transparent">
         <div className="container mx-auto px-4 py-16">
           <div className="mb-12 text-center">
             <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
