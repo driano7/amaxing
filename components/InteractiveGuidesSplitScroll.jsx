@@ -103,10 +103,11 @@ export default function InteractiveGuidesSplitScroll() {
     target: stickyRef,
     offset: ['start end', 'end start'],
   })
-  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [4, 0, -4])
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.96, 1, 0.96])
-  const blur = useTransform(scrollYProgress, [0, 0.5, 1], [2, 0, 2])
-  const dimOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.15, 0, 0.15])
+  // Duo más lento y sutil — antes cambiaba muy rápido
+  const rotateX = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [2.5, 0, 0, -2.5])
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.98, 1, 0.98])
+  const blur = useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 0, 1.2])
+  const dimOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.08, 0, 0.08])
   const filter = useTransform(blur, (v) => `blur(${v}px)`)
 
   useEffect(() => {
@@ -121,8 +122,8 @@ export default function InteractiveGuidesSplitScroll() {
       },
       {
         root: null,
-        rootMargin: '-35% 0px -35% 0px',
-        threshold: 0.15,
+        rootMargin: '-45% 0px -45% 0px',
+        threshold: 0.3,
       }
     )
 
@@ -290,6 +291,7 @@ export default function InteractiveGuidesSplitScroll() {
               return (
                 <motion.div
                   style={{ rotateX, scale, filter, transformStyle: 'preserve-3d' }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                   className="relative h-[calc(100vh-140px)] max-h-[820px] min-h-[560px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-900 shadow-2xl dark:border-slate-800"
                 >
                   <div key={activeGuide.id} className="absolute inset-0 h-full w-full">

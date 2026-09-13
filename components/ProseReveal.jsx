@@ -35,10 +35,10 @@ export function ProseReveal({ children, className = '', delay = 0 }) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const idx = children.indexOf(entry.target)
+          const el = entry.target
           if (entry.isIntersecting) {
-            const idx = children.indexOf(entry.target)
-            const el = entry.target
-            // Si es lista, anima sus bullets en cascada
+            // Entrando: anima
             if (el.tagName === 'UL' || el.tagName === 'OL') {
               el.style.opacity = '1'
               el.style.transform = 'translateY(0)'
@@ -55,7 +55,20 @@ export function ProseReveal({ children, className = '', delay = 0 }) {
                 el.style.transform = 'translateY(0)'
               }, startDelay + idx * 120)
             }
-            observer.unobserve(el)
+          } else {
+            // Saliendo: oculta para que al volver a entrar (scroll arriba) re-anime
+            if (el.tagName === 'UL' || el.tagName === 'OL') {
+              el.style.opacity = '0'
+              el.style.transform = 'translateY(20px)'
+              const items = Array.from(el.querySelectorAll(':scope > li'))
+              items.forEach((li) => {
+                li.style.opacity = '0'
+                li.style.transform = 'translateX(-12px)'
+              })
+            } else {
+              el.style.opacity = '0'
+              el.style.transform = 'translateY(20px)'
+            }
           }
         })
       },
