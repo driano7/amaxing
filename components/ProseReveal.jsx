@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 
 // Revela los hijos directos del contenido MDX uno a uno conforme scrollean
+// + animación escalonada para bullet points y listas (ul/ol > li)
 export function ProseReveal({ children, className = '', delay = 0 }) {
   const containerRef = useRef(null)
 
@@ -13,11 +14,21 @@ export function ProseReveal({ children, className = '', delay = 0 }) {
     const children = Array.from(container.children)
     if (children.length === 0) return undefined
 
-    // Estado inicial: oculto con desplazamiento
+    // Estado inicial: oculto con desplazamiento para hijos directos
     children.forEach((child) => {
-      child.style.opacity = '0'
-      child.style.transform = 'translateY(20px)'
-      child.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
+      // No ocultar listas completas si vamos a animar sus li individualmente
+      if (child.tagName === 'UL' || child.tagName === 'OL') {
+        const items = Array.from(child.querySelectorAll(':scope > li'))
+        items.forEach((li) => {
+          li.style.opacity = '0'
+          li.style.transform = 'translateX(-12px)'
+          li.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'
+        })
+      } else {
+        child.style.opacity = '0'
+        child.style.transform = 'translateY(20px)'
+        child.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
+      }
     })
 
     let startDelay = delay
@@ -27,10 +38,23 @@ export function ProseReveal({ children, className = '', delay = 0 }) {
           if (entry.isIntersecting) {
             const idx = children.indexOf(entry.target)
             const el = entry.target
-            setTimeout(() => {
+            // Si es lista, anima sus bullets en cascada
+            if (el.tagName === 'UL' || el.tagName === 'OL') {
               el.style.opacity = '1'
               el.style.transform = 'translateY(0)'
-            }, startDelay + idx * 120)
+              const items = Array.from(el.querySelectorAll(':scope > li'))
+              items.forEach((li, i) => {
+                setTimeout(() => {
+                  li.style.opacity = '1'
+                  li.style.transform = 'translateX(0)'
+                }, startDelay + idx * 80 + i * 90)
+              })
+            } else {
+              setTimeout(() => {
+                el.style.opacity = '1'
+                el.style.transform = 'translateY(0)'
+              }, startDelay + idx * 120)
+            }
             observer.unobserve(el)
           }
         })
