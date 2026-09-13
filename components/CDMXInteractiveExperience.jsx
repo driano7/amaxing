@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react'
 import Link from '@/components/Link'
 import { useRouter } from 'next/router'
 import { useLanguage } from '@/lib/hooks/useLanguage'
-import { motion, useScroll, useTransform } from 'framer-motion'
 import { CDMX_PAGE_HEADER, CDMX_MAPS_DATA } from '@/data/cdmxMapsData'
 
 // SVG Icons minimalistas para el Dock Móvil y Badges
@@ -101,17 +100,6 @@ export default function CDMXInteractiveExperience() {
   const lang = isEn ? 'en' : 'es'
   const [activeMapId, setActiveMapId] = useState(CDMX_MAPS_DATA[0].id)
   const cardRefs = useRef({})
-  const stickyRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: stickyRef,
-    offset: ['start end', 'end start'],
-  })
-  // Duo más lento y sutil — antes cambiaba muy rápido
-  const rotateX = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [2.5, 0, 0, -2.5])
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.98, 1, 0.98])
-  const blur = useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 0, 1.2])
-  const dimOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.08, 0, 0.08])
-  const filter = useTransform(blur, (v) => `blur(${v}px)`)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -125,8 +113,8 @@ export default function CDMXInteractiveExperience() {
       },
       {
         root: null,
-        rootMargin: '-45% 0px -45% 0px',
-        threshold: 0.3,
+        rootMargin: '-35% 0px -35% 0px',
+        threshold: 0.15,
       }
     )
 
@@ -252,25 +240,16 @@ export default function CDMXInteractiveExperience() {
             })}
           </div>
 
-          {/* Columna Derecha: Contenedor Sticky con iframe — Duo effect al scrollear (tilt+blur+dim) */}
-          <div
-            ref={stickyRef}
-            className="sticky top-24 hidden lg:col-span-7 lg:block"
-            style={{ perspective: 1200 }}
-          >
-            {(() => {
-              const activeMap =
-                CDMX_MAPS_DATA.find((m) => m.id === activeMapId) || CDMX_MAPS_DATA[0]
-              const activeTitle =
-                lang === 'en'
-                  ? activeMap.title_en || activeMap.title
-                  : activeMap.title_es || activeMap.title
-              return (
-                <motion.div
-                  style={{ rotateX, scale, filter, transformStyle: 'preserve-3d' }}
-                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative h-[calc(100vh-140px)] max-h-[820px] min-h-[560px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-2xl dark:border-slate-800 dark:bg-slate-900"
-                >
+          {/* Columna Derecha: Contenedor Sticky con iframe de Google My Maps (Desktop) — solo activo para carga rápida */}
+          {(() => {
+            const activeMap = CDMX_MAPS_DATA.find((m) => m.id === activeMapId) || CDMX_MAPS_DATA[0]
+            const activeTitle =
+              lang === 'en'
+                ? activeMap.title_en || activeMap.title
+                : activeMap.title_es || activeMap.title
+            return (
+              <div className="sticky top-24 hidden lg:col-span-7 lg:block">
+                <div className="relative h-[calc(100vh-140px)] max-h-[820px] min-h-[560px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
                   <iframe
                     key={activeMap.id}
                     src={activeMap.embedUrl}
@@ -278,15 +257,10 @@ export default function CDMXInteractiveExperience() {
                     className="absolute inset-0 h-full w-full border-0"
                     loading="lazy"
                   />
-                  {/* Sombreado degradado gris → rosa tenue, tirándole al gris */}
-                  <motion.div
-                    style={{ opacity: dimOpacity }}
-                    className="via-zinc-100/15 to-pink-200/15 pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-zinc-200/30 backdrop-blur-[0.5px] dark:from-zinc-700/20 dark:via-zinc-800/10 dark:to-pink-900/10"
-                  />
-                </motion.div>
-              )
-            })()}
-          </div>
+                </div>
+              </div>
+            )
+          })()}
         </div>
       </main>
     </div>
