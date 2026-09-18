@@ -60,6 +60,34 @@ Grupo reducido (máx. 8) para que siempre tengas asiento en la barra.`,
       'Fonda tradicional con pozole y cochinita pibil',
       'Cierre con tamales artesanales y jugo fresco',
     ],
+    faq: [
+      {
+        q: 'I’m vegetarian — will I go hungry?',
+        a: 'No. Tell your guide at the start and you’ll get tlacoyos, rajas tamales, huitlacoche quesadillas and all the salsas — the meat stops become extra tastings for the rest of the group.',
+      },
+      {
+        q: 'Is the street food actually safe?',
+        a: 'We only take you to stalls we eat at ourselves: everything cooked fresh in front of you, bottled water, and no ice from unknown sources.',
+      },
+      {
+        q: 'How much walking is involved?',
+        a: 'About 2 km on flat ground through the Centro, with a seat at every stop. Wear comfortable shoes and bring an appetite, not a big backpack.',
+      },
+    ],
+    faqEs: [
+      {
+        q: 'Soy vegetariano, ¿me quedaré con hambre?',
+        a: 'No. Avísale a tu guía al inicio y tendrás tlacoyos, tamales de rajas, quesadillas de huitlacoche y todas las salsas — las paradas de carne serán degustaciones extra para el resto del grupo.',
+      },
+      {
+        q: '¿La comida callejera es segura?',
+        a: 'Solo te llevamos a puestos donde comemos nosotros: todo cocinado al momento frente a ti, agua embotellada y nada de hielo de origen dudoso.',
+      },
+      {
+        q: '¿Cuánto se camina?',
+        a: 'Unos 2 km en plano por el Centro, con asiento en cada parada. Trae zapatos cómodos y hambre, no mochila grande.',
+      },
+    ],
   },
   {
     id: '2',
@@ -83,9 +111,9 @@ Grupo reducido (máx. 8) para que siempre tengas asiento en la barra.`,
     title: 'Mole & Chocolate Cooking Class in Coyoacán',
     titleEs: 'Clase de Mole y Chocolate en Coyoacán',
     tagline:
-      'Hands-on class with a traditional cook: grind your own mole with a metate and make drinking chocolate from scratch.',
+      'Hands-on cooking class in Coyoacán, CDMX with a traditional cook: grind your own mole with a metate and make drinking chocolate from scratch.',
     taglineEs:
-      'Clase práctica con una cocinera tradicional: muele tu propio mole en metate y prepara chocolate de agua desde cero.',
+      'Clase práctica de cocina en Coyoacán, CDMX con una cocinera tradicional: muele tu propio mole en metate y prepara chocolate de agua desde cero.',
     description: `Roll up your sleeves in the bohemian neighborhood of **Coyoacán**. With a traditional cook, you'll grind chilies and seeds on a volcanic-stone *metate* to build a true Oaxacan-style mole, then turn raw cacao into a frothy drinking chocolate.
 
 The class includes a small market visit to buy the exact ingredients, and ends sitting around the family table where you taste everything you made.
@@ -124,6 +152,34 @@ Perfecto para amantes de la comida que quieren más que una foto: saldrás con r
       'Cocina del mole y preparación del chocolate de agua',
       'Comida en familia degustando todo lo preparado',
     ],
+    faq: [
+      {
+        q: 'Do I need cooking experience?',
+        a: 'None. The cook teaches the metate technique from zero, and the group grinds together — the mess is part of the fun.',
+      },
+      {
+        q: 'I have a nut allergy — is mole safe for me?',
+        a: 'Tell us when booking. Traditional mole carries peanuts and almonds, so the cook prepares a separate nut-free pipián for you instead.',
+      },
+      {
+        q: 'Can kids come?',
+        a: 'Yes, ages 8 and up. Grinding on the metate is the part kids remember most.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿Necesito saber cocinar?',
+        a: 'Nada. La cocinera enseña la técnica del metate desde cero y el grupo muele junto — el desastre es parte de la diversión.',
+      },
+      {
+        q: 'Soy alérgico a los frutos secos, ¿el mole es seguro?',
+        a: 'Avísanos al reservar. El mole tradicional lleva cacahuate y almendra, así que la cocinera te prepara un pipián aparte sin frutos secos.',
+      },
+      {
+        q: '¿Pueden venir niños?',
+        a: 'Sí, desde los 8 años. Moler en el metate es lo que más recuerdan.',
+      },
+    ],
   },
   {
     id: '3',
@@ -147,9 +203,9 @@ Perfecto para amantes de la comida que quieren más que una foto: saldrás con r
     title: 'Mezcal & Pulque Tasting: The Drinks of Old Mexico',
     titleEs: 'Cata de Mezcal y Pulque: Las Bebidas del México Antiguo',
     tagline:
-      'Compare ancestral pulque and artisanal mezcal with an agave expert, in historic cantinas and pulquerías.',
+      'Compare ancestral pulque and artisanal mezcal with an agave expert, in historic cantinas and pulquerías of Centro, CDMX.',
     taglineEs:
-      'Compara el ancestral pulque y el mezcal artesanal con un experto agavero, en cantinas y pulquerías históricas.',
+      'Compara el ancestral pulque y el mezcal artesanal con un experto agavero, en cantinas y pulquerías históricas del Centro de CDMX.',
     description: `An afterno-on exploring the two drinks that shaped Mexican culture centuries before tequila existed. Your agave expert walks you through historic **pulquerías** to taste fresh, fermented pulque, then to a curated mezcal bar to compare ancestral and artisanal varieties.
 
 You'll learn how pulque was sacred to the Aztecs, how mezcal is produced village by village, and how to read a bottle's label like a pro.
@@ -176,6 +232,34 @@ Incluye 4 sabores de pulque y 5 catas de mezcal con sal, naranja y chapulines.`,
       'Barra de mezcal curada con 5 catas',
       'Cierre con maridaje y trucos para leer etiquetas',
     ],
+    faq: [
+      {
+        q: 'Do I have to drink alcohol?',
+        a: 'No. The fruit curados taste like dessert, and you can sip, skip, or switch to agua fresca at any stop — nobody keeps score.',
+      },
+      {
+        q: 'Will I get drunk?',
+        a: 'Tastings are 1–2 oz pours with food between stops. Most people feel warm, not drunk. Eat the chapulines.',
+      },
+      {
+        q: 'Do I need an ID?',
+        a: 'Yes — 18+ only, bring an ID. No ID, no tasting, no exceptions.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿Tengo que tomar alcohol?',
+        a: 'No. Los curados de fruta saben a postre y puedes probar, saltarte o cambiar a agua fresca en cualquier parada — nadie lleva la cuenta.',
+      },
+      {
+        q: '¿Me voy a emborrachar?',
+        a: 'Las catas son tragos de 1–2 oz con comida entre paradas. La mayoría sale contenta, no borracha. Come los chapulines.',
+      },
+      {
+        q: '¿Necesito identificación?',
+        a: 'Sí — solo mayores de 18 con identificación. Sin ID no hay cata, sin excepciones.',
+      },
+    ],
   },
   {
     id: '4',
@@ -199,9 +283,9 @@ Incluye 4 sabores de pulque y 5 catas de mezcal con sal, naranja y chapulines.`,
     title: 'Templo Mayor & the Aztec Underworld',
     titleEs: 'Templo Mayor y el Inframundo Azteca',
     tagline:
-      'Descend into the excavated heart of Tenochtitlán with an archaeologist who decodes the Aztec capital.',
+      'Descend into the excavated heart of Tenochtitlán with an archaeologist who decodes the Aztec capital, on this Templo Mayor tour in CDMX.',
     taglineEs:
-      'Desciende al corazón excavado de Tenochtitlán con un arqueólogo que descifra la capital azteca.',
+      'Desciende al corazón excavado de Tenochtitlán con un arqueólogo que descifra la capital azteca, en este tour del Templo Mayor en CDMX.',
     description: `In the exact center of Mexico City lie the ruins of the Aztec capital **Tenochtitlán**. Led by a professional archaeologist, you'll walk the excavated plaza of the Templo Mayor, see the Coyolxauhqui monolith, and learn how the Aztecs read the sky to build their dual temple to Huitzilopochtli and Tlaloc.
 
 Then you'll climb to the Zócalo above and connect the dots: the Spanish cathedral standing on the same sacred ground, and the modern city built on a lake.
@@ -228,6 +312,34 @@ Es el tour para viajeros que quieren historia real, no un resumen comercial.`,
       'Análisis del monolito de Coyolxauhqui y las salas',
       'Subida al Zócalo para conectar la historia',
     ],
+    faq: [
+      {
+        q: 'Is museum entry included?',
+        a: 'Yes — entry and skip-the-line access are included, so we walk straight past the ticket queue.',
+      },
+      {
+        q: 'Is there a lot of climbing?',
+        a: 'No. The ruins are at street level with ramps, and the Zócalo viewpoint is a short walk up. There are no pyramids to climb here.',
+      },
+      {
+        q: 'What if it rains?',
+        a: 'Half the visit is indoors in the museum galleries. Bring a light rain jacket; we reorder the route instead of canceling for drizzle.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿La entrada al museo está incluida?',
+        a: 'Sí — la entrada y el acceso sin filas están incluidos, así que pasamos directo frente a la taquilla.',
+      },
+      {
+        q: '¿Hay que subir mucho?',
+        a: 'No. Las ruinas están a nivel de calle con rampas y el mirador del Zócalo es una subida corta. Aquí no se escala ninguna pirámide.',
+      },
+      {
+        q: '¿Y si llueve?',
+        a: 'La mitad de la visita es bajo techo en las salas del museo. Trae impermeable ligero; reordenamos la ruta en vez de cancelar por llovizna.',
+      },
+    ],
   },
   {
     id: '5',
@@ -251,9 +363,9 @@ Es el tour para viajeros que quieren historia real, no un resumen comercial.`,
     title: 'Palacio de Bellas Artes & the Muralists',
     titleEs: 'Palacio de Bellas Artes y los Muralistas',
     tagline:
-      'Face-to-face with Rivera, Siqueiros and Orozco in the city’s most beautiful art nouveau palace.',
+      'Face-to-face with Rivera, Siqueiros and Orozco in Mexico City’s most beautiful art nouveau palace, on this Bellas Artes mural tour.',
     taglineEs:
-      'Cara a cara con Rivera, Siqueiros y Orozco en el palacio art nouveau más bello de la ciudad.',
+      'Cara a cara con Rivera, Siqueiros y Orozco en el palacio art nouveau más bello de la CDMX, en este tour de muralismo en Bellas Artes.',
     description: `Dedicated to Mexico's greatest painters, **Palacio de Bellas Artes** is a marble palace whose murals turned politics into art. Your guide decodes Diego Rivera's *Man at the Crossroads*, José Clemente Orozco's *Katharsis* and David Alfaro Siqueiros's monumental pieces.
 
 You'll also enjoy the building itself: art nouveau on the outside, art deco inside, with a Tiffany-style glass curtain in the theater.
@@ -292,6 +404,34 @@ Un tour perfecto en dos partes: los murales y luego una caminata por la Alameda 
       'Vista del teatro y el telón de cristal Tiffany',
       'Caminata por la Alameda para cerrar la experiencia',
     ],
+    faq: [
+      {
+        q: 'Is Bellas Artes closed on Mondays?',
+        a: 'Museums in CDMX close on Mondays, so we never schedule this tour on a Monday. If your dates only allow a Monday, we’ll offer an alternative.',
+      },
+      {
+        q: 'Can I take photos of the murals?',
+        a: 'Yes, no flash. The Tiffany glass curtain photographs best from the third-floor balcony — your guide will point out the spot.',
+      },
+      {
+        q: 'Does it include an opera or Ballet Folklórico show?',
+        a: 'No — this is a daytime mural and architecture visit. Evening Ballet Folklórico tickets can be arranged separately; ask on WhatsApp.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿Bellas Artes cierra los lunes?',
+        a: 'Los museos de CDMX cierran los lunes, así que nunca programamos este tour en lunes. Si tus fechas solo permiten un lunes, te ofrecemos una alternativa.',
+      },
+      {
+        q: '¿Puedo tomar fotos de los murales?',
+        a: 'Sí, sin flash. El telón de cristal Tiffany se fotografía mejor desde el balcón del tercer piso — tu guía te señalará el punto.',
+      },
+      {
+        q: '¿Incluye función de ópera o del Ballet Folklórico?',
+        a: 'No — es una visita diurna de murales y arquitectura. Los boletos del Ballet Folklórico nocturno se pueden gestionar aparte; pregunta por WhatsApp.',
+      },
+    ],
   },
   {
     id: '6',
@@ -315,9 +455,9 @@ Un tour perfecto en dos partes: los murales y luego una caminata por la Alameda 
     title: 'Chapultepec Castle & Reforma Avenue',
     titleEs: 'Castillo de Chapultepec y Paseo de la Reforma',
     tagline:
-      'From Aztec sanctuary to imperial palace: the only royal castle in the Americas and the avenue that connects Mexico’s history.',
+      'From Aztec sanctuary to imperial palace in Chapultepec, CDMX: the only royal castle in the Americas and the avenue that connects Mexico’s history.',
     taglineEs:
-      'De santuario azteca a palacio imperial: el único castillo real de América y la avenida que conecta la historia de México.',
+      'De santuario azteca a palacio imperial en Chapultepec, CDMX: el único castillo real de América y la avenida que conecta la historia de México.',
     description: `Perched on the hill the Aztecs considered sacred, **Chapultepec Castle** is the only genuine royal residence in the Americas. You'll tour its sumptuous rooms — from Maximilian's empire to the modern presidents — with panoramic views over the city.
 
 After the castle, you'll follow **Paseo de la Reforma**, the grand avenue designed by an Austrian archduke, passing the Angel of Independence and learning why this boulevard is the stage of Mexican public life.
@@ -356,6 +496,34 @@ Un tour largo que vale sus horas: castillo, museo, jardines y bulevar.`,
       'Paseo por los jardines del castillo con vistas',
       'Caminata por Reforma hasta el Ángel de la Independencia',
     ],
+    faq: [
+      {
+        q: 'How steep is the climb to the castle?',
+        a: 'It’s a 15-minute uphill walk on a paved ramp with shade and benches. We go slow — anyone who can walk Roma can do Chapultepec.',
+      },
+      {
+        q: 'Is the castle closed any day?',
+        a: 'Mondays, like every federal museum. We don’t run this tour on Mondays.',
+      },
+      {
+        q: 'How long are we outdoors?',
+        a: 'About half the tour — gardens and Reforma. Hat and water recommended; there are fountains and shade the whole way.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿Qué tan pesada es la subida al castillo?',
+        a: 'Son 15 minutos cuesta arriba por una rampa pavimentada con sombra y bancas. Vamos despacio — quien camina la Roma sube Chapultepec.',
+      },
+      {
+        q: '¿El castillo cierra algún día?',
+        a: 'Los lunes, como todo museo federal. No operamos este tour los lunes.',
+      },
+      {
+        q: '¿Cuánto tiempo estamos al aire libre?',
+        a: 'Como la mitad del tour — jardines y Reforma. Sombrero y agua recomendados; hay fuentes y sombra en todo el camino.',
+      },
+    ],
   },
   {
     id: '7',
@@ -379,9 +547,9 @@ Un tour largo que vale sus horas: castillo, museo, jardines y bulevar.`,
     title: 'Coyoacán: Frida, Diego & the Bohemian Soul',
     titleEs: 'Coyoacán: Frida, Diego y el Alma Bohemia',
     tagline:
-      'The Blue House, the Rivera studio and cobblestone plazas — the neighborhood where Mexican art was born.',
+      'The Blue House, the Rivera studio and cobblestone plazas — the neighborhood where Mexican art was born, on a walking tour of Coyoacán.',
     taglineEs:
-      'La Casa Azul, el estudio de Rivera y plazas empedradas: el barrio donde nació el arte mexicano.',
+      'La Casa Azul, el estudio de Rivera y plazas empedradas: el barrio donde nació el arte mexicano, en un tour a pie por Coyoacán.',
     description: `Few neighborhoods tell Mexico's story like **Coyoacán**. Starting at Frida Kahlo's **Blue House**, you'll trace her life, her love and her pain through the rooms she painted in. From there, a short walk takes you to the Rivera Anahuacalli studio, the colorful market and the leafy main plaza with its famous coyotes.
 
 Your guide connects it all: the artists, the revolution that shaped them, and why this bohemian barrio still attracts creators today.
@@ -419,6 +587,34 @@ Incluye entrada a los museos y un paseo por la plaza de la iglesia de San Juan E
       'Caminata al estudio Anahuacalli de Rivera',
       'Paseo por el mercado de Coyoacán',
       'Descanso en la plaza principal con historias de fondo',
+    ],
+    faq: [
+      {
+        q: 'Do I need to buy Casa Azul tickets in advance?',
+        a: 'No — entry to both museums is included and we time the visit to dodge the worst lines. Just bring an ID.',
+      },
+      {
+        q: 'Is five hours too long?',
+        a: 'It breaks into three parts — Blue House, studio, plaza with a market stop in between. Nobody has asked for it to be shorter yet.',
+      },
+      {
+        q: 'Can I shop at the market?',
+        a: 'Yes — the Coyoacán market stop includes free time, and your guide will tell you which stalls are fairly priced.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿Tengo que comprar los boletos de la Casa Azul por adelantado?',
+        a: 'No — las entradas a ambos museos están incluidas y programamos la visita para evitar las peores filas. Solo trae identificación.',
+      },
+      {
+        q: '¿Cinco horas no es mucho?',
+        a: 'Se divide en tres partes — Casa Azul, estudio y plaza con parada en el mercado. Nadie ha pedido que sea más corto todavía.',
+      },
+      {
+        q: '¿Puedo comprar en el mercado?',
+        a: 'Sí — la parada en el mercado de Coyoacán incluye tiempo libre y tu guía te dirá qué puestos tienen precios justos.',
+      },
     ],
   },
   {
@@ -479,6 +675,34 @@ Caminata ligera, muchas paradas para fotos y la mejor gente del mundo para obser
       'Paso a la Roma para art decó y murales',
       'Pausa de café en una cafetería legendaria',
     ],
+    faq: [
+      {
+        q: 'Is the coffee tasting included?',
+        a: 'Yes — one full specialty coffee at a legendary café is included. A second one is on you.',
+      },
+      {
+        q: 'How far do we walk?',
+        a: 'About 3 km, flat, with a seated coffee break in the middle. The easiest walking tour we run.',
+      },
+      {
+        q: 'What if it rains?',
+        a: 'Roma and Condesa have covered portales and cafés on every block — we duck in, order something, and keep going. Tours run rain or shine.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿La degustación de café está incluida?',
+        a: 'Sí — un café de especialidad completo en una cafetería legendaria está incluido. El segundo corre por tu cuenta.',
+      },
+      {
+        q: '¿Cuánto se camina?',
+        a: 'Unos 3 km en plano, con pausa de café sentados a la mitad. El tour a pie más ligero que operamos.',
+      },
+      {
+        q: '¿Y si llueve?',
+        a: 'Roma y Condesa tienen portales techados y cafés en cada cuadra — nos resguardamos, pedimos algo y seguimos. Operamos con lluvia o sol.',
+      },
+    ],
   },
   {
     id: '9',
@@ -501,9 +725,9 @@ Caminata ligera, muchas paradas para fotos y la mejor gente del mundo para obser
     title: 'Xochimilco: Trajineras & Floating Gardens',
     titleEs: 'Xochimilco: Trajineras y Jardines Flotantes',
     tagline:
-      'Glide down ancient canals on a flower-covered boat, with mariachi, market food and 2,000 years of history.',
+      'Glide down ancient canals on a flower-covered boat, with mariachi, market food and 2,000 years of history — on this Xochimilco trajinera tour.',
     taglineEs:
-      'Navega antiguos canales en una trajinera florida, con mariachi, antojitos de mercado y 2,000 años de historia.',
+      'Navega antiguos canales en una trajinera florida, con mariachi, antojitos de mercado y 2,000 años de historia, en este tour por Xochimilco.',
     description: `**Xochimilco** means "the place of flowers" in Nahuatl, and this UNESCO site has floated on chinampas — artificial islands — for over two millennia. You'll board a colorful *trajinera* and glide through canals lined with willow trees, alongside mariachi and marimba boats that you can hire for your own private concert.
 
 Along the way you'll stop at a working chinampa to learn the farming technique the Aztecs invented, and taste market snacks straight from the boats.
@@ -534,6 +758,34 @@ El lado más mágico e imperdible de la Ciudad de México.`,
       'Parada en una chinampa para aprender la agricultura azteca',
       'Antojitos de mercado mientras regresas flotando',
     ],
+    faq: [
+      {
+        q: 'Are the trajineras safe?',
+        a: 'Yes — wide, flat, roofed boats on calm, shallow canals. Life jackets available on request.',
+      },
+      {
+        q: 'Can we drink on board?',
+        a: 'Yes — beer and pulque vendors pull right up to the boat. Pace yourself; the sun and the motion add up.',
+      },
+      {
+        q: 'Are there bathrooms?',
+        a: 'Yes — at the embarcadero before boarding and at the chinampa stop halfway. Not on the boat itself.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿Las trajineras son seguras?',
+        a: 'Sí — lanchas anchas, planas y techadas en canales tranquilos y poco profundos. Chalecos disponibles si los pides.',
+      },
+      {
+        q: '¿Podemos tomar a bordo?',
+        a: 'Sí — las barcas de cerveza y pulque se acercan a la tuya. Ve con calma; el sol y el movimiento se acumulan.',
+      },
+      {
+        q: '¿Hay baños?',
+        a: 'Sí — en el embarcadero antes de abordar y en la parada de la chinampa a la mitad. No en la trajinera.',
+      },
+    ],
   },
   {
     id: '10',
@@ -557,9 +809,9 @@ El lado más mágico e imperdible de la Ciudad de México.`,
     title: 'National Museum of Anthropology Masterclass',
     titleEs: 'Masterclass en el Museo Nacional de Antropología',
     tagline:
-      'The Aztec Sun Stone, the colossal Tláloc and 20 rooms of Mesoamerica decoded by a museum specialist.',
+      'The Aztec Sun Stone, the colossal Tláloc and 20 rooms of Mesoamerica decoded by a museum specialist, at the Anthropology Museum in Chapultepec, CDMX.',
     taglineEs:
-      'La Piedra del Sol azteca, el colosal Tláloc y 20 salas de Mesoamérica descifradas por un especialista.',
+      'La Piedra del Sol azteca, el colosal Tláloc y 20 salas de Mesoamérica descifradas por un especialista, en el Museo de Antropología de Chapultepec, CDMX.',
     description: `The **National Museum of Anthropology** is one of the great museums of the world — and easy to get lost in. Your specialist guide builds a route through its 20 rooms, focusing on the Mexica hall: the Aztec Sun Stone, the 23-ton Tláloc monolith, and the feather headdress that was once the emperor's crown.
 
 You'll also see the Maya room, the Oaxaca room and the epic carved reliefs that explain 3,000 years of history in a morning.
@@ -586,6 +838,34 @@ Incluye entrada preferente y una narrativa clara — sin necesidad de audioguía
       'Recorrido por la sala mexica y la Piedra del Sol',
       'Cierre en las salas maya y oaxaqueña',
     ],
+    faq: [
+      {
+        q: 'Can you really cover 20 rooms in 3 hours?',
+        a: 'We don’t — we do the Mexica hall in depth plus the Maya and Oaxaca highlights. It’s a route, not a marathon.',
+      },
+      {
+        q: 'Is entry included?',
+        a: 'Yes — priority entry is included, so we skip the weekend ticket line.',
+      },
+      {
+        q: 'Will my kids be bored?',
+        a: 'The Sun Stone, the giant Tláloc and the jade masks land well with kids 8 and up. Under 6, consider a shorter private version — ask us.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿De verdad se ven 20 salas en 3 horas?',
+        a: 'No — hacemos la sala mexica a fondo más lo destacado de la maya y la oaxaqueña. Es una ruta, no un maratón.',
+      },
+      {
+        q: '¿La entrada está incluida?',
+        a: 'Sí — la entrada preferente está incluida, así que evitamos la fila de fin de semana.',
+      },
+      {
+        q: '¿Mis hijos se van a aburrir?',
+        a: 'La Piedra del Sol, el Tláloc gigante y las máscaras de jade funcionan bien desde los 8 años. Menores de 6, mejor una versión privada corta — pregúntanos.',
+      },
+    ],
   },
   {
     id: '11',
@@ -609,9 +889,9 @@ Incluye entrada preferente y una narrativa clara — sin necesidad de audioguía
     title: 'Modern Art & the Tamayo Collection',
     titleEs: 'Arte Moderno y la Colección Tamayo',
     tagline:
-      'From Kahlo and Tamayo to the best of contemporary Mexican art, across two museums in Chapultepec.',
+      'From Kahlo and Tamayo to the best of contemporary Mexican art, across two museums in Chapultepec, CDMX.',
     taglineEs:
-      'De Kahlo y Tamayo a lo mejor del arte contemporáneo mexicano, entre dos museos de Chapultepec.',
+      'De Kahlo y Tamayo a lo mejor del arte contemporáneo mexicano, entre dos museos de Chapultepec, CDMX.',
     description: `A curated art route through the heart of Chapultepec Park. Start at the **Museo de Arte Moderno** with its striking collection of Kahlo, Tamayo, Siqueiros and contemporary Mexican masters, set in a sculpture garden.
 
 Then cross the park to the **Rufino Tamayo Museum**, designed to bring the world's modern art to Mexico: Picasso, Miró, Bacon and more in a building that is itself a sculpture.
@@ -642,6 +922,34 @@ Tu guía explica los diálogos entre el arte mexicano e internacional a lo largo
       'Paseo por el jardín de esculturas',
       'Cruce al Museo Tamayo para el arte internacional',
     ],
+    faq: [
+      {
+        q: 'How far is the walk between museums?',
+        a: 'About 10 minutes through the park on a flat path. The walk through the sculpture garden is part of the tour.',
+      },
+      {
+        q: 'Do I need to know about art?',
+        a: 'No. The guide starts from zero and from the paintings in front of you — no jargon, no exam at the end.',
+      },
+      {
+        q: 'Are both entries included?',
+        a: 'Yes — both museum entries are included in the price.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿Qué tan lejos están los museos entre sí?',
+        a: 'Unos 10 minutos por el parque en camino plano. El paseo por el jardín de esculturas es parte del tour.',
+      },
+      {
+        q: '¿Necesito saber de arte?',
+        a: 'No. El guía parte de cero y de los cuadros frente a ti — sin jerga ni examen al final.',
+      },
+      {
+        q: '¿Ambas entradas están incluidas?',
+        a: 'Sí — las entradas a ambos museos están incluidas en el precio.',
+      },
+    ],
   },
   {
     id: '12',
@@ -665,9 +973,9 @@ Tu guía explica los diálogos entre el arte mexicano e internacional a lo largo
     title: 'MUAC & Contemporary Art Circuit',
     titleEs: 'MUAC y el Circuito de Arte Contemporáneo',
     tagline:
-      'Mexico’s boldest contemporary art at UNAM, with its famous murals and the soaring library of Coyoacán.',
+      'Mexico’s boldest contemporary art at UNAM, CDMX, with its famous murals and the soaring library of Coyoacán.',
     taglineEs:
-      'El arte contemporáneo más audaz de México en la UNAM, con sus murales famosos y la imponente biblioteca de Coyoacán.',
+      'El arte contemporáneo más audaz de México en la UNAM, CDMX, con sus murales famosos y la imponente biblioteca de Coyoacán.',
     description: `Step into the future of Mexican art at the **MUAC** (University Museum of Contemporary Art), the country's most important space for today's artists. Your guide decodes the daring installations and video works, and explains how Mexico's art scene became a global reference.
 
 The tour extends beyond the museum into the UNAM campus — a UNESCO World Heritage site — to see the famous Central Library mosaic by Juan O'Gorman and Rivera's monumental stadium mural.
@@ -701,6 +1009,34 @@ Arte contemporáneo, arquitectura épica e historias del campus en una sola sali
       'Recorrido por las galerías contemporáneas',
       'Caminata al mural de la Biblioteca Central',
       'Mural del estadio para cerrar',
+    ],
+    faq: [
+      {
+        q: 'Isn’t UNAM far from the center?',
+        a: 'About 30–40 minutes south — the transfer is part of the experience, and you see a side of the city most visitors never reach.',
+      },
+      {
+        q: 'Contemporary art isn’t my thing — is this tour for me?',
+        a: 'That’s exactly who it’s for. The guide decodes the pieces with zero snobbery — most skeptics leave converted.',
+      },
+      {
+        q: 'Is campus entry restricted?',
+        a: 'No — UNAM’s campus is public and open. The MUAC entry is included; the murals and the stadium are free to visit.',
+      },
+    ],
+    faqEs: [
+      {
+        q: '¿La UNAM no está muy lejos del centro?',
+        a: 'Unos 30–40 minutos al sur — el traslado es parte de la experiencia y ves un lado de la ciudad que pocos visitantes alcanzan.',
+      },
+      {
+        q: 'El arte contemporáneo no es lo mío, ¿este tour es para mí?',
+        a: 'Justo para ti es. El guía descifra las obras sin nada de esnobismo — la mayoría de los escépticos sale convertida.',
+      },
+      {
+        q: '¿La entrada al campus es restringida?',
+        a: 'No — el campus de la UNAM es público y abierto. La entrada al MUAC está incluida; los murales y el estadio son gratuitos.',
+      },
     ],
   },
 ]

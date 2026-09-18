@@ -21,6 +21,7 @@ import { FlipCard } from '@/components/ui/FlipCard'
 import { VirtualTicket } from '@/components/tickets/VirtualTicket'
 import { CryptoPayment } from '@/components/CryptoPayment'
 import { formatPriceByLocale } from '@/lib/currency'
+import { captureAcquisitionChannel, getAcquisitionChannel } from '@/lib/booking/utm'
 
 export default function CheckoutPage() {
   const { items, subtotal, itemCount, clearCart } = useCartStore()
@@ -38,6 +39,11 @@ export default function CheckoutPage() {
   // Método de pago: tarjeta (Stripe), cripto o efectivo
   const [payMethod, setPayMethod] = useState('card')
   const [showCryptoModal, setShowCryptoModal] = useState(false)
+
+  // Capturar canal de adquisición (first-touch UTM) para CAC por canal
+  useEffect(() => {
+    captureAcquisitionChannel()
+  }, [])
 
   // Detectar si viene del carrito con ?cash=1 o localStorage flag
   useEffect(() => {
@@ -307,6 +313,7 @@ export default function CheckoutPage() {
             participantNamesMap: Object.fromEntries(
               items.map((it) => [it.experienceId, pNames[it.lineId] || []])
             ),
+            acquisitionChannel: getAcquisitionChannel(),
           }),
         })
 

@@ -26,6 +26,7 @@ export interface BookingLite {
   customerSex?: string
   customerNationality?: string
   customerState?: string
+  acquisitionChannel?: string
 }
 
 // ---------- User-agent parsing (passive analytics) ----------
@@ -136,6 +137,97 @@ export function buildPassiveAnalytics(entries: AnalyticsEntry[]): PassiveAnalyti
       })
       .sort((a, b) => b.count - a.count)
       .slice(0, 8),
+  }
+}
+
+// ---------- Fuentes de tráfico + motores de IA (desde referrerUrl) ----------
+
+export type TrafficChannel = 'ai' | 'search' | 'social' | 'email' | 'referral' | 'direct'
+
+const AI_REFERRERS = [
+  'chatgpt.com',
+  'chat.openai.com',
+  'perplexity.ai',
+  'copilot.microsoft.com',
+  'claude.ai',
+  'gemini.google.com',
+  'grok.com',
+  'poe.com',
+  'you.com',
+  'phind.com',
+]
+
+const SEARCH_REFERRERS = [
+  'google.',
+  'bing.com',
+  'duckduckgo.com',
+  'yahoo.',
+  'ecosia.',
+  'brave.com',
+  'yandex.',
+]
+const SOCIAL_REFERRERS = [
+  'instagram.com',
+  'facebook.com',
+  'tiktok.com',
+  'x.com',
+  'twitter.com',
+  'youtube.com',
+  'linkedin.com',
+  'pinterest.com',
+  'whatsapp.com',
+  't.me',
+  'threads.',
+]
+
+export function classifyReferrer(referrerUrl: string | null | undefined): {
+  channel: TrafficChannel
+  source: string
+} {
+  if (!referrerUrl) return { channel: 'direct', source: 'direct' }
+  let host = ''
+  try {
+    host = new URL(referrerUrl).hostname.toLowerCase()
+  } catch {
+    return { channel: 'direct', source: 'direct' }
+  }
+  if (!host) return { channel: 'direct', source: 'direct' }
+  if (AI_REFERRERS.some((d) => host === d || host.endsWith(`.${d}`)))
+    return { channel: 'ai', source: host }
+  if (SEARCH_REFERRERS.some((d) => host.includes(d))) return { channel: 'search', source: host }
+  if (SOCIAL_REFERRERS.some((d) => host === d || host.endsWith(`.${d}`) || host.includes(d)))
+    return { channel: 'social', source: host }
+  if (host.includes('mail.') || host.includes('newsletter'))
+    return { channel: 'email', source: host }
+  return { channel: 'referral', source: host }
+}
+
+export interface ReferrerStats {
+  channels: Array<{ label: string; value: number }>
+  sources: Array<{ source: string; channel: TrafficChannel; visits: number }>
+  aiVisits: number
+  total: number
+}
+
+export function buildReferrerStats(entries: AnalyticsEntry[]): ReferrerStats {
+  const channelCount = new Map<TrafficChannel, number>()
+  const sourceCount = new Map<string, { channel: TrafficChannel; visits: number }>()
+  for (const e of entries) {
+    const { channel, source } = classifyReferrer(e.referrerUrl)
+    channelCount.set(channel, (channelCount.get(channel) || 0) + 1)
+    const prev = sourceCount.get(source) || { channel, visits: 0 }
+    sourceCount.set(source, { channel, visits: prev.visits + 1 })
+  }
+  return {
+    channels: [...channelCount.entries()]
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value),
+    sources: [...sourceCount.entries()]
+      .map(([source, v]) => ({ source, channel: v.channel, visits: v.visits }))
+      .sort((a, b) => b.visits - a.visits)
+      .slice(0, 10),
+    aiVisits: channelCount.get('ai') || 0,
+    total: entries.length,
   }
 }
 
@@ -410,5 +502,59 @@ export function buildDemographics(bookings: BookingLite[]): {
     sexes: toSorted(sexCount),
     nationalities: toSorted(natCount),
     states: toSorted(stateCount),
+  }
+}
+
+// ---------- CAC por canal (fórmula: inversión del canal ÷ clientes del canal) ----------
+
+export interface ChannelCAC {
+  channel: string
+  spend: number
+  clients: number
+  bookings: number
+  revenue: number
+  cac: number | null
+  roas: number | null
+}
+
+export function computeCAC(
+  bookings: BookingLite[],
+  adSpendByChannel: Record<string, number>
+): { channels: ChannelCAC[]; overall: { spend: number; clients: number; cac: number | null } } {
+  const byChannel = new Map<string, BookingLite[]>()
+  for (const b of bookings) {
+    const channel = (b.acquisitionChannel || 'unknown').toLowerCase() || 'unknown'
+    if (!byChannel.has(channel)) byChannel.set(channel, [])
+    byChannel.get(channel)!.push(b)
+  }
+
+  const channels: ChannelCAC[] = [...byChannel.entries()].map(([channel, list]) => {
+    const spend = Number(adSpendByChannel[channel] ?? 0)
+    const clients = new Set(list.map((b) => b.customerEmail || b.userId || b.customerName || b.id))
+      .size
+    const revenue = list.reduce((s, b) => s + (b.totalPrice || 0), 0)
+    return {
+      channel,
+      spend,
+      clients,
+      bookings: list.length,
+      revenue,
+      cac: clients > 0 && spend > 0 ? Math.round(spend / clients) : null,
+      roas: spend > 0 ? Math.round((revenue / spend) * 10) / 10 : null,
+    }
+  })
+
+  const totalSpend = Object.values(adSpendByChannel).reduce((s, v) => s + (Number(v) || 0), 0)
+  const totalClients = new Set(
+    bookings.map((b) => b.customerEmail || b.userId || b.customerName || b.id)
+  ).size
+
+  return {
+    channels: channels.sort((a, b) => b.bookings - a.bookings),
+    overall: {
+      spend: totalSpend,
+      clients: totalClients,
+      cac: totalClients > 0 && totalSpend > 0 ? Math.round(totalSpend / totalClients) : null,
+    },
   }
 }

@@ -40,6 +40,7 @@ interface MeData {
     canDecryptSensitiveFields: boolean
     canManageAdmins: boolean
     canExportGDPR: boolean
+    canViewAdvancedMetrics?: boolean
   }
   panels: string[]
 }
@@ -68,6 +69,7 @@ const MOCK_ME: MeData = {
     canDecryptSensitiveFields: true,
     canManageAdmins: true,
     canExportGDPR: true,
+    canViewAdvancedMetrics: true,
   },
   panels: ['/profile', '/empleados', '/admin'],
 }

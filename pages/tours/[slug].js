@@ -16,6 +16,7 @@ import {
   MapPinned,
   ShoppingBag,
   Heart,
+  HelpCircle,
 } from 'lucide-react'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { OjosOscuridad } from '@/components/moodboard/Icons'
@@ -23,6 +24,8 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useCartStore } from '@/lib/store/useCartStore'
 import { isFavorite, toggleFavorite } from '@/lib/userData'
 import { PageSEO } from '@/components/SEO'
+import JsonLd from '@/components/JsonLd'
+import { buildTourEntity, buildBreadcrumbList, buildFAQPageEntity } from '@/lib/seo'
 import { tours } from '@/data/toursData'
 import ProseReveal from '@/components/ProseReveal'
 import { TourReviews } from '@/components/experiences/TourReviews'
@@ -65,6 +68,8 @@ export default function TourDetail({ tour, locale }) {
   const includes = isEs ? tour.includesEs || tour.includes : tour.includes
   const itinerary = isEs ? tour.itineraryEs || tour.itinerary : tour.itinerary
   const gallery = tour.gallery?.length ? tour.gallery : [tour.imageUrl]
+  const faq = isEs ? tour.faqEs || tour.faq : tour.faq
+  const [faqOpen, setFaqOpen] = useState(null)
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat(isEs ? 'es-MX' : 'en-US', {
@@ -115,9 +120,25 @@ export default function TourDetail({ tour, locale }) {
     router.push('/cart')
   }
 
+  const tourLocale = isEs ? 'es' : 'en'
+  const tourJsonLd = buildTourEntity(tour, tourLocale)
+  const breadcrumbJsonLd = buildBreadcrumbList([
+    { name: isEs ? 'Inicio' : 'Home', path: '/' },
+    { name: isEs ? 'Tours' : 'Tours', path: '/tours' },
+    { name: categoryLabel, path: `/tours?category=${tour.category}` },
+    { name: title },
+  ])
+
   return (
     <>
       <PageSEO title={title} description={tagline || description} />
+      <JsonLd
+        data={
+          faq && faq.length > 0
+            ? [tourJsonLd, breadcrumbJsonLd, buildFAQPageEntity(faq)]
+            : [tourJsonLd, breadcrumbJsonLd]
+        }
+      />
       <div className="min-h-screen bg-white dark:bg-zinc-950" style={themeVars(theme)}>
         {/* Hero Image */}
         <section className="relative h-[60vh] min-h-[400px]">
@@ -321,11 +342,59 @@ export default function TourDetail({ tour, locale }) {
                   </div>
                 )}
 
+                {/* FAQ — MOFU: objeciones antes de reservar */}
+                {faq && faq.length > 0 && (
+                  <div>
+                    <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
+                      {isEs ? 'Preguntas frecuentes' : 'Frequently asked questions'}
+                    </h2>
+                    <div className="space-y-3">
+                      {faq.map((item, index) => {
+                        const open = faqOpen === index
+                        return (
+                          <div
+                            key={index}
+                            className="overflow-hidden rounded-xl border border-zinc-200 dark:border-white/10"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => setFaqOpen(open ? null : index)}
+                              aria-expanded={open}
+                              className="flex w-full items-center gap-3 bg-zinc-100 px-5 py-4 text-left transition-colors hover:bg-zinc-200/70 dark:bg-zinc-900/50 dark:hover:bg-zinc-900"
+                            >
+                              <HelpCircle className="h-5 w-5 flex-shrink-0 text-[var(--accent)]" />
+                              <span className="flex-1 font-medium text-gray-900 dark:text-white">
+                                {item.q}
+                              </span>
+                              <ChevronDown
+                                className={`h-5 w-5 flex-shrink-0 text-[var(--accent)] transition-transform duration-300 ${
+                                  open ? 'rotate-180' : ''
+                                }`}
+                              />
+                            </button>
+                            {open && (
+                              <div className="border-t border-zinc-200 bg-white px-5 py-4 text-sm leading-relaxed text-zinc-600 dark:border-white/10 dark:bg-zinc-950 dark:text-gray-300">
+                                {item.a}
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* CTA — Reserve / Request info */}
                 <div className="rounded-2xl border border-[var(--a20)] bg-[var(--a05)] p-8 text-center">
                   <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
                     {isEs ? '¿Listo para esta experiencia?' : 'Ready for this experience?'}
                   </h2>
+                  <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-[var(--a10)] px-4 py-1.5 text-sm font-semibold text-[var(--accent)]">
+                    <Users className="h-4 w-4" />
+                    {isEs
+                      ? `Grupos reducidos — máximo ${tour.maxGuests} personas`
+                      : `Small groups — max ${tour.maxGuests} guests`}
+                  </p>
                   <p className="mb-6 text-zinc-600 dark:text-gray-300">
                     {isEs
                       ? `Reserva tu lugar en ${tour.titleEs || title} o pide más información.`

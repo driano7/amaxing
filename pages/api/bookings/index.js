@@ -38,6 +38,8 @@ export default async function handler(req, res) {
       const customerName = body?.customerName
       const customerEmail = body?.customerEmail || session.user.email
       const currency = body?.currency || 'USD'
+      const acquisitionChannel =
+        body?.acquisitionChannel || body?.utmSource || req.query?.utm_source || undefined
 
       if (items.length === 1) {
         const booking = await createBooking({
@@ -49,6 +51,7 @@ export default async function handler(req, res) {
           customerName,
           customerEmail,
           currency,
+          acquisitionChannel: items[0].acquisitionChannel || acquisitionChannel,
         })
         return res.status(201).json({ booking })
       }
@@ -63,6 +66,7 @@ export default async function handler(req, res) {
           customerName,
           customerEmail,
           currency,
+          acquisitionChannel: item.acquisitionChannel || acquisitionChannel,
         }))
       )
       return res.status(201).json({ bookings })

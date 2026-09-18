@@ -28,7 +28,15 @@ export default async function handler(req, res) {
   }
 
   const session = await getSessionOptional(req)
-  const { sessionId, items, guestEmail, guestName, participantNamesMap, currency } = req.body || {}
+  const {
+    sessionId,
+    items,
+    guestEmail,
+    guestName,
+    participantNamesMap,
+    currency,
+    acquisitionChannel,
+  } = req.body || {}
 
   if (typeof sessionId !== 'string' || !sessionId) {
     return res.status(400).json({ error: 'Falta session_id' })
@@ -81,6 +89,7 @@ export default async function handler(req, res) {
             customerEmail: session?.user?.id ? customerEmail : undefined,
             currency: typeof currency === 'string' ? currency : 'USD',
             participantNames: pNames,
+            acquisitionChannel: item.acquisitionChannel || acquisitionChannel || undefined,
           }
         })
       )
@@ -142,6 +151,7 @@ export default async function handler(req, res) {
           customerEmail: isGuestReal ? undefined : customerEmail,
           currency: typeof currency === 'string' ? currency : 'USD',
           participantNames: pNames,
+          acquisitionChannel: item.acquisitionChannel || acquisitionChannel || undefined,
         }
       })
     )

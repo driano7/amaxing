@@ -77,6 +77,7 @@ export function createBookingInStorage(input: {
   // Para invitado: lista de nombres por participante (1 por ticket); si viene,
   // el primer nombre es el comprador y el resto acompañantes — se usa para QR
   participantNames?: string[]
+  acquisitionChannel?: string
 }): Booking {
   const bookings = getStoredBookings()
 
@@ -112,6 +113,7 @@ export function createBookingInStorage(input: {
     currency: input.currency || 'USD',
     participantNames,
     isGuest,
+    acquisitionChannel: input.acquisitionChannel,
   }
 
   const booking: Booking = {
@@ -136,6 +138,7 @@ export function createBookingsInStorage(
     customerEmail?: string
     currency?: string
     participantNames?: string[]
+    acquisitionChannel?: string
   }>
 ): Booking[] {
   const bookings = getStoredBookings()
@@ -173,6 +176,7 @@ export function createBookingsInStorage(
       currency: input.currency || 'USD',
       participantNames,
       isGuest,
+      acquisitionChannel: input.acquisitionChannel,
     }
 
     const booking: Booking = {

@@ -19,6 +19,7 @@ export interface CreateBookingInput {
   currency?: string
   participantNames?: string[]
   isGuest?: boolean
+  acquisitionChannel?: string
 }
 
 export async function getBookingsByUser(userId: string) {

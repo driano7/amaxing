@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Users, TrendingUp, AlertTriangle, Clock, Monitor, Globe, Activity } from 'lucide-react'
 import { SequentialBarChart, StatCard } from '@/components/charts/AnimatedCharts'
@@ -13,6 +13,8 @@ import {
   buildTourDemand,
   buildPassiveAnalytics,
   buildDemographics,
+  buildReferrerStats,
+  computeCAC,
   type AnalyticsEntry,
 } from '@/lib/analytics/ml-metrics'
 
@@ -64,6 +66,19 @@ const labels = {
     passiveNote:
       'Datos recolectados pasivamente del navegador. Sin cookies de terceros ni tracking externo.',
     emptyChart: '—',
+    cacTitle: 'CAC por canal',
+    cacHint:
+      'Captura manual del gasto en anuncios por canal (sin integración Meta/Google todavía).',
+    cacSpend: 'Gasto MXN',
+    cacClients: 'clientes',
+    cacCol: 'CAC',
+    cacOverall: 'CAC global',
+    cacNoData: 'Aún no hay canal registrado en las reservas.',
+    trafficSources: 'Fuentes de tráfico',
+    trafficHint: 'De dónde llega cada visita (referrer del navegador)',
+    aiTraffic: 'Visitas desde IAs',
+    topSources: 'Top orígenes',
+    visitsSuffix: 'visitas',
   },
   en: {
     totalRevenue: 'Total revenue',
@@ -108,6 +123,18 @@ const labels = {
     passiveNote:
       'Data collected passively from the browser. No third-party cookies or external tracking.',
     emptyChart: '—',
+    cacTitle: 'CAC by channel',
+    cacHint: 'Manual ad-spend input per channel (no Meta/Google integration yet).',
+    cacSpend: 'Spend MXN',
+    cacClients: 'clients',
+    cacCol: 'CAC',
+    cacOverall: 'Overall CAC',
+    cacNoData: 'No channel recorded on bookings yet.',
+    trafficSources: 'Traffic sources',
+    trafficHint: 'Where each visit comes from (browser referrer)',
+    aiTraffic: 'Visits from AIs',
+    topSources: 'Top sources',
+    visitsSuffix: 'visits',
   },
 } as const
 
@@ -384,8 +411,83 @@ export function AdvancedMetricsPanel({
         />
       </div>
 
+      <ChannelCACSection bookings={bookings} isEs={isEs} />
+
       <p className="text-center text-[11px] text-zinc-400">{t.methodology}</p>
     </div>
+  )
+}
+
+const AD_SPEND_KEY = 'amaxing_ad_spend_v1'
+
+function loadAdSpend(): Record<string, number> {
+  try {
+    const raw = localStorage.getItem(AD_SPEND_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch {
+    /* ignore */
+  }
+  return {}
+}
+
+function ChannelCACSection({ bookings, isEs }: { bookings: BookingLite[]; isEs: boolean }) {
+  const t = useT(isEs)
+  const [spend, setSpend] = useState<Record<string, number>>(loadAdSpend)
+
+  const result = useMemo(() => computeCAC(bookings, spend), [bookings, spend])
+
+  const setChannelSpend = (channel: string, value: string) => {
+    const next = { ...spend, [channel]: Math.max(0, Number(value) || 0) }
+    setSpend(next)
+    try {
+      localStorage.setItem(AD_SPEND_KEY, JSON.stringify(next))
+    } catch {
+      /* ignore */
+    }
+  }
+
+  return (
+    <section className="rounded-2xl border border-zinc-200 bg-white/80 p-5 dark:border-white/10 dark:bg-zinc-900/50">
+      <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500">{t.cacTitle}</h3>
+      <p className="mt-1 text-xs text-zinc-400">{t.cacHint}</p>
+      {result.channels.length === 0 ? (
+        <p className="mt-3 text-sm text-zinc-500">{t.cacNoData}</p>
+      ) : (
+        <div className="mt-3 space-y-2">
+          {result.channels.map((c) => (
+            <div
+              key={c.channel}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-zinc-50 px-3 py-2 dark:bg-white/5"
+            >
+              <span className="font-mono text-sm font-semibold text-zinc-900 dark:text-white">
+                {c.channel}
+              </span>
+              <span className="text-xs text-zinc-500">
+                {c.bookings} · {c.clients} {t.cacClients}
+              </span>
+              <label className="flex items-center gap-1 text-xs text-zinc-500">
+                {t.cacSpend}
+                <input
+                  type="number"
+                  min="0"
+                  value={spend[c.channel] ?? ''}
+                  onChange={(e) => setChannelSpend(c.channel, e.target.value)}
+                  placeholder="0"
+                  className="w-24 rounded-lg border border-zinc-300 bg-white px-2 py-1 text-right text-sm text-zinc-900 dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+                />
+              </label>
+              <span className="text-sm font-bold text-zinc-900 dark:text-white">
+                {t.cacCol}: {c.cac !== null ? `$${c.cac.toLocaleString()}` : '—'}
+              </span>
+            </div>
+          ))}
+          <p className="pt-1 text-right text-sm font-semibold text-zinc-900 dark:text-white">
+            {t.cacOverall}:{' '}
+            {result.overall.cac !== null ? `$${result.overall.cac.toLocaleString()}` : '—'}
+          </p>
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -406,6 +508,7 @@ export function PassiveAnalyticsPanel({
 }) {
   const t = useT(isEs)
   const analytics = useMemo(() => buildPassiveAnalytics(entries), [entries])
+  const referrers = useMemo(() => buildReferrerStats(entries), [entries])
 
   const deviceData = analytics.devices.map((d) => ({ label: d.label, value: d.count }))
   const browserData = analytics.browsers.map((d) => ({ label: d.label, value: d.count }))
@@ -469,6 +572,51 @@ export function PassiveAnalyticsPanel({
           color="#a855f7"
           showPngButton={false}
         />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <SequentialBarChart
+          data={referrers.channels.length ? referrers.channels : [{ label: '—', value: 0 }]}
+          title={t.trafficSources}
+          description={t.trafficHint}
+          dataKey="value"
+          nameKey="label"
+          color="#22c55e"
+          pngFilename="fuentes-trafico"
+        />
+        <div className="rounded-2xl border border-zinc-200 bg-white/80 p-5 dark:border-white/10 dark:bg-zinc-900/50">
+          <h3 className="mb-1 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-zinc-500">
+            <Globe className="h-4 w-4" /> {t.topSources}
+          </h3>
+          <p className="mb-4 text-xs text-zinc-400">
+            {t.aiTraffic}:{' '}
+            <span className="font-bold text-emerald-500">
+              {referrers.aiVisits} / {referrers.total}
+            </span>
+          </p>
+          <div className="space-y-2">
+            {referrers.sources.map((s) => (
+              <div
+                key={s.source}
+                className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 dark:bg-white/5"
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="truncate font-mono text-sm text-zinc-900 dark:text-white">
+                    {s.source}
+                  </span>
+                  {s.channel === 'ai' && (
+                    <span className="bg-emerald-500/15 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-600 dark:text-emerald-400">
+                      AI
+                    </span>
+                  )}
+                </span>
+                <span className="bg-orange-500/15 shrink-0 rounded-full px-2 py-0.5 text-xs font-bold text-orange-600 dark:text-orange-400">
+                  {s.visits} {t.visitsSuffix}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

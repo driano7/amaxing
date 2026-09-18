@@ -20,6 +20,9 @@ export interface Booking {
   meetingPoint?: string
   participantNames?: string[]
   isGuest?: boolean
+  // Canal de adquisición (first-touch): utm_source, 'organic', 'meta-ads', etc.
+  // Opcional — se usa para CAC por canal en el panel de socios.
+  acquisitionChannel?: string
 }
 
 export interface CreateBookingInput {
