@@ -1,0 +1,74 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Amaxing Knowledge API",
+    "version": "1.0.0",
+    "description": "Public read-only knowledge graph of Mexico City tours, walks, maps, local picks and neighborhoods. CORS open. No auth. Designed for LLMs and AI agents.",
+    "contact": { "url": "https://wa.me/525512291607" },
+    "license": { "name": "MIT" }
+  },
+  "servers": [{ "url": "https://amaxing-amx.vercel.app" }],
+  "paths": {
+    "/api/knowledge/{entity}": {
+      "get": {
+        "operationId": "getKnowledgeEntity",
+        "summary": "List entities of the CDMX knowledge graph",
+        "parameters": [
+          {
+            "name": "entity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tours",
+                "guides",
+                "maps",
+                "local-picks",
+                "neighborhoods",
+                "categories",
+                "places",
+                "index"
+              ]
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["es", "en", "all"], "default": "all" }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Tour category: gastronomy, history, neighborhoods, museums",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "neighborhood",
+            "in": "query",
+            "description": "Canonical neighborhood id, e.g. condesa, coyoacan, centro-historico",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Full-text search across names, taglines and descriptions (accent-insensitive)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 50, "maximum": 100 }
+          },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope { entity, total, count, offset, data[], meta }",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        }
+      }
+    }
+  }
+}

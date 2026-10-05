@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 // Captura del canal de adquisición (first-touch) para CAC por canal.
 // Lee utm_source / utm_medium / ref / gclid / fbclid de la URL una vez por
 // sesión y lo guarda en sessionStorage; el checkout lo adjunta al crear la reserva.

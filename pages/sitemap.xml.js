@@ -1,3 +1,4 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
 // Sitemap dinámico (Pages Router, Next 12): rutas estáticas + tours + guides +
 // maps + local picks + posts del blog. Sin dependencias nuevas (fs + gray-matter,
 // ambas ya usadas en lib/mdx). Cacheado 24h en CDN vía s-maxage.

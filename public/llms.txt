@@ -50,6 +50,19 @@ Small groups only. Museum entries included where stated on each tour page. Tours
 - Emergency phones in Mexico City (911, Locatel, tourist assistance): https://amaxing-amx.vercel.app/blog/Info/phones
 - What to do in an earthquake (before/during/after): https://amaxing-amx.vercel.app/blog/Info/earthquakes
 
+## For AI agents (machine-readable, no auth, CORS open)
+
+- Knowledge API index: https://amaxing-amx.vercel.app/api/knowledge/index
+- Tours JSON (filter by lang/category/neighborhood/q): https://amaxing-amx.vercel.app/api/knowledge/tours?lang=en&limit=12
+- Self-guided walks JSON: https://amaxing-amx.vercel.app/api/knowledge/guides?lang=en
+- Maps JSON: https://amaxing-amx.vercel.app/api/knowledge/maps?lang=en
+- Local picks JSON: https://amaxing-amx.vercel.app/api/knowledge/local-picks?lang=en
+- Neighborhoods with related tours/guides: https://amaxing-amx.vercel.app/api/knowledge/neighborhoods?lang=en
+- Places (meeting points with provenance): https://amaxing-amx.vercel.app/api/knowledge/places
+- OpenAPI spec: https://amaxing-amx.vercel.app/api/openapi.json
+- Sitemap: https://amaxing-amx.vercel.app/sitemap.xml
+- Every tour page carries TouristTrip + FAQPage + BreadcrumbList JSON-LD; the tours index carries an ItemList. Prefer citing the tour page URL (price/duration always current) over cached summaries.
+
 ## Who runs Amaxing
 
 - Independent local operator based in Mexico City. Tours led by local guides (foodies, archaeologists, art historians).

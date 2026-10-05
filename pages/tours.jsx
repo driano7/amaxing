@@ -8,6 +8,8 @@ import { tours, categories } from '@/data/toursData'
 import { ExperienceCard } from '@/components/experiences/ExperienceCard'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { PageSEO } from '@/components/SEO'
+import JsonLd from '@/components/JsonLd'
+import { buildItemListEntity } from '@/lib/seo'
 import siteMetadata from '@/data/siteMetadata'
 import { AnimatedSection } from '@/components/AnimatedSection'
 
@@ -56,6 +58,17 @@ export default function Tours() {
         description={
           t('tours.description') || 'Discover handpicked journeys that transcend the ordinary'
         }
+      />
+      <JsonLd
+        data={[
+          buildItemListEntity(
+            tours.map((tour) => ({
+              url: `/tours/${tour.id}`,
+              name: locale === 'es' ? tour.titleEs || tour.title : tour.title,
+            })),
+            locale === 'es' ? 'Tours de Amaxing en CDMX' : 'Amaxing tours in CDMX'
+          ),
+        ]}
       />
 
       <div className="min-h-screen bg-white dark:bg-zinc-950">

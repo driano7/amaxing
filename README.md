@@ -135,12 +135,30 @@ Visibles solo con rol admin en `/admin`. Modelos heurísticos (sin librerías ML
 - **Mejores horarios** (top 5 slots día+hora)
 - **Anomalías** z-score (demanda inusualmente alta/baja)
 - **Ticket promedio**, clientes activos, ingresos totales
+- **CAC por canal**: `computeCAC()` (`CAC = inversión ÷ clientes del canal`) con gasto manual por canal (`localStorage amaxing_ad_spend_v1`, input en el panel hasta integración Meta/Google Ads) + ROAS por canal
 
 Sin datos reales muestra un dataset mock etiquetado «Datos demo».
 
 ## Analítica pasiva 🔒
 
 Tracking automático de visitas (sin cookies de terceros): sesiones, usuarios únicos, tiempo en página, rutas más visitadas, dispositivos/navegadores/OS (parseo de user-agent) y flujo de navegación entre páginas. **SiteCookie** añade `amaxing_visited` (30d, SameSite=Lax) + `localStorage amaxing_cache_v1` y prefetch de imágenes críticas (`/static/images/guides/condesa.jpg` etc.) para retorno rápido en todo el sitio.
+
+**Fuentes de tráfico incl. IA**: `classifyReferrer()` + `buildReferrerStats()` (`lib/analytics/ml-metrics.ts`) clasifican cada visita por `referrerUrl` en `ai` (chatgpt, perplexity, copilot, claude, gemini, grok, poe, you, phind), `search`, `social`, `email`, `referral`, `direct`. El panel muestra gráfica por canal, contador `Visitas desde IAs` y top-10 orígenes con badge AI (con PNG/CSV/XLSX).
+
+## Tours — SEO y embudo (TOFU/MOFU/BOFU)
+
+- **Schemas** (`pages/tours/[slug].js` + `lib/seo.js`): `TouristTrip` (precio, duración, disponibilidad), `BreadcrumbList` (`Home > Tours > categoría > tour`) y `FAQPage` vía `JsonLd`; índice `/tours` con `ItemList`. Taglines con keyword geo+intención (`tour de tacos CDMX`, `Xochimilco trajinera tour`, ES+EN).
+- **MOFU**: campo `faq`/`faqEs` por tour en `data/toursData.js` (3 preguntas específicas, bilingüe) + acordeón antes del CTA.
+- **BOFU**: línea `Grupos reducidos — máximo {maxGuests} personas` sobre el CTA (dato real). Sin "próxima salida": no existe fuente de fechas fijas (pendiente, no simulado).
+- **CAC plumbing**: `Booking.acquisitionChannel?` (`lib/booking/types.ts`) capturado first-touch vía `lib/booking/utm.ts` (`utm_source` → `gclid`→`google-ads` → `fbclid`→`meta-ads` → `organic`, en `sessionStorage`), adjuntado en `checkout.jsx` y propagado por `/api/bookings` + `/api/stripe/confirm` (mock y real) hasta `storage.ts` (sin tocar el payload QR).
+- **TOFU**: posts `data/blog/mezcalPulqueCDMX.mdx` (+ES) → `/tours/3` y `coyoacanBeyondFrida.mdx` (+ES) → `/tours/7`, mismo frontmatter/cross-links que los existentes.
+
+## Knowledge Graph y API pública para IAs
+
+`lib/knowledge/graph.js` — single source of truth derivado solo de archivos existentes (sin inventar datos): entidades `Tour`, `Itinerary` (guides), `Map`, `LocalPick`, `Neighborhood` (derivados por tokens), `Category`, `Place` (meeting points con `provenance`), con `id` estable, URLs absolutas, `{es,en}` y `relations`. Restaurantes/hoteles/eventos/metro quedan pendientes (sin fuente de datos).
+
+- **API**: `GET /api/knowledge/{entity}?lang=&category=&neighborhood=&q=&limit=&offset=` → `{entity,total,count,data[],meta}`. CORS `*` abierto a propósito, caché CDN 1h. Spec en `public/openapi.json`.
+- **Discovery**: `public/llms.txt` (índice + sección máquina con endpoints), `public/robots.txt` (Allow explícito GPTBot/Claude/Perplexity/etc. + `Disallow: /api/ /admin /empleados /checkout /cart /profile /bookings`), `pages/sitemap.xml.js` dinámico (rutas + tours + guides + maps + local + blog, respeta drafts, caché 24h).
 
 ## Guía Interactiva CDMX (`/maps`) y Journeys de Cultura Fácil (`/guides`)
 
@@ -157,7 +175,7 @@ Límite: máx. **9 MDX en `data/guides`** (5 journeys → 9 archivos: 5× es + 4
 
 ## Local Picks (`/local`)
 
-Guía mensual curada por chilangos para visitantes 2–7 días. Generador `lib/localPicks/generator.js` usa **OpenRouter** (modelo `nvidia/nemotron-3-super-120b-a12b:free` con fallback Gemini/Groq) para escribir 8 picks bilingües, y **descarga cada foto a `public/static/images/local-picks/${month}-${idx}.jpg`** (como `/journeys` con `/static/images/*` local) para evitar retardo de Unsplash y permitir cache. Frontmatter `images: ['/static/images/local-picks/...']` (local, no Unsplash remoto).
+Guía mensual curada por chilangos para visitantes 2–7 días. Generador `lib/localPicks/generator.js` usa **OpenRouter** (modelo `nvidia/nemotron-3-super-120b-a12b:free` con fallback Gemini/Groq) para escribir 3 picks bilingües (1 request/mes) con `imageQuery` icónica por lugar, y **descarga cada foto a `public/static/images/local-picks/${month}-${idx}.jpg`** (Unsplash con query → Wikimedia Commons sin copyright → pool fallback) para evitar retardo de Unsplash y permitir cache. Frontmatter `images: ['/static/images/local-picks/...']` (local, no Unsplash remoto).
 
 - Vista lista: `pages/local/index.js` (`getServerSideProps` ahora `getStaticProps` para `Leer más` instantáneo) muestra cards con `Image` local (Unsplash cacheado) y `Link` a `/local/[slug]`.
 - Vista detalle: `pages/local/[slug].js` (`getStaticPaths` con `getAllLocalPickSlugs`, `getStaticProps` con `getLocalPickBySlug` hyphen/dot aware) renderiza MDX con `PostLayout`.
@@ -246,4 +264,4 @@ FRED (macros, opcional): `FRED` o `FRED_API_KEY`.
 
 ## Licencia
 
-MIT — ver [LICENSE](LICENSE). © 2024–2026 Donovan Riaño / Amaxing. Todos los nuevos archivos (`data/selfGuidesData.js`, `data/cdmxMapsData.js`, `components/InteractiveGuidesSplitScroll.jsx`, `components/CDMXInteractiveExperience.jsx`, `components/SiteCookie.jsx`, `components/Particles.tsx`, `public/static/images/guides/*`, `public/static/images/local-picks/*`, `data/guides/*.mdx`, `data/maps/*.mdx`, `data/local-picks/*.mdx`, `pages/guides/*`, `pages/maps/*`, `pages/local/*`, `lib/localPicks/*`) bajo misma licencia MIT.
+MIT — ver [LICENSE](LICENSE). © 2024–2026 Donovan Riaño / Amaxing. Todos los nuevos archivos (`data/selfGuidesData.js`, `data/cdmxMapsData.js`, `components/InteractiveGuidesSplitScroll.jsx`, `components/CDMXInteractiveExperience.jsx`, `components/SiteCookie.jsx`, `components/Particles.tsx`, `public/static/images/guides/*`, `public/static/images/local-picks/*`, `data/guides/*.mdx`, `data/maps/*.mdx`, `data/local-picks/*.mdx`, `pages/guides/*`, `pages/maps/*`, `pages/local/*`, `lib/localPicks/*`, `lib/knowledge/graph.js`, `lib/booking/utm.ts`, `pages/api/knowledge/*`, `pages/sitemap.xml.js`, `public/llms.txt`, `public/openapi.json`, `data/blog/mezcalPulqueCDMX.mdx`, `data/blog/guiaMezcalPulqueCDMX.mdx`, `data/blog/coyoacanBeyondFrida.mdx`, `data/blog/coyoacanMasAllaFrida.mdx`) bajo misma licencia MIT.
