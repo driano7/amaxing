@@ -160,6 +160,16 @@ Tracking automático de visitas (sin cookies de terceros): sesiones, usuarios ú
 - **API**: `GET /api/knowledge/{entity}?lang=&category=&neighborhood=&q=&limit=&offset=` → `{entity,total,count,data[],meta}`. CORS `*` abierto a propósito, caché CDN 1h. Spec en `public/openapi.json`.
 - **Discovery**: `public/llms.txt` (índice + sección máquina con endpoints), `public/robots.txt` (Allow explícito GPTBot/Claude/Perplexity/etc. + `Disallow: /api/ /admin /empleados /checkout /cart /profile /bookings`), `pages/sitemap.xml.js` dinámico (rutas + tours + guides + maps + local + blog, respeta drafts, caché 24h).
 
+## MCP Server (read-only, para agentes IA)
+
+`mcp/server.js` — servidor MCP especializado en descubrir, combinar y planificar tours en CDMX. Protocolo JSON-RPC 2.0 sobre stdio (MCP spec). Sin dependencias nuevas (usa `esbuild` ya existente para bundlear la capa de servicios).
+
+- **14 tools**: `search_tours`, `get_tour_details`, `match_tours_to_preferences`, `build_half_day_plan`, `build_day_plan`, `build_itinerary`, `combine_tours_and_places`, `find_activities_near`, `find_before_or_after_tour`, `suggest_for_time_available`, `suggest_for_location`, `suggest_for_weather`, `suggest_for_first_time_visitor`, `explain_recommendation`.
+- **9 resources**: `amaxing://tours`, `tours/{id}`, `places/{id}`, `neighborhoods/{id}`, `itineraries/{id}`, `taxonomies`, `knowledge-graph`, `data-policy`, `attribution`.
+- **5 prompts**: `plan-first-visit-to-cdmx`, `build-half-day-plan`, `combine-tour-with-nearby-activities`, `explain-tour-match`, `plan-around-existing-booking`.
+- **Tests**: `node --test mcp/tests/` — 18 tests (inputs válidos/inválidos, filtros incompatibles, datos faltantes, sin secretos, sin scores opacos, consistencia API↔MCP).
+- **Docs**: [`mcp/README.md`](mcp/README.md) — arquitectura, instalación, tools, resources, prompts, ejemplos, seguridad, limitaciones.
+
 ## Guía Interactiva CDMX (`/maps`) y Journeys de Cultura Fácil (`/guides`)
 
 Ambas vistas comparten la UI **split-scroll** (inspirada en AllVoices: 2 columnas desktop, sticky derecha, scroll natural izquierda, IntersectionObserver `-35%`, transición de opacidad):
@@ -264,4 +274,4 @@ FRED (macros, opcional): `FRED` o `FRED_API_KEY`.
 
 ## Licencia
 
-MIT — ver [LICENSE](LICENSE). © 2024–2026 Donovan Riaño / Amaxing. Todos los nuevos archivos (`data/selfGuidesData.js`, `data/cdmxMapsData.js`, `components/InteractiveGuidesSplitScroll.jsx`, `components/CDMXInteractiveExperience.jsx`, `components/SiteCookie.jsx`, `components/Particles.tsx`, `public/static/images/guides/*`, `public/static/images/local-picks/*`, `data/guides/*.mdx`, `data/maps/*.mdx`, `data/local-picks/*.mdx`, `pages/guides/*`, `pages/maps/*`, `pages/local/*`, `lib/localPicks/*`, `lib/knowledge/graph.js`, `lib/booking/utm.ts`, `pages/api/knowledge/*`, `pages/sitemap.xml.js`, `public/llms.txt`, `public/openapi.json`, `data/blog/mezcalPulqueCDMX.mdx`, `data/blog/guiaMezcalPulqueCDMX.mdx`, `data/blog/coyoacanBeyondFrida.mdx`, `data/blog/coyoacanMasAllaFrida.mdx`) bajo misma licencia MIT.
+MIT — ver [LICENSE](LICENSE). © 2024–2026 Donovan Riaño / Amaxing. Todos los nuevos archivos (`data/selfGuidesData.js`, `data/cdmxMapsData.js`, `components/InteractiveGuidesSplitScroll.jsx`, `components/CDMXInteractiveExperience.jsx`, `components/SiteCookie.jsx`, `components/Particles.tsx`, `public/static/images/guides/*`, `public/static/images/local-picks/*`, `data/guides/*.mdx`, `data/maps/*.mdx`, `data/local-picks/*.mdx`, `pages/guides/*`, `pages/maps/*`, `pages/local/*`, `lib/localPicks/*`, `lib/knowledge/graph.js`, `lib/knowledge/taxonomy.js`, `lib/knowledge/provenance.js`, `lib/knowledge/service.js`, `lib/booking/utm.ts`, `pages/api/knowledge/*`, `pages/api/v1/*`, `pages/sitemap.xml.js`, `public/llms.txt`, `public/llms-full.txt`, `public/openapi.json`, `public/knowledge/*`, `mcp/server.js`, `mcp/tests/*`, `scripts/export-knowledge.js`, `scripts/validate-knowledge.js`, `scripts/validate-jsonld.js`, `data/blog/mezcalPulqueCDMX.mdx`, `data/blog/guiaMezcalPulqueCDMX.mdx`, `data/blog/coyoacanBeyondFrida.mdx`, `data/blog/coyoacanMasAllaFrida.mdx`) bajo misma licencia MIT.

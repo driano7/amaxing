@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://amaxing-amx.vercel.app/knowledge/schemas/entity.json",
+  "title": "AmaxingKnowledgeEntity",
+  "description": "Base shape shared by every entity in Amaxing knowledge exports.",
+  "type": "object",
+  "required": ["id", "type", "url", "canonicalUrl", "@id", "name", "provenance", "relations"],
+  "properties": {
+    "id": { "type": "string", "description": "Stable id, e.g. tour:3", "pattern": "^[a-z]+:.+$" },
+    "@id": { "type": "string", "description": "Stable URI: canonicalUrl + #id" },
+    "type": {
+      "type": "string",
+      "enum": ["Tour", "Itinerary", "Map", "LocalPick", "Neighborhood", "Category", "Place"]
+    },
+    "url": { "type": "string", "description": "Canonical path on the site" },
+    "canonicalUrl": { "type": "string", "format": "uri" },
+    "name": { "description": "String or {es,en} object" },
+    "provenance": {
+      "type": "object",
+      "required": ["source", "sourceType", "sourceUrl", "freshnessStatus"],
+      "properties": {
+        "source": { "type": "string" },
+        "sourceType": {
+          "type": "string",
+          "enum": ["operatorProvided", "editoriallyVerified", "derived", "external", "unknown"]
+        },
+        "sourceUrl": { "type": "string" },
+        "verifiedAt": { "type": ["string", "null"] },
+        "updatedAt": { "type": ["string", "null"] },
+        "validFrom": { "type": ["string", "null"] },
+        "validThrough": { "type": ["string", "null"] },
+        "reviewedBy": { "type": ["string", "null"] },
+        "freshnessStatus": {
+          "type": "string",
+          "enum": ["current", "reviewDue", "outdated", "temporarilyUnavailable", "unknown"]
+        }
+      }
+    },
+    "relations": { "type": "object" }
+  }
+}

@@ -1,0 +1,359 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-10-11T19:31:02.634Z",
+  "meta": {
+    "version": "1.0.0",
+    "source": "amaxing/amaxing data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
+    "license": "MIT — ver LICENSE del repositorio",
+    "generatedAt": "2026-10-11T19:31:02.626Z"
+  },
+  "entity": "index",
+  "counts": {
+    "tours": 12,
+    "guides": 5,
+    "maps": 5,
+    "localPicks": 7,
+    "neighborhoods": 9,
+    "categories": 4,
+    "places": 17,
+    "relationships": 48
+  },
+  "relationships": [
+    {
+      "from": "tour:1",
+      "to": "category:gastronomy",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:1",
+      "to": "neighborhood:centro-historico",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:2",
+      "to": "category:gastronomy",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:2",
+      "to": "neighborhood:coyoacan",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:2",
+      "to": "guide:chimalistac-puentes",
+      "relation": "entityCanCombineWith",
+      "sourceType": "derived",
+      "evidence": "shared neighborhood"
+    },
+    {
+      "from": "tour:3",
+      "to": "category:gastronomy",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:3",
+      "to": "neighborhood:centro-historico",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:4",
+      "to": "category:history",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:4",
+      "to": "neighborhood:centro-historico",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:5",
+      "to": "category:history",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:5",
+      "to": "neighborhood:centro-historico",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:5",
+      "to": "neighborhood:juarez",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:6",
+      "to": "category:history",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:6",
+      "to": "neighborhood:chapultepec",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:6",
+      "to": "guide:chapultepec-agua",
+      "relation": "entityCanCombineWith",
+      "sourceType": "derived",
+      "evidence": "shared neighborhood"
+    },
+    {
+      "from": "tour:7",
+      "to": "category:neighborhoods",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:7",
+      "to": "neighborhood:coyoacan",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:7",
+      "to": "guide:chimalistac-puentes",
+      "relation": "entityCanCombineWith",
+      "sourceType": "derived",
+      "evidence": "shared neighborhood"
+    },
+    {
+      "from": "tour:8",
+      "to": "category:neighborhoods",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:8",
+      "to": "neighborhood:condesa",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:8",
+      "to": "neighborhood:roma",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:8",
+      "to": "guide:condesa-a-pie",
+      "relation": "entityCanCombineWith",
+      "sourceType": "derived",
+      "evidence": "shared neighborhood"
+    },
+    {
+      "from": "tour:9",
+      "to": "category:neighborhoods",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:9",
+      "to": "neighborhood:xochimilco",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:10",
+      "to": "category:museums",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:10",
+      "to": "neighborhood:chapultepec",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:10",
+      "to": "guide:chapultepec-agua",
+      "relation": "entityCanCombineWith",
+      "sourceType": "derived",
+      "evidence": "shared neighborhood"
+    },
+    {
+      "from": "tour:11",
+      "to": "category:museums",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:11",
+      "to": "neighborhood:chapultepec",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:11",
+      "to": "guide:chapultepec-agua",
+      "relation": "entityCanCombineWith",
+      "sourceType": "derived",
+      "evidence": "shared neighborhood"
+    },
+    {
+      "from": "tour:12",
+      "to": "category:museums",
+      "relation": "tourInCategory",
+      "sourceType": "derived",
+      "evidence": "toursData.category"
+    },
+    {
+      "from": "tour:12",
+      "to": "neighborhood:coyoacan",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:12",
+      "to": "neighborhood:cu-unam",
+      "relation": "tourLocatedInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "location/meetingPoint match"
+    },
+    {
+      "from": "tour:12",
+      "to": "guide:chimalistac-puentes",
+      "relation": "entityCanCombineWith",
+      "sourceType": "derived",
+      "evidence": "shared neighborhood"
+    },
+    {
+      "from": "guide:condesa-a-pie",
+      "to": "neighborhood:condesa",
+      "relation": "itineraryInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "selfGuidesData.neighborhood"
+    },
+    {
+      "from": "guide:centro-palacios",
+      "to": "neighborhood:centro-historico",
+      "relation": "itineraryInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "selfGuidesData.neighborhood"
+    },
+    {
+      "from": "guide:chapultepec-agua",
+      "to": "neighborhood:chapultepec",
+      "relation": "itineraryInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "selfGuidesData.neighborhood"
+    },
+    {
+      "from": "guide:chimalistac-puentes",
+      "to": "neighborhood:coyoacan",
+      "relation": "itineraryInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "selfGuidesData.neighborhood"
+    },
+    {
+      "from": "guide:chimalistac-puentes",
+      "to": "neighborhood:san-angel",
+      "relation": "itineraryInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "selfGuidesData.neighborhood"
+    },
+    {
+      "from": "guide:unam-murales",
+      "to": "neighborhood:cu-unam",
+      "relation": "itineraryInNeighborhood",
+      "sourceType": "derived",
+      "evidence": "selfGuidesData.neighborhood"
+    },
+    {
+      "from": "map:comida-tradicional",
+      "to": "neighborhood:condesa",
+      "relation": "mapCoversNeighborhood",
+      "sourceType": "derived",
+      "evidence": "title/highlights match"
+    },
+    {
+      "from": "map:comida-tradicional",
+      "to": "neighborhood:centro-historico",
+      "relation": "mapCoversNeighborhood",
+      "sourceType": "derived",
+      "evidence": "title/highlights match"
+    },
+    {
+      "from": "map:comida-tradicional",
+      "to": "neighborhood:tacubaya",
+      "relation": "mapCoversNeighborhood",
+      "sourceType": "derived",
+      "evidence": "title/highlights match"
+    },
+    {
+      "from": "map:comida-tradicional",
+      "to": "neighborhood:narvarte",
+      "relation": "mapCoversNeighborhood",
+      "sourceType": "derived",
+      "evidence": "title/highlights match"
+    },
+    {
+      "from": "map:vida-nocturna",
+      "to": "neighborhood:condesa",
+      "relation": "mapCoversNeighborhood",
+      "sourceType": "derived",
+      "evidence": "title/highlights match"
+    },
+    {
+      "from": "map:vida-nocturna",
+      "to": "neighborhood:centro-historico",
+      "relation": "mapCoversNeighborhood",
+      "sourceType": "derived",
+      "evidence": "title/highlights match"
+    },
+    {
+      "from": "map:vida-nocturna",
+      "to": "neighborhood:juarez",
+      "relation": "mapCoversNeighborhood",
+      "sourceType": "derived",
+      "evidence": "title/highlights match"
+    },
+    {
+      "from": "map:top-atracciones",
+      "to": "neighborhood:chapultepec",
+      "relation": "mapCoversNeighborhood",
+      "sourceType": "derived",
+      "evidence": "title/highlights match"
+    }
+  ]
+}

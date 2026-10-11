@@ -1,0 +1,40 @@
+name: Generate Local Picks
+
+on:
+  schedule:
+    - cron: '0 9 1 * *'
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Generate Local Picks
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          node -e "
+          const { generateLocalPicks } = require('./lib/localPicks/generator.js');
+          generateLocalPicks(new Date().toISOString().slice(0,7)).then(r => {
+            console.log('created:', r.created);
+            console.log('files:', r.files);
+            if (r.created === 0) {
+              console.log('note:', r.reason || 'already exists');
+            }
+          }).catch(e => {
+            console.error('ERROR:', e.message);
+            process.exit(1);
+          });
+          "
+
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: local picks for $(date +%Y-%m)"
+          file_pattern: "data/local-picks/*.mdx public/static/images/local-picks/*.jpg data/local-picks-sync-state.json"

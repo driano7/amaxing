@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-10-11T19:31:02.634Z",
+  "meta": {
+    "version": "1.0.0",
+    "source": "amaxing/amaxing data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
+    "license": "MIT — ver LICENSE del repositorio",
+    "generatedAt": "2026-10-11T19:31:02.626Z"
+  },
+  "entity": "neighborhoods",
+  "total": 9,
+  "count": 9,
+  "data": [
+    {
+      "id": "neighborhood:condesa",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "Condesa",
+        "en": "Condesa"
+      },
+      "description": {
+        "es": "El trazo del antiguo hipódromo, sus edificios de los años 30 y el corredor de jacarandas de Ámsterdam. Ideal al atardecer, entre cafés y parques.",
+        "en": "The former racetrack layout, its 1930s architecture, and the jacaranda corridor of Amsterdam. Perfect at dusk, between cafés and parks."
+      },
+      "relations": {
+        "tours": ["8"],
+        "guides": ["condesa-a-pie"]
+      }
+    },
+    {
+      "id": "neighborhood:centro-historico",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "Centro Histórico",
+        "en": "Historic Center"
+      },
+      "description": {
+        "es": "De Bellas Artes al Zócalo por Madero y Regina: palacios virreinales, cantera rosa y el contraste entre la traza mexica y la neoclásica.",
+        "en": "From Bellas Artes to Zócalo via Madero and Regina: viceregal palaces, pink quarry stone, and the clash of Mexica and neoclassical grids."
+      },
+      "relations": {
+        "tours": ["1", "3", "4", "5"],
+        "guides": ["centro-palacios"]
+      }
+    },
+    {
+      "id": "neighborhood:coyoacan",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "Coyoacán",
+        "en": "Coyoacán"
+      },
+      "description": {
+        "es": "Un barrio del siglo XVII congelado: puentes jorobados, capilla del Carmen y el sonido del agua entre ahuehuetes.",
+        "en": "A 17th-century village frozen in time: humpback bridges, Carmen chapel and water murmuring among ahuehuetes."
+      },
+      "relations": {
+        "tours": ["2", "7", "12"],
+        "guides": ["chimalistac-puentes"]
+      }
+    },
+    {
+      "id": "neighborhood:roma",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "Roma",
+        "en": "Roma"
+      },
+      "description": {
+        "es": null,
+        "en": null
+      },
+      "relations": {
+        "tours": ["8"],
+        "guides": []
+      }
+    },
+    {
+      "id": "neighborhood:chapultepec",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "Chapultepec",
+        "en": "Chapultepec"
+      },
+      "description": {
+        "es": "La parte menos visitada del bosque: hidráulica, murales bajo agua y la fuente de Tláloc. Silencio y sombra para caminar sin prisa.",
+        "en": "The forest’s quiet side: waterworks, underwater murals and the Tláloc fountain. Shade and silence for an unhurried walk."
+      },
+      "relations": {
+        "tours": ["6", "10", "11"],
+        "guides": ["chapultepec-agua"]
+      }
+    },
+    {
+      "id": "neighborhood:xochimilco",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "Xochimilco",
+        "en": "Xochimilco"
+      },
+      "description": {
+        "es": null,
+        "en": null
+      },
+      "relations": {
+        "tours": ["9"],
+        "guides": []
+      }
+    },
+    {
+      "id": "neighborhood:cu-unam",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "Ciudad Universitaria (UNAM)",
+        "en": "University City (UNAM)"
+      },
+      "description": {
+        "es": "Patrimonio UNESCO: la Biblioteca Central de O’Gorman (mosaicos de piedra natural) y Rectoría de Siqueiros. Arquitectura + roca volcánica.",
+        "en": "UNESCO World Heritage: O’Gorman’s Central Library (natural-stone mosaics) and Siqueiros at the Rectory. Architecture + volcanic rock."
+      },
+      "relations": {
+        "tours": ["12"],
+        "guides": ["unam-murales"]
+      }
+    },
+    {
+      "id": "neighborhood:san-angel",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "San Ángel",
+        "en": "San Ángel"
+      },
+      "description": {
+        "es": "Un barrio del siglo XVII congelado: puentes jorobados, capilla del Carmen y el sonido del agua entre ahuehuetes.",
+        "en": "A 17th-century village frozen in time: humpback bridges, Carmen chapel and water murmuring among ahuehuetes."
+      },
+      "relations": {
+        "tours": [],
+        "guides": ["chimalistac-puentes"]
+      }
+    },
+    {
+      "id": "neighborhood:juarez",
+      "type": "Neighborhood",
+      "url": "/guides",
+      "name": {
+        "es": "Juárez",
+        "en": "Juárez"
+      },
+      "description": {
+        "es": null,
+        "en": null
+      },
+      "relations": {
+        "tours": ["5"],
+        "guides": []
+      }
+    }
+  ]
+}

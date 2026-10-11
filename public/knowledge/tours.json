@@ -1,0 +1,411 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-10-11T19:31:02.632Z",
+  "meta": {
+    "version": "1.0.0",
+    "source": "amaxing/amaxing data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
+    "license": "MIT — ver LICENSE del repositorio",
+    "generatedAt": "2026-10-11T19:31:02.626Z"
+  },
+  "entity": "tours",
+  "total": 12,
+  "count": 12,
+  "data": [
+    {
+      "id": "tour:1",
+      "type": "Tour",
+      "url": "/tours/1",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/1",
+      "name": {
+        "es": "Secretos de la Comida Callejera del Centro Histórico",
+        "en": "Street Food Secrets of the Historic Center"
+      },
+      "tagline": {
+        "es": "Cómelo todo en CDMX de la mano de un foodie local: tacos, tlacoyos, tamales y antojos exóticos de mercado.",
+        "en": "Eat your way through Mexico City with a local foodie: tacos, tlacoyos, tamales and exotic market bites."
+      },
+      "description": {
+        "es": "Un recorrido gastronómico a pie por el corazón de la Ciudad de México. Tu guía local te lleva desde el famoso **Mercado de San Juan** — donde los chefs compran ingredientes exóticos — hasta taquerías familiares y fondas humildes que nunca aparecen en las guías.\n\nProbarás cochinita pibil, pozole, tortillas recién hechas, tlacoyos y más, descubriendo la historia detrás de cada bocado: cómo la nixtamalización hizo del maíz el pilar de la cocina mexicana y por qué el taco es una forma de arte.\n\nGrupo reducido (máx. 8) para que siempre tengas asiento en la barra.",
+        "en": "A guided street food walk through the beating heart of Mexico City. Your local guide takes you from the famous **Mercado de San Juan** — where chefs shop for exotic ingredients — to family-run taquerías and humble fondas that never make it into guidebooks.\n\nYou'll taste cochinita pibil, pozole, fresh tortillas, tlacoyos and more, learning the story behind each bite: how nixtamalization made corn the backbone of Mexican cuisine, and why the taco is a form of art.\n\nSmall group (max 8) so you always get a seat at the counter."
+      },
+      "priceUSD": 65,
+      "durationHours": 3,
+      "maxGuests": 8,
+      "rating": 4.9,
+      "reviewCount": 312,
+      "image": "/static/images/cochinita.jpg",
+      "category": "gastronomy",
+      "isFeatured": true,
+      "hasFaq": true,
+      "relations": {
+        "category": "gastronomy",
+        "neighborhoods": ["centro-historico"],
+        "guides": [],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:2",
+      "type": "Tour",
+      "url": "/tours/2",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/2",
+      "name": {
+        "es": "Clase de Mole y Chocolate en Coyoacán",
+        "en": "Mole & Chocolate Cooking Class in Coyoacán"
+      },
+      "tagline": {
+        "es": "Clase práctica de cocina en Coyoacán, CDMX con una cocinera tradicional: muele tu propio mole en metate y prepara chocolate de agua desde cero.",
+        "en": "Hands-on cooking class in Coyoacán, CDMX with a traditional cook: grind your own mole with a metate and make drinking chocolate from scratch."
+      },
+      "description": {
+        "es": "Arrémate las mangas en el bohemio barrio de **Coyoacán**. De la mano de una cocinera tradicional molerás chiles y semillas en un *metate* de piedra volcánica para construir un mole auténtico estilo oaxaqueño, y convertirás cacao en rama en un espumoso chocolate de agua.\n\nLa clase incluye una visita corta al mercado para comprar los ingredientes exactos y termina en la mesa familiar degustando todo lo que preparaste.\n\nPerfecto para amantes de la comida que quieren más que una foto: saldrás con recetas que puedes replicar en casa.",
+        "en": "Roll up your sleeves in the bohemian neighborhood of **Coyoacán**. With a traditional cook, you'll grind chilies and seeds on a volcanic-stone *metate* to build a true Oaxacan-style mole, then turn raw cacao into a frothy drinking chocolate.\n\nThe class includes a small market visit to buy the exact ingredients, and ends sitting around the family table where you taste everything you made.\n\nPerfect for food lovers who want more than a photo — you'll leave with recipes you can actually make at home."
+      },
+      "priceUSD": 95,
+      "durationHours": 4,
+      "maxGuests": 6,
+      "rating": 4.8,
+      "reviewCount": 184,
+      "image": "/static/images/mole.jpeg",
+      "category": "gastronomy",
+      "isFeatured": false,
+      "hasFaq": true,
+      "relations": {
+        "category": "gastronomy",
+        "neighborhoods": ["coyoacan"],
+        "guides": ["chimalistac-puentes"],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:3",
+      "type": "Tour",
+      "url": "/tours/3",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/3",
+      "name": {
+        "es": "Cata de Mezcal y Pulque: Las Bebidas del México Antiguo",
+        "en": "Mezcal & Pulque Tasting: The Drinks of Old Mexico"
+      },
+      "tagline": {
+        "es": "Compara el ancestral pulque y el mezcal artesanal con un experto agavero, en cantinas y pulquerías históricas del Centro de CDMX.",
+        "en": "Compare ancestral pulque and artisanal mezcal with an agave expert, in historic cantinas and pulquerías of Centro, CDMX."
+      },
+      "description": {
+        "es": "Una tarde explorando las dos bebidas que moldearon la cultura mexicana siglos antes de que existiera el tequila. Tu experto agavero recorre contigo **pulquerías** históricas para probar pulque fresco fermentado, y luego una barra de mezcal curada para comparar variedades ancestrales y artesanales.\n\nAprenderás cómo el pulque era sagrado para los aztecas, cómo se produce el mezcal pueblo por pueblo y a leer una etiqueta como un profesional.\n\nIncluye 4 sabores de pulque y 5 catas de mezcal con sal, naranja y chapulines.",
+        "en": "An afterno-on exploring the two drinks that shaped Mexican culture centuries before tequila existed. Your agave expert walks you through historic **pulquerías** to taste fresh, fermented pulque, then to a curated mezcal bar to compare ancestral and artisanal varieties.\n\nYou'll learn how pulque was sacred to the Aztecs, how mezcal is produced village by village, and how to read a bottle's label like a pro.\n\nIncludes 4 pulque flavors and 5 mezcal tastings with salt, orange and chapulines."
+      },
+      "priceUSD": 85,
+      "durationHours": 3,
+      "maxGuests": 10,
+      "rating": 4.7,
+      "reviewCount": 96,
+      "image": "/static/images/gusano.jpg",
+      "category": "gastronomy",
+      "isFeatured": false,
+      "hasFaq": true,
+      "relations": {
+        "category": "gastronomy",
+        "neighborhoods": ["centro-historico"],
+        "guides": [],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:4",
+      "type": "Tour",
+      "url": "/tours/4",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/4",
+      "name": {
+        "es": "Templo Mayor y el Inframundo Azteca",
+        "en": "Templo Mayor & the Aztec Underworld"
+      },
+      "tagline": {
+        "es": "Desciende al corazón excavado de Tenochtitlán con un arqueólogo que descifra la capital azteca, en este tour del Templo Mayor en CDMX.",
+        "en": "Descend into the excavated heart of Tenochtitlán with an archaeologist who decodes the Aztec capital, on this Templo Mayor tour in CDMX."
+      },
+      "description": {
+        "es": "En el centro exacto de la Ciudad de México se encuentran las ruinas de la capital azteca **Tenochtitlán**. Guiado por un arqueólogo profesional, caminarás la plaza excavada del Templo Mayor, verás el monolito de Coyolxauhqui y aprenderás cómo los aztecas leían el cielo para construir su templo dual a Huitzilopochtli y Tlaloc.\n\nDespués subirás al Zócalo y conectarás los puntos: la catedral española erigida sobre el mismo suelo sagrado y la ciudad moderna construida sobre un lago.\n\nEs el tour para viajeros que quieren historia real, no un resumen comercial.",
+        "en": "In the exact center of Mexico City lie the ruins of the Aztec capital **Tenochtitlán**. Led by a professional archaeologist, you'll walk the excavated plaza of the Templo Mayor, see the Coyolxauhqui monolith, and learn how the Aztecs read the sky to build their dual temple to Huitzilopochtli and Tlaloc.\n\nThen you'll climb to the Zócalo above and connect the dots: the Spanish cathedral standing on the same sacred ground, and the modern city built on a lake.\n\nThis is the tour for travelers who want real history, not a highlight reel."
+      },
+      "priceUSD": 120,
+      "durationHours": 4,
+      "maxGuests": 8,
+      "rating": 4.9,
+      "reviewCount": 421,
+      "image": "/static/images/BestMuseums2/mayor.jpg",
+      "category": "history",
+      "isFeatured": true,
+      "hasFaq": true,
+      "relations": {
+        "category": "history",
+        "neighborhoods": ["centro-historico"],
+        "guides": [],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:5",
+      "type": "Tour",
+      "url": "/tours/5",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/5",
+      "name": {
+        "es": "Palacio de Bellas Artes y los Muralistas",
+        "en": "Palacio de Bellas Artes & the Muralists"
+      },
+      "tagline": {
+        "es": "Cara a cara con Rivera, Siqueiros y Orozco en el palacio art nouveau más bello de la CDMX, en este tour de muralismo en Bellas Artes.",
+        "en": "Face-to-face with Rivera, Siqueiros and Orozco in Mexico City’s most beautiful art nouveau palace, on this Bellas Artes mural tour."
+      },
+      "description": {
+        "es": "Dedicado a los grandes pintores de México, el **Palacio de Bellas Artes** es un palacio de mármol cuyos murales convirtieron la política en arte. Tu guía descifra *El hombre en la encrucijada* de Diego Rivera, la *Katharsis* de José Clemente Orozco y las piezas monumentales de David Alfaro Siqueiros.\n\nTambién disfrutarás el edificio: art nouveau por fuera, art decó por dentro, con un telón de cristal estilo Tiffany en el teatro.\n\nUn tour perfecto en dos partes: los murales y luego una caminata por la Alameda y el centro histórico.",
+        "en": "Dedicated to Mexico's greatest painters, **Palacio de Bellas Artes** is a marble palace whose murals turned politics into art. Your guide decodes Diego Rivera's *Man at the Crossroads*, José Clemente Orozco's *Katharsis* and David Alfaro Siqueiros's monumental pieces.\n\nYou'll also enjoy the building itself: art nouveau on the outside, art deco inside, with a Tiffany-style glass curtain in the theater.\n\nA perfect two-part tour: the murals, then a walk through the Alameda park and the old center."
+      },
+      "priceUSD": 90,
+      "durationHours": 3,
+      "maxGuests": 10,
+      "rating": 4.8,
+      "reviewCount": 267,
+      "image": "/static/images/bellas.jpeg",
+      "category": "history",
+      "isFeatured": false,
+      "hasFaq": true,
+      "relations": {
+        "category": "history",
+        "neighborhoods": ["centro-historico", "juarez"],
+        "guides": [],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:6",
+      "type": "Tour",
+      "url": "/tours/6",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/6",
+      "name": {
+        "es": "Castillo de Chapultepec y Paseo de la Reforma",
+        "en": "Chapultepec Castle & Reforma Avenue"
+      },
+      "tagline": {
+        "es": "De santuario azteca a palacio imperial en Chapultepec, CDMX: el único castillo real de América y la avenida que conecta la historia de México.",
+        "en": "From Aztec sanctuary to imperial palace in Chapultepec, CDMX: the only royal castle in the Americas and the avenue that connects Mexico’s history."
+      },
+      "description": {
+        "es": "En la cima del cerro que los aztecas consideraban sagrado, el **Castillo de Chapultepec** es la única residencia real genuina de América. Recorrerás sus salones suntuosos — del imperio de Maximiliano a los presidentes modernos — con vistas panorámicas de la ciudad.\n\nTras el castillo seguirás por el **Paseo de la Reforma**, la gran avenida diseñada por un archiduque austriaco, pasando por el Ángel de la Independencia y descubriendo por qué este bulevar es el escenario de la vida pública mexicana.\n\nUn tour largo que vale sus horas: castillo, museo, jardines y bulevar.",
+        "en": "Perched on the hill the Aztecs considered sacred, **Chapultepec Castle** is the only genuine royal residence in the Americas. You'll tour its sumptuous rooms — from Maximilian's empire to the modern presidents — with panoramic views over the city.\n\nAfter the castle, you'll follow **Paseo de la Reforma**, the grand avenue designed by an Austrian archduke, passing the Angel of Independence and learning why this boulevard is the stage of Mexican public life.\n\nA longer tour that earns its hours: castle, museum, gardens and boulevard."
+      },
+      "priceUSD": 110,
+      "durationHours": 5,
+      "maxGuests": 10,
+      "rating": 4.8,
+      "reviewCount": 152,
+      "image": "/static/images/chapu.jpeg",
+      "category": "history",
+      "isFeatured": false,
+      "hasFaq": true,
+      "relations": {
+        "category": "history",
+        "neighborhoods": ["chapultepec"],
+        "guides": ["chapultepec-agua"],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:7",
+      "type": "Tour",
+      "url": "/tours/7",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/7",
+      "name": {
+        "es": "Coyoacán: Frida, Diego y el Alma Bohemia",
+        "en": "Coyoacán: Frida, Diego & the Bohemian Soul"
+      },
+      "tagline": {
+        "es": "La Casa Azul, el estudio de Rivera y plazas empedradas: el barrio donde nació el arte mexicano, en un tour a pie por Coyoacán.",
+        "en": "The Blue House, the Rivera studio and cobblestone plazas — the neighborhood where Mexican art was born, on a walking tour of Coyoacán."
+      },
+      "description": {
+        "es": "Pocos barrios cuentan la historia de México como **Coyoacán**. Empezando en la **Casa Azul** de Frida Kahlo, recorrerás su vida, su amor y su dolor a través de las habitaciones que pintó. A unos pasos, el estudio Anahuacalli de Rivera, el colorido mercado y la frondosa plaza principal con sus famosos coyotes.\n\nTu guía lo conecta todo: los artistas, la revolución que los moldeó y por qué este barrio bohemio sigue atrayendo creadores.\n\nIncluye entrada a los museos y un paseo por la plaza de la iglesia de San Juan Evangelista.",
+        "en": "Few neighborhoods tell Mexico's story like **Coyoacán**. Starting at Frida Kahlo's **Blue House**, you'll trace her life, her love and her pain through the rooms she painted in. From there, a short walk takes you to the Rivera Anahuacalli studio, the colorful market and the leafy main plaza with its famous coyotes.\n\nYour guide connects it all: the artists, the revolution that shaped them, and why this bohemian barrio still attracts creators today.\n\nIncludes museum entry and a stroll through the San Juan Evangelista church square."
+      },
+      "priceUSD": 98,
+      "durationHours": 5,
+      "maxGuests": 8,
+      "rating": 4.9,
+      "reviewCount": 348,
+      "image": "/static/images/fridaYDiego/Las-dos-fridas-autorretrato.png",
+      "category": "neighborhoods",
+      "isFeatured": true,
+      "hasFaq": true,
+      "relations": {
+        "category": "neighborhoods",
+        "neighborhoods": ["coyoacan"],
+        "guides": ["chimalistac-puentes"],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:8",
+      "type": "Tour",
+      "url": "/tours/8",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/8",
+      "name": {
+        "es": "Roma y Condesa: Art Decó y Cultura de Cafés",
+        "en": "Roma & Condesa: Art Deco and Café Culture"
+      },
+      "tagline": {
+        "es": "Avenidas arboladas, fachadas art decó y las mejores terrazas de cafés del mundo: la nueva bohemia de CDMX.",
+        "en": "Tree-lined avenues, art deco facades and the world’s best café terraces — the new bohemia of CDMX."
+      },
+      "description": {
+        "es": "Antiguo refugio para artistas, **Roma y Condesa** son hoy los barrios más caminables y llenos de cafés de América Latina. Recorrerás las avenidas arboladas de Condesa, descubrirás mansiones art decó y murales ocultos en la Roma, y harás paradas en cafeterías y pastelerías legendarias.\n\nTu guía comparte la historia real: el terremoto de 1985 que reconfiguró estas cuadras, el debate de la gentrificación y dónde encontrar la mejor mezcalería al terminar.\n\nCaminata ligera, muchas paradas para fotos y la mejor gente del mundo para observar.",
+        "en": "Once a car-free refuge for artists, **Roma and Condesa** are now the most walkable, café-filled neighborhoods in Latin America. You'll stroll the tree-lined streets of Condesa, spot art deco mansions and hidden murals in Roma, and stop at legendary cafés and pastry shops.\n\nYour guide shares the real story: the 1985 earthquake that reshaped these blocks, the gentrification debate, and where to find the best mezcaleria when the tour ends.\n\nEasy walking, lots of photo stops, and the city's best people-watching."
+      },
+      "priceUSD": 75,
+      "durationHours": 3,
+      "maxGuests": 10,
+      "rating": 4.7,
+      "reviewCount": 205,
+      "image": "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1200&q=80",
+      "category": "neighborhoods",
+      "isFeatured": false,
+      "hasFaq": true,
+      "relations": {
+        "category": "neighborhoods",
+        "neighborhoods": ["condesa", "roma"],
+        "guides": ["condesa-a-pie"],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:9",
+      "type": "Tour",
+      "url": "/tours/9",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/9",
+      "name": {
+        "es": "Xochimilco: Trajineras y Jardines Flotantes",
+        "en": "Xochimilco: Trajineras & Floating Gardens"
+      },
+      "tagline": {
+        "es": "Navega antiguos canales en una trajinera florida, con mariachi, antojitos de mercado y 2,000 años de historia, en este tour por Xochimilco.",
+        "en": "Glide down ancient canals on a flower-covered boat, with mariachi, market food and 2,000 years of history — on this Xochimilco trajinera tour."
+      },
+      "description": {
+        "es": "**Xochimilco** significa \"el lugar de las flores\" en náhuatl, y este sitio UNESCO flota sobre chinampas — islas artificiales — desde hace más de dos milenios. Abordarás una colorida *trajinera* y navegarás por canales bordeado de sauces, junto a barcas de mariachi y marimba que puedes contratar para tu concierto privado.\n\nEn el camino harás parada en una chinampa trabajada para aprender la técnica agrícola que inventaron los aztecas, y probarás antojitos directamente desde las barcas.\n\nEl lado más mágico e imperdible de la Ciudad de México.",
+        "en": "**Xochimilco** means \"the place of flowers\" in Nahuatl, and this UNESCO site has floated on chinampas — artificial islands — for over two millennia. You'll board a colorful *trajinera* and glide through canals lined with willow trees, alongside mariachi and marimba boats that you can hire for your own private concert.\n\nAlong the way you'll stop at a working chinampa to learn the farming technique the Aztecs invented, and taste market snacks straight from the boats.\n\nThe most magical, unmissable side of Mexico City."
+      },
+      "priceUSD": 80,
+      "durationHours": 4,
+      "maxGuests": 12,
+      "rating": 4.8,
+      "reviewCount": 289,
+      "image": "https://images.unsplash.com/photo-1528127269322-539801943592?w=1200&q=80",
+      "category": "neighborhoods",
+      "isFeatured": false,
+      "hasFaq": true,
+      "relations": {
+        "category": "neighborhoods",
+        "neighborhoods": ["xochimilco"],
+        "guides": [],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:10",
+      "type": "Tour",
+      "url": "/tours/10",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/10",
+      "name": {
+        "es": "Masterclass en el Museo Nacional de Antropología",
+        "en": "National Museum of Anthropology Masterclass"
+      },
+      "tagline": {
+        "es": "La Piedra del Sol azteca, el colosal Tláloc y 20 salas de Mesoamérica descifradas por un especialista, en el Museo de Antropología de Chapultepec, CDMX.",
+        "en": "The Aztec Sun Stone, the colossal Tláloc and 20 rooms of Mesoamerica decoded by a museum specialist, at the Anthropology Museum in Chapultepec, CDMX."
+      },
+      "description": {
+        "es": "El **Museo Nacional de Antropología** es uno de los grandes museos del mundo — y fácil de perderse en él. Tu guía especialista traza una ruta por sus 20 salas, enfocándose en la sala mexica: la Piedra del Sol azteca, el monolito de Tláloc de 23 toneladas y el penacho de plumas que fue la corona del emperador.\n\nTambién verás la sala maya, la de Oaxaca y los relieves esculpidos que explican 3,000 años de historia en una mañana.\n\nIncluye entrada preferente y una narrativa clara — sin necesidad de audioguía.",
+        "en": "The **National Museum of Anthropology** is one of the great museums of the world — and easy to get lost in. Your specialist guide builds a route through its 20 rooms, focusing on the Mexica hall: the Aztec Sun Stone, the 23-ton Tláloc monolith, and the feather headdress that was once the emperor's crown.\n\nYou'll also see the Maya room, the Oaxaca room and the epic carved reliefs that explain 3,000 years of history in a morning.\n\nIncludes priority entry and a clear narrative — no audio guide needed."
+      },
+      "priceUSD": 85,
+      "durationHours": 3,
+      "maxGuests": 8,
+      "rating": 4.9,
+      "reviewCount": 512,
+      "image": "/static/images/BestMuseums1/Antropologia.jpg",
+      "category": "museums",
+      "isFeatured": true,
+      "hasFaq": true,
+      "relations": {
+        "category": "museums",
+        "neighborhoods": ["chapultepec"],
+        "guides": ["chapultepec-agua"],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:11",
+      "type": "Tour",
+      "url": "/tours/11",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/11",
+      "name": {
+        "es": "Arte Moderno y la Colección Tamayo",
+        "en": "Modern Art & the Tamayo Collection"
+      },
+      "tagline": {
+        "es": "De Kahlo y Tamayo a lo mejor del arte contemporáneo mexicano, entre dos museos de Chapultepec, CDMX.",
+        "en": "From Kahlo and Tamayo to the best of contemporary Mexican art, across two museums in Chapultepec, CDMX."
+      },
+      "description": {
+        "es": "Una ruta de arte curada por el corazón del Bosque de Chapultepec. Empieza en el **Museo de Arte Moderno** con su impactante colección de Kahlo, Tamayo, Siqueiros y maestros contemporáneos mexicanos, instalada en un jardín de esculturas.\n\nLuego cruza el parque al **Museo Rufino Tamayo**, diseñado para traer el arte moderno del mundo a México: Picasso, Miró, Bacon y más, en un edificio que es en sí mismo una escultura.\n\nTu guía explica los diálogos entre el arte mexicano e internacional a lo largo del siglo XX.",
+        "en": "A curated art route through the heart of Chapultepec Park. Start at the **Museo de Arte Moderno** with its striking collection of Kahlo, Tamayo, Siqueiros and contemporary Mexican masters, set in a sculpture garden.\n\nThen cross the park to the **Rufino Tamayo Museum**, designed to bring the world's modern art to Mexico: Picasso, Miró, Bacon and more in a building that is itself a sculpture.\n\nYour guide explains the dialogues between Mexican and international art across the 20th century."
+      },
+      "priceUSD": 75,
+      "durationHours": 3,
+      "maxGuests": 8,
+      "rating": 4.8,
+      "reviewCount": 193,
+      "image": "/static/images/BestMuseums1/mam.jpg",
+      "category": "museums",
+      "isFeatured": false,
+      "hasFaq": true,
+      "relations": {
+        "category": "museums",
+        "neighborhoods": ["chapultepec"],
+        "guides": ["chapultepec-agua"],
+        "maps": []
+      }
+    },
+    {
+      "id": "tour:12",
+      "type": "Tour",
+      "url": "/tours/12",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/12",
+      "name": {
+        "es": "MUAC y el Circuito de Arte Contemporáneo",
+        "en": "MUAC & Contemporary Art Circuit"
+      },
+      "tagline": {
+        "es": "El arte contemporáneo más audaz de México en la UNAM, CDMX, con sus murales famosos y la imponente biblioteca de Coyoacán.",
+        "en": "Mexico’s boldest contemporary art at UNAM, CDMX, with its famous murals and the soaring library of Coyoacán."
+      },
+      "description": {
+        "es": "Entra al futuro del arte mexicano en el **MUAC** (Museo Universitario de Arte Contemporáneo), el espacio más importante del país para los artistas de hoy. Tu guía descifra las atrevidas instalaciones y obras de video, y explica cómo la escena del arte mexicano se volvió referencia global.\n\nEl tour se extiende más allá del museo al campus de la UNAM — patrimonio UNESCO — para ver el famoso mural biblioteca de Juan O'Gorman y el mural monumental de Rivera en el estadio.\n\nArte contemporáneo, arquitectura épica e historias del campus en una sola salida.",
+        "en": "Step into the future of Mexican art at the **MUAC** (University Museum of Contemporary Art), the country's most important space for today's artists. Your guide decodes the daring installations and video works, and explains how Mexico's art scene became a global reference.\n\nThe tour extends beyond the museum into the UNAM campus — a UNESCO World Heritage site — to see the famous Central Library mosaic by Juan O'Gorman and Rivera's monumental stadium mural.\n\nModern art, epic architecture and campus stories in one outing."
+      },
+      "priceUSD": 80,
+      "durationHours": 3,
+      "maxGuests": 8,
+      "rating": 4.7,
+      "reviewCount": 141,
+      "image": "/static/images/BestMuseums3/tamayo.jpg",
+      "category": "museums",
+      "isFeatured": false,
+      "hasFaq": true,
+      "relations": {
+        "category": "museums",
+        "neighborhoods": ["coyoacan", "cu-unam"],
+        "guides": ["chimalistac-puentes"],
+        "maps": []
+      }
+    }
+  ]
+}

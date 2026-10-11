@@ -1,0 +1,287 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-10-11T19:31:02.634Z",
+  "meta": {
+    "version": "1.0.0",
+    "source": "amaxing/amaxing data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
+    "license": "MIT — ver LICENSE del repositorio",
+    "generatedAt": "2026-10-11T19:31:02.626Z"
+  },
+  "entity": "places",
+  "total": 17,
+  "count": 17,
+  "data": [
+    {
+      "id": "place:1",
+      "type": "Place",
+      "name": "Mercado de San Juan, Ernestina Ponce 99, Centro",
+      "relations": {
+        "tours": ["1"],
+        "neighborhoods": ["centro-historico"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/1",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:2",
+      "type": "Place",
+      "name": "Casa de las Cocinas Tradicionales, Coyoacán",
+      "relations": {
+        "tours": ["2"],
+        "neighborhoods": ["coyoacan"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/2",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:3",
+      "type": "Place",
+      "name": "Pulquería Las Duelistas, Avenida Arcos de Belén 73, Centro",
+      "relations": {
+        "tours": ["3"],
+        "neighborhoods": ["centro-historico"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/3",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:4",
+      "type": "Place",
+      "name": "Pulquería Las Duelistas, Av. Arcos de Belén 73, Centro",
+      "relations": {
+        "tours": ["3"],
+        "neighborhoods": ["centro-historico"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/3",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:5",
+      "type": "Place",
+      "name": "Main gate of the Templo Mayor Museum, Seminario 8, Centro",
+      "relations": {
+        "tours": ["4"],
+        "neighborhoods": ["centro-historico"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/4",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:6",
+      "type": "Place",
+      "name": "Entrada principal del Museo del Templo Mayor, Seminario 8, Centro",
+      "relations": {
+        "tours": ["4"],
+        "neighborhoods": ["centro-historico"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/4",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:7",
+      "type": "Place",
+      "name": "Palacio de Bellas Artes, Av. Juárez, Centro",
+      "relations": {
+        "tours": ["5"],
+        "neighborhoods": ["centro-historico", "juarez"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/5",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:8",
+      "type": "Place",
+      "name": "Monument to the Niños Héroes, Chapultepec Park entrance",
+      "relations": {
+        "tours": ["6"],
+        "neighborhoods": ["chapultepec"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/6",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:9",
+      "type": "Place",
+      "name": "Monumento a los Niños Héroes, entrada del Bosque de Chapultepec",
+      "relations": {
+        "tours": ["6"],
+        "neighborhoods": ["chapultepec"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/6",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:10",
+      "type": "Place",
+      "name": "Frida Kahlo Museum (Casa Azul), Londres 247, Coyoacán",
+      "relations": {
+        "tours": ["7"],
+        "neighborhoods": ["coyoacan"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/7",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:11",
+      "type": "Place",
+      "name": "Museo Frida Kahlo (Casa Azul), Londres 247, Coyoacán",
+      "relations": {
+        "tours": ["7"],
+        "neighborhoods": ["coyoacan"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/7",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:12",
+      "type": "Place",
+      "name": "Parque España, Roma Norte",
+      "relations": {
+        "tours": ["8"],
+        "neighborhoods": ["roma"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/8",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:13",
+      "type": "Place",
+      "name": "Embarcadero Nuevo Nativitas, Xochimilco",
+      "relations": {
+        "tours": ["9"],
+        "neighborhoods": ["xochimilco"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/9",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:14",
+      "type": "Place",
+      "name": "National Museum of Anthropology, Av. Paseo de la Reforma, Chapultepec",
+      "relations": {
+        "tours": ["10"],
+        "neighborhoods": ["chapultepec"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/10",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:15",
+      "type": "Place",
+      "name": "Museo Nacional de Antropología, Av. Paseo de la Reforma, Chapultepec",
+      "relations": {
+        "tours": ["10"],
+        "neighborhoods": ["chapultepec"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/10",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:16",
+      "type": "Place",
+      "name": "Museo de Arte Moderno, Paseo de la Reforma, Chapultepec",
+      "relations": {
+        "tours": ["11"],
+        "neighborhoods": ["chapultepec"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/11",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    },
+    {
+      "id": "place:17",
+      "type": "Place",
+      "name": "Museo Universitario de Arte Contemporáneo (MUAC), UNAM, Coyoacán",
+      "relations": {
+        "tours": ["12"],
+        "neighborhoods": ["coyoacan", "cu-unam"]
+      },
+      "provenance": {
+        "source": "tour",
+        "sourceType": "operatorProvided",
+        "sourceUrl": "/tours/12",
+        "field": "meetingPoint",
+        "freshnessStatus": "unknown"
+      }
+    }
+  ]
+}

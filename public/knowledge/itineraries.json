@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-10-11T19:31:02.633Z",
+  "meta": {
+    "version": "1.0.0",
+    "source": "amaxing/amaxing data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
+    "license": "MIT — ver LICENSE del repositorio",
+    "generatedAt": "2026-10-11T19:31:02.626Z"
+  },
+  "entity": "itineraries",
+  "total": 5,
+  "count": 5,
+  "data": [
+    {
+      "id": "guide:condesa-a-pie",
+      "type": "Itinerary",
+      "url": "/guides/condesa-a-pie",
+      "alternateUrl": "/guides/condesa-walk",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/condesa-a-pie",
+      "name": {
+        "es": "Condesa a Pie — Art Deco & Jacarandas",
+        "en": "Condesa Walk — Art Deco & Jacarandas"
+      },
+      "summary": {
+        "es": "El trazo del antiguo hipódromo, sus edificios de los años 30 y el corredor de jacarandas de Ámsterdam. Ideal al atardecer, entre cafés y parques.",
+        "en": "The former racetrack layout, its 1930s architecture, and the jacaranda corridor of Amsterdam. Perfect at dusk, between cafés and parks."
+      },
+      "duration": {
+        "es": "60 min · 2.1 km · plano",
+        "en": "60 min · 2.1 km · flat"
+      },
+      "image": "/static/images/polanco.jpeg",
+      "accentColor": "#0E8C7A",
+      "relations": {
+        "neighborhoods": ["condesa"],
+        "tours": ["8"]
+      }
+    },
+    {
+      "id": "guide:centro-palacios",
+      "type": "Itinerary",
+      "url": "/guides/centro-palacios",
+      "alternateUrl": "/guides/historic-center-palaces",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/centro-palacios",
+      "name": {
+        "es": "Centro de Palacios — 400 años en 1 km",
+        "en": "Palace District — 400 Years in 1 km"
+      },
+      "summary": {
+        "es": "De Bellas Artes al Zócalo por Madero y Regina: palacios virreinales, cantera rosa y el contraste entre la traza mexica y la neoclásica.",
+        "en": "From Bellas Artes to Zócalo via Madero and Regina: viceregal palaces, pink quarry stone, and the clash of Mexica and neoclassical grids."
+      },
+      "duration": {
+        "es": "75 min · 1.4 km · adoquín",
+        "en": "75 min · 1.4 km · cobblestone"
+      },
+      "image": "/static/images/bellas.jpeg",
+      "accentColor": "#C1440E",
+      "relations": {
+        "neighborhoods": ["centro-historico"],
+        "tours": ["1", "3", "4", "5"]
+      }
+    },
+    {
+      "id": "guide:chapultepec-agua",
+      "type": "Itinerary",
+      "url": "/guides/chapultepec-agua",
+      "alternateUrl": "/guides/chapultepec-agua",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/chapultepec-agua",
+      "name": {
+        "es": "Chapultepec II — Agua, Bosque y Murales",
+        "en": "Chapultepec II — Water, Forest & Murals"
+      },
+      "summary": {
+        "es": "La parte menos visitada del bosque: hidráulica, murales bajo agua y la fuente de Tláloc. Silencio y sombra para caminar sin prisa.",
+        "en": "The forest’s quiet side: waterworks, underwater murals and the Tláloc fountain. Shade and silence for an unhurried walk."
+      },
+      "duration": {
+        "es": "80 min · 3.0 km · bosque",
+        "en": "80 min · 3.0 km · forest"
+      },
+      "image": "/static/images/chapu.jpeg",
+      "accentColor": "#2E86AB",
+      "relations": {
+        "neighborhoods": ["chapultepec"],
+        "tours": ["6", "10", "11"]
+      }
+    },
+    {
+      "id": "guide:chimalistac-puentes",
+      "type": "Itinerary",
+      "url": "/guides/chimalistac-puentes",
+      "alternateUrl": "/guides/chimalistac-bridges",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/chimalistac-puentes",
+      "name": {
+        "es": "Chimalistac — Puentes de Piedra y Acequias",
+        "en": "Chimalistac — Stone Bridges & Canals"
+      },
+      "summary": {
+        "es": "Un barrio del siglo XVII congelado: puentes jorobados, capilla del Carmen y el sonido del agua entre ahuehuetes.",
+        "en": "A 17th-century village frozen in time: humpback bridges, Carmen chapel and water murmuring among ahuehuetes."
+      },
+      "duration": {
+        "es": "60 min · 1.8 km · empedrado",
+        "en": "60 min · 1.8 km · cobblestone"
+      },
+      "image": "/static/images/fridaYDiego/Las-dos-fridas-autorretrato.png",
+      "accentColor": "#7B2BD9",
+      "relations": {
+        "neighborhoods": ["coyoacan", "san-angel"],
+        "tours": ["2", "7", "12"]
+      }
+    },
+    {
+      "id": "guide:unam-murales",
+      "type": "Itinerary",
+      "url": "/guides/unam-murales",
+      "alternateUrl": "/guides/unam-murals",
+      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/unam-murales",
+      "name": {
+        "es": "CU UNAM — Murales de Piedra",
+        "en": "UNAM Campus — Stone Murals"
+      },
+      "summary": {
+        "es": "Patrimonio UNESCO: la Biblioteca Central de O’Gorman (mosaicos de piedra natural) y Rectoría de Siqueiros. Arquitectura + roca volcánica.",
+        "en": "UNESCO World Heritage: O’Gorman’s Central Library (natural-stone mosaics) and Siqueiros at the Rectory. Architecture + volcanic rock."
+      },
+      "duration": {
+        "es": "70 min · 2.4 km · campus",
+        "en": "70 min · 2.4 km · campus"
+      },
+      "image": "/static/images/BestMuseums2/muacc.jpg",
+      "accentColor": "#F2A03D",
+      "relations": {
+        "neighborhoods": ["cu-unam"],
+        "tours": ["12"]
+      }
+    }
+  ]
+}

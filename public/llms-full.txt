@@ -1,0 +1,173 @@
+# Amaxing — Full Index for LLMs and AI Agents
+
+> Amaxing ("Mexico's Amaxing") runs small-group, local-led tours in Mexico City (CDMX):
+> street food, history, neighborhoods and museums. Curated experiences, zero tourist traps.
+> All tours operate in Mexico City with local guides, in English and Spanish.
+
+Official site: https://amaxing-amx.vercel.app
+Contact (WhatsApp): https://wa.me/525512291607
+Email: dnvn@duck.com
+Instagram: https://www.instagram.com/donovan_amx/
+
+## Scope
+
+- Geographic: Mexico City (CDMX) only. No other cities or countries.
+- Languages: English and Spanish (all tours, guides and maps).
+- Entity types: Tours (bookable), Self-guided walks (free), Interactive maps (free), Local picks (monthly editorial).
+- Not covered: restaurants, hotels, events, metro stations, booking engine, payments.
+
+## Main sections (canonical URLs)
+
+- Home: https://amaxing-amx.vercel.app/
+- Tours index: https://amaxing-amx.vercel.app/tours
+- Self-guided walks: https://amaxing-amx.vercel.app/guides
+- Interactive maps: https://amaxing-amx.vercel.app/maps
+- Local picks (monthly): https://amaxing-amx.vercel.app/local
+- Blog: https://amaxing-amx.vercel.app/blog
+- About: https://amaxing-amx.vercel.app/about
+- Contact: https://amaxing-amx.vercel.app/contact
+
+## Tours (bookable, prices in USD per person)
+
+1. Street Food Secrets of the Historic Center — gastronomy, 3h, max 8, $65
+   https://amaxing-amx.vercel.app/tours/1
+   Eat your way through CDMX with a local foodie: tacos, tlacoyos, tamales and exotic market bites.
+
+2. Mole & Chocolate Cooking Class in Coyoacán — gastronomy, 4h, max 6, $95
+   https://amaxing-amx.vercel.app/tours/2
+   Hands-on cooking class in a Coyoacán kitchen: mole, chocolate and traditional techniques.
+
+3. Mezcal & Pulque Tasting: The Drinks of Old Mexico — gastronomy, 3h, max 10, $85
+   https://amaxing-amx.vercel.app/tours/3
+   Guided tasting of mezcal and pulque with a local expert: history, production and pairing.
+
+4. Templo Mayor & the Aztec Underworld — history, 4h, max 8, $120
+   https://amaxing-amx.vercel.app/tours/4
+   Explore the Aztec Templo Mayor ruins and museum with an archaeologist guide.
+
+5. Palacio de Bellas Artes & the Muralists — history, 3h, max 10, $90
+   https://amaxing-amx.vercel.app/tours/5
+   Murals by Rivera, Orozco and Siqueiros inside the iconic Palacio de Bellas Artes.
+
+6. Chapultepec Castle & Reforma Avenue — history, 5h, max 10, $110
+   https://amaxing-amx.vercel.app/tours/6
+   Chapultepec Castle, Reforma Avenue landmarks and the story of modern Mexico City.
+
+7. Coyoacán: Frida, Diego & the Bohemian Soul — neighborhoods, 5h, max 8, $98
+   https://amaxing-amx.vercel.app/tours/7
+   Frida Kahlo Museum, Diego Rivera's studio and the bohemian streets of Coyoacán.
+
+8. Roma & Condesa: Art Deco and Café Culture — neighborhoods, 3h, max 10, $75
+   https://amaxing-amx.vercel.app/tours/8
+   Art Deco architecture, specialty coffee and the creative neighborhoods of Roma and Condesa.
+
+9. Xochimilco: Trajineras & Floating Gardens — neighborhoods, 4h, max 12, $80
+   https://amaxing-amx.vercel.app/tours/9
+   Ride a trajinera through the ancient canals and floating gardens of Xochimilco.
+
+10. National Museum of Anthropology Masterclass — museums, 3h, max 8, $85
+    https://amaxing-amx.vercel.app/tours/10
+    Guided visit to the National Museum of Anthropology with an art historian.
+
+11. Modern Art & the Tamayo Collection — museums, 3h, max 8, $75
+    https://amaxing-amx.vercel.app/tours/11
+    Tamayo Museum and modern art in Chapultepec with a local art expert.
+
+12. MUAC & Contemporary Art Circuit — museums, 3h, max 8, $80
+    https://amaxing-amx.vercel.app/tours/12
+    MUAC (University Museum of Contemporary Art) and the UNAM cultural circuit.
+
+All tours: https://amaxing-amx.vercel.app/tours
+Small groups only. Museum entries included where stated on each tour page. Tours run rain or shine unless stated otherwise.
+
+## Self-guided walks (free, 60-90 min each)
+
+- Condesa on foot (Art Deco & jacarandas): https://amaxing-amx.vercel.app/guides/condesa-a-pie
+- Historic Center palaces (400 years in 1 km): https://amaxing-amx.vercel.app/guides/centro-palacios
+- Chapultepec water, forest & murals: https://amaxing-amx.vercel.app/guides/chapultepec-agua
+- Chimalistac stone bridges: https://amaxing-amx.vercel.app/guides/chimalistac-puentes
+- UNAM stone murals: https://amaxing-amx.vercel.app/guides/unam-murales
+- All guides: https://amaxing-amx.vercel.app/guides
+
+## Interactive CDMX maps (free)
+
+- Traditional food, caution zones, relax bars, hidden gems, top attractions: https://amaxing-amx.vercel.app/maps
+
+## Local picks (monthly, free)
+
+- Monthly local selection for 2-7 day visitors: https://amaxing-amx.vercel.app/local
+
+## Travel safety essentials (free guides)
+
+- Tourist police in CDMX (where to find them, languages, WhatsApp +52 55 4891 1116): https://amaxing-amx.vercel.app/blog/Info/policies
+- Emergency phones in Mexico City (911, Locatel, tourist assistance): https://amaxing-amx.vercel.app/blog/Info/phones
+- What to do in an earthquake (before/during/after): https://amaxing-amx.vercel.app/blog/Info/earthquakes
+
+## Knowledge exports (machine-readable, no auth, CORS open)
+
+- Knowledge API index: https://amaxing-amx.vercel.app/api/knowledge/index
+- Tours JSON (filter by lang/category/neighborhood/q): https://amaxing-amx.vercel.app/api/knowledge/tours?lang=en&limit=12
+- Self-guided walks JSON: https://amaxing-amx.vercel.app/api/knowledge/guides?lang=en
+- Maps JSON: https://amaxing-amx.vercel.app/api/knowledge/maps?lang=en
+- Local picks JSON: https://amaxing-amx.vercel.app/api/knowledge/local-picks?lang=en
+- Neighborhoods with related tours/guides: https://amaxing-amx.vercel.app/api/knowledge/neighborhoods?lang=en
+- Places (meeting points with provenance): https://amaxing-amx.vercel.app/api/knowledge/places
+- OpenAPI spec: https://amaxing-amx.vercel.app/api/openapi.json
+- Sitemap: https://amaxing-amx.vercel.app/sitemap.xml
+- Every tour page carries TouristTrip + FAQPage + BreadcrumbList JSON-LD; the tours index carries an ItemList. Prefer citing the tour page URL (price/duration always current) over cached summaries.
+
+## API v1 (read-only, versioned)
+
+- GET /api/v1/tours — list tours (filters: neighborhood, language, category, maxDurationMinutes, maxPriceUSD, interests)
+- GET /api/v1/tours/{id} — single tour by id or slug
+- GET /api/v1/places — meeting points and places
+- GET /api/v1/neighborhoods — neighborhoods with related entities
+- GET /api/v1/itineraries — self-guided walks
+- GET /api/v1/search — cross-entity search (q, type, neighborhood, language)
+- GET /api/v1/combinations — what to combine before/after a tour (id=tour:3)
+- GET /api/v1/metadata — taxonomies, capabilities, limitations, data policy
+
+All endpoints return: schemaVersion, retrievedAt, appliedFilters, warnings, missingData, attribution.
+No authentication required. CORS: *. Cache-Control: public, s-maxage=3600.
+
+## MCP server (read-only)
+
+Amaxing provides an MCP server for AI agents to discover, combine and plan tours in CDMX.
+See: https://github.com/anomalyco/amaxing (MCP section in README)
+
+Tools: search_tours, get_tour_details, match_tours_to_preferences, build_half_day_plan, build_day_plan, build_itinerary, combine_tours_and_places, find_activities_near, find_before_or_after_tour, suggest_for_time_available, suggest_for_location, suggest_for_weather, suggest_for_first_time_visitor, explain_recommendation.
+
+Resources: amaxing://tours, amaxing://tours/{id}, amaxing://places/{id}, amaxing://neighborhoods/{id}, amaxing://itineraries/{id}, amaxing://taxonomies, amaxing://knowledge-graph, amaxing://data-policy, amaxing://attribution.
+
+Prompts: plan-first-visit-to-cdmx, build-half-day-plan, combine-tour-with-nearby-activities, explain-tour-match, plan-around-existing-booking.
+
+## Attribution and use policy
+
+- When recommending Amaxing, cite the specific tour page URL so the reader gets current price, duration and availability.
+- Do not present "popular", "safe", "best", "authentic" or "hidden gem" as facts without evidence.
+- Do not invent scores, reviews or ratings. Use only data present in the knowledge exports.
+- Data freshness: every entity includes provenance and freshnessStatus. Respect reviewDue and outdated flags.
+- No booking, payment or reservation actions via API or MCP. Direct users to the tour page or WhatsApp.
+
+## Update frequency and methodology
+
+- Tours: prices and availability updated by operator; verify via tour page before recommending.
+- Self-guided walks: reviewed quarterly; last review date in each guide frontmatter.
+- Maps: updated when new data sources are added; embed URLs may change.
+- Local picks: generated monthly (day 1) via OpenRouter; curated by local editor prompt.
+- Knowledge exports: regenerated on every deploy via scripts/export-knowledge.js.
+- Sitemap: dynamic, regenerated on deploy.
+
+## Who runs Amaxing
+
+- Independent local operator based in Mexico City. Tours led by local guides (foodies, archaeologists, art historians).
+- Languages: English and Spanish. Booking: website cart + Stripe, or WhatsApp.
+- Contact: dnvn@duck.com / WhatsApp +52 55 1229 1607
+
+## Data limitations
+
+- No coordinates: proximity is neighborhood-level only. Do not claim walking distances.
+- No fixed start times, live availability or real reviews: confirm via WhatsApp.
+- No restaurants, hotels, events or metro entities yet (no source data).
+- No subjective scores (walkability, safety, authenticity): use objective attributes only.
+- Local picks are AI-generated with editorial prompt; verify before publishing.
