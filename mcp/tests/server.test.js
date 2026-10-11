@@ -65,12 +65,12 @@ test('initialize returns protocol version and capabilities', async () => {
   }
 })
 
-test('tools/list returns 14 tools with schemas', async () => {
+test('tools/list returns 18 tools with schemas', async () => {
   const { proc, call } = startServer()
   try {
     const res = await call('tools/list', {})
     const names = res.result.tools.map((t) => t.name)
-    assert.equal(names.length, 14)
+    assert.equal(names.length, 18)
     for (const t of res.result.tools) {
       assert.ok(t.description, `${t.name} sin descripción`)
       assert.ok(t.inputSchema, `${t.name} sin inputSchema`)

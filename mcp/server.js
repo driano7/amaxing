@@ -356,6 +356,59 @@ const tools = [
       }
     },
   },
+  {
+    name: 'get_guides',
+    description: 'Get self-guided walks (guides) with filters.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        language: { type: 'string', enum: ['en', 'es'] },
+        neighborhood: { type: 'string' },
+        limit: { type: 'number', default: 10 },
+      },
+    },
+    execute: (svc, args) =>
+      svc.searchEntities({ type: 'itinerary', ...args, limit: args.limit ?? 10 }),
+  },
+  {
+    name: 'get_maps',
+    description: 'Get interactive CDMX maps.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        language: { type: 'string', enum: ['en', 'es'] },
+        limit: { type: 'number', default: 10 },
+      },
+    },
+    execute: (svc, args) => svc.searchEntities({ type: 'map', ...args, limit: args.limit ?? 10 }),
+  },
+  {
+    name: 'get_local_picks',
+    description: 'Get monthly local picks (editorial recommendations).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        language: { type: 'string', enum: ['en', 'es'] },
+        month: { type: 'string', description: 'YYYY-MM format' },
+        limit: { type: 'number', default: 10 },
+      },
+    },
+    execute: (svc, args) =>
+      svc.searchEntities({ type: 'localpick', ...args, limit: args.limit ?? 10 }),
+  },
+  {
+    name: 'get_blog_posts',
+    description: 'Get blog posts (TOFU content).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        language: { type: 'string', enum: ['en', 'es'] },
+        limit: { type: 'number', default: 10 },
+      },
+    },
+    execute: (svc, args) =>
+      svc.searchEntities({ type: 'article', ...args, limit: args.limit ?? 10 }),
+  },
 ]
 
 // ---------- RESOURCES ----------
@@ -366,6 +419,31 @@ const resourceHandlers = {
     const e = svc.getById(`tour:${id}`) || svc.getBySlug(id)
     return e || { error: 'Tour not found' }
   },
+  'amaxing://guides': (svc) => ({ entity: 'guides', items: svc.getGuideEntities('all') }),
+  'amaxing://guides/{id}': (svc, uri) => {
+    const id = uri.match(/guides\/(.+)/)?.[1]
+    const e = svc.getById(`itinerary:${id}`) || svc.getBySlug(id)
+    return e || { error: 'Guide not found' }
+  },
+  'amaxing://maps': (svc) => ({ entity: 'maps', items: svc.getMapEntities('all') }),
+  'amaxing://maps/{id}': (svc, uri) => {
+    const id = uri.match(/maps\/(.+)/)?.[1]
+    const e = svc.getById(`map:${id}`) || svc.getBySlug(id)
+    return e || { error: 'Map not found' }
+  },
+  'amaxing://local-picks': (svc) => ({
+    entity: 'local-picks',
+    items: svc.getLocalPickEntities('all'),
+  }),
+  'amaxing://local-picks/{id}': (svc, uri) => {
+    const id = uri.match(/local-picks\/(.+)/)?.[1]
+    const e = svc.getById(`localpick:${id}`) || svc.getBySlug(id)
+    return e || { error: 'Local pick not found' }
+  },
+  'amaxing://blog': (svc) => ({
+    entity: 'blog',
+    items: svc.getBlogPosts ? svc.getBlogPosts('all') : [],
+  }),
   'amaxing://places/{id}': (svc, uri) => {
     const id = uri.match(/places\/(.+)/)?.[1]
     const e = svc.getById(`place:${id}`)
