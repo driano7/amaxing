@@ -3,12 +3,14 @@
 // POST /api/mcp/stream  — JSON-RPC 2.0 sobre HTTP.
 // Compatible con ChatGPT, Claude Web, MCP Inspector remoto, etc.
 import { handleStreamableHttp } from '@/lib/mcp/handler'
-import { validateAccessToken } from '@/lib/mcp/oauth'
+import { validateAccessToken, getProtectedResourceMetadata } from '@/lib/mcp/oauth'
 
 export const config = {
   runtime: 'nodejs',
   maxDuration: 60,
 }
+
+const MCP_RESOURCE = 'https://donovan-amx.vercel.app/api/mcp/stream'
 
 export default async function handler(req, res) {
   // CORS para clientes MCP remotos
@@ -39,16 +41,17 @@ export default async function handler(req, res) {
       .json({ error: 'Rate limit exceeded', retryAfter: Math.ceil((bucket.resetAt - now) / 1000) })
   }
 
-  // Auth: OAuth Bearer token OR API Key
+  // ---- Auth: OAuth Bearer token OR API Key ----
   const authHeader = req.headers.authorization || ''
   let authenticated = false
+  let mcpUser = null
 
-  // 1. Try OAuth Bearer token
+  // 1. Try OAuth Bearer token (RFC 6750 + RFC 8707)
   if (authHeader.startsWith('Bearer ')) {
     const token = authHeader.slice(7)
-    const payload = validateAccessToken(token)
+    const payload = await validateAccessToken(token, MCP_RESOURCE)
     if (payload) {
-      req.mcpUser = payload // { sub, client_id, scope, ... }
+      mcpUser = payload
       authenticated = true
     }
   }
@@ -63,15 +66,19 @@ export default async function handler(req, res) {
       const provided = req.headers['x-api-key'] || authHeader.replace('Bearer ', '')
       if (apiKeys.includes(provided)) {
         authenticated = true
+        mcpUser = { sub: 'api-key', scope: 'mcp:read' }
       }
     }
   }
 
   if (!authenticated) {
+    // Return 401 with WWW-Authenticate and protected resource metadata (RFC 9728)
+    const prm = getProtectedResourceMetadata()
+    res.setHeader('WWW-Authenticate', `Bearer realm="mcp", resource_metadata="${prm.resource}"`)
     return res.status(401).json({
       error: 'unauthorized',
       error_description: 'Valid OAuth Bearer token or API Key required',
-      www_authenticate: 'Bearer realm="mcp"',
+      resource_metadata: prm,
     })
   }
 
