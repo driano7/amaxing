@@ -48,13 +48,14 @@ export default async function handler(req, res) {
     }
   }
 
-  // Validación básica de contenido
-  if (!req.body || typeof req.body !== 'object') {
+  // Validación básica de contenido (Next.js ya parsea JSON en req.body)
+  const body = req.body
+  if (!body || typeof body !== 'object') {
     return res.status(400).json({ error: 'Invalid JSON-RPC request' })
   }
 
   try {
-    const response = await handleStreamableHttp(req)
+    const response = await handleStreamableHttp({ json: () => Promise.resolve(body) })
     const data = await response.json()
     res.setHeader('X-Request-Id', req.headers['x-request-id'] || crypto.randomUUID())
     return res.status(200).json(data)
