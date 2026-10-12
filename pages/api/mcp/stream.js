@@ -3,6 +3,7 @@
 // POST /api/mcp/stream  — JSON-RPC 2.0 sobre HTTP.
 // Compatible con ChatGPT, Claude Web, MCP Inspector remoto, etc.
 import { handleStreamableHttp } from '@/lib/mcp/handler'
+import { validateAccessToken } from '@/lib/mcp/oauth'
 
 export const config = {
   runtime: 'nodejs',
@@ -38,17 +39,40 @@ export default async function handler(req, res) {
       .json({ error: 'Rate limit exceeded', retryAfter: Math.ceil((bucket.resetAt - now) / 1000) })
   }
 
-  // API Keys opcionales (para clientes privados/socios) — separadas por coma
-  const apiKeys = (process.env.MCP_API_KEYS || process.env.MCP_API_KEY || '')
-    .split(',')
-    .map((k) => k.trim())
-    .filter(Boolean)
-  if (apiKeys.length) {
-    const provided =
-      req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '')
-    if (!apiKeys.includes(provided)) {
-      return res.status(401).json({ error: 'Invalid or missing API key' })
+  // Auth: OAuth Bearer token OR API Key
+  const authHeader = req.headers.authorization || ''
+  let authenticated = false
+
+  // 1. Try OAuth Bearer token
+  if (authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7)
+    const payload = validateAccessToken(token)
+    if (payload) {
+      req.mcpUser = payload // { sub, client_id, scope, ... }
+      authenticated = true
     }
+  }
+
+  // 2. Fallback: API Key (header x-api-key or Bearer with API key)
+  if (!authenticated) {
+    const apiKeys = (process.env.MCP_API_KEYS || process.env.MCP_API_KEY || '')
+      .split(',')
+      .map((k) => k.trim())
+      .filter(Boolean)
+    if (apiKeys.length) {
+      const provided = req.headers['x-api-key'] || authHeader.replace('Bearer ', '')
+      if (apiKeys.includes(provided)) {
+        authenticated = true
+      }
+    }
+  }
+
+  if (!authenticated) {
+    return res.status(401).json({
+      error: 'unauthorized',
+      error_description: 'Valid OAuth Bearer token or API Key required',
+      www_authenticate: 'Bearer realm="mcp"',
+    })
   }
 
   // Validación básica de contenido (Next.js ya parsea JSON en req.body)
