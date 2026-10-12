@@ -38,12 +38,15 @@ export default async function handler(req, res) {
       .json({ error: 'Rate limit exceeded', retryAfter: Math.ceil((bucket.resetAt - now) / 1000) })
   }
 
-  // API Key opcional (para clientes privados/socios)
-  const apiKey = process.env.MCP_API_KEY
-  if (apiKey) {
+  // API Keys opcionales (para clientes privados/socios) — separadas por coma
+  const apiKeys = (process.env.MCP_API_KEYS || process.env.MCP_API_KEY || '')
+    .split(',')
+    .map((k) => k.trim())
+    .filter(Boolean)
+  if (apiKeys.length) {
     const provided =
       req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '')
-    if (provided !== apiKey) {
+    if (!apiKeys.includes(provided)) {
       return res.status(401).json({ error: 'Invalid or missing API key' })
     }
   }
