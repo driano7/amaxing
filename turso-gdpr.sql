@@ -23,12 +23,8 @@ ALTER TABLE users ADD COLUMN pii_encrypted_at TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_users_pii_encrypted ON users(pii_encrypted_at);
 
--- passport_number y date_of_birth también son datos sensibles (documento / fecha de nac).
-ALTER TABLE users ADD COLUMN passport_numberEncrypted TEXT;
-ALTER TABLE users ADD COLUMN passport_numberIv TEXT;
-ALTER TABLE users ADD COLUMN passport_numberTag TEXT;
-ALTER TABLE users ADD COLUMN passport_numberSalt TEXT;
-
+-- date_of_birth es opcional: solo se cifra si el cliente lo captura.
+-- passport_number se eliminó del schema: no lo pedimos.
 ALTER TABLE users ADD COLUMN date_of_birthEncrypted TEXT;
 ALTER TABLE users ADD COLUMN date_of_birthIv TEXT;
 ALTER TABLE users ADD COLUMN date_of_birthTag TEXT;

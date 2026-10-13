@@ -1,6 +1,33 @@
 import { getStripeClient } from '@/lib/stripe'
-import { createBookings } from '@/lib/booking/server'
+import { createBookingInTurso, findBookingsByStripeSession } from '@/lib/booking/turso'
 import { getSessionOptional } from '@/lib/auth/session'
+
+/**
+ * Crea las reservas en Turso (fuente de verdad) y devuelve los tickets con QR.
+ * Idempotente: si la sesión de Stripe ya generó reservas, las devuelve tal cual.
+ */
+async function persistBookings({ items, userId, customerName, customerEmail, currency, stripe }) {
+  const created = []
+  for (const item of items) {
+    const booking = await createBookingInTurso({
+      experienceId: item.experienceId,
+      userId,
+      date: item.date,
+      time: item.time,
+      peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+      totalAmount: Number(item.unitPrice || 0) * Math.max(1, Number(item.peopleCount) || 1),
+      currency,
+      customerName: item.customerName || customerName,
+      customerEmail: userId ? customerEmail : null,
+      specialRequests: item.specialRequests || null,
+      stripeSessionId: stripe?.sessionId || null,
+      stripePaymentIntentId: stripe?.paymentIntentId || null,
+      paid: true,
+    })
+    created.push(booking)
+  }
+  return created
+}
 
 export const config = { runtime: 'nodejs' }
 
@@ -69,37 +96,25 @@ export default async function handler(req, res) {
         ? mockItems[0].participantNames[0]
         : 'Invitado'
 
-      const userId =
-        session?.user?.id || `guest_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+      const mockBookings = await persistBookings({
+        items: mockItems.map((item) => ({
+          experienceId: item.experienceId,
+          date: item.date,
+          time: item.time,
+          peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+          unitPrice: Number(item.unitPrice) || 0,
+          customerName:
+            (Array.isArray(item.participantNames) && item.participantNames[0]) || customerName,
+        })),
+        userId: session?.user?.id || null,
+        customerName,
+        customerEmail: session?.user?.id ? customerEmail : '',
+        currency: typeof currency === 'string' ? currency : 'USD',
+        stripe: { sessionId },
+      })
 
-      const bookings = await createBookings(
-        mockItems.map((item) => {
-          const pNames = Array.isArray(item.participantNames)
-            ? item.participantNames
-            : Array.isArray(participantNamesMap?.[item.experienceId])
-            ? participantNamesMap[item.experienceId]
-            : undefined
-          return {
-            userId,
-            experienceId: item.experienceId,
-            date: item.date,
-            time: item.time,
-            peopleCount: Math.max(1, Number(item.peopleCount) || 1),
-            customerName: Array.isArray(pNames) && pNames[0] ? pNames[0] : customerName,
-            customerEmail: session?.user?.id ? customerEmail : undefined,
-            currency: typeof currency === 'string' ? currency : 'USD',
-            participantNames: pNames,
-            acquisitionChannel: item.acquisitionChannel || acquisitionChannel || undefined,
-          }
-        })
-      )
-
-      console.log(
-        '[stripe.mock] Bookings creados (mock):',
-        bookings.length,
-        isGuest ? '(guest)' : '(auth)'
-      )
-      return res.status(200).json({ ok: true, bookings, mock: true, isGuest })
+      console.log('[stripe.mock] Reservas creadas en Turso:', mockBookings.length)
+      return res.status(200).json({ ok: true, bookings: mockBookings, mock: true, isGuest })
     }
 
     // ─── MODO REAL: Stripe ───
@@ -108,22 +123,15 @@ export default async function handler(req, res) {
       expand: ['payment_intent'],
     })
 
-    if (checkout.payment_status !== 'paid' && checkout.payment_status !== 'no_payment_required') {
-      return res.status(400).json({ error: 'El pago aún no está confirmado' })
+    if (checkout.payment_status !== 'paid') {
+      return res.status(402).json({ error: 'El pago no está confirmado todavía' })
     }
 
-    let parsedItems = []
-    try {
-      parsedItems = JSON.parse(checkout.metadata?.items || '[]')
-    } catch {
-      parsedItems = []
-    }
-
+    const parsedItems = Array.isArray(items) ? items : []
     if (parsedItems.length === 0) {
       return res.status(400).json({ error: 'No hay items en la sesión' })
     }
 
-    const isGuestReal = !session?.user?.id
     const customerEmail =
       session?.user?.email ||
       checkout.customer_details?.email ||
@@ -133,28 +141,37 @@ export default async function handler(req, res) {
     const customerName = session?.user?.firstName
       ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
       : checkout.metadata?.customer_name || guestName || ''
-    const userId =
-      session?.user?.id || `guest_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 
-    const bookings = await createBookings(
-      parsedItems.map((item) => {
-        const pNames = Array.isArray(participantNamesMap?.[item.experienceId])
-          ? participantNamesMap[item.experienceId]
-          : undefined
-        return {
-          userId,
-          experienceId: item.experienceId,
-          date: item.date,
-          time: item.time,
-          peopleCount: Math.max(1, Number(item.peopleCount) || 1),
-          customerName: Array.isArray(pNames) && pNames[0] ? pNames[0] : customerName,
-          customerEmail: isGuestReal ? undefined : customerEmail,
-          currency: typeof currency === 'string' ? currency : 'USD',
-          participantNames: pNames,
-          acquisitionChannel: item.acquisitionChannel || acquisitionChannel || undefined,
-        }
-      })
-    )
+    // Idempotencia: si ya se crearon reservas para esta sesión, no duplicamos.
+    const alreadyBooked = await findBookingsByStripeSession(sessionId)
+    if (alreadyBooked.length > 0) {
+      return res.status(200).json({ ok: true, bookings: alreadyBooked, idempotent: true })
+    }
+
+    await persistBookings({
+      items: parsedItems.map((item) => ({
+        experienceId: item.experienceId,
+        date: item.date,
+        time: item.time,
+        peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+        unitPrice: Number(item.unitPrice) || 0,
+        customerName: customerName,
+        specialRequests: item.specialRequests,
+      })),
+      userId: session?.user?.id || null,
+      customerName,
+      customerEmail,
+      currency: typeof currency === 'string' ? currency : 'USD',
+      stripe: {
+        sessionId,
+        paymentIntentId:
+          typeof checkout.payment_intent === 'string'
+            ? checkout.payment_intent
+            : checkout.payment_intent?.id || null,
+      },
+    })
+
+    const bookings = await findBookingsByStripeSession(sessionId)
 
     return res.status(200).json({ ok: true, bookings })
   } catch (error) {

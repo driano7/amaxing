@@ -24,6 +24,8 @@ const PBKDF2_ITERATIONS = 210_000 // OWASP 2023 para PBKDF2-SHA256
 
 /** Campos personales que se cifran en reposo. */
 export const SENSITIVE_FIELDS = ['first_name', 'last_name', 'phone'] as const
+// Nota: date_of_birth es opcional y se cifra aparte solo si el cliente lo captura.
+// passport_number se eliminó del schema: no lo pedimos.
 export type SensitiveField = (typeof SENSITIVE_FIELDS)[number]
 
 export interface EncryptedValue {

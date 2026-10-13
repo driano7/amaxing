@@ -1,0 +1,281 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
+// Reservas reales en Turso. El booking_reference es el mismo que viaja en el QR,
+// así que el escáner del empleado resuelve contra la misma fila.
+import { randomBytes } from 'crypto'
+import { turso } from '../turso'
+
+/** Alfabeto sin caracteres ambiguos: O/0, I/1, S/5. */
+const ALPHABET = 'ABCDEFGHJKLMNPQRTUVWXYZ23456789'
+
+export interface CreateBookingInput {
+  experienceId: string
+  userId?: string | null
+  date: string
+  time?: string | null
+  peopleCount: number
+  totalAmount: number
+  currency?: string
+  customerName?: string | null
+  customerEmail?: string | null
+  specialRequests?: string | null
+  dietaryRestrictions?: string[]
+  accessibilityNeeds?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  /** Si el pago ya está confirmado, la reserva nace pagada. */
+  paid?: boolean
+}
+
+/** Referencia legible y corta: CDMX-7K3QF9 */
+export function generateBookingReference(): string {
+  const bytes = randomBytes(6)
+  let out = ''
+  for (let i = 0; i < 6; i++) out += ALPHABET[bytes[i] % ALPHABET.length]
+  return `CDMX-${out}`
+}
+
+/** Código completo que se imprime en el QR. */
+export function ticketCodeFor(reference: string): string {
+  return `AMX-T-${String(reference)
+    .replace(/^AMX-T-/i, '')
+    .toUpperCase()}`
+}
+
+/** Normaliza fecha/hora a ISO. Acepta 'YYYY-MM-DD' y 'YYYY-MM-DDTHH:mm'. */
+function normalizeWhen(date: string, time?: string | null): { iso: string; time: string | null } {
+  const trimmed = String(date || '').trim()
+  if (!trimmed) throw new Error('Falta la fecha de la reserva')
+
+  const hasTime = trimmed.includes('T')
+  const iso = hasTime ? trimmed : `${trimmed}T${(time || '09:00').slice(0, 5)}:00`
+  const parsed = new Date(iso)
+  if (Number.isNaN(parsed.getTime())) throw new Error(`Fecha inválida: ${date}`)
+
+  return {
+    iso: parsed.toISOString(),
+    time: hasTime ? trimmed.slice(11, 16) : (time || '09:00').slice(0, 5),
+  }
+}
+
+export interface CreatedBooking {
+  id: string
+  bookingReference: string
+  ticketCode: string
+  status: string
+  paymentStatus: string
+  startDate: string
+  guests: number
+}
+
+/**
+ * Crea la reserva en Turso. Lanza si la experiencia no existe o si ya
+ * existe una reserva con la misma referencia (colisión, muy improbable).
+ */
+export async function createBookingInTurso(input: CreateBookingInput): Promise<CreatedBooking> {
+  const { iso, time } = normalizeWhen(input.date, input.time)
+  const paid = input.paid ?? false
+  const reference = generateBookingReference()
+
+  const experience = await turso.execute({
+    sql: 'SELECT id FROM experiences WHERE id = ?',
+    args: [String(input.experienceId)],
+  })
+  if (!experience.rows[0]) {
+    throw new Error(`La experiencia ${input.experienceId} no existe`)
+  }
+
+  if (input.userId) {
+    const user = await turso.execute({
+      sql: 'SELECT id FROM users WHERE id = ?',
+      args: [input.userId],
+    })
+    if (!user.rows[0]) {
+      throw new Error('El usuario de la reserva no existe')
+    }
+  }
+
+  const guests = Math.max(1, Math.min(10, Number(input.peopleCount) || 1))
+  const total = Number(input.totalAmount) || 0
+  const status = paid ? 'paid' : 'confirmed'
+  const paymentStatus = paid ? 'paid' : 'unpaid'
+
+  // libSQL serializa `undefined` como el literal "None" y rompe el SQL:
+  // cualquier argumento opcional se normaliza a null.
+  const args = [
+    String(input.experienceId),
+    input.userId || null,
+    input.userId ? 0 : 1,
+    reference,
+    iso.slice(0, 10),
+    iso,
+    iso,
+    time,
+    guests,
+    status,
+    paymentStatus,
+    paid ? iso : null,
+    total,
+    paid ? total : 0,
+    input.currency || 'USD',
+    input.stripeSessionId || null,
+    input.stripePaymentIntentId || null,
+    input.customerName || null,
+    input.customerEmail || null,
+    input.specialRequests || null,
+    JSON.stringify(input.dietaryRestrictions || []),
+    input.accessibilityNeeds || null,
+  ].map((value) => (value === undefined ? null : value))
+
+  await turso.execute({
+    sql: `INSERT INTO bookings (
+            experience_id, user_id, is_guest, booking_reference,
+            booking_date, start_date, end_date, start_time,
+            guests, status, payment_status, paid_at,
+            total_amount, payed_amount, currency,
+            stripe_session_id, stripe_payment_intent_id,
+            customer_name, customer_email, special_requests,
+            dietary_restrictions, accessibility_needs
+          )
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    args,
+  })
+
+  // `RETURNING` no está soportado de forma fiable en Turso HTTP: se recupera
+  // por la booking_reference, que es única.
+  const inserted = await turso.execute({
+    sql: 'SELECT id FROM bookings WHERE booking_reference = ?',
+    args: [reference],
+  })
+
+  const id = (inserted.rows[0] as any)?.id
+  if (!id) throw new Error('No se pudo crear la reserva')
+
+  return {
+    id,
+    bookingReference: reference,
+    ticketCode: ticketCodeFor(reference),
+    status,
+    paymentStatus,
+    startDate: iso,
+    guests,
+  }
+}
+
+export interface TicketLookup {
+  bookingId: string
+  bookingReference: string
+  ticketCode: string
+  experienceTitle: string
+  location: string | null
+  startDate: string
+  startTime: string | null
+  guests: number
+  status: string
+  paymentStatus: string
+  totalAmount: number
+  currency: string
+  paidAt: string | null
+  customerName: string | null
+  customerEmail: string | null
+  isGuest: boolean
+  specialRequests: string | null
+  dietaryRestrictions: string[]
+  accessibilityNeeds: string | null
+  checkedInAt: string | null
+  stripeSessionId: string | null
+}
+
+const TICKET_SELECT = `
+  SELECT b.id, b.booking_reference, b.start_date, b.end_date, b.start_time,
+         b.guests, b.status, b.payment_status, b.total_amount, b.currency,
+         b.paid_at, b.customer_name, b.customer_email, b.is_guest,
+         b.special_requests, b.dietary_restrictions, b.accessibility_needs,
+         b.checked_in_at, b.stripe_session_id,
+         COALESCE(e.title_es, e.title_en) AS title, e.location_es, e.location_en
+  FROM bookings b
+  JOIN experiences e ON e.id = b.experience_id`
+
+function mapTicket(row: any): TicketLookup {
+  return {
+    bookingId: row.id,
+    bookingReference: row.booking_reference,
+    ticketCode: ticketCodeFor(row.booking_reference),
+    experienceTitle: row.title,
+    location: row.location_es || row.location_en || null,
+    startDate: row.start_date,
+    startTime: row.start_time,
+    guests: row.guests,
+    status: row.status,
+    paymentStatus: row.payment_status,
+    totalAmount: row.total_amount,
+    currency: row.currency,
+    paidAt: row.paid_at,
+    customerName: row.customer_name,
+    customerEmail: row.customer_email,
+    isGuest: Number(row.is_guest) === 1,
+    specialRequests: row.special_requests,
+    dietaryRestrictions: safeJson(row.dietary_restrictions),
+    accessibilityNeeds: row.accessibility_needs,
+    checkedInAt: row.checked_in_at,
+    stripeSessionId: row.stripe_session_id,
+  }
+}
+
+function safeJson(value: unknown): string[] {
+  if (!value) return []
+  try {
+    const parsed = typeof value === 'string' ? JSON.parse(value) : value
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+/** Busca el ticket por su código de QR (AMX-T-XXXX o solo la referencia). */
+export async function getTicketByCode(code: string): Promise<TicketLookup | null> {
+  const reference = String(code || '')
+    .trim()
+    .replace(/^AMX-T-/i, '')
+    .toUpperCase()
+
+  if (!reference) return null
+
+  const result = await turso.execute({
+    sql: `${TICKET_SELECT} WHERE b.booking_reference = ? COLLATE NOCASE LIMIT 1`,
+    args: [reference],
+  })
+
+  const row: any = result.rows[0]
+  return row ? mapTicket(row) : null
+}
+
+/** Marca el check-in. Devuelve el ticket actualizado o null si no existe. */
+export async function checkIn(
+  bookingReference: string,
+  employeeId: string | null
+): Promise<TicketLookup | null> {
+  const reference = String(bookingReference || '')
+    .trim()
+    .replace(/^AMX-T-/i, '')
+    .toUpperCase()
+
+  const result = await turso.execute({
+    sql: `UPDATE bookings
+          SET checked_in_at = datetime('now'), checked_in_by = ?,
+              status = CASE WHEN status = 'paid' THEN 'in_progress' ELSE status END
+          WHERE booking_reference = ? COLLATE NOCASE`,
+    args: [employeeId, reference],
+  })
+
+  if (!result.rowsAffected) return null
+  return getTicketByCode(reference)
+}
+
+/** Idempotencia: si ya hay reservas para esta sesión de Stripe, las devuelve. */
+export async function findBookingsByStripeSession(sessionId: string): Promise<TicketLookup[]> {
+  const result = await turso.execute({
+    sql: `${TICKET_SELECT} WHERE b.stripe_session_id = ? ORDER BY b.start_date`,
+    args: [sessionId],
+  })
+  return result.rows.map(mapTicket)
+}
