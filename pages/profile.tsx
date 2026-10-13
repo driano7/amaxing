@@ -33,6 +33,7 @@ import {
   User,
   Shield,
   Download,
+  FileText,
   Trash2,
   Lock,
   Star,
@@ -261,27 +262,126 @@ export default function Profile() {
     setTimeout(() => setPwMsg(null), 2500)
   }
 
-  const handleExport = () => {
-    exportMyData()
-    setGdprMsg(isEs ? 'Descarga iniciada' : 'Download started')
-    setTimeout(() => setGdprMsg(''), 2500)
+  // Exportación real: lo que aloja el servidor (RGPD art. 15), no el localStorage.
+  const handleExport = async () => {
+    const token = localStorage.getItem('authToken')
+    try {
+      const res = await fetch('/api/gdpr/export', {
+        headers: { Authorization: token ? `Bearer ${token}` : '' },
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || 'export failed')
+      }
+      const payload = await res.json()
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `calpulli-datos-${new Date().toISOString().split('T')[0]}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+
+      const c = payload.counts ?? {}
+      setGdprMsg(
+        isEs
+          ? `Descarga lista: ${c.bookings ?? 0} reservas, ${c.reviews ?? 0} reseñas, ${
+              c.sessions ?? 0
+            } sesiones`
+          : `Ready: ${c.bookings ?? 0} bookings, ${c.reviews ?? 0} reviews, ${
+              c.sessions ?? 0
+            } sessions`
+      )
+    } catch (error) {
+      console.error(error)
+      setGdprMsg(isEs ? 'No se pudo exportar' : 'Export failed')
+    }
+    setTimeout(() => setGdprMsg(''), 5000)
   }
 
-  const handleExportEncrypted = async () => {
-    await exportEncryptedData()
-    setGdprMsg(isEs ? 'Descarga cifrada iniciada' : 'Encrypted download started')
-    setTimeout(() => setGdprMsg(''), 2500)
+  const handleExportCsv = async () => {
+    const token = localStorage.getItem('authToken')
+    try {
+      const res = await fetch('/api/gdpr/export', {
+        headers: { Authorization: token ? `Bearer ${token}` : '' },
+      })
+      const payload = await res.json()
+
+      const rows: string[][] = []
+      const add = (key: string, value: unknown) => {
+        rows.push([
+          key,
+          value === null || value === undefined
+            ? ''
+            : typeof value === 'object'
+            ? JSON.stringify(value)
+            : String(value),
+        ])
+      }
+      Object.entries(payload.account ?? {}).forEach(([k, v]) => add(`cuenta.${k}`, v))
+      ;(payload.bookings ?? []).forEach((b: any) => add(`reserva.${b.booking_reference}`, b))
+      ;(payload.reviews ?? []).forEach((r: any) => add(`reseña.${r.id}`, r))
+
+      const csv = rows
+        .map((r) => r.map((f) => `"${String(f).replace(/"/g, '""')}"`).join(','))
+        .join('\n')
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `calpulli-datos-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+
+      setGdprMsg(isEs ? 'CSV descargado' : 'CSV downloaded')
+    } catch (error) {
+      console.error(error)
+      setGdprMsg(isEs ? 'No se pudo exportar' : 'Export failed')
+    }
+    setTimeout(() => setGdprMsg(''), 5000)
   }
 
-  const handleDelete = () => {
-    const ok = window.confirm(
-      isEs
-        ? 'Esta acción eliminará permanentemente tu cuenta y todos tus datos. ¿Continuar?'
-        : 'This will permanently delete your account and all your data. Continue?'
+  const handleExportEncrypted = handleExport
+
+  const handleDelete = async () => {
+    const password = window.prompt(
+      isEs ? 'Escribe tu contraseña para confirmar' : 'Type your password to confirm'
     )
-    if (!ok) return
-    deleteMyData()
-    void logout()
+    if (!password) return
+
+    const confirmText = window.prompt(
+      isEs ? 'Escribe ELIMINAR en mayúsculas para confirmar' : 'Type DELETE in caps to confirm'
+    )
+    if (confirmText !== 'ELIMINAR') {
+      setGdprMsg(isEs ? 'Cancelado: escribiste ELIMINAR' : 'Cancelled: you did not type it')
+      setTimeout(() => setGdprMsg(''), 3000)
+      return
+    }
+
+    const token = localStorage.getItem('authToken')
+    try {
+      const res = await fetch('/api/gdpr/account', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token ? `Bearer ${token}` : '',
+        },
+        body: JSON.stringify({ password, confirm: confirmText }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setGdprMsg(json.error || (isEs ? 'No se pudo eliminar' : 'Could not delete'))
+        setTimeout(() => setGdprMsg(''), 4000)
+        return
+      }
+      localStorage.clear()
+      await logout()
+    } catch (error) {
+      console.error(error)
+      setGdprMsg(isEs ? 'No se pudo eliminar' : 'Could not delete')
+      setTimeout(() => setGdprMsg(''), 4000)
+    }
   }
 
   const isPrivileged = role === 'admin' || role === 'employee'
@@ -594,7 +694,7 @@ export default function Profile() {
                     isEs={isEs}
                     onChangePassword={handleChangePassword}
                     onExport={handleExport}
-                    onExportEncrypted={handleExportEncrypted}
+                    onExportCsv={handleExportCsv}
                     onDelete={handleDelete}
                   />
                 </ErrorBoundary>
@@ -1445,7 +1545,7 @@ function SecuritySection({
   isEs,
   onChangePassword,
   onExport,
-  onExportEncrypted,
+  onExportCsv,
   onDelete,
 }: any) {
   return (
@@ -1561,8 +1661,8 @@ function SecuritySection({
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           {isEs
-            ? 'Descarga una copia de todos tus datos personales. Opción cifrada disponible para mayor seguridad.'
-            : 'Download a copy of all your personal data. Encrypted option available for extra security.'}
+            ? 'Todo lo que alojamos de ti: cuenta, reservas, reseñas, sesiones y actividad. Tus campos personales se descifran porque son tuyos.'
+            : 'Everything we host about you: account, bookings, reviews, sessions and activity. Your personal fields are decrypted because they are yours.'}
         </motion.p>
         <motion.div
           className="flex flex-wrap gap-3"
@@ -1581,13 +1681,13 @@ function SecuritySection({
             {isEs ? 'Exportar datos (JSON)' : 'Export data (JSON)'}
           </motion.button>
           <motion.button
-            onClick={onExportEncrypted}
+            onClick={onExportCsv}
             className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Lock className="h-4 w-4" />
-            {isEs ? 'Exportar cifrado (AES-GCM)' : 'Export encrypted (AES-GCM)'}
+            <FileText className="h-4 w-4" />
+            {isEs ? 'Exportar CSV' : 'Export CSV'}
           </motion.button>
         </motion.div>
         <motion.p
@@ -1598,8 +1698,8 @@ function SecuritySection({
           transition={{ duration: 0.4, delay: 0.3 }}
         >
           {isEs
-            ? 'Tus datos se cifran en tránsito (TLS) y en reposo (AES-256-GCM). Puedes solicitar su exportación o eliminación en cualquier momento conforme al RGPD (GDPR).'
-            : 'Your data is encrypted in transit (TLS) and at rest (AES-256-GCM). You can request its export or deletion at any time under GDPR.'}
+            ? 'Cifrados en tránsito (TLS) y en reposo (AES-256-GCM). Al eliminar tu cuenta se borran sesiones, actividad y reseñas; las reservas se conservan de forma anónima por obligación contable.'
+            : 'Encrypted in transit (TLS) and at rest (AES-256-GCM). Deleting your account removes sessions, activity and reviews; bookings are kept anonymously for accounting.'}
         </motion.p>
       </motion.div>
 
