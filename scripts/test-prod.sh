@@ -60,7 +60,9 @@ echo "════════ 4. FLUJOS CON ROLES ════════"
 node -e "import('@libsql/client').then(async ({createClient})=>{const c=createClient({url:process.env.TURSO_URL,authToken:process.env.TURSO_API_KEY});await c.execute({sql:'UPDATE user_roles SET role=? WHERE email=?',args:['employee','$E']});});"
 chk "employee /admin/analytics" "$(code $B/api/admin/analytics -H "Authorization: Bearer $T")" "200"
 chk "employee /admin/dashboard" "$(code $B/api/admin/dashboard -H "Authorization: Bearer $T")" "200"
-chk "employee /admin/users (403)" "$(code $B/api/admin/users -H "Authorization: Bearer $T")" "403"
+chk "employee /admin/users (ve enmascarado)" "$(code $B/api/admin/users -H "Authorization: Bearer $T")" "200"
+R=$(curl -s --max-time 25 $B/api/admin/users -H "Authorization: Bearer $T")
+echo "$R" | grep -q '"firstName"' && fail "employee no ve PII en claro" "FUGA" || ok "employee no ve PII en claro" "correcto"
 chk "employee /admin/decrypt (403)" "$(code -X POST $B/api/admin/decrypt -H 'Content-Type: application/json' -H "Authorization: Bearer $T" -d '{"userId":"x","reason":"prueba de humo"}')" "403"
 R=$(curl -s --max-time 25 $B/api/admin/analytics -H "Authorization: Bearer $T")
 echo "$R" | grep -q '"advanced"' && fail "employee no ve advanced" "FUGA" || ok "employee no ve bloque advanced" "correcto"

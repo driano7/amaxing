@@ -386,6 +386,27 @@ export async function registerUser(input: {
     console.error('[auth] No se pudo registrar el rol inicial:', error)
   }
 
+  // El alta queda auditada: saber quién se creó una cuenta y con qué demografía.
+  try {
+    await turso.execute({
+      sql: `INSERT INTO access_audit_logs
+              (id, actor_id, actor_email, actor_role, action, target_email, details)
+            VALUES (lower(hex(randomblob(16))), ?, ?, 'client', 'register', ?, ?)`,
+      args: [
+        id,
+        email,
+        email,
+        JSON.stringify({
+          hasCountry: Boolean(normalizeCountry(input.country)),
+          hasGender: Boolean(normalizeGender(input.gender)),
+          referred: Boolean(input.referredBy),
+        }),
+      ],
+    })
+  } catch (error) {
+    console.error('[auth] No se pudo auditar el alta:', error)
+  }
+
   // Atribución de referido: solo si vino uno válido y no es el mismo usuario.
   if (input.referredBy) {
     try {
