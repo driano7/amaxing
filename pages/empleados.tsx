@@ -9,7 +9,6 @@ import { AuthLoader } from '@/components/AuthLoader'
 import { CoffeeBackground } from '@/components/CoffeeBackground'
 import { QrScanner } from '@/components/QrScanner'
 import { ScanResultDisplay } from '@/components/ScanResultDisplay'
-import { resolveQr } from '@/lib/qr/resolve'
 import { type QrType } from '@/lib/qr/types'
 import {
   BadgeCheck,
@@ -399,11 +398,26 @@ function QrScannerSection({ isEs }: { isEs: boolean }) {
   const [showScanner, setShowScanner] = useState(false)
   const [scanResult, setScanResult] = useState<any>(null)
 
-  const handleScan = (raw: string, type: QrType, code: string) => {
-    const resolved = resolveQr(raw)
-    if (resolved) {
-      setScanResult(resolved)
+  const handleScan = async (raw: string, type: QrType, code: string) => {
+    try {
+      const token = localStorage.getItem('authToken')
+      const res = await fetch('/api/admin/qr', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token ? `Bearer ${token}` : '',
+        },
+        body: JSON.stringify({ code: raw }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        console.error('QR resolve error:', json?.error)
+        return
+      }
+      setScanResult(json.resolved)
       setShowScanner(false)
+    } catch (error) {
+      console.error('QR resolve failed:', error)
     }
   }
 

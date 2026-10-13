@@ -1,4 +1,6 @@
-import { supabase } from '@/lib/supabase'
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
+// /api/tours/reviews — Reseñas reales desde Turso (sin Supabase, sin datos ficticios)
+import { turso } from '@/lib/turso'
 
 export default async function handler(req, res) {
   const { experienceId } = req.query
@@ -8,110 +10,84 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
+    const limit = Math.min(parseInt(String(req.query.limit ?? '10'), 10) || 10, 50)
+    const offset = Math.max(parseInt(String(req.query.offset ?? '0'), 10) || 0, 0)
+
     try {
-      const { limit = 10, offset = 0, locale } = req.query
+      const [rows, countRow] = await Promise.all([
+        turso.execute({
+          sql: `SELECT id, reviewer_name, origin_country, rating, comment_text,
+                       "isVerified", "helpfulVotes", "createdAt"
+                FROM reviews
+                WHERE experience_id = ? AND "isPublished" = 1
+                ORDER BY "createdAt" DESC
+                LIMIT ? OFFSET ?`,
+          args: [experienceId, limit, offset],
+        }),
+        turso.execute({
+          sql: 'SELECT COUNT(*) as count FROM reviews WHERE experience_id = ? AND "isPublished" = 1',
+          args: [experienceId],
+        }),
+      ])
 
-      const { data, error, count } = await supabase
-        .from('reviews')
-        .select(
-          `
-          id,
-          reviewer_name,
-          origin_country,
-          rating,
-          comment_text,
-          is_verified,
-          helpful_votes,
-          created_at,
-          user_id
-        `,
-          { count: 'exact' }
-        )
-        .eq('experience_id', experienceId)
-        .eq('is_published', true)
-        .order('created_at', { ascending: false })
-        .range(parseInt(offset, 10), parseInt(offset, 10) + parseInt(limit, 10) - 1)
+      const total = Number(countRow.rows[0]?.count) || 0
 
-      if (error) {
-        console.error('[API] reviews GET error:', error)
-        return res.status(500).json({ error: error.message })
-      }
-
-      const reviews = data.map((r) => ({
+      const reviews = rows.rows.map((r) => ({
         id: r.id,
         reviewerName: r.reviewer_name,
         originCountry: r.origin_country,
         rating: r.rating,
         comment: r.comment_text,
-        isVerified: r.is_verified,
-        helpfulVotes: r.helpful_votes,
-        createdAt: r.created_at,
+        isVerified: Number(r.isVerified) === 1,
+        helpfulVotes: r.helpfulVotes ?? 0,
+        createdAt: r.createdAt,
       }))
 
       res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
       return res.status(200).json({
         reviews,
-        pagination: {
-          total: count,
-          limit: parseInt(limit, 10),
-          offset: parseInt(offset, 10),
-          hasMore: parseInt(offset, 10) + parseInt(limit, 10) < (count || 0),
-        },
+        pagination: { total, limit, offset, hasMore: offset + limit < total },
       })
     } catch (err) {
-      console.error('[API] reviews GET exception:', err)
+      console.error('[API] reviews GET error:', err)
       return res.status(500).json({ error: 'Internal server error' })
     }
   }
 
   if (req.method === 'POST') {
+    const { reviewerName, originCountry, rating, comment, userId } = req.body ?? {}
+
+    if (!reviewerName || !rating || !comment) {
+      return res
+        .status(400)
+        .json({ error: 'Missing required fields: reviewerName, rating, comment' })
+    }
+
+    if (Number(rating) < 1 || Number(rating) > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5' })
+    }
+
     try {
-      const { reviewerName, originCountry, rating, comment, userId } = req.body
+      const isVerified = userId ? 1 : 0
 
-      if (!reviewerName || !rating || !comment) {
-        return res
-          .status(400)
-          .json({ error: 'Missing required fields: reviewerName, rating, comment' })
-      }
-
-      if (rating < 1 || rating > 5) {
-        return res.status(400).json({ error: 'Rating must be between 1 and 5' })
-      }
-
-      const { data, error } = await supabase
-        .from('reviews')
-        .insert({
-          experience_id: experienceId,
-          user_id: userId || null,
-          reviewer_name: reviewerName,
-          origin_country: originCountry || null,
-          rating: parseInt(rating, 10),
-          comment_text: comment,
-          is_verified: false,
-          is_published: true,
-        })
-        .select()
-        .single()
-
-      if (error) {
-        console.error('[API] reviews POST error:', error)
-        return res.status(500).json({ error: error.message })
-      }
-
-      return res.status(201).json({
-        review: {
-          id: data.id,
-          reviewerName: data.reviewer_name,
-          originCountry: data.origin_country,
-          rating: data.rating,
-          comment: data.comment_text,
-          isVerified: data.is_verified,
-          helpfulVotes: data.helpful_votes,
-          createdAt: data.created_at,
-        },
+      await turso.execute({
+        sql: `INSERT INTO reviews
+                (id, experience_id, user_id, reviewer_name, origin_country, rating, comment_text, "isVerified")
+              VALUES (lower(hex(randomblob(16))), ?, ?, ?, ?, ?, ?, ?)`,
+        args: [
+          experienceId,
+          userId ?? null,
+          String(reviewerName).trim().slice(0, 120),
+          originCountry ?? null,
+          Number(rating),
+          String(comment).trim().slice(0, 4000),
+          isVerified,
+        ],
       })
+
+      return res.status(201).json({ success: true })
     } catch (err) {
-      console.error('[API] reviews POST exception:', err)
+      console.error('[API] reviews POST error:', err)
       return res.status(500).json({ error: 'Internal server error' })
     }
   }

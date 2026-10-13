@@ -175,7 +175,7 @@ export default function Profile() {
       const profileData = await getProfileData(user)
       setForm({
         ...profileData,
-        firstName: profileData.firstName || user.firstName || 'Donovan',
+        firstName: profileData.firstName || user.firstName || '',
         lastName: profileData.lastName || 'Riaño',
         email: profileData.email || user.email,
         phone: profileData.phone || '+52 55 5122 9160',

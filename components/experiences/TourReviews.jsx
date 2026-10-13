@@ -5,45 +5,42 @@ import { motion } from 'framer-motion'
 import { Star, MessageSquare, User } from 'lucide-react'
 import { addCommented } from '@/lib/userData'
 
-// Comentarios de ejemplo estilo XocoCafé mientras no haya BD.
+// Reseñas reales cargadas desde Turso vía /api/tours/reviews.
 export function TourReviews({ tour, isEs, locale }) {
-  const [reviews, setReviews] = useState(() => [
-    {
-      id: 'r1',
-      reviewerName: isEs ? 'María G.' : 'Maria G.',
-      originCountry: 'MX',
-      rating: 5,
-      comment: isEs
-        ? 'Increíble. El guía conocía cada puesto y las historias valían oro.'
-        : 'Amazing. The guide knew every stall and the stories were gold.',
-      isVerified: true,
-    },
-    {
-      id: 'r2',
-      reviewerName: 'J. Carter',
-      originCountry: 'US',
-      rating: 4,
-      comment: isEs
-        ? 'Muy buen recorrido, aunque al final llovió. Recomendado venir con walkings cómodos.'
-        : 'Great tour, although it rained at the end. Bring comfy shoes.',
-      isVerified: true,
-    },
-    {
-      id: 'r3',
-      reviewerName: isEs ? 'Ana R.' : 'Ana R.',
-      originCountry: 'ES',
-      rating: 5,
-      comment: isEs
-        ? 'Una experiencia auténtica, lejos del turismo de masas.'
-        : 'An authentic experience, far from mass tourism.',
-      isVerified: false,
-    },
-  ])
+  const [reviews, setReviews] = useState([])
+  const [loadingReviews, setLoadingReviews] = useState(true)
   const [signedIn, setSignedIn] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
+
+    const load = async () => {
+      if (!tour?.id) {
+        setLoadingReviews(false)
+        return
+      }
+      try {
+        const res = await fetch(`/api/tours/reviews?experienceId=${encodeURIComponent(tour.id)}`)
+        if (!res.ok) throw new Error('Failed to fetch reviews')
+        const json = await res.json()
+        if (!cancelled) setReviews(json.reviews ?? [])
+      } catch (error) {
+        console.error('Error loading reviews:', error)
+        if (!cancelled) setReviews([])
+      } finally {
+        if (!cancelled) setLoadingReviews(false)
+      }
+    }
+
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [tour?.id])
+
+  useEffect(() => {
     try {
-      setSignedIn(!!localStorage.getItem('authUser'))
+      setSignedIn(!!localStorage.getItem('authToken'))
     } catch {
       setSignedIn(false)
     }
@@ -56,6 +53,7 @@ export function TourReviews({ tour, isEs, locale }) {
   const verifiedLabel = isEs ? 'Compra verificada' : 'Verified purchase'
   const noPerfil = isEs ? 'Inicia sesión para dejar tu comentario.' : 'Log in to leave your review.'
   const emptyLabel = isEs ? 'Sin comentarios todavía' : 'No reviews yet'
+  const loadingLabel = isEs ? 'Cargando comentarios…' : 'Loading reviews…'
 
   return (
     <section id="tour-reviews" className="scroll-mt-24 py-10">
@@ -80,7 +78,9 @@ export function TourReviews({ tour, isEs, locale }) {
           </div>
 
           <div className="space-y-4">
-            {reviews.length === 0 ? (
+            {loadingReviews ? (
+              <p className="text-sm text-zinc-500">{loadingLabel}</p>
+            ) : reviews.length === 0 ? (
               <p className="text-sm text-zinc-500">{emptyLabel}</p>
             ) : (
               reviews.map((review, index) => (

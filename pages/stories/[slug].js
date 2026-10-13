@@ -167,7 +167,10 @@ export async function getStaticProps({ params }) {
   try {
     const { turso } = await import('@/lib/turso')
     const result = await turso.execute({
-      sql: `SELECT id, slug, locale, title, excerpt, content, image, author, published_at, read_time, tags FROM news_notes WHERE slug = ? AND published = 1 LIMIT 1`,
+      sql: `SELECT id, slug, locale, title, summary, body, image, category, date, source_url, tags
+            FROM news_notes
+            WHERE slug = ? AND published = 1
+            LIMIT 1`,
       args: [slug],
     })
 
@@ -176,19 +179,28 @@ export async function getStaticProps({ params }) {
       return { notFound: true }
     }
 
+    let tags = []
+    try {
+      tags = story.tags ? JSON.parse(story.tags) : []
+    } catch {
+      tags = []
+    }
+
     return {
       props: {
         story: {
           id: story.id,
           slug: story.slug,
+          locale: story.locale,
           title: story.title,
-          excerpt: story.excerpt,
-          content: story.content,
+          excerpt: story.summary,
+          content: story.body,
           image: story.image,
-          author: { name: story.author },
-          publishedAt: story.published_at,
-          readTime: story.read_time,
-          tags: story.tags ? JSON.parse(story.tags) : [],
+          category: story.category,
+          sourceUrl: story.source_url,
+          publishedAt: story.date,
+          readTime: 5,
+          tags,
         },
       },
       revalidate: 3600,

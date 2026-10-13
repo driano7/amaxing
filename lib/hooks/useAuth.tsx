@@ -49,47 +49,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const verifyToken = useCallback(async (tokenToVerify: string) => {
     try {
       const response = await fetch('/api/auth/me', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${tokenToVerify}`,
         },
       })
 
-      const result = await response.json()
-
-      if (result.success) {
-        setUser(result.user)
-        setToken(tokenToVerify)
-      } else {
-        // Fall back to the locally stored user (demo auth)
-        const savedUser = localStorage.getItem('authUser')
-        if (savedUser) {
-          try {
-            setUser(JSON.parse(savedUser) as AuthUser)
-          } catch {
-            localStorage.removeItem('authToken')
-            setToken(null)
-            setUser(null)
-          }
-        } else {
-          localStorage.removeItem('authToken')
-          setToken(null)
-          setUser(null)
-        }
+      if (!response.ok) {
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('authUser')
+        setToken(null)
+        setUser(null)
+        return
       }
+
+      const result = await response.json()
+      const verified = result?.user as AuthUser | undefined
+
+      if (!verified) {
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('authUser')
+        setToken(null)
+        setUser(null)
+        return
+      }
+
+      // La sesión válida en Turso es la fuente de verdad.
+      setUser(verified)
+      setToken(tokenToVerify)
+      localStorage.setItem('authUser', JSON.stringify(verified))
     } catch (error) {
       console.error('Error verifying token:', error)
-      // Endpoint unavailable — restore from localStorage instead of logging out
-      const savedUser = localStorage.getItem('authUser')
-      if (savedUser) {
-        try {
-          setUser(JSON.parse(savedUser) as AuthUser)
-        } catch {
-          setUser(null)
-        }
-      } else {
-        setUser(null)
-      }
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('authUser')
+      setToken(null)
+      setUser(null)
     } finally {
       setIsLoading(false)
     }
@@ -97,20 +91,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const restoreSession = useCallback(() => {
     const savedToken = localStorage.getItem('authToken')
-    const savedUser = localStorage.getItem('authUser')
-    if (savedToken && savedUser) {
-      try {
-        setToken(savedToken)
-        setUser(JSON.parse(savedUser) as AuthUser)
-        setIsLoading(false)
-      } catch {
-        setUser(null)
-        setIsLoading(false)
-      }
-    } else if (savedToken) {
-      setToken(savedToken)
-      verifyToken(savedToken)
+    if (savedToken) {
+      // Siempre validado contra el servidor: nunca confiar en localStorage solo.
+      void verifyToken(savedToken)
     } else {
+      localStorage.removeItem('authUser')
       setToken(null)
       setUser(null)
       setIsLoading(false)
@@ -134,8 +119,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = useCallback(async () => {
     try {
       if (token) {
-        await fetch('/api/auth/me', {
-          method: 'DELETE',
+        await fetch('/api/auth/logout', {
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
           },

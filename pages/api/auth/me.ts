@@ -10,8 +10,8 @@ export default async function handler(req, res) {
 
   try {
     const user = await getSessionUser(token)
-    if (!user) return res.status(401).json({ message: 'No autenticado' })
-    return res.status(200).json({ user })
+    if (!user) return res.status(401).json({ success: false, message: 'No autenticado' })
+    return res.status(200).json({ success: true, user })
   } catch (error) {
     console.error('Auth me error:', error)
     return res.status(500).json({ message: 'Error obteniendo la sesión' })
