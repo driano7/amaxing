@@ -1,6 +1,36 @@
 import { getStripeClient } from '@/lib/stripe'
 import { createBookingInTurso, findBookingsByStripeSession } from '@/lib/booking/turso'
 import { recordConversion } from '@/lib/referrals'
+import { trySend } from '@/lib/mail/service'
+import { BRAND } from '@/lib/brand'
+
+/** Avisa al cliente segun como pago. Si falla el correo, la reserva sigue. */
+async function notifyBooking(booking, { paymentMethod, customerPhone, userEmail, userId }) {
+  const origin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '') || ''
+  const digits = (customerPhone || '').replace(/\D/g, '')
+  const whatsappUrl = digits.length >= 10 ? `https://wa.me/${digits}` : BRAND.social.whatsapp
+
+  const vars = {
+    firstName: (booking.customerName || '').split(' ')[0] || 'viajera',
+    bookingReference: booking.bookingReference,
+    experienceTitle: 'Tu tour',
+    startDate: String(booking.startDate || '').slice(0, 10),
+    startTime: '10:00',
+    guests: booking.guests,
+    total: booking.totalAmount,
+    currency: booking.currency,
+    meetingPoint: 'Te lo confirmamos por WhatsApp',
+    ticketUrl: `${origin}/profile`,
+    whatsappUrl,
+  }
+
+  await trySend(
+    paymentMethod === 'cash' ? 'booking_cash_reserved' : 'booking_confirmed',
+    userEmail,
+    userId,
+    vars
+  )
+}
 import { getSessionOptional } from '@/lib/auth/session'
 
 /**
@@ -160,6 +190,15 @@ export default async function handler(req, res) {
       })
 
       console.log('[stripe.mock] Reservas creadas en Turso:', mockBookings.length)
+
+      for (const booking of mockBookings) {
+        await notifyBooking(booking, {
+          paymentMethod,
+          customerPhone,
+          userEmail: session?.user?.email || guestEmail || null,
+          userId: session?.user?.id || null,
+        })
+      }
       return res.status(200).json({ ok: true, bookings: mockBookings, mock: true, isGuest })
     }
 
@@ -220,6 +259,15 @@ export default async function handler(req, res) {
     })
 
     const bookings = await findBookingsByStripeSession(sessionId)
+
+    for (const booking of bookings) {
+      await notifyBooking(booking, {
+        paymentMethod,
+        customerPhone,
+        userEmail: session?.user?.email || customerEmail || null,
+        userId: session?.user?.id || null,
+      })
+    }
 
     await registerReferralConversions(bookings, {
       userId: session?.user?.id || null,
