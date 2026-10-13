@@ -3,6 +3,7 @@
 import { randomBytes, scrypt as _scrypt, timingSafeEqual } from 'crypto'
 import { promisify } from 'util'
 import { turso } from './turso'
+import { encryptRowFields, isPepperConfigured } from './gdpr-crypto'
 
 const scrypt = promisify(_scrypt) as (
   password: string,
@@ -313,15 +314,53 @@ export async function registerUser(input: {
   password: string
   firstName: string
   lastName: string
+  phone?: string | null
 }): Promise<AuthUser> {
   const email = input.email.trim().toLowerCase()
   const passwordHash = await hashPassword(input.password)
 
+  const encrypted = isPepperConfigured()
+    ? encryptRowFields(
+        {
+          first_name: input.firstName,
+          last_name: input.lastName,
+          phone: input.phone ?? '',
+        },
+        email
+      )
+    : {}
+
   const result = await turso.execute({
-    sql: `INSERT INTO users (email, password_hash, first_name, last_name, is_email_verified)
-          VALUES (?, ?, ?, ?, 0)
+    sql: `INSERT INTO users (
+            email, password_hash, first_name, last_name, phone,
+            first_nameEncrypted, first_nameIv, first_nameTag, first_nameSalt,
+            last_nameEncrypted, last_nameIv, last_nameTag, last_nameSalt,
+            phoneEncrypted, phoneIv, phoneTag, phoneSalt,
+            pii_encrypted_at, is_email_verified
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           RETURNING id`,
-    args: [email, passwordHash, input.firstName.trim(), input.lastName.trim()],
+    args: [
+      email,
+      passwordHash,
+      input.firstName.trim(),
+      input.lastName.trim(),
+      input.phone ?? null,
+      encrypted.first_nameEncrypted ?? null,
+      encrypted.first_nameIv ?? null,
+      encrypted.first_nameTag ?? null,
+      encrypted.first_nameSalt ?? null,
+      encrypted.last_nameEncrypted ?? null,
+      encrypted.last_nameIv ?? null,
+      encrypted.last_nameTag ?? null,
+      encrypted.last_nameSalt ?? null,
+      encrypted.phoneEncrypted ?? null,
+      encrypted.phoneIv ?? null,
+      encrypted.phoneTag ?? null,
+      encrypted.phoneSalt ?? null,
+      isPepperConfigured() ? new Date().toISOString() : null,
+      0,
+    ],
   })
 
   const row: any = result.rows[0]

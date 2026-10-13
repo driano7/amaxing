@@ -137,26 +137,74 @@ export default function AdminPanel() {
     setNotice(null)
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch('/api/admin/users?decrypt=1', {
-        headers: {
-          Authorization: token ? `Bearer ${token}` : '',
-        },
+      // 1) Lista en claro SOLO de metadatos; el PII viaja cifrado.
+      const listRes = await fetch('/api/admin/users', {
+        headers: { Authorization: token ? `Bearer ${token}` : '' },
       })
-      if (!res.ok) {
-        const err = await res.json()
-        setNotice(err.message || 'No se pudo descifrar')
+      if (!listRes.ok) {
+        const err = await listRes.json()
+        setNotice(err.error || (isEs ? 'No se pudo cargar' : 'Could not load'))
         return
       }
-      const json = await res.json()
-      setUsers(json.users)
+      const listed = (await listRes.json()).users ?? []
+
+      // 2) Descifrado real, usuario por usuario, vía servidor y auditado.
+      const decryptedUsers = []
+      let ok = 0
+      let failed = 0
+      let tampered = 0
+
+      for (const u of listed) {
+        const res = await fetch('/api/admin/decrypt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+          body: JSON.stringify({
+            userId: u.id,
+            reason: 'Acceso desde el panel de administración',
+          }),
+        })
+
+        if (!res.ok) {
+          failed++
+          decryptedUsers.push({ ...u, decrypted: false, notDecrypted: true })
+          continue
+        }
+
+        const json = await res.json()
+        tampered += json.tamperedFields?.length ?? 0
+        decryptedUsers.push({
+          ...u,
+          firstName: json.user.firstName,
+          lastName: json.user.lastName,
+          phone: json.user.phone,
+          decrypted: true,
+          tamperedFields: json.tamperedFields,
+        })
+        ok++
+      }
+
+      setUsers(decryptedUsers)
       setDecrypted(true)
-      setNotice(isEs ? 'Datos sensibles accessed ✓' : 'Sensitive data accessed ✓')
+
+      const tamperedNote = tampered > 0 ? ` · ${tampered} campo(s) no verificaron` : ''
+      setNotice(
+        isEs
+          ? `Descifrados ${ok}/${listed.length} con AES-256-GCM${
+              failed ? ` · ${failed} sin acceso` : ''
+            }${tamperedNote}`
+          : `Decrypted ${ok}/${listed.length} with AES-256-GCM${
+              failed ? ` · ${failed} denied` : ''
+            }${tamperedNote}`
+      )
     } catch {
       setUsers([])
       setDecrypted(false)
-      setNotice(isEs ? 'No se pudieron cargar los datos' : 'Could not load data')
+      setNotice(isEs ? 'No se pudieron descifrar los datos' : 'Could not decrypt data')
     } finally {
-      setTimeout(() => setNotice(null), 3500)
+      setTimeout(() => setNotice(null), 5000)
       setLoadingUsers(false)
     }
   }, [isEs])
