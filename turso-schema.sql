@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS "users" (
   date_of_birthIv TEXT,
   date_of_birthTag TEXT,
   date_of_birthSalt TEXT,
-  pii_encrypted_at TEXT, gender TEXT, country TEXT,
+  pii_encrypted_at TEXT, gender TEXT, country TEXT, state TEXT, age_band TEXT,
   CHECK (email LIKE '%@%.%'),
   CHECK (LENGTH(password_hash) >= 60)
 );
@@ -262,7 +262,7 @@ CREATE TABLE IF NOT EXISTS "bookings" (
   checked_in_by TEXT REFERENCES users(id) ON DELETE SET NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-, anon_country TEXT, anon_age_band TEXT, anon_gender TEXT, anon_at TEXT);
+, anon_country TEXT, anon_age_band TEXT, anon_gender TEXT, anon_at TEXT, customer_phone TEXT);
 
 CREATE TABLE IF NOT EXISTS payments (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -449,6 +449,33 @@ CREATE TABLE IF NOT EXISTS api_keys (
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS email_log (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  template_key TEXT NOT NULL,
+  to_email TEXT NOT NULL,
+  user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+  subject TEXT,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','sent','failed','skipped')),
+  error TEXT,
+  provider_id TEXT,
+  sent_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS email_templates (
+  key TEXT PRIMARY KEY,
+  subject TEXT NOT NULL,
+  html TEXT NOT NULL,
+  text TEXT NOT NULL,
+  label TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  variables TEXT NOT NULL DEFAULT '[]',
+  is_active INTEGER NOT NULL DEFAULT 1,
+  updated_by TEXT REFERENCES users(id) ON DELETE SET NULL,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS profiles (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   user_id TEXT UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -511,6 +538,9 @@ CREATE INDEX IF NOT EXISTS idx_bookings_upcoming ON bookings(start_date)
 CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON bookings(user_id);
 CREATE INDEX IF NOT EXISTS idx_conversion_events_created_at ON conversion_events("createdAt");
 CREATE INDEX IF NOT EXISTS idx_conversion_events_type ON conversion_events ("eventType");
+CREATE INDEX IF NOT EXISTS idx_email_log_key ON email_log(template_key, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_email_log_to ON email_log(to_email);
+CREATE INDEX IF NOT EXISTS idx_email_log_user ON email_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_expires_at ON email_verification_tokens(expires_at);
 CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_is_used ON email_verification_tokens(is_used);
 CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_user_id ON email_verification_tokens(user_id);
@@ -552,6 +582,7 @@ CREATE INDEX IF NOT EXISTS idx_user_activity_logs_created_at ON user_activity_lo
 CREATE INDEX IF NOT EXISTS idx_user_activity_logs_user_id ON user_activity_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_roles_email ON user_roles(email COLLATE NOCASE);
 CREATE INDEX IF NOT EXISTS idx_user_roles_user ON user_roles("userId");
+CREATE INDEX IF NOT EXISTS idx_users_email_notify ON users(email, is_active);
 CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active) WHERE is_active = 1;
 CREATE INDEX IF NOT EXISTS idx_users_pii_encrypted ON users(pii_encrypted_at);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
@@ -585,6 +616,12 @@ AFTER UPDATE ON chatbot_prefs
 FOR EACH ROW WHEN NEW."updatedAt" = OLD."updatedAt"
 BEGIN
   UPDATE chatbot_prefs SET "updatedAt" = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_email_templates_updated_at
+AFTER UPDATE ON email_templates
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE email_templates SET updated_at = datetime('now') WHERE key = NEW.key;
 END;
 CREATE TRIGGER IF NOT EXISTS trg_experiences_updated_at
 AFTER UPDATE ON experiences
@@ -699,7 +736,7 @@ INSERT OR REPLACE INTO role_permissions ("role", "label", "description", "rank",
 
 -- ============================================================================
 --  RESUMEN
---    29 tablas · 67 índices · 20 triggers
+--    31 tablas · 71 índices · 21 triggers
 --
 --  Privacidad (ver lib/gdpr-crypto.ts):
 --    users.*Encrypted/Iv/Tag/Salt  -> AES-256-GCM, llave = PBKDF2(email + GDPR_PEPPER).

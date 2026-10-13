@@ -11,6 +11,7 @@ import { QrScanner } from '@/components/QrScanner'
 import { ScanResultDisplay } from '@/components/ScanResultDisplay'
 import { type QrType } from '@/lib/qr/types'
 import { AdvancedMetricsPanel, PassiveAnalyticsPanel } from '@/components/analytics/SocioPanels'
+import { EmailTemplatesPanel } from '@/components/admin/EmailTemplatesPanel'
 import { getLocalAnalytics, type AnalyticsEntry } from '@/lib/analytics/track'
 import { BRAND, getAdminConfig } from '@/lib/brand'
 import {
@@ -447,6 +448,9 @@ export default function AdminPanel() {
             className="mb-8"
           >
             <QrScannerSection isEs={isEs} />
+
+            {/* Correos: plantillas editables */}
+            {me.role === 'admin' && <EmailTemplatesPanel isEs={isEs} />}
           </motion.div>
 
           {/* SOCIOS ONLY: Métricas ML + Analítica pasiva */}
