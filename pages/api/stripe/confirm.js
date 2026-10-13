@@ -7,7 +7,16 @@ import { getSessionOptional } from '@/lib/auth/session'
  * Crea las reservas en Turso (fuente de verdad) y devuelve los tickets con QR.
  * Idempotente: si la sesión de Stripe ya generó reservas, las devuelve tal cual.
  */
-async function persistBookings({ items, userId, customerName, customerEmail, currency, stripe }) {
+async function persistBookings({
+  items,
+  userId,
+  customerName,
+  customerEmail,
+  customerPhone,
+  currency,
+  paymentMethod,
+  stripe,
+}) {
   const created = []
   for (const item of items) {
     const booking = await createBookingInTurso({
@@ -20,10 +29,12 @@ async function persistBookings({ items, userId, customerName, customerEmail, cur
       currency,
       customerName: item.customerName || customerName,
       customerEmail: userId ? customerEmail : null,
+      customerPhone: customerPhone || null,
+      paymentMethod: paymentMethod || 'card',
       specialRequests: item.specialRequests || null,
       stripeSessionId: stripe?.sessionId || null,
       stripePaymentIntentId: stripe?.paymentIntentId || null,
-      paid: true,
+      paid: paymentMethod !== 'cash',
     })
     created.push(booking)
   }
@@ -86,6 +97,9 @@ export default async function handler(req, res) {
     participantNamesMap,
     currency,
     acquisitionChannel,
+    paymentMethod,
+    customerPhone,
+    guestPhone,
   } = req.body || {}
 
   if (typeof sessionId !== 'string' || !sessionId) {
@@ -132,6 +146,8 @@ export default async function handler(req, res) {
         userId: session?.user?.id || null,
         customerName,
         customerEmail: session?.user?.id ? customerEmail : '',
+        customerPhone: customerPhone || guestPhone || null,
+        paymentMethod: paymentMethod || 'card',
         currency: typeof currency === 'string' ? currency : 'USD',
         stripe: { sessionId },
       })
@@ -191,6 +207,8 @@ export default async function handler(req, res) {
       userId: session?.user?.id || null,
       customerName,
       customerEmail,
+      customerPhone: customerPhone || guestPhone || null,
+      paymentMethod: paymentMethod || 'card',
       currency: typeof currency === 'string' ? currency : 'USD',
       stripe: {
         sessionId,

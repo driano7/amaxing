@@ -18,6 +18,10 @@ export interface CreateBookingInput {
   currency?: string
   customerName?: string | null
   customerEmail?: string | null
+  /** WhatsApp. Obligatorio para efectivo: es como localizamos al cliente. */
+  customerPhone?: string | null
+  /** 'cash' deja la reserva pendiente de pago; no se marca como pagada. */
+  paymentMethod?: 'card' | 'cash' | 'crypto' | null
   specialRequests?: string | null
   dietaryRestrictions?: string[]
   accessibilityNeeds?: string | null
@@ -77,7 +81,10 @@ export interface CreatedBooking {
  */
 export async function createBookingInTurso(input: CreateBookingInput): Promise<CreatedBooking> {
   const { iso, time } = normalizeWhen(input.date, input.time)
-  const paid = input.paid ?? false
+  // Efectivo: la reserva existe pero NO está pagada. El cobro ocurre en el
+  // punto de encuentro, así que marcarla 'paid' sería mentir en la contabilidad.
+  const isCash = input.paymentMethod === 'cash'
+  const paid = isCash ? false : input.paid ?? false
   const reference = generateBookingReference()
 
   const experience = await turso.execute({
@@ -129,9 +136,15 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
     input.stripePaymentIntentId || null,
     input.customerName || null,
     input.customerEmail || null,
+    input.customerPhone || null,
     input.specialRequests || null,
     JSON.stringify(input.dietaryRestrictions || []),
     input.accessibilityNeeds || null,
+    // Demografía congelada: sobrevive al borrado del cliente.
+    demographics.country,
+    demographics.ageBand,
+    demographics.gender,
+    new Date().toISOString(),
   ].map((value) => (value === undefined ? null : value))
 
   await turso.execute({
@@ -141,11 +154,11 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
             guests, status, payment_status, paid_at,
             total_amount, payed_amount, currency,
             stripe_session_id, stripe_payment_intent_id,
-            customer_name, customer_email, special_requests,
+            customer_name, customer_email, customer_phone, special_requests,
             dietary_restrictions, accessibility_needs,
             anon_country, anon_age_band, anon_gender, anon_at
           )
-          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     args,
   })
 

@@ -36,6 +36,8 @@ export default function CheckoutPage() {
   const [createdBookings, setCreatedBookings] = useState([])
   const [selectedTicket, setSelectedTicket] = useState(null)
 
+  // WhatsApp: obligatorio para efectivo. Sin esto no hay cómo localizarlo.
+  const [customerPhone, setCustomerPhone] = useState('')
   // Método de pago: tarjeta (Stripe), cripto o efectivo
   const [payMethod, setPayMethod] = useState('card')
   const [showCryptoModal, setShowCryptoModal] = useState(false)
@@ -301,6 +303,16 @@ export default function CheckoutPage() {
               }))
             : bodyItems
 
+        // Efectivo sin WhatsApp no se guarda: sin teléfono no hay contacto.
+        if (payMethod === 'cash' && !customerPhone.trim()) {
+          setError(
+            locale === 'es'
+              ? 'Para reservar en efectivo necesitamos tu WhatsApp.'
+              : 'Cash booking requires your WhatsApp number.'
+          )
+          return
+        }
+
         const response = await fetch('/api/stripe/confirm', {
           method: 'POST',
           headers,
@@ -314,6 +326,8 @@ export default function CheckoutPage() {
               items.map((it) => [it.experienceId, pNames[it.lineId] || []])
             ),
             acquisitionChannel: getAcquisitionChannel(),
+            paymentMethod: payMethod,
+            customerPhone: customerPhone.trim() || undefined,
           }),
         })
 
@@ -876,6 +890,31 @@ export default function CheckoutPage() {
                         ? 'Reserva ahora sin pagar. Recogerás tu ticket en el punto de encuentro. Te confirmamos por WhatsApp 2 horas antes y pagas en efectivo allí.'
                         : 'Reserve now without paying. Pick up your ticket at the meeting point. We confirm via WhatsApp 2 hours before and you pay in cash there.'}
                     </p>
+                    <div className="mt-4 text-left">
+                      <label
+                        htmlFor="whatsapp"
+                        className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+                      >
+                        {locale === 'es'
+                          ? 'WhatsApp (obligatorio) — con este número te confirmamos'
+                          : 'WhatsApp (required) — we confirm on this number'}
+                      </label>
+                      <input
+                        id="whatsapp"
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel"
+                        placeholder="+52 55 1234 5678"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+                      />
+                      <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+                        {locale === 'es'
+                          ? 'Sin este número no se guarda la reserva: sin teléfono no hay forma de avisarte ni de localizarte el día del tour.'
+                          : 'Without this number the booking is not saved: there is no way to reach you or find you on tour day.'}
+                      </p>
+                    </div>
                     <div className="mt-3 rounded-lg bg-white/80 p-3 text-left dark:bg-zinc-900">
                       <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                         {locale === 'es' ? '¿Cómo funciona?' : 'How it works?'}
