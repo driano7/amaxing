@@ -3,7 +3,8 @@
 import { turso } from '@/lib/turso'
 
 export default async function handler(req, res) {
-  const { experienceId } = req.query
+  // GET lo manda en query, POST en el body. Se aceptan ambos.
+  const experienceId = req.query.experienceId || (req.body && req.body.experienceId)
 
   if (!experienceId) {
     return res.status(400).json({ error: 'Experience ID required' })

@@ -33,6 +33,7 @@ import {
   User,
   Shield,
   Download,
+  Gift,
   FileText,
   Trash2,
   Lock,
@@ -54,7 +55,14 @@ import {
 } from '@/components/charts/AnimatedCharts'
 import { buildDemographics } from '@/lib/analytics/ml-metrics'
 
-type Tab = 'profile' | 'bookings' | 'dashboard' | 'favorites' | 'commented' | 'security'
+type Tab =
+  | 'profile'
+  | 'bookings'
+  | 'dashboard'
+  | 'favorites'
+  | 'commented'
+  | 'security'
+  | 'referral'
 
 // Real bookings fetched from the server (Turso) — never from the browser
 const getRealBookings = async (userId: string) => {
@@ -385,11 +393,58 @@ export default function Profile() {
   }
 
   const isPrivileged = role === 'admin' || role === 'employee'
+  const [canBeReferrer, setCanBeReferrer] = useState(false)
+  const [referral, setReferral] = useState<{ code: string; shareUrl: string | null } | null>(null)
+  const [referralStats, setReferralStats] = useState<{
+    visits: number
+    attributedUsers: number
+    conversions: number
+  } | null>(null)
+
+  // El permiso de referido vive en la matriz de roles (role_permissions).
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      const token = localStorage.getItem('authToken')
+      if (!token) return
+      try {
+        const res = await fetch('/api/referrals/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (!res.ok) {
+          if (!cancelled) setCanBeReferrer(false)
+          return
+        }
+        const json = await res.json()
+        if (cancelled) return
+        setCanBeReferrer(true)
+        setReferral({ code: json.referralCode, shareUrl: json.shareUrl })
+
+        const statsRes = await fetch('/api/admin/referrals', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (statsRes.ok) {
+          const statsJson = await statsRes.json()
+          if (!cancelled && statsJson.stats) setReferralStats(statsJson.stats)
+        }
+      } catch {
+        if (!cancelled) setCanBeReferrer(false)
+      }
+    }
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [])
   const tabs: { id: Tab; label: string; icon: any }[] = useMemo(() => {
     const base = [
       { id: 'profile' as Tab, label: isEs ? 'Mi perfil' : 'My profile', icon: User },
       { id: 'dashboard' as Tab, label: isEs ? 'Dashboard' : 'Dashboard', icon: BarChart2 },
     ]
+    // Solo quienes pueden tener referido (employee y admin) ven el botón.
+    if (canBeReferrer) {
+      base.push({ id: 'referral' as Tab, label: isEs ? 'Mi referido' : 'My referral', icon: Gift })
+    }
     if (isPrivileged) return base
     return [
       ...base.slice(0, 1),
@@ -681,6 +736,86 @@ export default function Profile() {
                     profileLoaded={profileLoaded}
                     user={user}
                   />
+                </ErrorBoundary>
+              )}
+
+              {tab === 'referral' && referral && (
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-lg dark:border-white/10 dark:bg-zinc-900/50"
+                  >
+                    <h3 className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-white">
+                      <Gift className="h-5 w-5 text-orange-500" />
+                      {isEs ? 'Mi código de referido' : 'My referral code'}
+                    </h3>
+                    <p className="mt-1 text-sm text-zinc-600 dark:text-gray-400">
+                      {isEs
+                        ? 'Comparte este enlace. Si alguien se registra y reserva por él, la reserva queda atribuida a ti.'
+                        : 'Share this link. If someone signs up and books through it, the booking is attributed to you.'}
+                    </p>
+
+                    <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                      <code className="select-all rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 font-mono text-lg font-bold tracking-wider text-orange-600 dark:text-orange-400">
+                        {referral.code}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void navigator.clipboard?.writeText(referral.code)
+                          setGdprMsg(isEs ? 'Código copiado' : 'Code copied')
+                          setTimeout(() => setGdprMsg(''), 2500)
+                        }}
+                        className="rounded-xl bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200"
+                      >
+                        {isEs ? 'Copiar código' : 'Copy code'}
+                      </button>
+                      {referral.shareUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            void navigator.clipboard?.writeText(referral.shareUrl)
+                            setGdprMsg(isEs ? 'Enlace copiado' : 'Link copied')
+                            setTimeout(() => setGdprMsg(''), 2500)
+                          }}
+                          className="rounded-xl bg-orange-500 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+                        >
+                          {isEs ? 'Copiar enlace' : 'Copy link'}
+                        </button>
+                      )}
+                    </div>
+
+                    <dl className="mt-6 grid gap-4 sm:grid-cols-3">
+                      {[
+                        {
+                          label: isEs ? 'Visitas' : 'Visits',
+                          value: referralStats?.visits ?? 0,
+                        },
+                        {
+                          label: isEs ? 'Clientes atribuidos' : 'Attributed clients',
+                          value: referralStats?.attributedUsers ?? 0,
+                        },
+                        {
+                          label: isEs ? 'Reservas' : 'Bookings',
+                          value: referralStats?.conversions ?? 0,
+                        },
+                      ].map((stat) => (
+                        <div
+                          key={stat.label}
+                          className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-800/50"
+                        >
+                          <dt className="text-xs uppercase tracking-wider text-zinc-500">
+                            {stat.label}
+                          </dt>
+                          <dd className="mt-1 text-2xl font-black text-zinc-900 dark:text-white">
+                            {stat.value}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </motion.div>
                 </ErrorBoundary>
               )}
 
