@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useEffect, useState, FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -59,9 +59,25 @@ export default function Login() {
     }
   }
 
+  // /login?mode=client (el link de AuthNav) debe abrir el formulario de
+  // alta. Antes el parametro se descartaba en silencio. Se espera a
+  // router.isReady para no romper la hidratacion: el HTML del servidor
+  // siempre sale en modo login y el ajuste ocurre ya en el cliente.
+  useEffect(() => {
+    if (!router.isReady) return
+    const q = router.query.mode
+    const wanted = Array.isArray(q) ? q[0] : q
+    if (wanted === 'client' || wanted === 'register') {
+      setMode('register')
+      setError('')
+    }
+  }, [router.isReady, router.query.mode])
+
   const toggleMode = () => {
     setMode(mode === 'login' ? 'register' : 'login')
     setError('')
+    // quitamos ?mode= para que al recargar no vuelva a forzar el alta
+    router.replace({ pathname: '/login', query: {} }, undefined, { shallow: true })
   }
 
   const inputClass =
