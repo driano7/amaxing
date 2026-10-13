@@ -4,7 +4,8 @@ import { randomBytes, scrypt as _scrypt, timingSafeEqual } from 'crypto'
 import { promisify } from 'util'
 import { turso } from './turso'
 import { encryptRowFields, isPepperConfigured } from './gdpr-crypto'
-import { normalizeCountry, normalizeGender } from './booking/turso'
+import { ageBandFrom, normalizeCountry, normalizeGender } from './booking/turso'
+import { normalizeAgeBand } from './demographics-shared'
 
 const scrypt = promisify(_scrypt) as (
   password: string,
@@ -321,6 +322,8 @@ export async function registerUser(input: {
   /** Demografía opcional. Solo alimenta métricas agregadas. */
   country?: string | null
   gender?: string | null
+  state?: string | null
+  ageBand?: string | null
 }): Promise<AuthUser> {
   const email = input.email.trim().toLowerCase()
   const passwordHash = await hashPassword(input.password)
@@ -342,9 +345,9 @@ export async function registerUser(input: {
             first_nameEncrypted, first_nameIv, first_nameTag, first_nameSalt,
             last_nameEncrypted, last_nameIv, last_nameTag, last_nameSalt,
             phoneEncrypted, phoneIv, phoneTag, phoneSalt,
-            pii_encrypted_at, is_email_verified, country, gender
+            pii_encrypted_at, is_email_verified, country, gender, state, age_band
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           RETURNING id`,
     args: [
       email,
@@ -368,6 +371,8 @@ export async function registerUser(input: {
       0,
       normalizeCountry(input.country),
       normalizeGender(input.gender),
+      input.state ?? null,
+      normalizeAgeBand(input.ageBand),
     ],
   })
 
@@ -375,13 +380,33 @@ export async function registerUser(input: {
   const id = row?.id ?? row?.['id']
   if (!id) throw new Error('Could not create user')
 
-  // Todo alta nace como client en la BD; el admin reclasifica después.
+  // Alta: 'client' por defecto. Si el correo está en ADMIN_EMAILS o
+  // EMPLOYEE_EMAILS se auto-asigna ese rol, así la cuenta de.bootstrap no
+  // depende de que alguien la promueva a mano después.
   try {
+    const admins = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim().toLowerCase())
+    const employees = (process.env.EMPLOYEE_EMAILS || '')
+      .split(',')
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean)
+    const role: Role = admins.includes(email)
+      ? 'admin'
+      : employees.includes(email)
+      ? 'employee'
+      : 'client'
+
     await turso.execute({
       sql: `INSERT OR IGNORE INTO user_roles ("userId", email, role, note)
-            VALUES (?, ?, 'client', 'Alta automática')`,
-      args: [id, email],
+            VALUES (?, ?, ?, ?)`,
+      args: [id, email, role, role === 'client' ? 'Alta automática' : 'Bootstrap por .env'],
     })
+
+    if (role !== 'customer') {
+      await turso.execute({
+        sql: 'UPDATE users SET role = ? WHERE id = ?',
+        args: [role === 'admin' ? 'admin' : 'guide', id],
+      })
+    }
   } catch (error) {
     console.error('[auth] No se pudo registrar el rol inicial:', error)
   }

@@ -3,6 +3,7 @@
 // así que el escáner del empleado resuelve contra la misma fila.
 import { randomBytes } from 'crypto'
 import { turso } from '../turso'
+import { normalizeGender as normalizeGenderValue } from '../demographics-shared'
 
 /** Alfabeto sin caracteres ambiguos: O/0, I/1, S/5. */
 const ALPHABET = 'ABCDEFGHJKLMNPQRTUVWXYZ23456789'
@@ -325,12 +326,8 @@ export function ageBandFrom(dateOfBirth?: string | null, today = new Date()): st
   return '65_mas'
 }
 
-const GENDERS = ['femenino', 'masculino', 'no_binario', 'otro', 'prefiero_no_decir']
-
 export function normalizeGender(value?: string | null): string | null {
-  if (!value) return null
-  const v = String(value).trim().toLowerCase()
-  return GENDERS.includes(v) ? v : null
+  return normalizeGenderValue(value)
 }
 
 const COUNTRIES = new Set([

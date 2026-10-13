@@ -86,6 +86,35 @@ export default async function handler(req, res) {
       return res.status(200).json({ role: actor.role, today: todayPayload })
     }
 
+    // Demografía agregada. Viene de users (quien la da) y de bookings.anon_*
+    // (congelada al reservar y conservada aunque borre su cuenta).
+    const [byCountry, byAge, byGender, anonStats] = await Promise.all([
+      turso.execute({
+        sql: `SELECT COALESCE(country, 'sin_dato') AS label, COUNT(*) AS value
+              FROM users GROUP BY country ORDER BY value DESC LIMIT 12`,
+        args: [],
+      }),
+      turso.execute({
+        sql: `SELECT COALESCE(age_band, 'sin_dato') AS label, COUNT(*) AS value
+              FROM users GROUP BY age_band ORDER BY value DESC`,
+        args: [],
+      }),
+      turso.execute({
+        sql: `SELECT COALESCE(gender, 'sin_dato') AS label, COUNT(*) AS value
+              FROM users GROUP BY gender ORDER BY value DESC`,
+        args: [],
+      }),
+      turso.execute({
+        sql: `SELECT
+                COUNT(*) AS total,
+                SUM(CASE WHEN anon_at IS NOT NULL THEN 1 ELSE 0 END) AS with_demo,
+                COUNT(DISTINCT anon_country) AS countries,
+                COUNT(DISTINCT anon_age_band) AS age_bands
+              FROM bookings`,
+        args: [],
+      }),
+    ])
+
     const [revenue, byTour, referrers, funnel] = await Promise.all([
       turso.execute({
         sql: `SELECT
@@ -153,6 +182,17 @@ export default async function handler(req, res) {
       },
       revenueByTour: byTour.rows,
       referralLeaderboard: referrers.rows,
+      demographics: {
+        byCountry: byCountry.rows,
+        byAgeBand: byAge.rows,
+        byGender: byGender.rows,
+        bookingsWithDemographics: {
+          total: num((anonStats.rows[0] as any)?.total),
+          withDemographics: num((anonStats.rows[0] as any)?.with_demo),
+          distinctCountries: num((anonStats.rows[0] as any)?.countries),
+          distinctAgeBands: num((anonStats.rows[0] as any)?.age_bands),
+        },
+      },
       funnel: {
         pageViews: views,
         sessions,

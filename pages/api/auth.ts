@@ -7,7 +7,8 @@ import {
   registerUser,
   verifyPassword,
 } from '@/lib/auth'
-import { isValidCountry, isValidGender } from '@/lib/demographics'
+import { isValidAgeBand, isValidCountry, isValidGender, isValidState } from '@/lib/demographics'
+import { validatePassword } from '@/lib/password'
 
 function readRefCookie(req): string | null {
   const header = req.headers.cookie || ''
@@ -40,6 +41,8 @@ export default async function handler(req, res) {
     referredBy,
     country,
     gender,
+    state,
+    ageBand,
   } = req.body ?? {}
 
   if (!email || typeof email !== 'string' || !email.includes('@')) {
@@ -51,9 +54,9 @@ export default async function handler(req, res) {
       if (!firstName || !lastName) {
         return res.status(400).json({ message: 'Nombre y apellido son obligatorios' })
       }
-      if (!password || String(password).length < 8) {
-        return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' })
-      }
+      // Mismas reglas que el formulario, por si alguien lo salta.
+      const pwError = validatePassword(String(password))
+      if (pwError) return res.status(400).json({ message: pwError })
       if (await findUserByEmail(email)) {
         return res.status(409).json({ message: 'Ese correo ya está registrado' })
       }
@@ -66,6 +69,8 @@ export default async function handler(req, res) {
         referredBy: readRefCookie(req) || (typeof referredBy === 'string' ? referredBy : null),
         country: isValidCountry(country) ? country : undefined,
         gender: isValidGender(gender) ? gender : undefined,
+        state: country === 'MX' && isValidState(state) ? state : undefined,
+        ageBand: isValidAgeBand(ageBand) ? ageBand : undefined,
       })
       const session = await createSession(user.id, clientMeta(req))
 
