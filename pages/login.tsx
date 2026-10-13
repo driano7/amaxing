@@ -6,15 +6,18 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { LoginLoadingBar } from '@/components/auth/LoginLoadingBar'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 
 export default function Login() {
   const { login } = useAuth()
   const { t, currentLanguage, setLanguage } = useLanguage()
+  const isEs = currentLanguage === 'es'
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -22,6 +25,7 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
     try {
       const res = await fetch('/api/auth', {
@@ -37,8 +41,9 @@ export default function Login() {
       })
 
       if (!res.ok) {
-        const err = await res.json()
+        const err = await res.json().catch(() => ({}))
         setError(err.message || 'Authentication failed')
+        setIsLoading(false)
         return
       }
 
@@ -50,6 +55,7 @@ export default function Login() {
       router.push('/profile')
     } catch (err) {
       setError('Network error. Please try again.')
+      setIsLoading(false)
     }
   }
 
@@ -61,6 +67,23 @@ export default function Login() {
   const inputClass =
     'w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500'
   const labelClass = 'mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300'
+
+  // Mientras autentica mostramos la barra en lugar del formulario: evita el
+  // doble clic y deja claro que algo está pasando.
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 dark:bg-zinc-950">
+        <LoginLoadingBar
+          label={isEs ? 'Iniciando sesión…' : 'Signing in…'}
+          message={
+            isEs
+              ? 'Tu sesión está activa. Te estamos redirigiendo…'
+              : 'Your session is active. Redirecting…'
+          }
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-zinc-950">

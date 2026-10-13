@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AGE_BANDS, GENDERS, MEXICAN_STATES, sortCountries } from '@/lib/demographics'
 import { SearchableSelect } from '@/components/SearchableSelect'
+import { LoginLoadingBar } from '@/components/auth/LoginLoadingBar'
 import { PASSWORD_RULES, validatePassword } from '@/lib/password'
 import { AuthLoader } from '@/components/AuthLoader'
 
@@ -102,6 +103,22 @@ export default function Register() {
 
   if (isLoading) {
     return <AuthLoader label="Creando tu cuenta..." />
+  }
+
+  // Igual que en login: la barra sustituye al formulario mientras espera.
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 dark:bg-zinc-950">
+        <LoginLoadingBar
+          label={isEs ? 'Creando tu cuenta…' : 'Creating your account…'}
+          message={
+            isEs
+              ? 'Ya casi. Te estamos llevando a tu perfil…'
+              : 'Almost there. Taking you to your profile…'
+          }
+        />
+      </div>
+    )
   }
 
   return (
