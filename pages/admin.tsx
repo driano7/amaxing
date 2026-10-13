@@ -113,39 +113,24 @@ export default function AdminPanel() {
   // Fetch real admin role
   useEffect(() => {
     const resolveRole = async () => {
-      if (!user?.email) return
       try {
         const token = localStorage.getItem('authToken')
         const res = await fetch('/api/admin/me', {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-            'x-demo-email': user.email,
-          },
+          headers: { Authorization: token ? `Bearer ${token}` : '' },
         })
         const json = await res.json()
-        if (json.success && (json.data.role === 'admin' || json.data.role === 'employee')) {
+        if (res.ok && json.success) {
           setMe(json.data)
           return
         }
+        // Sin sesión válida se queda sin permisos: nunca se otorga admin por fallback.
+        setMe(null)
       } catch {
-        /* fallback to demo */
+        setMe(null)
       }
-      // Demo fallback
-      setMe({
-        email: BRAND.email,
-        role: 'admin',
-        permissions: {
-          canManageUsers: true,
-          canDecryptSensitiveFields: true,
-          canManageAdmins: true,
-          canExportGDPR: true,
-          canViewAdvancedMetrics: true,
-        },
-        panels: ['/profile', '/empleados', '/admin'],
-      })
     }
     void resolveRole()
-  }, [user])
+  }, [])
 
   const toggleDecrypt = useCallback(async () => {
     setLoadingUsers(true)
@@ -165,17 +150,16 @@ export default function AdminPanel() {
       const json = await res.json()
       setUsers(json.users)
       setDecrypted(true)
-      setNotice(isEs ? 'Datos descifrados con AES-256-GCM ✓' : 'Data decrypted with AES-256-GCM ✓')
+      setNotice(isEs ? 'Datos sensibles accessed ✓' : 'Sensitive data accessed ✓')
     } catch {
-      // Fallback to empty if API fails
       setUsers([])
-      setDecrypted(true)
-      setNotice(isEs ? 'Demo: datos descifrados ✓' : 'Demo: data decrypted ✓')
+      setDecrypted(false)
+      setNotice(isEs ? 'No se pudieron cargar los datos' : 'Could not load data')
     } finally {
       setTimeout(() => setNotice(null), 3500)
       setLoadingUsers(false)
     }
-  }, [isEs, user?.email])
+  }, [isEs])
 
   const hideSensitive = useCallback(() => {
     fetchUsers(false)

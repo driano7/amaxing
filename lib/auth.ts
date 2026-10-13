@@ -120,32 +120,131 @@ export async function getSessionUser(token: string | null): Promise<AuthUser | n
 // Roles
 // ---------------------------------------------------------------------------
 
-const ROLE_PERMISSIONS: Record<Role, Record<string, boolean>> = {
+const FALLBACK_PERMISSIONS: Record<Role, Record<string, boolean>> = {
   admin: {
+    canViewProfile: true,
+    canOperateTours: true,
+    canViewAdmin: true,
     canManageUsers: true,
+    canViewClientPii: true,
     canDecryptSensitiveFields: true,
     canManageAdmins: true,
-    canExportGDPR: true,
+    canViewBookingsOwn: true,
+    canViewBookingsAll: true,
+    canManageBookings: true,
+    canViewPayments: true,
+    canViewBasicMetrics: true,
+    canViewPassiveAnalytics: true,
     canViewAdvancedMetrics: true,
+    canExportGDPR: true,
   },
   employee: {
+    canViewProfile: true,
+    canOperateTours: true,
+    canViewAdmin: false,
     canManageUsers: false,
+    canViewClientPii: true,
     canDecryptSensitiveFields: false,
     canManageAdmins: false,
-    canExportGDPR: false,
+    canViewBookingsOwn: true,
+    canViewBookingsAll: true,
+    canManageBookings: true,
+    canViewPayments: false,
+    canViewBasicMetrics: true,
+    canViewPassiveAnalytics: true,
     canViewAdvancedMetrics: false,
+    canExportGDPR: false,
   },
   client: {
+    canViewProfile: true,
+    canOperateTours: false,
+    canViewAdmin: false,
     canManageUsers: false,
+    canViewClientPii: false,
     canDecryptSensitiveFields: false,
     canManageAdmins: false,
-    canExportGDPR: false,
+    canViewBookingsOwn: true,
+    canViewBookingsAll: false,
+    canManageBookings: false,
+    canViewPayments: false,
+    canViewBasicMetrics: false,
+    canViewPassiveAnalytics: false,
     canViewAdvancedMetrics: false,
+    canExportGDPR: false,
   },
 }
 
-export function permissionsFor(role: Role) {
-  return ROLE_PERMISSIONS[role] ?? ROLE_PERMISSIONS.client
+export interface RolePermissions extends Record<string, boolean> {
+  panels: string[]
+}
+
+/** La BD usa snake_case; el resto del código consume camelCase. */
+const PERMISSION_ALIASES: Record<string, string> = {
+  can_export_gdpr: 'canExportGDPR',
+}
+
+/** Lee la matriz de permisos desde Turso. Cachea 60s. */
+let permissionsCache: { at: number; data: Record<Role, RolePermissions> } | null = null
+
+export async function getRolePermissions(role: Role): Promise<RolePermissions> {
+  const cached = permissionsCache?.data?.[role]
+  if (cached && permissionsCache && Date.now() - permissionsCache.at < 60_000) {
+    return cached
+  }
+
+  const result = await turso.execute({
+    sql: 'SELECT * FROM role_permissions WHERE role = ? AND is_active = 1',
+    args: [role],
+  })
+
+  const row: any = result.rows[0]
+  if (!row) {
+    console.warn(`[auth] Rol "${role}" sin fila en role_permissions; usando fallback local`)
+    const fallback = FALLBACK_PERMISSIONS[role] ?? FALLBACK_PERMISSIONS.client
+    return { ...fallback, panels: panelsFor(role) }
+  }
+
+  const perms: Record<string, boolean> = {}
+  for (const [key, value] of Object.entries(row)) {
+    // Solo los flags de permiso; el resto (rank, label, timestamps) no aplica.
+    if (!/^can_/i.test(key)) continue
+    if (typeof value === 'number' || value === '0' || value === '1') {
+      const camel =
+        PERMISSION_ALIASES[key] ?? key.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
+      perms[camel] = Number(value) === 1
+    }
+  }
+
+  let panels: string[] = panelsFor(role)
+  try {
+    const parsed = typeof row.panels === 'string' ? JSON.parse(row.panels) : row.panels
+    if (Array.isArray(parsed) && parsed.length) panels = parsed
+  } catch {
+    /* usar panelsFor */
+  }
+
+  const data = { ...(permissionsCache?.data ?? ({} as any)), [role]: { ...perms, panels } }
+  permissionsCache = { at: Date.now(), data }
+  return data[role]
+}
+
+/** Permisos por rol — se leen de la BD (con fallback local si Turso no responde). */
+export async function permissionsFor(role: Role): Promise<RolePermissions> {
+  try {
+    return await getRolePermissions(role)
+  } catch (error) {
+    console.error('[auth] Fallback de permisos:', error)
+    const fallback = FALLBACK_PERMISSIONS[role] ?? FALLBACK_PERMISSIONS.client
+    return { ...fallback, panels: panelsFor(role) }
+  }
+}
+
+/** Versión síncrona para gating en UI; usa la caché de la última lectura. */
+export function permissionsForSync(role: Role): RolePermissions {
+  const cached = permissionsCache?.data?.[role]
+  if (cached) return cached
+  const fallback = FALLBACK_PERMISSIONS[role] ?? FALLBACK_PERMISSIONS.client
+  return { ...fallback, panels: panelsFor(role) }
 }
 
 export function panelsFor(role: Role): string[] {
@@ -176,7 +275,12 @@ export async function resolveRole(
   if (envEmails('EMPLOYEE_EMAILS').includes(normalized)) return 'employee'
 
   const result = await turso.execute({
-    sql: 'SELECT role FROM user_roles WHERE "userId" = ? OR email = ? COLLATE NOCASE ORDER BY created_at DESC LIMIT 1',
+    sql: `SELECT ur.role
+          FROM user_roles ur
+          LEFT JOIN role_permissions rp ON rp.role = ur.role
+          WHERE ur."userId" = ? OR ur.email = ? COLLATE NOCASE
+          ORDER BY COALESCE(rp.rank, 0) DESC
+          LIMIT 1`,
     args: [userId, normalized],
   })
 
@@ -223,6 +327,17 @@ export async function registerUser(input: {
   const row: any = result.rows[0]
   const id = row?.id ?? row?.['id']
   if (!id) throw new Error('Could not create user')
+
+  // Todo alta nace como client en la BD; el admin reclasifica después.
+  try {
+    await turso.execute({
+      sql: `INSERT OR IGNORE INTO user_roles ("userId", email, role, note)
+            VALUES (?, ?, 'client', 'Alta automática')`,
+      args: [id, email],
+    })
+  } catch (error) {
+    console.error('[auth] No se pudo registrar el rol inicial:', error)
+  }
 
   return {
     id,
