@@ -315,6 +315,8 @@ export async function registerUser(input: {
   firstName: string
   lastName: string
   phone?: string | null
+  /** Código de referido que trajo al cliente (atribución de una vez). */
+  referredBy?: string | null
 }): Promise<AuthUser> {
   const email = input.email.trim().toLowerCase()
   const passwordHash = await hashPassword(input.password)
@@ -376,6 +378,19 @@ export async function registerUser(input: {
     })
   } catch (error) {
     console.error('[auth] No se pudo registrar el rol inicial:', error)
+  }
+
+  // Atribución de referido: solo si vino uno válido y no es el mismo usuario.
+  if (input.referredBy) {
+    try {
+      const { findByCode, attributeUser } = await import('./referrals')
+      const referral = await findByCode(input.referredBy)
+      if (referral && referral.userId !== id) {
+        await attributeUser({ referral, referredUserId: id, source: 'registro' })
+      }
+    } catch (error) {
+      console.error('[auth] No se pudo atribuir el referido:', error)
+    }
   }
 
   return {

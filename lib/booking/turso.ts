@@ -65,6 +65,8 @@ export interface CreatedBooking {
   paymentStatus: string
   startDate: string
   guests: number
+  totalAmount: number
+  currency: string
 }
 
 /**
@@ -158,6 +160,8 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
     paymentStatus,
     startDate: iso,
     guests,
+    totalAmount: total,
+    currency: input.currency || 'USD',
   }
 }
 

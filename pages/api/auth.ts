@@ -8,6 +8,18 @@ import {
   verifyPassword,
 } from '@/lib/auth'
 
+function readRefCookie(req): string | null {
+  const header = req.headers.cookie || ''
+  for (const part of header.split(';')) {
+    const index = part.indexOf('=')
+    if (index === -1) continue
+    if (part.slice(0, index).trim() === 'calpulli_ref') {
+      return decodeURIComponent(part.slice(index + 1).trim()) || null
+    }
+  }
+  return null
+}
+
 function clientMeta(req) {
   return {
     ip: (req.headers['x-forwarded-for']?.split(',')[0] || '').trim() || undefined,
@@ -18,7 +30,7 @@ function clientMeta(req) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' })
 
-  const { mode = 'login', email, password, firstName, lastName } = req.body ?? {}
+  const { mode = 'login', email, password, firstName, lastName, referredBy } = req.body ?? {}
 
   if (!email || typeof email !== 'string' || !email.includes('@')) {
     return res.status(400).json({ message: 'Email inválido' })
@@ -41,6 +53,7 @@ export default async function handler(req, res) {
         password: String(password),
         firstName: String(firstName),
         lastName: String(lastName),
+        referredBy: readRefCookie(req) || (typeof referredBy === 'string' ? referredBy : null),
       })
       const session = await createSession(user.id, clientMeta(req))
 

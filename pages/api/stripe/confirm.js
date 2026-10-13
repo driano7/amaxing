@@ -1,5 +1,6 @@
 import { getStripeClient } from '@/lib/stripe'
 import { createBookingInTurso, findBookingsByStripeSession } from '@/lib/booking/turso'
+import { recordConversion } from '@/lib/referrals'
 import { getSessionOptional } from '@/lib/auth/session'
 
 /**
@@ -44,6 +45,28 @@ const createMockBookings = (sessionId, user) => {
   return { mock: true }
 }
 // ───────────────────────────────────────────────────────────────────────────────
+
+/** Atribuye las conversiones a los referidos que trajeron al cliente. */
+async function registerReferralConversions(
+  bookings,
+  { userId, sessionId, paymentIntentId, currency }
+) {
+  for (const booking of bookings) {
+    try {
+      await recordConversion({
+        bookingId: booking.id,
+        referredUserId: userId,
+        stripeSessionId: sessionId,
+        paymentIntentId,
+        amount: booking.totalAmount ?? 0,
+        currency,
+        status: booking.status,
+      })
+    } catch (error) {
+      console.error('[referrals] conversión no registrada:', error)
+    }
+  }
+}
 
 // Convierte la sesión de Stripe en bookings persistidos (tickets con QR).
 // Soporta dos paths:
@@ -113,6 +136,13 @@ export default async function handler(req, res) {
         stripe: { sessionId },
       })
 
+      await registerReferralConversions(mockBookings, {
+        userId: session?.user?.id || null,
+        sessionId,
+        paymentIntentId: null,
+        currency: typeof currency === 'string' ? currency : 'USD',
+      })
+
       console.log('[stripe.mock] Reservas creadas en Turso:', mockBookings.length)
       return res.status(200).json({ ok: true, bookings: mockBookings, mock: true, isGuest })
     }
@@ -172,6 +202,16 @@ export default async function handler(req, res) {
     })
 
     const bookings = await findBookingsByStripeSession(sessionId)
+
+    await registerReferralConversions(bookings, {
+      userId: session?.user?.id || null,
+      sessionId,
+      paymentIntentId:
+        typeof checkout.payment_intent === 'string'
+          ? checkout.payment_intent
+          : checkout.payment_intent?.id || null,
+      currency: typeof currency === 'string' ? currency : 'USD',
+    })
 
     return res.status(200).json({ ok: true, bookings })
   } catch (error) {
