@@ -1,14 +1,18 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/admin/users — Real users from Turso for admin panel
 import { turso } from '@/lib/turso'
-import { getSessionFromRequest, resolveRole } from '@/lib/roles'
+import { getSessionUser } from '@/lib/auth'
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })
 
-  const session = await getSessionFromRequest(req)
-  if (!session) return res.status(401).json({ error: 'Unauthorized' })
-  if (resolveRole(session.email) === 'client') {
+  // El rol se resuelve contra la BD (user_roles), no contra el env:
+  // así un admin promoted desde el panel entra por igual.
+  const header = req.headers.authorization
+  const token = header?.startsWith('Bearer ') ? header.slice(7) : null
+  const actor = await getSessionUser(token)
+  if (!actor) return res.status(401).json({ error: 'Unauthorized' })
+  if (actor.role === 'client') {
     return res.status(403).json({ error: 'Forbidden' })
   }
 

@@ -1,7 +1,7 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/admin/stats — Real stats from Turso
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getSessionFromRequest, resolveRole } from '@/lib/roles'
+import { getSessionUser } from '@/lib/auth'
 import { turso } from '@/lib/turso'
 import { BRAND } from '@/lib/brand'
 
@@ -14,12 +14,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ success: false, message: 'Method not allowed' })
   }
 
-  const session = await getSessionFromRequest(req)
-  if (!session || !session.email) {
+  // Rol desde la BD (user_roles), no desde el env.
+  const header = req.headers.authorization
+  const token = header?.startsWith('Bearer ') ? header.slice(7) : null
+  const actor = await getSessionUser(token)
+  if (!actor) {
     return res.status(401).json({ success: false, message: 'No autenticado' })
   }
 
-  const role = resolveRole(session.email)
+  const role = actor.role
   if (role === 'client') {
     return res.status(403).json({ success: false, message: 'Sin permisos' })
   }
