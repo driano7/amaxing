@@ -106,12 +106,9 @@ module.exports = withBundleAnalyzer({
         source: '/.well-known/oauth-protected-resource.json',
         destination: '/api/mcp/.well-known/oauth-protected-resource',
       },
+      // La spec MCP pide la variante con la ruta del recurso (RFC 9728 §3.1).
       {
-        source: '/.well-known/oauth-protected-resource/mcp',
-        destination: '/api/mcp/.well-known/oauth-protected-resource',
-      },
-      {
-        source: '/.well-known/oauth-protected-resource/api/mcp/stream',
+        source: '/.well-known/oauth-protected-resource/:path*',
         destination: '/api/mcp/.well-known/oauth-protected-resource',
       },
     ]
