@@ -1,26 +1,29 @@
 -- ============================================================================
---  Calpulli CDMX — Esquema unificado de Turso (SQLite / libSQL)
+--  Calpulli CDMX — Esquema de Turso (SQLite / libSQL)
 --  Copyright (c) 2024-2026 Donovan Riaño
 --
---  Este archivo es la fuente de verdad del esquema. Reemplaza a los scripts
---  incrementales que se aplicaron durante el desarrollo:
---    turso-roles.sql, turso-gdpr.sql, turso-bookings.sql, turso-referrals.sql
+--  GENERADO AUTOMÁTICAMENTE desde la base real:
+--    node scripts/schema-dump.mjs
+--
+--  No editar a mano: la fuente de verdad es la base. Regenerar tras cualquier
+--  cambio. Verifica que no haya deriva con:
+--    node scripts/schema-drift.mjs
 --
 --  Aplicar sobre una base vacía:
 --    set -a; source .env.local; set +a
 --    node scripts/apply-sql.mjs turso-schema.sql
 --
---  Datos fuera del esquema (se siembran aparte):
---    experiences  -> node scripts/seed-experiences.mjs   (desde data/toursData.js)
---    Cifrado PII  -> node scripts/backfill-gdpr.mjs      (--dry-run primero)
+--  Datos que NO son esquema (se siembran aparte):
+--    experiences -> node scripts/seed-experiences.mjs
+--    Cifrado PII -> node scripts/backfill-gdpr.mjs
 -- ============================================================================
 
 
 -- ============================================================================
---  1. IDENTIDAD
+--  IDENTIDAD
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS "users" (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   email TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
@@ -28,13 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
   last_name TEXT NOT NULL,
   nationality TEXT,
   phone TEXT,
-  -- Opcional. passport_number se eliminó: no lo pedimos.
   date_of_birth TEXT,
-  -- Demografía para métricas agregadas. Opcional y nunca se exporta junto al
-  -- nombre: al borrar la cuenta se va con ella.
-  country TEXT,
-  gender TEXT CHECK (gender IS NULL OR gender IN
-    ('femenino','masculino','no_binario','otro','prefiero_no_decir')),
   is_email_verified INTEGER NOT NULL DEFAULT 0,
   is_active INTEGER NOT NULL DEFAULT 1,
   last_login_at TEXT,
@@ -43,10 +40,6 @@ CREATE TABLE IF NOT EXISTS users (
   role TEXT NOT NULL DEFAULT 'customer' CHECK (role IN ('admin', 'customer', 'guide')),
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
-
-  -- Cifrado en reposo (AES-256-GCM, ver lib/gdpr-crypto.ts).
-  -- La llave se deriva con PBKDF2(email + GDPR_PEPPER); sin el pepper, el
-  -- dump de la base no descifra nada.
   first_nameEncrypted TEXT,
   first_nameIv TEXT,
   first_nameTag TEXT,
@@ -63,23 +56,65 @@ CREATE TABLE IF NOT EXISTS users (
   date_of_birthIv TEXT,
   date_of_birthTag TEXT,
   date_of_birthSalt TEXT,
-  pii_encrypted_at TEXT,
-
+  pii_encrypted_at TEXT, gender TEXT, country TEXT,
   CHECK (email LIKE '%@%.%'),
   CHECK (LENGTH(password_hash) >= 60)
 );
 
-CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
-CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active) WHERE is_active = 1;
-CREATE INDEX IF NOT EXISTS idx_users_pii_encrypted ON users(pii_encrypted_at);
+CREATE TABLE IF NOT EXISTS role_permissions (
+  role TEXT PRIMARY KEY CHECK (role IN ('client', 'employee', 'admin')),
+  label TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  rank INTEGER NOT NULL DEFAULT 1,
 
-DROP TRIGGER IF EXISTS trg_users_updated_at;
-CREATE TRIGGER trg_users_updated_at
-AFTER UPDATE ON users
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE users SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
+    can_view_profile INTEGER NOT NULL DEFAULT 1,
+  can_operate_tours INTEGER NOT NULL DEFAULT 0,
+  can_view_admin INTEGER NOT NULL DEFAULT 0,
+
+    can_manage_users INTEGER NOT NULL DEFAULT 0,
+  can_view_client_pii INTEGER NOT NULL DEFAULT 0,
+  can_decrypt_sensitive_fields INTEGER NOT NULL DEFAULT 0,
+  can_manage_admins INTEGER NOT NULL DEFAULT 0,
+
+    can_view_bookings_own INTEGER NOT NULL DEFAULT 1,
+  can_view_bookings_all INTEGER NOT NULL DEFAULT 0,
+  can_manage_bookings INTEGER NOT NULL DEFAULT 0,
+  can_view_payments INTEGER NOT NULL DEFAULT 0,
+
+    can_view_basic_metrics INTEGER NOT NULL DEFAULT 0,
+  can_view_passive_analytics INTEGER NOT NULL DEFAULT 0,
+  can_view_advanced_metrics INTEGER NOT NULL DEFAULT 0,
+  can_export_gdpr INTEGER NOT NULL DEFAULT 0,
+
+    panels TEXT NOT NULL DEFAULT '[]',
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+, can_be_referrer INTEGER NOT NULL DEFAULT 0, can_view_referral_stats INTEGER NOT NULL DEFAULT 0, can_export_own_data INTEGER NOT NULL DEFAULT 1);
+
+CREATE TABLE IF NOT EXISTS "user_roles" (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  "userId" TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  role TEXT NOT NULL CHECK (role IN ('client', 'employee', 'admin')),
+  granted_by TEXT REFERENCES users(id) ON DELETE SET NULL,
+  note TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE("userId", role)
+);
+
+CREATE TABLE IF NOT EXISTS access_audit_logs (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  actor_id TEXT,
+  actor_email TEXT,
+  actor_role TEXT NOT NULL,
+  action TEXT NOT NULL,
+  target_email TEXT,
+  details TEXT NOT NULL DEFAULT '{}',
+  ip TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 
 CREATE TABLE IF NOT EXISTS sessions (
   id TEXT PRIMARY KEY,
@@ -99,205 +134,45 @@ CREATE TABLE IF NOT EXISTS sessions (
   "lastActivityAt" TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
-CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions("userId");
-CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions("expiresAt");
-
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   token_hash TEXT NOT NULL UNIQUE,
   expires_at TEXT NOT NULL,
-  used_at TEXT,
+  is_used INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
-
-CREATE INDEX IF NOT EXISTS idx_password_reset_user ON password_reset_tokens(user_id);
 
 CREATE TABLE IF NOT EXISTS email_verification_tokens (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   token_hash TEXT NOT NULL UNIQUE,
   expires_at TEXT NOT NULL,
-  verified_at TEXT,
+  is_used INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS login_attempts (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  email TEXT,
-  ip TEXT,
+  user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+  ip_address TEXT,
   user_agent TEXT,
-  success INTEGER NOT NULL DEFAULT 0,
-  attempted_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_login_attempts_email ON login_attempts(email, attempted_at DESC);
-
-
--- ============================================================================
---  2. ROLES Y PERMISOS  (fuente de verdad: la BD)
--- ============================================================================
-
-CREATE TABLE IF NOT EXISTS role_permissions (
-  role TEXT PRIMARY KEY CHECK (role IN ('client', 'employee', 'admin')),
-  label TEXT NOT NULL,
-  description TEXT NOT NULL DEFAULT '',
-  rank INTEGER NOT NULL DEFAULT 1,
-
-  -- Paneles
-  can_view_profile INTEGER NOT NULL DEFAULT 1,
-  can_operate_tours INTEGER NOT NULL DEFAULT 0,
-  can_view_admin INTEGER NOT NULL DEFAULT 0,
-
-  -- Usuarios
-  can_manage_users INTEGER NOT NULL DEFAULT 0,
-  can_view_client_pii INTEGER NOT NULL DEFAULT 0,
-  can_decrypt_sensitive_fields INTEGER NOT NULL DEFAULT 0,
-  can_manage_admins INTEGER NOT NULL DEFAULT 0,
-
-  -- Reservas y pagos
-  can_view_bookings_own INTEGER NOT NULL DEFAULT 1,
-  can_view_bookings_all INTEGER NOT NULL DEFAULT 0,
-  can_manage_bookings INTEGER NOT NULL DEFAULT 0,
-  can_view_payments INTEGER NOT NULL DEFAULT 0,
-
-  -- Métricas
-  can_view_basic_metrics INTEGER NOT NULL DEFAULT 0,
-  can_view_passive_analytics INTEGER NOT NULL DEFAULT 0,
-  can_view_advanced_metrics INTEGER NOT NULL DEFAULT 0,
-  can_export_gdpr INTEGER NOT NULL DEFAULT 0,
-
-  -- Referidos
-  can_be_referrer INTEGER NOT NULL DEFAULT 0,
-  can_view_referral_stats INTEGER NOT NULL DEFAULT 0,
-
-  -- RGPD: el derecho de acceso y supresión es del propio cliente sobre
-  -- sus datos. Por eso can_export_gdpr está en 1 para los tres roles, pero
-  -- el endpoint /api/gdpr/* solo alcanza los datos del usuario autenticado.
-  can_export_own_data INTEGER NOT NULL DEFAULT 1,
-
-  panels TEXT NOT NULL DEFAULT '[]',
-  is_active INTEGER NOT NULL DEFAULT 1,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-DROP TRIGGER IF EXISTS trg_role_permissions_updated_at;
-CREATE TRIGGER trg_role_permissions_updated_at
-AFTER UPDATE ON role_permissions
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE role_permissions SET updated_at = datetime('now') WHERE role = NEW.role;
-END;
-
-INSERT INTO role_permissions (
-  role, label, description, rank,
-  can_view_profile, can_operate_tours, can_view_admin,
-  can_manage_users, can_view_client_pii, can_decrypt_sensitive_fields, can_manage_admins,
-  can_view_bookings_own, can_view_bookings_all, can_manage_bookings, can_view_payments,
-  can_view_basic_metrics, can_view_passive_analytics, can_view_advanced_metrics, can_export_gdpr,
-  can_be_referrer, can_view_referral_stats, can_export_own_data,
-  panels
-) VALUES
-  ('client', 'Cliente',
-   'Compra y gestiona sus propias reservas. Exporta y elimina sus datos (RGPD).',
-   1, 1,0,0,  0,0,0,0,  1,0,0,0,  0,0,0,0,  0,0, 1,  '["/profile"]'),
-
-  ('employee', 'Empleado',
-   'Opera tours del día. Ve lo mínimo del cliente. Puede tener referred.',
-   2, 1,1,0,  0,1,0,0,  1,1,1,0,  1,1,0,0,  1,0, 1,  '["/profile", "/empleados"]'),
-
-  ('admin', 'Admin',
-   'Control total: usuarios, datos sensibles, métricas, referidos y RGPD.',
-   3, 1,1,1,  1,1,1,1,  1,1,1,1,  1,1,1,1,  1,1, 1,  '["/profile", "/empleados", "/admin"]')
-ON CONFLICT(role) DO UPDATE SET
-  label = excluded.label,
-  description = excluded.description,
-  rank = excluded.rank,
-  can_view_profile = excluded.can_view_profile,
-  can_operate_tours = excluded.can_operate_tours,
-  can_view_admin = excluded.can_view_admin,
-  can_manage_users = excluded.can_manage_users,
-  can_view_client_pii = excluded.can_view_client_pii,
-  can_decrypt_sensitive_fields = excluded.can_decrypt_sensitive_fields,
-  can_manage_admins = excluded.can_manage_admins,
-  can_view_bookings_own = excluded.can_view_bookings_own,
-  can_view_bookings_all = excluded.can_view_bookings_all,
-  can_manage_bookings = excluded.can_manage_bookings,
-  can_view_payments = excluded.can_view_payments,
-  can_view_basic_metrics = excluded.can_view_basic_metrics,
-  can_view_passive_analytics = excluded.can_view_passive_analytics,
-  can_view_advanced_metrics = excluded.can_view_advanced_metrics,
-  can_export_gdpr = excluded.can_export_gdpr,
-  can_be_referrer = excluded.can_be_referrer,
-  can_view_referral_stats = excluded.can_view_referral_stats,
-  can_export_own_data = excluded.can_export_own_data,
-  panels = excluded.panels;
-
--- Fuente de verdad del rol. Un solo rol activo por usuario.
-CREATE TABLE IF NOT EXISTS user_roles (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  "userId" TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  email TEXT NOT NULL,
-  role TEXT NOT NULL CHECK (role IN ('client', 'employee', 'admin')),
-  granted_by TEXT REFERENCES users(id) ON DELETE SET NULL,
-  note TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
-  UNIQUE ("userId", role)
-);
-
-DROP TRIGGER IF EXISTS trg_user_roles_updated_at;
-CREATE TRIGGER trg_user_roles_updated_at
-AFTER UPDATE ON user_roles
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE user_roles SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
-CREATE INDEX IF NOT EXISTS idx_user_roles_email ON user_roles(email COLLATE NOCASE);
-CREATE INDEX IF NOT EXISTS idx_user_roles_user ON user_roles("userId");
-
-CREATE TABLE IF NOT EXISTS access_audit_logs (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  actor_id TEXT,
-  actor_email TEXT,
-  actor_role TEXT NOT NULL,
-  action TEXT NOT NULL,
-  target_email TEXT,
-  details TEXT NOT NULL DEFAULT '{}',
-  ip TEXT,
+  attempt_result TEXT CHECK (attempt_result IN ('success', 'failed', 'locked_out')),
+  failure_reason TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_audit_actor ON access_audit_logs(actor_id, created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_audit_role_created ON access_audit_logs(actor_role, created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_audit_target ON access_audit_logs(target_email);
-
-
--- ============================================================================
---  3. CATÁLOGO
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS tour_categories (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  slug TEXT UNIQUE,
+  slug TEXT NOT NULL UNIQUE,
   name_en TEXT NOT NULL,
   name_es TEXT NOT NULL,
-  description_en TEXT,
-  description_es TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  icon_name TEXT NOT NULL,
+  "displayOrder" INTEGER NOT NULL DEFAULT 0,
+  "isActive" INTEGER NOT NULL DEFAULT 1,
+  "createdAt" TEXT NOT NULL DEFAULT (datetime('now')),
+  "updatedAt" TEXT NOT NULL DEFAULT (datetime('now'))
 );
-
-DROP TRIGGER IF EXISTS trg_tour_categories_updated_at;
-CREATE TRIGGER trg_tour_categories_updated_at
-AFTER UPDATE ON tour_categories
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE tour_categories SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
 
 CREATE TABLE IF NOT EXISTS experiences (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -305,9 +180,9 @@ CREATE TABLE IF NOT EXISTS experiences (
   title_es TEXT NOT NULL,
   description_en TEXT,
   description_es TEXT,
-  price REAL NOT NULL CHECK (price >= 0),
-  duration_hours REAL NOT NULL CHECK (duration_hours > 0),
-  max_guests INTEGER NOT NULL DEFAULT 8 CHECK (max_guests > 0),
+  price REAL NOT NULL,
+  duration_hours INTEGER NOT NULL,
+  max_guests INTEGER NOT NULL DEFAULT 8,
   image_url TEXT,
   location_en TEXT,
   location_es TEXT,
@@ -315,22 +190,10 @@ CREATE TABLE IF NOT EXISTS experiences (
   highlights_es TEXT NOT NULL DEFAULT '[]',
   "isFeatured" INTEGER NOT NULL DEFAULT 0,
   "isActive" INTEGER NOT NULL DEFAULT 1,
-  category_id TEXT REFERENCES tour_categories(id) ON DELETE SET NULL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  "createdAt" TEXT NOT NULL DEFAULT (datetime('now')),
+  "updatedAt" TEXT NOT NULL DEFAULT (datetime('now')),
+  category_id TEXT REFERENCES tour_categories(id) ON DELETE SET NULL
 );
-
-DROP TRIGGER IF EXISTS trg_experiences_updated_at;
-CREATE TRIGGER trg_experiences_updated_at
-AFTER UPDATE ON experiences
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE experiences SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
-CREATE INDEX IF NOT EXISTS idx_experiences_category_id ON experiences(category_id);
-CREATE INDEX IF NOT EXISTS idx_experiences_active ON experiences("isActive");
-CREATE INDEX IF NOT EXISTS idx_experiences_featured ON experiences("isFeatured");
 
 CREATE TABLE IF NOT EXISTS reviews (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -338,7 +201,7 @@ CREATE TABLE IF NOT EXISTS reviews (
   user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
   reviewer_name TEXT NOT NULL,
   origin_country TEXT,
-  rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   comment_text TEXT NOT NULL,
   "isVerified" INTEGER NOT NULL DEFAULT 0,
   "isPublished" INTEGER NOT NULL DEFAULT 1,
@@ -347,60 +210,29 @@ CREATE TABLE IF NOT EXISTS reviews (
   "updatedAt" TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-DROP TRIGGER IF EXISTS trg_reviews_updated_at;
-CREATE TRIGGER trg_reviews_updated_at
-AFTER UPDATE ON reviews
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE reviews SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
-CREATE INDEX IF NOT EXISTS idx_reviews_experience_id ON reviews(experience_id);
-CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
-CREATE INDEX IF NOT EXISTS idx_reviews_published ON reviews("isPublished");
-CREATE INDEX IF NOT EXISTS idx_reviews_created_at ON reviews("createdAt" DESC);
-
 CREATE TABLE IF NOT EXISTS news_notes (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  slug TEXT NOT NULL UNIQUE,
-  locale TEXT NOT NULL DEFAULT 'es',
+  slug TEXT NOT NULL,
+  locale TEXT NOT NULL DEFAULT 'en',
   title TEXT NOT NULL,
-  date TEXT,
+  date TEXT NOT NULL DEFAULT (datetime('now')),
+  published INTEGER NOT NULL DEFAULT 1,
   summary TEXT,
-  body TEXT,
+  tags TEXT NOT NULL DEFAULT '[]',
   image TEXT,
-  images TEXT,
+  images TEXT NOT NULL DEFAULT '[]',
   category TEXT,
   source_url TEXT,
-  published INTEGER NOT NULL DEFAULT 0,
-  tags TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  body TEXT,
+  "createdAt" TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (slug, locale)
 );
 
-DROP TRIGGER IF EXISTS trg_news_notes_updated_at;
-CREATE TRIGGER trg_news_notes_updated_at
-AFTER UPDATE ON news_notes
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE news_notes SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
-CREATE INDEX IF NOT EXISTS idx_news_notes_slug ON news_notes(slug);
-CREATE INDEX IF NOT EXISTS idx_news_notes_published ON news_notes(published);
-
-
--- ============================================================================
---  4. RESERVAS Y PAGOS
--- ============================================================================
-
--- user_id es NULLABLE: el sitio permite pagar como invitado sin cuenta.
-CREATE TABLE IF NOT EXISTS bookings (
+CREATE TABLE IF NOT EXISTS "bookings" (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   experience_id TEXT NOT NULL REFERENCES experiences(id) ON DELETE CASCADE,
   user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
   is_guest INTEGER NOT NULL DEFAULT 0,
-  -- Esta referencia es la que viaja en el QR (AMX-T-<booking_reference>).
   booking_reference TEXT NOT NULL UNIQUE,
   booking_date TEXT NOT NULL,
   start_date TEXT NOT NULL,
@@ -419,7 +251,6 @@ CREATE TABLE IF NOT EXISTS bookings (
   currency TEXT NOT NULL DEFAULT 'USD' CHECK (currency IN ('USD','EUR','MXN','CAD')),
   stripe_session_id TEXT,
   stripe_payment_intent_id TEXT,
-  -- Identidad: se borra al ejercer el derecho de supresión.
   customer_name TEXT,
   customer_email TEXT,
   special_requests TEXT,
@@ -429,67 +260,28 @@ CREATE TABLE IF NOT EXISTS bookings (
   commission_rate REAL NOT NULL DEFAULT 0,
   checked_in_at TEXT,
   checked_in_by TEXT REFERENCES users(id) ON DELETE SET NULL,
-  -- Snapshot demográfico congelado al reservar. NO identifica a nadie y
-  -- sobrevive al borrado del cliente para no perder las métricas.
-  anon_country TEXT,
-  anon_age_band TEXT,
-  anon_gender TEXT,
-  anon_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_bookings_anon_country ON bookings(anon_country);
-CREATE INDEX IF NOT EXISTS idx_bookings_anon_age_band ON bookings(anon_age_band);
-
-DROP TRIGGER IF EXISTS trg_bookings_updated_at;
-CREATE TRIGGER trg_bookings_updated_at
-AFTER UPDATE ON bookings
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE bookings SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
-CREATE INDEX IF NOT EXISTS idx_bookings_experience_id ON bookings(experience_id);
-CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON bookings(user_id);
-CREATE INDEX IF NOT EXISTS idx_bookings_reference ON bookings(booking_reference);
-CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
-CREATE INDEX IF NOT EXISTS idx_bookings_start_date ON bookings(start_date);
-CREATE INDEX IF NOT EXISTS idx_bookings_upcoming ON bookings(start_date)
-  WHERE status IN ('confirmed','paid','pending');
-CREATE INDEX IF NOT EXISTS idx_bookings_stripe ON bookings(stripe_session_id);
+, anon_country TEXT, anon_age_band TEXT, anon_gender TEXT, anon_at TEXT);
 
 CREATE TABLE IF NOT EXISTS payments (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  booking_id TEXT REFERENCES bookings(id) ON DELETE SET NULL,
-  user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
-  provider TEXT NOT NULL DEFAULT 'stripe',
-  provider_payment_id TEXT,
-  amount REAL NOT NULL DEFAULT 0,
-  currency TEXT NOT NULL DEFAULT 'USD',
-  status TEXT NOT NULL DEFAULT 'pending',
-  raw_payload TEXT,
+  booking_id TEXT NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+  payment_method TEXT NOT NULL CHECK (payment_method IN ('credit_card', 'debit_card', 'bank_transfer', 'paypal', 'cash', 'stripe', 'razorpay')),
+  payment_provider TEXT,
+  payment_token TEXT,
+  amount REAL NOT NULL,
+  currency TEXT DEFAULT 'USD',
+  status TEXT NOT NULL CHECK (status IN ('pending', 'completed', 'failed', 'refunded', 'partially_refunded')),
+  gateway_response TEXT NOT NULL DEFAULT '{}',
+  processed_at TEXT,
+  refund_id TEXT,
+  refund_amount REAL,
+  refund_reason TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-DROP TRIGGER IF EXISTS trg_payments_updated_at;
-CREATE TRIGGER trg_payments_updated_at
-AFTER UPDATE ON payments
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE payments SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
-CREATE INDEX IF NOT EXISTS idx_payments_booking_id ON payments(booking_id);
-CREATE INDEX IF NOT EXISTS idx_payments_provider_id ON payments(provider_payment_id);
-
-
--- ============================================================================
---  5. REFERIDOS  (modelo de Cripte, adaptado a SQLite)
--- ============================================================================
-
--- El código es único y está ligado 1:1 al usuario (UNIQUE(user_id)).
 CREATE TABLE IF NOT EXISTS referral_codes (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -503,18 +295,6 @@ CREATE TABLE IF NOT EXISTS referral_codes (
   UNIQUE (user_id)
 );
 
-DROP TRIGGER IF EXISTS trg_referral_codes_updated_at;
-CREATE TRIGGER trg_referral_codes_updated_at
-AFTER UPDATE ON referral_codes
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE referral_codes SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
-CREATE INDEX IF NOT EXISTS idx_referral_codes_code ON referral_codes(referral_code);
-CREATE INDEX IF NOT EXISTS idx_referral_codes_user ON referral_codes(user_id);
-CREATE INDEX IF NOT EXISTS idx_referral_codes_status ON referral_codes(status);
-
 CREATE TABLE IF NOT EXISTS referral_visits (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   referral_code_id TEXT NOT NULL REFERENCES referral_codes(id) ON DELETE CASCADE,
@@ -526,9 +306,6 @@ CREATE TABLE IF NOT EXISTS referral_visits (
   visited_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_referral_visits_code ON referral_visits(referral_code_id, visited_at DESC);
-
--- Una atribución por usuario: el primer referido que lo trae es el que cuenta.
 CREATE TABLE IF NOT EXISTS referral_attributions (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   referral_code_id TEXT NOT NULL REFERENCES referral_codes(id) ON DELETE CASCADE,
@@ -543,18 +320,6 @@ CREATE TABLE IF NOT EXISTS referral_attributions (
   UNIQUE (referred_user_id)
 );
 
-DROP TRIGGER IF EXISTS trg_referral_attributions_updated_at;
-CREATE TRIGGER trg_referral_attributions_updated_at
-AFTER UPDATE ON referral_attributions
-FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
-BEGIN
-  UPDATE referral_attributions SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
-CREATE INDEX IF NOT EXISTS idx_referral_attributions_code
-  ON referral_attributions(referral_code_id, attributed_at DESC);
-
--- Una conversión por reserva.
 CREATE TABLE IF NOT EXISTS referral_conversions (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   referral_code_id TEXT NOT NULL REFERENCES referral_codes(id) ON DELETE CASCADE,
@@ -571,166 +336,373 @@ CREATE TABLE IF NOT EXISTS referral_conversions (
   UNIQUE (booking_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_referral_conversions_code
-  ON referral_conversions(referral_code_id, converted_at DESC);
-CREATE INDEX IF NOT EXISTS idx_referral_conversions_stripe
-  ON referral_conversions(stripe_session_id);
-
-
--- ============================================================================
---  6. ANALÍTICA
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS page_analytics (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  id TEXT PRIMARY KEY,
   "userId" TEXT REFERENCES users(id) ON DELETE SET NULL,
   "sessionId" TEXT REFERENCES sessions(id) ON DELETE SET NULL,
   "pagePath" TEXT NOT NULL,
   "pageTitle" TEXT,
   "pageCategory" TEXT,
-  "timeOnPage" INTEGER,
-  "scrollDepth" REAL,
-  "bounce" INTEGER,
-  "exitPage" INTEGER,
+  "timeOnPage" INTEGER NOT NULL DEFAULT 0,
+  "scrollDepth" INTEGER NOT NULL DEFAULT 0,
+  bounce INTEGER NOT NULL DEFAULT 0,
+  "exitPage" INTEGER NOT NULL DEFAULT 0,
+  "createdAt" TEXT NOT NULL DEFAULT (datetime('now')),
   "ipAddress" TEXT,
   "userAgent" TEXT,
   "referrerUrl" TEXT,
   "conversionEvent" TEXT,
-  "conversionValue" REAL DEFAULT 0,
-  "createdAt" TEXT NOT NULL DEFAULT (datetime('now'))
+  "conversionValue" REAL
 );
 
-CREATE INDEX IF NOT EXISTS idx_page_analytics_user ON page_analytics("userId");
-CREATE INDEX IF NOT EXISTS idx_page_analytics_session ON page_analytics("sessionId");
-CREATE INDEX IF NOT EXISTS idx_page_analytics_path ON page_analytics("pagePath");
-CREATE INDEX IF NOT EXISTS idx_page_analytics_created ON page_analytics("createdAt" DESC);
-
 CREATE TABLE IF NOT EXISTS conversion_events (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  id TEXT PRIMARY KEY,
   "userId" TEXT REFERENCES users(id) ON DELETE SET NULL,
   "sessionId" TEXT REFERENCES sessions(id) ON DELETE SET NULL,
   "eventType" TEXT NOT NULL,
   "eventCategory" TEXT,
-  "eventValue" REAL DEFAULT 0,
-  "eventData" TEXT,
-  "pagePath" TEXT,
+  "eventValue" REAL,
+  "createdAt" TEXT NOT NULL DEFAULT (datetime('now')),
   "ipAddress" TEXT,
   "userAgent" TEXT,
-  "createdAt" TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_conversion_events_type ON conversion_events("eventType");
-CREATE INDEX IF NOT EXISTS idx_conversion_events_created ON conversion_events("createdAt" DESC);
+  "pagePath" TEXT
+, "eventData" TEXT);
 
 CREATE TABLE IF NOT EXISTS chatbot_prefs (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  "userId" TEXT REFERENCES users(id) ON DELETE CASCADE,
-  prefs TEXT NOT NULL DEFAULT '{}',
+  chat_id TEXT NOT NULL UNIQUE,
+  prefs TEXT NOT NULL DEFAULT '[]',
+  locale TEXT NOT NULL DEFAULT 'en',
   "createdAt" TEXT NOT NULL DEFAULT (datetime('now')),
   "updatedAt" TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-DROP TRIGGER IF EXISTS trg_chatbot_prefs_updated_at;
-CREATE TRIGGER trg_chatbot_prefs_updated_at
+CREATE TABLE IF NOT EXISTS oauth_clients (
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    client_id TEXT UNIQUE NOT NULL,
+    client_secret_hash TEXT,
+    client_name TEXT,
+    redirect_uris TEXT NOT NULL DEFAULT '[]',
+    grant_types TEXT NOT NULL DEFAULT '["authorization_code","refresh_token"]',
+    response_types TEXT NOT NULL DEFAULT '["code"]',
+    scope TEXT NOT NULL DEFAULT 'mcp:read',
+    token_endpoint_auth_method TEXT NOT NULL DEFAULT 'client_secret_post',
+    client_uri TEXT,
+    logo_uri TEXT,
+    contacts TEXT,
+    tos_uri TEXT,
+    policy_uri TEXT,
+    jwks_uri TEXT,
+    jwks TEXT,
+    software_id TEXT,
+    software_version TEXT,
+    is_public INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS oauth_client_metadata (
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    client_id TEXT UNIQUE NOT NULL,
+    metadata TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS oauth_authorization_codes (
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    code TEXT UNIQUE NOT NULL,
+    client_id TEXT NOT NULL,
+    redirect_uri TEXT NOT NULL,
+    scope TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    code_challenge TEXT,
+    code_challenge_method TEXT CHECK (code_challenge_method IN ('S256', 'plain')),
+    expires_at TEXT NOT NULL,
+    consumed_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+, resource TEXT);
+
+CREATE TABLE IF NOT EXISTS oauth_tokens (
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    token_hash TEXT UNIQUE NOT NULL,
+    token_type TEXT NOT NULL CHECK (token_type IN ('access', 'refresh')),
+    client_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    scope TEXT NOT NULL,
+    expires_at TEXT,
+    revoked_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+, resource TEXT);
+
+CREATE TABLE IF NOT EXISTS api_keys (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  key_prefix TEXT NOT NULL,
+  key_hash TEXT NOT NULL,
+  permissions TEXT NOT NULL DEFAULT '[]',
+  expires_at TEXT,
+  is_active INTEGER NOT NULL DEFAULT 1,
+  last_used_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS profiles (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  user_id TEXT UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  bio TEXT,
+  preferences TEXT NOT NULL DEFAULT '{}',
+  emergency_contact_name TEXT,
+  emergency_contact_phone TEXT,
+  medical_conditions TEXT,
+  dietary_restrictions TEXT NOT NULL DEFAULT '[]',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS social_auth_accounts (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  provider TEXT NOT NULL CHECK (provider IN ('google', 'facebook', 'apple', 'microsoft')),
+  provider_user_id TEXT NOT NULL,
+  access_token TEXT,
+  refresh_token TEXT,
+  token_expires_at TEXT,
+  profile_data TEXT NOT NULL DEFAULT '{}',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (provider, provider_user_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_activity_logs (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  action TEXT NOT NULL,
+  resource TEXT,
+  resource_id TEXT,
+  metadata TEXT NOT NULL DEFAULT '{}',
+  ip_address TEXT,
+  user_agent TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- ============================================================================
+--  ÍNDICES
+-- ============================================================================
+
+CREATE INDEX IF NOT EXISTS chatbot_prefs_chat_id_idx ON chatbot_prefs (chat_id);
+CREATE INDEX IF NOT EXISTS chatbot_prefs_created_at_idx ON chatbot_prefs ("createdAt" DESC);
+CREATE INDEX IF NOT EXISTS experiences_active_idx ON experiences ("isActive");
+CREATE INDEX IF NOT EXISTS experiences_category_id_idx ON experiences (category_id);
+CREATE INDEX IF NOT EXISTS experiences_featured_idx ON experiences ("isFeatured");
+CREATE INDEX IF NOT EXISTS idx_api_keys_is_active ON api_keys(is_active) WHERE is_active = 1;
+CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON api_keys(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_actor ON access_audit_logs(actor_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_role_created ON access_audit_logs(actor_role, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_target ON access_audit_logs(target_email);
+CREATE INDEX IF NOT EXISTS idx_bookings_experience_id ON bookings(experience_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_reference ON bookings(booking_reference);
+CREATE INDEX IF NOT EXISTS idx_bookings_start_date ON bookings(start_date);
+CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
+CREATE INDEX IF NOT EXISTS idx_bookings_upcoming ON bookings(start_date)
+  WHERE status IN ('confirmed','paid','pending');
+CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_conversion_events_created_at ON conversion_events("createdAt");
+CREATE INDEX IF NOT EXISTS idx_conversion_events_type ON conversion_events ("eventType");
+CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_expires_at ON email_verification_tokens(expires_at);
+CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_is_used ON email_verification_tokens(is_used);
+CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_user_id ON email_verification_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_login_attempts_created_at ON login_attempts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_login_attempts_user_id ON login_attempts(user_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_auth_codes_client_id ON oauth_authorization_codes(client_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_auth_codes_code ON oauth_authorization_codes(code);
+CREATE INDEX IF NOT EXISTS idx_oauth_auth_codes_expires_at ON oauth_authorization_codes(expires_at);
+CREATE INDEX IF NOT EXISTS idx_oauth_clients_client_id ON oauth_clients(client_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_tokens_client_id ON oauth_tokens(client_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_tokens_expires_at ON oauth_tokens(expires_at);
+CREATE INDEX IF NOT EXISTS idx_oauth_tokens_hash ON oauth_tokens(token_hash);
+CREATE INDEX IF NOT EXISTS idx_oauth_tokens_user_id ON oauth_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_page_analytics_created_at ON page_analytics ("createdAt");
+CREATE INDEX IF NOT EXISTS idx_page_analytics_page_category ON page_analytics ("pageCategory");
+CREATE INDEX IF NOT EXISTS idx_page_analytics_session_id ON page_analytics("sessionId");
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires_at ON password_reset_tokens(expires_at);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_is_used ON password_reset_tokens(is_used);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_payments_booking_id ON payments(booking_id);
+CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
+CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON profiles(user_id);
+CREATE INDEX IF NOT EXISTS idx_referral_attributions_code
+  ON referral_attributions(referral_code_id, attributed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_referral_codes_code ON referral_codes(referral_code);
+CREATE INDEX IF NOT EXISTS idx_referral_codes_status ON referral_codes(status);
+CREATE INDEX IF NOT EXISTS idx_referral_codes_user ON referral_codes(user_id);
+CREATE INDEX IF NOT EXISTS idx_referral_conversions_code
+  ON referral_conversions(referral_code_id, converted_at DESC);
+CREATE INDEX IF NOT EXISTS idx_referral_conversions_stripe
+  ON referral_conversions(stripe_session_id);
+CREATE INDEX IF NOT EXISTS idx_referral_visits_code ON referral_visits(referral_code_id, visited_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions("expiresAt");
+CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions (token);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions("userId");
+CREATE INDEX IF NOT EXISTS idx_social_auth_accounts_provider ON social_auth_accounts(provider, provider_user_id);
+CREATE INDEX IF NOT EXISTS idx_social_auth_accounts_user_id ON social_auth_accounts(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_activity_logs_created_at ON user_activity_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_activity_logs_user_id ON user_activity_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_email ON user_roles(email COLLATE NOCASE);
+CREATE INDEX IF NOT EXISTS idx_user_roles_user ON user_roles("userId");
+CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active) WHERE is_active = 1;
+CREATE INDEX IF NOT EXISTS idx_users_pii_encrypted ON users(pii_encrypted_at);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS news_notes_date_idx ON news_notes (date DESC);
+CREATE INDEX IF NOT EXISTS news_notes_locale_idx ON news_notes (locale);
+CREATE INDEX IF NOT EXISTS reviews_created_at_idx ON reviews ("createdAt" DESC);
+CREATE INDEX IF NOT EXISTS reviews_experience_id_idx ON reviews (experience_id);
+CREATE INDEX IF NOT EXISTS reviews_published_idx ON reviews ("isPublished");
+CREATE INDEX IF NOT EXISTS reviews_user_id_idx ON reviews (user_id);
+CREATE INDEX IF NOT EXISTS tour_categories_active_idx ON tour_categories ("isActive");
+CREATE INDEX IF NOT EXISTS tour_categories_slug_idx ON tour_categories (slug);
+
+-- ============================================================================
+--  TRIGGERS  (updated_at automático)
+-- ============================================================================
+
+CREATE TRIGGER IF NOT EXISTS trg_api_keys_updated_at
+AFTER UPDATE ON api_keys
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE api_keys SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_bookings_updated_at
+AFTER UPDATE ON bookings
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE bookings SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_chatbot_prefs_updated_at
 AFTER UPDATE ON chatbot_prefs
 FOR EACH ROW WHEN NEW."updatedAt" = OLD."updatedAt"
 BEGIN
   UPDATE chatbot_prefs SET "updatedAt" = datetime('now') WHERE id = NEW.id;
 END;
-
-
--- ============================================================================
---  7. MCP / OAUTH 2.1
--- ============================================================================
-
-CREATE TABLE IF NOT EXISTS oauth_clients (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  client_id TEXT UNIQUE NOT NULL,
-  client_secret_hash TEXT,
-  client_name TEXT,
-  redirect_uris TEXT NOT NULL DEFAULT '[]',
-  grant_types TEXT NOT NULL DEFAULT '["authorization_code","refresh_token"]',
-  response_types TEXT NOT NULL DEFAULT '["code"]',
-  scope TEXT NOT NULL DEFAULT 'mcp:read',
-  token_endpoint_auth_method TEXT NOT NULL DEFAULT 'none',
-  client_uri TEXT,
-  logo_uri TEXT,
-  contacts TEXT,
-  tos_uri TEXT,
-  policy_uri TEXT,
-  jwks_uri TEXT,
-  jwks TEXT,
-  software_id TEXT,
-  software_version TEXT,
-  is_public INTEGER NOT NULL DEFAULT 1,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-DROP TRIGGER IF EXISTS trg_oauth_clients_updated_at;
-CREATE TRIGGER trg_oauth_clients_updated_at
+CREATE TRIGGER IF NOT EXISTS trg_experiences_updated_at
+AFTER UPDATE ON experiences
+FOR EACH ROW WHEN NEW."updatedAt" = OLD."updatedAt"
+BEGIN
+  UPDATE experiences SET "updatedAt" = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_oauth_client_metadata_updated_at
+AFTER UPDATE ON oauth_client_metadata
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE oauth_client_metadata SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_oauth_clients_updated_at
 AFTER UPDATE ON oauth_clients
 FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
 BEGIN
   UPDATE oauth_clients SET updated_at = datetime('now') WHERE id = NEW.id;
 END;
-
-CREATE TABLE IF NOT EXISTS oauth_authorization_codes (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  code_hash TEXT NOT NULL UNIQUE,
-  client_id TEXT NOT NULL,
-  user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
-  redirect_uri TEXT NOT NULL,
-  scope TEXT NOT NULL DEFAULT 'mcp:read',
-  code_challenge TEXT,
-  code_challenge_method TEXT,
-  resource TEXT,
-  expires_at TEXT NOT NULL,
-  used_at TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_oauth_codes_hash ON oauth_authorization_codes(code_hash);
-CREATE INDEX IF NOT EXISTS idx_oauth_codes_user ON oauth_authorization_codes(user_id);
-
-CREATE TABLE IF NOT EXISTS oauth_tokens (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  token_hash TEXT NOT NULL UNIQUE,
-  client_id TEXT NOT NULL,
-  user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
-  scope TEXT NOT NULL DEFAULT 'mcp:read',
-  token_type TEXT NOT NULL DEFAULT 'access' CHECK (token_type IN ('access','refresh')),
-  resource TEXT,
-  expires_at TEXT,
-  revoked_at TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_oauth_tokens_hash ON oauth_tokens(token_hash);
-CREATE INDEX IF NOT EXISTS idx_oauth_tokens_user ON oauth_tokens(user_id);
-
-CREATE TABLE IF NOT EXISTS oauth_client_metadata (
-  client_id TEXT PRIMARY KEY,
-  metadata TEXT NOT NULL DEFAULT '{}',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-DROP TRIGGER IF EXISTS trg_oauth_client_metadata_updated_at;
-CREATE TRIGGER trg_oauth_client_metadata_updated_at
-AFTER UPDATE ON oauth_client_metadata
+CREATE TRIGGER IF NOT EXISTS trg_payments_updated_at
+AFTER UPDATE ON payments
 FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
 BEGIN
-  UPDATE oauth_client_metadata SET updated_at = datetime('now') WHERE client_id = NEW.client_id;
+  UPDATE payments SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_profiles_updated_at
+AFTER UPDATE ON profiles
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE profiles SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_referral_attributions_updated_at
+AFTER UPDATE ON referral_attributions
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE referral_attributions SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_referral_codes_updated_at
+AFTER UPDATE ON referral_codes
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE referral_codes SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_reviews_updated_at
+AFTER UPDATE ON reviews
+FOR EACH ROW WHEN NEW."updatedAt" = OLD."updatedAt"
+BEGIN
+  UPDATE reviews SET "updatedAt" = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_role_permissions_updated_at
+AFTER UPDATE ON role_permissions
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE role_permissions SET updated_at = datetime('now') WHERE role = NEW.role;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_social_auth_accounts_updated_at
+AFTER UPDATE ON social_auth_accounts
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE social_auth_accounts SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_tour_categories_updated_at
+AFTER UPDATE ON tour_categories
+FOR EACH ROW WHEN NEW."updatedAt" = OLD."updatedAt"
+BEGIN
+  UPDATE tour_categories SET "updatedAt" = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_user_roles_updated_at
+AFTER UPDATE ON user_roles
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE user_roles SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_users_updated_at
+AFTER UPDATE ON users
+FOR EACH ROW WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+  UPDATE users SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS update_oauth_client_metadata_updated_at
+AFTER UPDATE ON oauth_client_metadata
+BEGIN
+    UPDATE oauth_client_metadata SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS update_oauth_clients_updated_at
+AFTER UPDATE ON oauth_clients
+BEGIN
+    UPDATE oauth_clients SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS update_payments_updated_at
+AFTER UPDATE ON payments
+BEGIN
+    UPDATE payments SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS update_profiles_updated_at
+AFTER UPDATE ON profiles
+BEGIN
+    UPDATE profiles SET updated_at = datetime('now') WHERE id = NEW.id;
 END;
 
+-- ============================================================================
+--  DATOS SEMILLA
+-- ============================================================================
+
+-- Matriz de roles: configuración, no datos de usuario.
+-- Es lo único que debe existir en una base recién creada.
+INSERT OR REPLACE INTO role_permissions ("role", "label", "description", "rank", "can_view_profile", "can_operate_tours", "can_view_admin", "can_manage_users", "can_view_client_pii", "can_decrypt_sensitive_fields", "can_manage_admins", "can_view_bookings_own", "can_view_bookings_all", "can_manage_bookings", "can_view_payments", "can_view_basic_metrics", "can_view_passive_analytics", "can_view_advanced_metrics", "can_export_gdpr", "panels", "is_active", "created_at", "updated_at", "can_be_referrer", "can_view_referral_stats", "can_export_own_data") VALUES
+  ('client', 'Cliente', 'Compra y gestiona sus propias reservas y datos.', 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, '["/profile"]', 1, '2026-10-13 00:55:06', '2026-10-13 00:55:06', 0, 0, 1),
+  ('employee', 'Empleado', 'Opera tours del día. Ve lo mínimo necesario del cliente.', 2, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, '["/profile", "/empleados"]', 1, '2026-10-13 00:55:06', '2026-10-13 01:40:02', 1, 0, 1),
+  ('admin', 'Admin', 'Control total: usuarios, datos sensibles, métricas y GDPR.', 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, '["/profile", "/empleados", "/admin"]', 1, '2026-10-13 00:55:06', '2026-10-13 01:40:02', 1, 1, 1);
+
 
 -- ============================================================================
---  8. VERIFICACIÓN
+--  RESUMEN
+--    29 tablas · 67 índices · 20 triggers
+--
+--  Privacidad (ver lib/gdpr-crypto.ts):
+--    users.*Encrypted/Iv/Tag/Salt  -> AES-256-GCM, llave = PBKDF2(email + GDPR_PEPPER).
+--    bookings.anon_*               -> snapshot demográfico; sobrevive al borrado
+--                                     del cliente y no identifica a nadie.
 -- ============================================================================
--- SELECT COUNT(*) FROM users;                          -- 0
--- SELECT role, can_view_advanced_metrics,
---        can_decrypt_sensitive_fields, can_export_own_data
---   FROM role_permissions ORDER BY rank;              -- 3 filas
--- SELECT name FROM sqlite_master
---  WHERE type='trigger' ORDER BY name;                -- todos válidas
