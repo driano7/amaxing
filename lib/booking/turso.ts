@@ -67,6 +67,7 @@ export interface CreatedBooking {
   guests: number
   totalAmount: number
   currency: string
+  demographics: Demographics
 }
 
 /**
@@ -95,6 +96,10 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
       throw new Error('El usuario de la reserva no existe')
     }
   }
+
+  const demographics: Demographics = input.userId
+    ? await demographicsForUser(input.userId)
+    : { country: null, ageBand: null, gender: null }
 
   const guests = Math.max(1, Math.min(10, Number(input.peopleCount) || 1))
   const total = Number(input.totalAmount) || 0
@@ -136,9 +141,10 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
             total_amount, payed_amount, currency,
             stripe_session_id, stripe_payment_intent_id,
             customer_name, customer_email, special_requests,
-            dietary_restrictions, accessibility_needs
+            dietary_restrictions, accessibility_needs,
+            anon_country, anon_age_band, anon_gender, anon_at
           )
-          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     args,
   })
 
@@ -162,6 +168,7 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
     guests,
     totalAmount: total,
     currency: input.currency || 'USD',
+    demographics,
   }
 }
 
@@ -282,4 +289,95 @@ export async function findBookingsByStripeSession(sessionId: string): Promise<Ti
     args: [sessionId],
   })
   return result.rows.map(mapTicket)
+}
+
+// ---------------------------------------------------------------------------
+// Demografía anonimizada
+// ---------------------------------------------------------------------------
+
+/**
+ * Se toma ANTES de cualquier borrado y se congela en la reserva.
+ * Cuando el cliente exercise su derecho de supresión, estas tres columnas
+ * sobreviven: no identifican a nadie, pero permiten seguir midiendo.
+ */
+export interface Demographics {
+  country: string | null
+  ageBand: string | null
+  gender: string | null
+}
+
+/** Bandas de edad:足够 agregadas para medir sin ser un dato sensible. */
+export function ageBandFrom(dateOfBirth?: string | null, today = new Date()): string | null {
+  if (!dateOfBirth) return null
+  const dob = new Date(dateOfBirth)
+  if (Number.isNaN(dob.getTime())) return null
+
+  let age = today.getFullYear() - dob.getFullYear()
+  const monthDiff = today.getMonth() - dob.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--
+
+  if (age < 18) return 'menor_de_18'
+  if (age < 25) return '18_24'
+  if (age < 35) return '25_34'
+  if (age < 45) return '35_44'
+  if (age < 55) return '45_54'
+  if (age < 65) return '55_64'
+  return '65_mas'
+}
+
+const GENDERS = ['femenino', 'masculino', 'no_binario', 'otro', 'prefiero_no_decir']
+
+export function normalizeGender(value?: string | null): string | null {
+  if (!value) return null
+  const v = String(value).trim().toLowerCase()
+  return GENDERS.includes(v) ? v : null
+}
+
+const COUNTRIES = new Set([
+  'MX',
+  'US',
+  'CA',
+  'ES',
+  'AR',
+  'CO',
+  'CL',
+  'PE',
+  'BR',
+  'FR',
+  'DE',
+  'IT',
+  'GB',
+  'PT',
+  'NL',
+  'CH',
+  'JP',
+  'KR',
+  'CN',
+  'AU',
+  'NZ',
+  'IE',
+  'SE',
+  'NO',
+])
+
+export function normalizeCountry(value?: string | null): string | null {
+  if (!value) return null
+  const v = String(value).trim().toUpperCase()
+  return COUNTRIES.has(v) ? v : null
+}
+
+/** Lee la demografía del usuario (gender, country, date_of_birth). */
+export async function demographicsForUser(userId: string): Promise<Demographics> {
+  const result = await turso.execute({
+    sql: 'SELECT gender, country, date_of_birth FROM users WHERE id = ?',
+    args: [userId],
+  })
+  const row: any = result.rows[0]
+  if (!row) return { country: null, ageBand: null, gender: null }
+
+  return {
+    country: normalizeCountry(row.country),
+    ageBand: ageBandFrom(row.date_of_birth),
+    gender: normalizeGender(row.gender),
+  }
 }

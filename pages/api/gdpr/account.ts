@@ -41,14 +41,26 @@ export default async function handler(req, res) {
     const now = new Date().toISOString()
 
     // Historial financiero se conserva, pero sin persona asociada.
+    //
+    // Se borra TODO lo que pueda identificar:
+    //   - user_id y email (los dosfectureadores de vuelta al cliente)
+    //   - nombre, teléfono y las notas libres, que el cliente pudo escribir
+    //     con su nombre dentro (" soy María, tengo alergia a...")
+    // Se conserva anon_country / anon_age_band / anon_gender: no identifican
+    // a nadie y permiten seguir midiendo demanda sin perder el histórico.
     await turso.execute({
       sql: `UPDATE bookings
             SET user_id = NULL,
                 is_guest = 1,
-                customer_name = 'Eliminado',
-                customer_email = NULL
+                customer_name = NULL,
+                customer_email = NULL,
+                special_requests = NULL,
+                accessibility_needs = NULL,
+                dietary_restrictions = '[]',
+                checked_in_by = NULL,
+                anon_at = COALESCE(anon_at, ?)
             WHERE user_id = ?`,
-      args: [user.id],
+      args: [now, user.id],
     })
 
     await turso.execute({ sql: 'DELETE FROM sessions WHERE "userId" = ?', args: [user.id] })

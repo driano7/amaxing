@@ -30,6 +30,11 @@ CREATE TABLE IF NOT EXISTS users (
   phone TEXT,
   -- Opcional. passport_number se eliminó: no lo pedimos.
   date_of_birth TEXT,
+  -- Demografía para métricas agregadas. Opcional y nunca se exporta junto al
+  -- nombre: al borrar la cuenta se va con ella.
+  country TEXT,
+  gender TEXT CHECK (gender IS NULL OR gender IN
+    ('femenino','masculino','no_binario','otro','prefiero_no_decir')),
   is_email_verified INTEGER NOT NULL DEFAULT 0,
   is_active INTEGER NOT NULL DEFAULT 1,
   last_login_at TEXT,
@@ -414,6 +419,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   currency TEXT NOT NULL DEFAULT 'USD' CHECK (currency IN ('USD','EUR','MXN','CAD')),
   stripe_session_id TEXT,
   stripe_payment_intent_id TEXT,
+  -- Identidad: se borra al ejercer el derecho de supresión.
   customer_name TEXT,
   customer_email TEXT,
   special_requests TEXT,
@@ -423,9 +429,18 @@ CREATE TABLE IF NOT EXISTS bookings (
   commission_rate REAL NOT NULL DEFAULT 0,
   checked_in_at TEXT,
   checked_in_by TEXT REFERENCES users(id) ON DELETE SET NULL,
+  -- Snapshot demográfico congelado al reservar. NO identifica a nadie y
+  -- sobrevive al borrado del cliente para no perder las métricas.
+  anon_country TEXT,
+  anon_age_band TEXT,
+  anon_gender TEXT,
+  anon_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE INDEX IF NOT EXISTS idx_bookings_anon_country ON bookings(anon_country);
+CREATE INDEX IF NOT EXISTS idx_bookings_anon_age_band ON bookings(anon_age_band);
 
 DROP TRIGGER IF EXISTS trg_bookings_updated_at;
 CREATE TRIGGER trg_bookings_updated_at
