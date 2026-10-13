@@ -41,6 +41,14 @@ export function isMailConfigured(): boolean {
   return getMailConfig() !== null
 }
 
+/**
+ * Interruptor maestro. Aunque existan claves SMTP, no se manda nada hasta que
+ * se ponga MAIL_ENABLED=true. Así ninguna notificación sale sin que lo pidas.
+ */
+export function isMailEnabled(): boolean {
+  return process.env.MAIL_ENABLED === 'true' && isMailConfigured()
+}
+
 function transporter(): Transporter {
   const config = getMailConfig()
   if (!config) throw new Error('SMTP no configurado')
@@ -179,7 +187,8 @@ export async function sendMail(key: string, options: SendOptions): Promise<SendR
 
   const logId = randomHex()
 
-  if (!isMailConfigured()) {
+  if (!isMailEnabled()) {
+    const reason = !isMailConfigured() ? 'SMTP no configurado' : 'MAIL_ENABLED != true'
     await logMail({
       id: logId,
       key,
@@ -187,9 +196,9 @@ export async function sendMail(key: string, options: SendOptions): Promise<SendR
       userId: options.userId ?? null,
       subject,
       status: 'skipped',
-      error: 'SMTP no configurado',
+      error: reason,
     })
-    return { status: 'skipped', reason: 'SMTP no configurado' }
+    return { status: 'skipped', reason }
   }
 
   try {

@@ -13,9 +13,16 @@
 --    set -a; source .env.local; set +a
 --    node scripts/apply-sql.mjs turso-schema.sql
 --
---  Datos que NO son esquema (se siembran aparte):
---    experiences -> node scripts/seed-experiences.mjs
---    Cifrado PII -> node scripts/backfill-gdpr.mjs
+--  Datos que NO son esquema (se siembran aparte, en este orden):
+--    1. experiences       -> node scripts/seed-experiences.mjs
+--       (12 tours desde data/toursData.js; bookings tiene FK hacia esta tabla)
+--    2. Cifrado del PII   -> node scripts/backfill-gdpr.mjs
+--       (rellena users.*Encrypted/Iv/Tag/Salt; necesita GDPR_PEPPER)
+--    3. Plantillas de mail-> se siembran solas al cargar /api/admin/email-templates
+--    4. Matriz de roles   -> ya incluida en este archivo (3 filas sembradas)
+--
+--  Correo: aunque existan claves SMTP, NO se envia nada hasta poner
+--    MAIL_ENABLED=true en el entorno. Todo intento queda en email_log.
 -- ============================================================================
 
 
