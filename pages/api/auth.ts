@@ -7,6 +7,7 @@ import {
   registerUser,
   verifyPassword,
 } from '@/lib/auth'
+import { isValidCountry, isValidGender } from '@/lib/demographics'
 
 function readRefCookie(req): string | null {
   const header = req.headers.cookie || ''
@@ -30,7 +31,16 @@ function clientMeta(req) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' })
 
-  const { mode = 'login', email, password, firstName, lastName, referredBy } = req.body ?? {}
+  const {
+    mode = 'login',
+    email,
+    password,
+    firstName,
+    lastName,
+    referredBy,
+    country,
+    gender,
+  } = req.body ?? {}
 
   if (!email || typeof email !== 'string' || !email.includes('@')) {
     return res.status(400).json({ message: 'Email inválido' })
@@ -54,6 +64,8 @@ export default async function handler(req, res) {
         firstName: String(firstName),
         lastName: String(lastName),
         referredBy: readRefCookie(req) || (typeof referredBy === 'string' ? referredBy : null),
+        country: isValidCountry(country) ? country : undefined,
+        gender: isValidGender(gender) ? gender : undefined,
       })
       const session = await createSession(user.id, clientMeta(req))
 

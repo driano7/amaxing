@@ -586,7 +586,7 @@ async function handleMessage(msg) {
       jsonrpc: '2.0',
       id,
       result: {
-        protocolVersion: '2024-11-05',
+        protocolVersion: negotiateProtocolVersion(params?.protocolVersion),
         capabilities: { tools: {}, resources: {}, prompts: {} },
         serverInfo: { name: 'Calpulli CDMX-mcp', version: SCHEMA_VERSION },
       },
@@ -666,3 +666,14 @@ main().catch((e) => {
   console.error('MCP server failed to start:', e.message)
   process.exit(1)
 })
+
+/**
+ * MCP 2025-06-18 pide negociar: si el cliente pide una versión que soportamos,
+ * se devuelve la suya. Si pide algo desconocido, la más reciente que你了.
+ */
+export const SUPPORTED_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05']
+
+function negotiateProtocolVersion(requested) {
+  if (requested && SUPPORTED_PROTOCOL_VERSIONS.includes(requested)) return requested
+  return SUPPORTED_PROTOCOL_VERSIONS[0]
+}

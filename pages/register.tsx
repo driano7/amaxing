@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
+import { COUNTRIES, GENDERS } from '@/lib/demographics'
 import { AuthLoader } from '@/components/AuthLoader'
 
 export default function Register() {
@@ -17,6 +18,9 @@ export default function Register() {
   const [password, setPassword] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  // Demografía opcional: solo alimenta métricas agregadas, nunca identifica.
+  const [country, setCountry] = useState('')
+  const [gender, setGender] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -36,6 +40,8 @@ export default function Register() {
             password,
             firstName,
             lastName,
+            country: country || undefined,
+            gender: gender || undefined,
           }),
         })
 
@@ -175,6 +181,51 @@ export default function Register() {
                 placeholder="••••••••"
               />
             </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="country" className={labelClass}>
+                  {t('auth.signup.country') || 'País'}
+                </label>
+                <select
+                  id="country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">{t('auth.signup.optional') || 'Opcional'}</option>
+                  {COUNTRIES.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.es}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="gender" className={labelClass}>
+                  {t('auth.signup.gender') || 'Género'}
+                </label>
+                <select
+                  id="gender"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">{t('auth.signup.optional') || 'Opcional'}</option>
+                  {GENDERS.map((g) => (
+                    <option key={g.value} value={g.value}>
+                      {g.es}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              {t('auth.signup.demographicsNote') ||
+                'Opcional. Solo lo usamos en conjunto para entender mejor a nuestros visitantes, nunca de forma individual.'}
+            </p>
 
             <motion.button
               type="submit"

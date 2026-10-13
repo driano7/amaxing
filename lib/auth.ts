@@ -4,6 +4,7 @@ import { randomBytes, scrypt as _scrypt, timingSafeEqual } from 'crypto'
 import { promisify } from 'util'
 import { turso } from './turso'
 import { encryptRowFields, isPepperConfigured } from './gdpr-crypto'
+import { normalizeCountry, normalizeGender } from './booking/turso'
 
 const scrypt = promisify(_scrypt) as (
   password: string,
@@ -317,6 +318,9 @@ export async function registerUser(input: {
   phone?: string | null
   /** Código de referido que trajo al cliente (atribución de una vez). */
   referredBy?: string | null
+  /** Demografía opcional. Solo alimenta métricas agregadas. */
+  country?: string | null
+  gender?: string | null
 }): Promise<AuthUser> {
   const email = input.email.trim().toLowerCase()
   const passwordHash = await hashPassword(input.password)
@@ -338,9 +342,9 @@ export async function registerUser(input: {
             first_nameEncrypted, first_nameIv, first_nameTag, first_nameSalt,
             last_nameEncrypted, last_nameIv, last_nameTag, last_nameSalt,
             phoneEncrypted, phoneIv, phoneTag, phoneSalt,
-            pii_encrypted_at, is_email_verified
+            pii_encrypted_at, is_email_verified, country, gender
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           RETURNING id`,
     args: [
       email,
@@ -362,6 +366,8 @@ export async function registerUser(input: {
       encrypted.phoneSalt ?? null,
       isPepperConfigured() ? new Date().toISOString() : null,
       0,
+      normalizeCountry(input.country),
+      normalizeGender(input.gender),
     ],
   })
 
