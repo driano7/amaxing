@@ -684,7 +684,7 @@ CREATE TABLE IF NOT EXISTS oauth_tokens (
   client_id TEXT NOT NULL,
   user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
   scope TEXT NOT NULL DEFAULT 'mcp:read',
-  token_type TEXT NOT NULL DEFAULT 'Bearer',
+  token_type TEXT NOT NULL DEFAULT 'access' CHECK (token_type IN ('access','refresh')),
   resource TEXT,
   expires_at TEXT,
   revoked_at TEXT,

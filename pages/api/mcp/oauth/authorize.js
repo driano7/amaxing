@@ -4,7 +4,38 @@ import {
   getClientByClientId,
   createAuthCode,
   getAuthorizationServerMetadata,
+  isValidResource,
+  mcpResource,
+  serverOrigin,
+  SUPPORTED_SCOPES,
 } from '@/lib/mcp/oauth'
+import { getSessionUser } from '@/lib/auth'
+
+function parseCookie(header, name) {
+  if (!header) return null
+  for (const part of header.split(';')) {
+    const index = part.indexOf('=')
+    if (index === -1) continue
+    if (part.slice(0, index).trim() === name) {
+      return decodeURIComponent(part.slice(index + 1).trim()) || null
+    }
+  }
+  return null
+}
+
+function loginRequiredPage(clientName, returnTo) {
+  const target = encodeURIComponent(returnTo)
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inicia sesión · Calpulli CDMX</title>
+<style>body{font-family:system-ui,sans-serif;background:#fafaf9;color:#1c1917;display:grid;place-items:center;min-height:100vh;margin:0}
+.box{background:#fff;padding:2.5rem;border-radius:1rem;max-width:26rem;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+h1{font-size:1.25rem;margin:0 0 .5rem}p{color:#57534e;line-height:1.6;margin:0 0 1.5rem}
+a{display:inline-block;background:#c2410c;color:#fff;padding:.75rem 1.25rem;border-radius:.5rem;text-decoration:none;font-weight:600}</style>
+</head><body><div class="box"><h1>Necesitas iniciar sesión</h1>
+<p><strong>${clientName}</strong> quiere conectarse a tu cuenta de Calpulli CDMX para consultar tours y reservas.</p>
+<a href="/login?next=${target}">Iniciar sesión</a></div></body></html>`
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -38,8 +69,16 @@ export default async function handler(req, res) {
     return redirectError(redirect_uri, 'invalid_client', state, 'Unknown client_id')
   }
 
+  // redirect_uris se guarda como JSON en TEXT: hay que parsearlo.
+  let registeredUris = []
+  try {
+    registeredUris = JSON.parse(client.redirect_uris || '[]')
+  } catch {
+    registeredUris = []
+  }
+
   // Validate redirect_uri exactly matches registered URI
-  if (!client.redirect_uris.includes(redirect_uri)) {
+  if (!registeredUris.includes(redirect_uri)) {
     return redirectError(
       redirect_uri,
       'invalid_redirect_uri',
@@ -48,10 +87,14 @@ export default async function handler(req, res) {
     )
   }
 
-  // Validate scope
-  const requestedScopes = scope.split(' ').filter(Boolean)
-  const allowedScopes = client.scope.split(' ').filter(Boolean)
-  const invalidScopes = requestedScopes.filter((s) => !allowedScopes.includes(s))
+  // Validate scope: lo pedido debe estar en el scope del cliente Y soportado.
+  const requestedScopes = String(scope).split(' ').filter(Boolean)
+  const allowedScopes = String(client.scope || 'mcp:read')
+    .split(' ')
+    .filter(Boolean)
+  const invalidScopes = requestedScopes.filter(
+    (sc) => !allowedScopes.includes(sc) || !SUPPORTED_SCOPES.includes(sc)
+  )
   if (invalidScopes.length > 0) {
     return redirectError(
       redirect_uri,
@@ -79,52 +122,57 @@ export default async function handler(req, res) {
     )
   }
 
-  // Resource parameter (RFC 8707) - validate if provided
-  if (resource) {
-    const validResources = ['https://donovan-amx.vercel.app/api/mcp/stream']
-    if (!validResources.includes(resource)) {
-      return redirectError(redirect_uri, 'invalid_request', state, 'Invalid resource parameter')
-    }
+  // Resource parameter (RFC 8707): debe ser este servidor o un origen
+  // registrado por el cliente.
+  if (resource && !isValidResource(resource, registeredUris)) {
+    return redirectError(redirect_uri, 'invalid_target', state, 'Invalid resource parameter')
   }
 
-  // ---- CONSENT FLOW ----
-  // In a real app, this would render a consent page and wait for user approval.
-  // For now, we'll simulate consent via a query parameter or session.
-  // In production, integrate with your auth system (NextAuth, Clerk, etc.)
+  // ---- AUTENTICACIÓN REAL ----
+  // Antes se emitía el token contra un "dev-user-001" fijo: cualquiera que
+  // autorizaba obtenía credenciales de un usuario que no existía.
+  // Ahora exige una sesión válida de Turso (Bearer o cookie de sesión).
+  const authHeader = req.headers.authorization
+  const bearer = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+  const cookieToken = parseCookie(req.headers.cookie, 'authToken')
+  const user = await getSessionUser(bearer || cookieToken)
 
-  // For development/testing: check for auto-consent parameter
-  // In production, this would be a proper consent page with user authentication
-  const consent = req.query.consent === 'true' || req.query.auto_consent === 'true'
+  const approved = req.query.consent === 'approve'
 
-  if (!consent) {
+  if (!user) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8')
+    return res.status(401).send(loginRequiredPage(client.client_name || client_id, req.url))
+  }
+
+  if (!approved) {
     // Render consent page (simplified HTML)
     const consentHtml = generateConsentPage({
       client_name: client.client_name || client_id,
       client_id,
       redirect_uri,
       scope,
+      allowedScopes,
+      requestedScopes,
       state,
       code_challenge,
       code_challenge_method: code_challenge_method || 'S256',
       resource,
+      approveUrl: `${req.url}${req.url.includes('?') ? '&' : '?'}consent=approve`,
     })
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     return res.status(200).send(consentHtml)
   }
 
-  // ---- USER AUTHENTICATION ----
-  // In production, integrate with your auth system (NextAuth, Supabase Auth, etc.)
-  // For now, use a dev user ID (in production, get from session)
-  const userId = req.query.dev_user_id || 'dev-user-001'
-
   // ---- CREATE AUTH CODE ----
+  // OJO: client_id (el identificador MCP público), no client.id (la fila).
   const code = await createAuthCode({
-    client_id: client.id,
+    client_id: client.client_id,
     redirect_uri,
-    scope,
-    user_id: userId,
+    scope: requestedScopes.filter((sc) => allowedScopes.includes(sc)).join(' '),
+    user_id: user.id,
     code_challenge,
-    code_challenge_method: code_challenge_method || 'S256',
+    code_challenge_method: 'S256',
+    resource: resource || mcpResource(),
   })
 
   // ---- REDIRECT BACK TO CLIENT ----
@@ -158,22 +206,16 @@ function generateConsentPage({
   client_id,
   redirect_uri,
   scope,
+  allowedScopes = ['mcp:read'],
+  requestedScopes = [],
   state,
   code_challenge,
   code_challenge_method,
   resource,
+  approveUrl,
 }) {
-  const params = new URLSearchParams({
-    client_id,
-    redirect_uri,
-    response_type: 'code',
-    scope,
-    state: state || '',
-    code_challenge,
-    code_challenge_method: code_challenge_method || 'S256',
-    resource: resource || 'https://donovan-amx.vercel.app/api/mcp/stream',
-    consent: 'true',
-  })
+  const params = new URLSearchParams(Object.fromEntries(new URL(approveUrl).searchParams.entries()))
+  params.set('consent', 'approve')
 
   const denyUrl = new URL(redirect_uri)
   denyUrl.searchParams.set('error', 'access_denied')
@@ -208,9 +250,9 @@ function generateConsentPage({
         <small style="color: #666;">${client_id}</small>
       </div>
     </div>
-    <p>is requesting access to your Calpulli CDMX account.</p>
+    <p>solicita acceso a tu cuenta de Calpulli CDMX.</p>
     <div class="scope-list">
-      <strong>Requested permissions:</strong><br>
+      <strong>Permisos solicitados:</strong><br>
       ${scope
         .split(' ')
         .map((s) => `<span class="scope-item">${s}</span>`)

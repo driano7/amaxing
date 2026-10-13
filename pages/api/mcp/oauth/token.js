@@ -7,6 +7,7 @@ import {
   createAccessToken,
   createRefreshToken,
   rotateRefreshToken,
+  mcpResource,
 } from '@/lib/mcp/oauth'
 
 export const config = {
@@ -77,10 +78,12 @@ export default async function handler(req, res) {
     client = await validateClient(body.client_id, body.client_secret)
   }
 
-  // Public client (none) - only for authorization_code grant with PKCE
-  if (!client && grant_type === 'authorization_code' && client_id) {
+  // Public client (token_endpoint_auth_method = "none"): es el caso normal
+  // en MCP (Claude, ChatGPT, Gemini, Perplexity). Aplica a authorization_code
+  // (con PKCE) y a refresh_token.
+  if (!client && client_id && ['authorization_code', 'refresh_token'].includes(grant_type)) {
     const publicClient = await getClientByClientId(client_id)
-    if (publicClient && publicClient.is_public) {
+    if (publicClient && publicClient.is_public && !publicClient.client_secret_hash) {
       client = publicClient
     }
   }
@@ -102,17 +105,22 @@ export default async function handler(req, res) {
     }
 
     // PKCE verification is mandatory for public clients, recommended for all
-    const authCode = await consumeAuthCode(code, client.client_id, redirect_uri, code_verifier)
-    if (!authCode) {
+    const authCode = await consumeAuthCode(
+      code,
+      client.client_id,
+      redirect_uri,
+      code_verifier,
+      resource
+    )
+    if (!authCode || authCode.error) {
       return res.status(400).json({
-        error: 'invalid_grant',
+        error: authCode?.error || 'invalid_grant',
         error_description: 'Invalid or expired authorization code, or PKCE verification failed',
       })
     }
 
     // Determine resource (RFC 8707)
-    const tokenResource =
-      resource || authCode.resource || 'https://donovan-amx.vercel.app/api/mcp/stream'
+    const tokenResource = resource || authCode.resource || mcpResource()
 
     const access_token = await createAccessToken({
       client_id: client.client_id,
@@ -125,13 +133,12 @@ export default async function handler(req, res) {
       client_id: client.client_id,
       scope: authCode.scope,
       user_id: authCode.user_id,
+      resource: tokenResource,
     })
 
     return res.status(200).json({
-      access_token,
-      token_type: 'Bearer',
-      expires_in: 3600,
-      refresh_token,
+      ...access_token,
+      ...refresh_token,
       scope: authCode.scope,
     })
   }
@@ -144,18 +151,20 @@ export default async function handler(req, res) {
       })
     }
 
+    // rotateRefreshToken devuelve { error } en fallo, no null.
     const rotated = await rotateRefreshToken(refresh_token, client.client_id)
-    if (!rotated) {
+    if (!rotated || rotated.error) {
       return res.status(400).json({
-        error: 'invalid_grant',
+        error: rotated?.error || 'invalid_grant',
         error_description: 'Invalid or expired refresh token',
       })
     }
 
+    // rotateRefreshToken ya devuelve el objeto plano de la respuesta OAuth.
     return res.status(200).json({
       access_token: rotated.access_token,
-      token_type: 'Bearer',
-      expires_in: 3600,
+      token_type: rotated.token_type ?? 'Bearer',
+      expires_in: rotated.expires_in,
       refresh_token: rotated.refresh_token,
       scope: rotated.scope || 'mcp:read',
     })
@@ -164,7 +173,7 @@ export default async function handler(req, res) {
   if (grant_type === 'client_credentials') {
     // For machine-to-machine (if needed)
     const scope = body.scope || 'mcp:read'
-    const tokenResource = resource || 'https://donovan-amx.vercel.app/api/mcp/stream'
+    const tokenResource = resource || mcpResource()
 
     const access_token = await createAccessToken({
       client_id: client.client_id,
@@ -173,12 +182,7 @@ export default async function handler(req, res) {
       resource: tokenResource,
     })
 
-    return res.status(200).json({
-      access_token,
-      token_type: 'Bearer',
-      expires_in: 3600,
-      scope,
-    })
+    return res.status(200).json({ ...access_token, scope })
   }
 
   return res.status(400).json({ error: 'unsupported_grant_type' })

@@ -86,6 +86,36 @@ module.exports = withBundleAnalyzer({
       { source: '/local-picks/:slug*', destination: '/local/:slug*', permanent: false },
     ]
   },
+  // Las rewrites de .well-known viven también aquí para que funcionen en local;
+  // en producción están además en vercel.json (que tiene prioridad).
+  async rewrites() {
+    return [
+      {
+        source: '/.well-known/oauth-authorization-server',
+        destination: '/api/mcp/oauth/discovery',
+      },
+      {
+        source: '/.well-known/oauth-authorization-server.json',
+        destination: '/api/mcp/oauth/discovery',
+      },
+      {
+        source: '/.well-known/oauth-protected-resource',
+        destination: '/api/mcp/.well-known/oauth-protected-resource',
+      },
+      {
+        source: '/.well-known/oauth-protected-resource.json',
+        destination: '/api/mcp/.well-known/oauth-protected-resource',
+      },
+      {
+        source: '/.well-known/oauth-protected-resource/mcp',
+        destination: '/api/mcp/.well-known/oauth-protected-resource',
+      },
+      {
+        source: '/.well-known/oauth-protected-resource/api/mcp/stream',
+        destination: '/api/mcp/.well-known/oauth-protected-resource',
+      },
+    ]
+  },
   async headers() {
     return [
       {
