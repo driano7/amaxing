@@ -25,7 +25,7 @@
   "hero": {
     "titleStart": "Discover the",
     "titleHighlight": "CDMX-traordinary they never show you.",
-    "subtitle": "amaxing, the city in every bite: local-led luxury tours through the real Mexico City.",
+    "subtitle": "Calpulli CDMX, the city in every bite: local-led luxury tours through the real Mexico City.",
     "cta": "Book a Trip",
     "scrollHint": "Scroll to explore"
   },
@@ -35,18 +35,18 @@
   },
   "aboutPage": {
     "kicker": "CDMX · Local soul tours",
-    "heroTitle": "Amaxing",
+    "heroTitle": "Calpulli CDMX",
     "taglineEs": "The embrace of the city we love.",
     "taglineEn": "Mexico City, the way we hug it.",
     "whoTitle": "Who we are",
-    "whoLead": "Amaxing was born from two stories crossing in Mexico City: one of us is from Oaxaca and lives here today; the other was born in CDMX but hasn't lived here for years. Between us we know, almost by chance, the most different poles of this city — its markets, its rooftops, its corners that don't appear in any guide. One day we decided it was worth sharing.",
+    "whoLead": "Calpulli CDMX was born from two stories crossing in Mexico City: one of us is from Oaxaca and lives here today; the other was born in CDMX but hasn't lived here for years. Between us we know, almost by chance, the most different poles of this city — its markets, its rooftops, its corners that don't appear in any guide. One day we decided it was worth sharing.",
     "founderOax": "The Oaxacan",
     "founderOaxDesc": "lives in CDMX, walks it every day",
     "founderDef": "The defeño",
     "founderDefDesc": "born here, now sees it from afar — and misses it",
     "aboutUsTitle": "About us",
     "whyTitle": "Why “chilango”",
-    "whyLead": "“Chilango” has been used for years to belittle those who live in this city. We believe it's the opposite: being chilango means having learned to love a huge, noisy and contradictory city, and finding in it something that feels like home. Amaxing exists to show that version of Mexico City — the one of flavors, places, smells and surrealism that you only understand by walking it with a local.",
+    "whyLead": "“Chilango” has been used for years to belittle those who live in this city. We believe it's the opposite: being chilango means having learned to love a huge, noisy and contradictory city, and finding in it something that feels like home. Calpulli CDMX exists to show that version of Mexico City — the one of flavors, places, smells and surrealism that you only understand by walking it with a local.",
     "forWhoTitle": "Who is it for",
     "forWhoLead": "We design each route for solo travelers or small groups who want more than a list of photos.",
     "cardFlavors": "Flavors",
@@ -71,7 +71,7 @@
       "oaxContent": "Lives in CDMX, walks it every day. Knows the markets that open before dawn, the rooftops with the most honest mezcal, and the corners no digital map points to.",
       "defTitle": "The defeño",
       "defContent": "Born here, now sees it from afar — and misses it. That distance gives a perspective locals sometimes lose: he knows the treasures a visitor would never find alone.",
-      "amxTitle": "Amaxing",
+      "amxTitle": "Calpulli CDMX",
       "amxContent": "The crossing of two stories. Between the two we cover the most different poles of this city — and we decided it was worth sharing with anyone who wants to feel the real CDMX."
     }
   },
@@ -97,7 +97,7 @@
   },
   "stories": {
     "title": "Traveler Stories",
-    "subtitle": "Real stories from real travelers experiencing the magic of Mexico with Amaxing.",
+    "subtitle": "Real stories from real travelers experiencing the magic of Mexico with Calpulli CDMX.",
     "readStory": "Read story"
   },
   "experienceDetail": {
@@ -176,7 +176,7 @@
       "signIn": "Sign In",
       "noAccount": "Don't have an account?",
       "signUp": "Sign Up",
-      "welcome": "Welcome back to Amaxing",
+      "welcome": "Welcome back to Calpulli CDMX",
       "join": "Join the traveler community",
       "firstName": "First Name",
       "lastName": "Last Name",
@@ -283,7 +283,7 @@
   },
   "support": {
     "title": "Support the project",
-    "subtitle": "Open donations to keep building. Copy the method you prefer or scan the code. Thank you for powering Amaxing.",
+    "subtitle": "Open donations to keep building. Copy the method you prefer or scan the code. Thank you for powering Calpulli CDMX.",
     "note": "Your contribution goes directly to the team to fund experience improvements.",
     "copy": "Copy",
     "copied": "Copied",

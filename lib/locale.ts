@@ -1,5 +1,5 @@
 /*
- * amaxing - Luxury Tourism Agency Localization Configuration
+ * calpulli - Luxury Tourism Agency Localization Configuration
  * Context: Inglés (default) y Español para turismo internacional y local
  */
 

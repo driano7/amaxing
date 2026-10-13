@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/v1/metadata — taxonomías, capabilities y política de datos.
 import { getGraphIndex } from '@/lib/knowledge/service'
 import {
@@ -40,7 +40,7 @@ export default function handler(req, res) {
           'no fixed start times, live availability or real reviews: confirm via WhatsApp',
           'no restaurants/hotels/events/metro entities yet (no source data)',
         ],
-        dataPolicy: 'https://amaxing-amx.vercel.app/api/knowledge/index',
+        dataPolicy: 'https://donovan-amx.vercel.app/api/knowledge/index',
       },
       {}
     )

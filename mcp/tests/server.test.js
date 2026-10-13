@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // Tests para MCP server: inputs válidos/inválidos, filtros, datos faltantes, secretos, consistencia.
 // Uso: node --test mcp/tests/
 const { test } = require('node:test')
@@ -56,7 +56,7 @@ test('initialize returns protocol version and capabilities', async () => {
   try {
     const res = await call('initialize', {})
     assert.equal(res.result.protocolVersion, '2024-11-05')
-    assert.equal(res.result.serverInfo.name, 'amaxing-mcp')
+    assert.equal(res.result.serverInfo.name, 'calpulli-mcp')
     assert.ok(res.result.capabilities.tools)
     assert.ok(res.result.capabilities.resources)
     assert.ok(res.result.capabilities.prompts)
@@ -211,20 +211,20 @@ test('resources/list returns all resources', async () => {
   try {
     const res = await call('resources/list', {})
     const uris = res.result.resources.map((r) => r.uri)
-    assert.ok(uris.includes('amaxing://tours'))
-    assert.ok(uris.includes('amaxing://taxonomies'))
-    assert.ok(uris.includes('amaxing://knowledge-graph'))
-    assert.ok(uris.includes('amaxing://data-policy'))
-    assert.ok(uris.includes('amaxing://attribution'))
+    assert.ok(uris.includes('calpulli://tours'))
+    assert.ok(uris.includes('calpulli://taxonomies'))
+    assert.ok(uris.includes('calpulli://knowledge-graph'))
+    assert.ok(uris.includes('calpulli://data-policy'))
+    assert.ok(uris.includes('calpulli://attribution'))
   } finally {
     proc.kill()
   }
 })
 
-test('resources/read amaxing://tours returns tour list', async () => {
+test('resources/read calpulli://tours returns tour list', async () => {
   const { proc, call } = startServer()
   try {
-    const res = await call('resources/read', { uri: 'amaxing://tours' })
+    const res = await call('resources/read', { uri: 'calpulli://tours' })
     assert.ok(res.result.entity === 'tours' || res.result.items)
   } finally {
     proc.kill()

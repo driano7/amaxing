@@ -34,7 +34,7 @@ export function AuthLoader({ label = 'Cargando...' }: { label?: string }) {
       </motion.div>
       <div className="flex flex-col items-center gap-3 text-center">
         <span className="font-serif text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
-          Amaxing
+          Calpulli CDMX
         </span>
         <div className="flex items-center gap-2">
           <motion.span

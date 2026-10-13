@@ -1,9 +1,9 @@
 import { encryptWithUserId, decryptWithUserId, generateLocalUserId } from '@/lib/encryption'
 
-const FAV_KEY = 'amaxing_favorites'
-const COMMENTED_KEY = 'amaxing_commented'
-const PROFILE_KEY = 'amaxing_profile'
-const USER_ID_KEY = 'amaxing_user_id'
+const FAV_KEY = 'calpulli_favorites'
+const COMMENTED_KEY = 'calpulli_commented'
+const PROFILE_KEY = 'calpulli_profile'
+const USER_ID_KEY = 'calpulli_user_id'
 
 function getUserId(): string {
   if (typeof window === 'undefined') return ''
@@ -141,8 +141,8 @@ export async function exportMyData(encrypt = false): Promise<EncryptedExportData
     profile: (await readEncrypted(PROFILE_KEY, userId)) ?? read(PROFILE_KEY)[0] ?? null,
     favorites: getFavorites(),
     commented: getCommented(),
-    bookings: read<unknown[]>('amaxing_bookings'),
-    cart: read<unknown[]>('amaxing_cart'),
+    bookings: read<unknown[]>('calpulli_bookings'),
+    cart: read<unknown[]>('calpulli_cart'),
   }
 
   let finalPayload = payload
@@ -167,9 +167,9 @@ export async function deleteMyData() {
     FAV_KEY,
     COMMENTED_KEY,
     PROFILE_KEY,
-    'amaxing_bookings',
-    'amaxing_cart',
-    'amaxing_password',
+    'calpulli_bookings',
+    'calpulli_cart',
+    'calpulli_password',
     USER_ID_KEY,
   ]
   keys.forEach((k) => localStorage.removeItem(k))

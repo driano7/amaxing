@@ -2,7 +2,7 @@ import { Booking } from './types'
 import { generateBookingCode } from './types'
 import { tours } from '@/data/toursData'
 
-const BOOKINGS_KEY = 'amaxing_bookings'
+const BOOKINGS_KEY = 'calpulli_bookings'
 
 function getStoredBookings(): Booking[] {
   if (typeof window === 'undefined') return []

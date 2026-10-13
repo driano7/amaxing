@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // Audita JSON-LD generado: IDs estables, URLs canónicas, relaciones, consistencia.
 // Uso: npm run validate:jsonld
 // Exit 1 si encuentra errores.
@@ -103,7 +103,7 @@ function auditTours(lib) {
   }
 
   const listItems = tours.map((t) => ({ name: t.title, url: `/tours/${t.id}` }))
-  const itemList = lib.buildItemListEntity(listItems, 'Amaxing Tours')
+  const itemList = lib.buildItemListEntity(listItems, 'Calpulli CDMX Tours')
   if (itemList.itemListElement.length !== tours.length) {
     errors.push(`ItemList tiene ${itemList.itemListElement.length} items, esperado ${tours.length}`)
   }

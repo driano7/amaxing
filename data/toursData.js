@@ -1,4 +1,4 @@
-// Tours de Amaxing — todos operan en la Ciudad de México (CDMX), ciudad de lanzamiento.
+// Tours de Calpulli CDMX — todos operan en la Ciudad de México (CDMX), ciudad de lanzamiento.
 // Los campos `title`, `tagline`, `description`, `highlights`, `includes`, `itinerary`,
 // `location` y `meetingPoint` son el idioma por defecto (inglés); los campos `*Es`
 // son la traducción al español. Los consumidores (chatbot, carrito) usan los campos

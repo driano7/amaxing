@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 
-const ANALYTICS_KEY = 'amaxing_page_analytics'
+const ANALYTICS_KEY = 'calpulli_page_analytics'
 const MAX_ENTRIES = 2000
 const FLUSH_INTERVAL_MS = 10000
 
@@ -16,8 +16,8 @@ export interface PageAnalyticsEntry {
 function getSessionUserId(): string | null {
   if (typeof window === 'undefined') return null
   try {
-    // Intentar múltiples claves (el auth real usa authUser, legacy amaxing_auth, user_id)
-    const keys = ['authUser', 'amaxing_auth', 'amaxing_user_id', 'user_id']
+    // Intentar múltiples claves (el auth real usa authUser, legacy calpulli_auth, user_id)
+    const keys = ['authUser', 'calpulli_auth', 'calpulli_user_id', 'user_id']
     for (const k of keys) {
       const raw = localStorage.getItem(k)
       if (!raw) continue

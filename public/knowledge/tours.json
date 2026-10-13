@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-11T19:31:02.632Z",
   "meta": {
     "version": "1.0.0",
-    "source": "amaxing/amaxing data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
+    "source": "calpulli/calpulli data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
     "license": "MIT — ver LICENSE del repositorio",
     "generatedAt": "2026-10-11T19:31:02.626Z"
   },
@@ -15,7 +15,7 @@
       "id": "tour:1",
       "type": "Tour",
       "url": "/tours/1",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/1",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/1",
       "name": {
         "es": "Secretos de la Comida Callejera del Centro Histórico",
         "en": "Street Food Secrets of the Historic Center"
@@ -48,7 +48,7 @@
       "id": "tour:2",
       "type": "Tour",
       "url": "/tours/2",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/2",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/2",
       "name": {
         "es": "Clase de Mole y Chocolate en Coyoacán",
         "en": "Mole & Chocolate Cooking Class in Coyoacán"
@@ -81,7 +81,7 @@
       "id": "tour:3",
       "type": "Tour",
       "url": "/tours/3",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/3",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/3",
       "name": {
         "es": "Cata de Mezcal y Pulque: Las Bebidas del México Antiguo",
         "en": "Mezcal & Pulque Tasting: The Drinks of Old Mexico"
@@ -114,7 +114,7 @@
       "id": "tour:4",
       "type": "Tour",
       "url": "/tours/4",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/4",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/4",
       "name": {
         "es": "Templo Mayor y el Inframundo Azteca",
         "en": "Templo Mayor & the Aztec Underworld"
@@ -147,7 +147,7 @@
       "id": "tour:5",
       "type": "Tour",
       "url": "/tours/5",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/5",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/5",
       "name": {
         "es": "Palacio de Bellas Artes y los Muralistas",
         "en": "Palacio de Bellas Artes & the Muralists"
@@ -180,7 +180,7 @@
       "id": "tour:6",
       "type": "Tour",
       "url": "/tours/6",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/6",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/6",
       "name": {
         "es": "Castillo de Chapultepec y Paseo de la Reforma",
         "en": "Chapultepec Castle & Reforma Avenue"
@@ -213,7 +213,7 @@
       "id": "tour:7",
       "type": "Tour",
       "url": "/tours/7",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/7",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/7",
       "name": {
         "es": "Coyoacán: Frida, Diego y el Alma Bohemia",
         "en": "Coyoacán: Frida, Diego & the Bohemian Soul"
@@ -246,7 +246,7 @@
       "id": "tour:8",
       "type": "Tour",
       "url": "/tours/8",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/8",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/8",
       "name": {
         "es": "Roma y Condesa: Art Decó y Cultura de Cafés",
         "en": "Roma & Condesa: Art Deco and Café Culture"
@@ -279,7 +279,7 @@
       "id": "tour:9",
       "type": "Tour",
       "url": "/tours/9",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/9",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/9",
       "name": {
         "es": "Xochimilco: Trajineras y Jardines Flotantes",
         "en": "Xochimilco: Trajineras & Floating Gardens"
@@ -312,7 +312,7 @@
       "id": "tour:10",
       "type": "Tour",
       "url": "/tours/10",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/10",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/10",
       "name": {
         "es": "Masterclass en el Museo Nacional de Antropología",
         "en": "National Museum of Anthropology Masterclass"
@@ -345,7 +345,7 @@
       "id": "tour:11",
       "type": "Tour",
       "url": "/tours/11",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/11",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/11",
       "name": {
         "es": "Arte Moderno y la Colección Tamayo",
         "en": "Modern Art & the Tamayo Collection"
@@ -378,7 +378,7 @@
       "id": "tour:12",
       "type": "Tour",
       "url": "/tours/12",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/tours/12",
+      "absoluteUrl": "https://donovan-amx.vercel.app/tours/12",
       "name": {
         "es": "MUAC y el Circuito de Arte Contemporáneo",
         "en": "MUAC & Contemporary Art Circuit"

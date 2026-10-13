@@ -39,12 +39,12 @@ const baseHtml = (title: string, body: string) => `<!DOCTYPE html>
   <div style="padding:24px;">
     <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;">
       <div style="text-align:center;margin-bottom:20px;">
-        <h1 style="margin:0;font-size:24px;color:#DE1D8D;">Amaxing</h1>
+        <h1 style="margin:0;font-size:24px;color:#DE1D8D;">Calpulli CDMX</h1>
         <p style="margin:4px 0 0;font-size:12px;color:#6b7280;letter-spacing:0.1em;text-transform:uppercase;">Experiencias en CDMX</p>
       </div>
       <h2 style="margin:0 0 16px;font-size:22px;">${escapeHtml(title)}</h2>
       <div style="font-size:14px;color:#1f2937;">${body}</div>
-      <p style="margin-top:24px;font-size:12px;color:#6b7280;">Amaxing — El abrazo de la ciudad que amamos.<br/>Si tienes dudas, responde a este correo o escríbenos por WhatsApp: +52 55 1229 1607</p>
+      <p style="margin-top:24px;font-size:12px;color:#6b7280;">Calpulli CDMX — El abrazo de la ciudad que amamos.<br/>Si tienes dudas, responde a este correo o escríbenos por WhatsApp: +52 55 1229 1607</p>
     </div>
   </div>
 </body>
@@ -118,7 +118,7 @@ export const buildBookingConfirmationTemplate = (input: {
         `<p style="margin-top:16px;"><strong>Total: ${escapeHtml(input.total)}</strong></p>`,
         input.isCash
           ? ''
-          : `<p style="margin-top:12px;"><a href="https://amaxing.com/profile" style="display:inline-block;padding:10px 16px;background:#DE1D8D;color:#fff;text-decoration:none;border-radius:8px;">Ver mis tickets</a></p>`,
+          : `<p style="margin-top:12px;"><a href="https://calpulli.com/profile" style="display:inline-block;padding:10px 16px;background:#DE1D8D;color:#fff;text-decoration:none;border-radius:8px;">Ver mis tickets</a></p>`,
       ].join('')
     ),
   } satisfies MailTemplate
@@ -179,7 +179,7 @@ export const buildBookingAdminNotificationTemplate = (input: {
 }
 
 export const buildPasswordResetTemplate = (input: { resetUrl: string; expiresAt: string }) => {
-  const title = 'Recupera tu contraseña - Amaxing'
+  const title = 'Recupera tu contraseña - Calpulli CDMX'
   const expires = new Date(input.expiresAt).toLocaleString('es-MX', {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -210,31 +210,31 @@ export const buildPasswordResetTemplate = (input: { resetUrl: string; expiresAt:
 }
 
 export const buildPasswordChangedTemplate = () => {
-  const title = 'Tu contraseña fue actualizada - Amaxing'
+  const title = 'Tu contraseña fue actualizada - Calpulli CDMX'
   return {
     key: 'password_changed',
     variables: {},
     subject: title,
-    text: 'Tu contraseña se actualizó correctamente. Si no reconoces este cambio, contacta a Amaxing de inmediato.',
+    text: 'Tu contraseña se actualizó correctamente. Si no reconoces este cambio, contacta a Calpulli CDMX de inmediato.',
     html: baseHtml(
       title,
-      '<p>Tu contraseña se actualizó correctamente.</p><p>Si no reconoces este cambio, contacta a Amaxing de inmediato por WhatsApp.</p>'
+      '<p>Tu contraseña se actualizó correctamente.</p><p>Si no reconoces este cambio, contacta a Calpulli CDMX de inmediato por WhatsApp.</p>'
     ),
   } satisfies MailTemplate
 }
 
 export const buildWelcomeTemplate = (input: { name: string }) => {
-  const title = '¡Bienvenido a Amaxing!'
+  const title = '¡Bienvenido a Calpulli CDMX!'
   return {
     key: 'welcome',
     variables: { name: input.name },
     subject: title,
-    text: `Hola ${input.name}, tu cuenta fue creada correctamente en Amaxing. ¡Estamos listos para crear recuerdos inolvidables contigo!`,
+    text: `Hola ${input.name}, tu cuenta fue creada correctamente en Calpulli CDMX. ¡Estamos listos para crear recuerdos inolvidables contigo!`,
     html: baseHtml(
       title,
       `<p>Hola <strong>${escapeHtml(
         input.name
-      )}</strong>,</p><p>Tu cuenta fue creada correctamente en Amaxing. ¡Estamos listos para crear recuerdos inolvidables contigo!</p><p><a href="https://amaxing.com/tours" style="display:inline-block;padding:10px 16px;background:#DE1D8D;color:#fff;text-decoration:none;border-radius:8px;">Explorar tours</a></p>`
+      )}</strong>,</p><p>Tu cuenta fue creada correctamente en Calpulli CDMX. ¡Estamos listos para crear recuerdos inolvidables contigo!</p><p><a href="https://calpulli.com/tours" style="display:inline-block;padding:10px 16px;background:#DE1D8D;color:#fff;text-decoration:none;border-radius:8px;">Explorar tours</a></p>`
     ),
   } satisfies MailTemplate
 }

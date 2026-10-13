@@ -1,10 +1,10 @@
 /**
- * Amaxing Assistant — pages/api/chatbot.js
+ * Calpulli CDMX Assistant — pages/api/chatbot.js
  * Endpoint que conversa con OpenRouter recomendando tours de México
  * basado en el catálogo de tours y las preferencias registradas por el usuario.
  * Adaptado del patrón de EarningsAI (app/api/dashboard/chat/route.ts).
  */
-import { amaxingChat } from '@/lib/openrouter'
+import { calpulliChat } from '@/lib/openrouter'
 import { tours } from '@/data/toursData'
 import { checkRateLimit, limits } from '@/lib/utils/rateLimiter'
 
@@ -207,7 +207,7 @@ Reglas: máx 2-3 párrafos + lista estructurada si recomiendas tour. Tono del pu
       { role: 'user', content: message },
     ]
 
-    const reply = await amaxingChat({ messages, maxTokens: 900, temperature: 0.4 })
+    const reply = await calpulliChat({ messages, maxTokens: 900, temperature: 0.4 })
 
     return res.status(200).json({
       reply,

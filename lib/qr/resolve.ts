@@ -2,7 +2,7 @@ import { type ResolvedQr, type ResolvedBooking, type ResolvedClient } from './ty
 import { Booking } from '@/lib/booking/types'
 import { MOCK_SCANNABLE_BOOKINGS } from '@/lib/mocks/socioData'
 
-const BOOKINGS_KEY = 'amaxing_bookings'
+const BOOKINGS_KEY = 'calpulli_bookings'
 
 function getStoredBookings(): Booking[] {
   if (typeof window === 'undefined') return []
@@ -63,7 +63,7 @@ export function resolveClientQr(code: string): ResolvedClient | null {
       clientId: 'D4R1A',
       firstName: 'Donovan',
       lastName: 'Riaño',
-      email: 'donovan@amaxing.com',
+      email: 'donovan@calpulli.com',
       phone: '+52 55 5122 9160',
     },
     ANA01: {
@@ -88,7 +88,7 @@ export function resolveClientQr(code: string): ResolvedClient | null {
       clientId: 'DEMO',
       firstName: 'Cliente',
       lastName: 'Demo',
-      email: 'cliente@amaxing.com',
+      email: 'cliente@calpulli.com',
       phone: '+52 55 0000 0000',
     },
   }

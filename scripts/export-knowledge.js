@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // Genera exports públicos derivados de la fuente de verdad (lib/knowledge).
 // Uso: npm run knowledge:export  →  public/knowledge/*.json
 // No hay mantenimiento manual: todo se deriva en cada ejecución.
@@ -47,7 +47,7 @@ const dump = {
 };
 console.log(JSON.stringify(dump));
 `
-  const tmpEntry = path.join(os.tmpdir(), `amaxing-kg-export-${Date.now()}.mjs`)
+  const tmpEntry = path.join(os.tmpdir(), `Calpulli CDMX-kg-export-${Date.now()}.mjs`)
   fs.writeFileSync(tmpEntry, entry)
   try {
     const result = await esbuild.build({

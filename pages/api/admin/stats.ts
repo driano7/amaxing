@@ -1,16 +1,20 @@
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
+// GET /api/admin/stats — Real stats from Turso
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSessionFromRequest, resolveRole } from '@/lib/roles'
+import { turso } from '@/lib/turso'
+import { BRAND } from '@/lib/brand'
 
 /**
  * GET /api/admin/stats
  * Métricas del panel. Admin: totales completos. Empleado: métricas operativas del día.
  */
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ success: false, message: 'Method not allowed' })
   }
 
-  const session = getSessionFromRequest(req)
+  const session = await getSessionFromRequest(req)
   if (!session || !session.email) {
     return res.status(401).json({ success: false, message: 'No autenticado' })
   }
@@ -20,63 +24,75 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(403).json({ success: false, message: 'Sin permisos' })
   }
 
-  // Mocks — al conectar Supabase se reemplazan por agregaciones reales
-  const adminStats = {
-    totalUsers: 342,
-    totalBookings: 891,
-    totalRevenue: 2145800,
-    activeTours: 12,
-    usersByMonth: [
-      { label: 'mar', value: 28 },
-      { label: 'abr', value: 35 },
-      { label: 'may', value: 41 },
-      { label: 'jun', value: 38 },
-      { label: 'jul', value: 52 },
-      { label: 'ago', value: 61 },
-    ],
-    bookingsByCategory: [
-      { label: 'Gastronomía', value: 320 },
-      { label: 'Historia', value: 240 },
-      { label: 'Barrios', value: 190 },
-      { label: 'Museos', value: 141 },
-    ],
-    recentAudit: [
-      {
-        action: 'decrypt_field',
-        actor: 'admin@amaxing.mx',
-        target: 'ana.r•••',
-        at: '2025-08-24T18:22:00Z',
-      },
-      {
-        action: 'grant_role',
-        actor: 'admin@amaxing.mx',
-        target: 'empleado2@amaxing.mx',
-        at: '2025-08-23T11:05:00Z',
-      },
-      {
-        action: 'export_gdpr',
-        actor: 'admin@amaxing.mx',
-        target: 'maria.g•••',
-        at: '2025-08-21T09:40:00Z',
-      },
-    ],
-  }
+  try {
+    // Fetch real stats from Turso
+    const [
+      totalUsersResult,
+      totalBookingsResult,
+      totalRevenueResult,
+      activeToursResult,
+      usersByMonthResult,
+      bookingsByCategoryResult,
+      recentAuditResult,
+    ] = await Promise.all([
+      turso.execute({
+        sql: `SELECT COUNT(*) as count FROM users WHERE role = 'customer'`,
+      }),
+      turso.execute({
+        sql: `SELECT COUNT(*) as count FROM bookings WHERE status IN ('confirmed', 'paid', 'completed')`,
+      }),
+      turso.execute({
+        sql: `SELECT COALESCE(SUM(total_amount), 0) as total FROM bookings WHERE status IN ('confirmed', 'paid', 'completed')`,
+      }),
+      turso.execute({
+        sql: `SELECT COUNT(*) as count FROM experiences WHERE "isActive" = 1`,
+      }),
+      turso.execute({
+        sql: `SELECT strftime('%m', created_at) as month, COUNT(*) as count FROM users WHERE role = 'customer' AND created_at >= date('now', '-6 months') GROUP BY month ORDER BY month`,
+      }),
+      turso.execute({
+        sql: `SELECT e.category_id as category, COUNT(b.id) as count FROM bookings b JOIN experiences e ON b.experience_id = e.id WHERE b.status IN ('confirmed', 'paid', 'completed') GROUP BY e.category_id`,
+      }),
+      turso.execute({
+        sql: `SELECT actor_email, action, target_email, created_at FROM access_audit_logs ORDER BY created_at DESC LIMIT 10`,
+      }),
+    ])
 
-  const employeeStats = {
-    toursToday: 4,
-    guestsToday: 38,
-    checkinsPending: 6,
-    toursThisWeek: 19,
-    upcomingTours: [
-      { time: '09:00', title: 'Ruta del Jaguar en Baja', guests: 12 },
-      { time: '11:30', title: 'Historia Viva: Centro Histórico', guests: 8 },
-      { time: '16:00', title: 'Barrios Mágicos: Roma y Condesa', guests: 10 },
-      { time: '18:30', title: 'Sabores de Oaxaca', guests: 8 },
-    ],
-  }
+    const adminStats = {
+      totalUsers: Number(totalUsersResult.rows[0]?.count) || 0,
+      totalBookings: Number(totalBookingsResult.rows[0]?.count) || 0,
+      totalRevenue: Number(totalRevenueResult.rows[0]?.total) || 0,
+      activeTours: Number(activeToursResult.rows[0]?.count) || 0,
+      usersByMonth: usersByMonthResult.rows.map((row: any) => ({
+        label: row.month,
+        value: Number(row.count) || 0,
+      })),
+      bookingsByCategory: bookingsByCategoryResult.rows.map((row: any) => ({
+        label: row.category,
+        value: Number(row.count) || 0,
+      })),
+      recentAudit: recentAuditResult.rows.map((row: any) => ({
+        action: row.action,
+        actor: row.actor_email,
+        target: row.target_email,
+        at: row.created_at,
+      })),
+    }
 
-  return res.status(200).json({
-    success: true,
-    data: role === 'admin' ? adminStats : employeeStats,
-  })
+    const employeeStats = {
+      toursToday: 0, // TODO: implement from Turso
+      guestsToday: 0,
+      checkinsPending: 0,
+      toursThisWeek: 0,
+      upcomingTours: [],
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: role === 'admin' ? adminStats : employeeStats,
+    })
+  } catch (error) {
+    console.error('Admin stats error:', error)
+    return res.status(500).json({ success: false, error: 'Failed to fetch stats' })
+  }
 }

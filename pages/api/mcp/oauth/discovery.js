@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/mcp/oauth/discovery — Authorization Server Metadata (RFC 8414) + RFC 8707
 import { getAuthorizationServerMetadata } from '@/lib/mcp/oauth'
 

@@ -175,7 +175,7 @@ export function VirtualTicket({
             </button>
           </div>
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-center">
-            <div className="font-serif text-2xl font-bold text-white">Amaxing</div>
+            <div className="font-serif text-2xl font-bold text-white">Calpulli CDMX</div>
             <p className="text-xs text-white/80">Exclusive Mexico Experiences</p>
           </div>
         </div>

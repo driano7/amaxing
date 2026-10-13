@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // OAuth 2.1 Tests — Run with: node --test mcp/tests/oauth.test.js
 const { test, before, after, describe } = require('node:test')
 const assert = require('node:assert')

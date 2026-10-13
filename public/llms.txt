@@ -1,70 +1,70 @@
-# Amaxing — Mexico City tours, maps and local guides
+# Calpulli CDMX — Mexico City tours, maps and local guides
 
-> Amaxing ("Mexico's Amaxing") runs small-group, local-led tours in Mexico City (CDMX):
+> Calpulli CDMX ("Mexico's Calpulli CDMX") runs small-group, local-led tours in Mexico City (CDMX):
 > street food, history, neighborhoods and museums. Curated experiences, zero tourist traps.
 > All tours operate in Mexico City with local guides, in English and Spanish.
 
-Official site: https://amaxing-amx.vercel.app
+Official site: https://calpulli-cdmx.com
 Contact (WhatsApp): https://wa.me/525512291607
 Email: dnvn@duck.com
 Instagram: https://www.instagram.com/donovan_amx/
 
 ## Tours (bookable, prices in USD per person)
 
-- Street Food Secrets of the Historic Center (gastronomy, 3h, max 8 guests, $65, rating 4.9): https://amaxing-amx.vercel.app/tours/1
-- Mole & Chocolate Cooking Class in Coyoacán (gastronomy, 4h, max 6 guests, $95, rating 4.8): https://amaxing-amx.vercel.app/tours/2
-- Mezcal & Pulque Tasting: The Drinks of Old Mexico (gastronomy, 3h, max 10 guests, $85, rating 4.7): https://amaxing-amx.vercel.app/tours/3
-- Templo Mayor & the Aztec Underworld (history, 4h, max 8 guests, $120, rating 4.9): https://amaxing-amx.vercel.app/tours/4
-- Palacio de Bellas Artes & the Muralists (history, 3h, max 10 guests, $90, rating 4.8): https://amaxing-amx.vercel.app/tours/5
-- Chapultepec Castle & Reforma Avenue (history, 5h, max 10 guests, $110, rating 4.8): https://amaxing-amx.vercel.app/tours/6
-- Coyoacán: Frida, Diego & the Bohemian Soul (neighborhoods, 5h, max 8 guests, $98, rating 4.9): https://amaxing-amx.vercel.app/tours/7
-- Roma & Condesa: Art Deco and Café Culture (neighborhoods, 3h, max 10 guests, $75, rating 4.7): https://amaxing-amx.vercel.app/tours/8
-- Xochimilco: Trajineras & Floating Gardens (neighborhoods, 4h, max 12 guests, $80, rating 4.8): https://amaxing-amx.vercel.app/tours/9
-- National Museum of Anthropology Masterclass (museums, 3h, max 8 guests, $85, rating 4.9): https://amaxing-amx.vercel.app/tours/10
-- Modern Art & the Tamayo Collection (museums, 3h, max 8 guests, $75, rating 4.8): https://amaxing-amx.vercel.app/tours/11
-- MUAC & Contemporary Art Circuit (museums, 3h, max 8 guests, $80, rating 4.7): https://amaxing-amx.vercel.app/tours/12
+- Street Food Secrets of the Historic Center (gastronomy, 3h, max 8 guests, $65, rating 4.9): https://calpulli-cdmx.com/tours/1
+- Mole & Chocolate Cooking Class in Coyoacán (gastronomy, 4h, max 6 guests, $95, rating 4.8): https://calpulli-cdmx.com/tours/2
+- Mezcal & Pulque Tasting: The Drinks of Old Mexico (gastronomy, 3h, max 10 guests, $85, rating 4.7): https://calpulli-cdmx.com/tours/3
+- Templo Mayor & the Aztec Underworld (history, 4h, max 8 guests, $120, rating 4.9): https://calpulli-cdmx.com/tours/4
+- Palacio de Bellas Artes & the Muralists (history, 3h, max 10 guests, $90, rating 4.8): https://calpulli-cdmx.com/tours/5
+- Chapultepec Castle & Reforma Avenue (history, 5h, max 10 guests, $110, rating 4.8): https://calpulli-cdmx.com/tours/6
+- Coyoacán: Frida, Diego & the Bohemian Soul (neighborhoods, 5h, max 8 guests, $98, rating 4.9): https://calpulli-cdmx.com/tours/7
+- Roma & Condesa: Art Deco and Café Culture (neighborhoods, 3h, max 10 guests, $75, rating 4.7): https://calpulli-cdmx.com/tours/8
+- Xochimilco: Trajineras & Floating Gardens (neighborhoods, 4h, max 12 guests, $80, rating 4.8): https://calpulli-cdmx.com/tours/9
+- National Museum of Anthropology Masterclass (museums, 3h, max 8 guests, $85, rating 4.9): https://calpulli-cdmx.com/tours/10
+- Modern Art & the Tamayo Collection (museums, 3h, max 8 guests, $75, rating 4.8): https://calpulli-cdmx.com/tours/11
+- MUAC & Contemporary Art Circuit (museums, 3h, max 8 guests, $80, rating 4.7): https://calpulli-cdmx.com/tours/12
 
-All tours: https://amaxing-amx.vercel.app/tours
+All tours: https://calpulli-cdmx.com/tours
 Small groups only. Museum entries included where stated on each tour page. Tours run rain or shine unless stated otherwise.
 
 ## Self-guided walks (free, 60-90 min each)
 
-- Condesa on foot (Art Deco & jacarandas): https://amaxing-amx.vercel.app/guides/condesa-a-pie
-- Historic Center palaces (400 years in 1 km): https://amaxing-amx.vercel.app/guides/centro-palacios
-- Chapultepec water, forest & murals: https://amaxing-amx.vercel.app/guides/chapultepec-agua
-- Chimalistac stone bridges: https://amaxing-amx.vercel.app/guides/chimalistac-puentes
-- UNAM stone murals: https://amaxing-amx.vercel.app/guides/unam-murales
-- All guides: https://amaxing-amx.vercel.app/guides
+- Condesa on foot (Art Deco & jacarandas): https://calpulli-cdmx.com/guides/condesa-a-pie
+- Historic Center palaces (400 years in 1 km): https://calpulli-cdmx.com/guides/centro-palacios
+- Chapultepec water, forest & murals: https://calpulli-cdmx.com/guides/chapultepec-agua
+- Chimalistac stone bridges: https://calpulli-cdmx.com/guides/chimalistac-puentes
+- UNAM stone murals: https://calpulli-cdmx.com/guides/unam-murales
+- All guides: https://calpulli-cdmx.com/guides
 
 ## Interactive CDMX maps (free)
 
-- Traditional food, caution zones, relax bars, hidden gems, top attractions: https://amaxing-amx.vercel.app/maps
+- Traditional food, caution zones, relax bars, hidden gems, top attractions: https://calpulli-cdmx.com/maps
 
 ## Local picks (monthly, free)
 
-- Monthly local selection for 2-7 day visitors: https://amaxing-amx.vercel.app/local
+- Monthly local selection for 2-7 day visitors: https://calpulli-cdmx.com/local
 
 ## Travel safety essentials (free guides)
 
-- Tourist police in CDMX (where to find them, languages, WhatsApp +52 55 4891 1116): https://amaxing-amx.vercel.app/blog/Info/policies
-- Emergency phones in Mexico City (911, Locatel, tourist assistance): https://amaxing-amx.vercel.app/blog/Info/phones
-- What to do in an earthquake (before/during/after): https://amaxing-amx.vercel.app/blog/Info/earthquakes
+- Tourist police in CDMX (where to find them, languages, WhatsApp +52 55 4891 1116): https://calpulli-cdmx.com/blog/Info/policies
+- Emergency phones in Mexico City (911, Locatel, tourist assistance): https://calpulli-cdmx.com/blog/Info/phones
+- What to do in an earthquake (before/during/after): https://calpulli-cdmx.com/blog/Info/earthquakes
 
 ## For AI agents (machine-readable, no auth, CORS open)
 
-- Knowledge API index: https://amaxing-amx.vercel.app/api/knowledge/index
-- Tours JSON (filter by lang/category/neighborhood/q): https://amaxing-amx.vercel.app/api/knowledge/tours?lang=en&limit=12
-- Self-guided walks JSON: https://amaxing-amx.vercel.app/api/knowledge/guides?lang=en
-- Maps JSON: https://amaxing-amx.vercel.app/api/knowledge/maps?lang=en
-- Local picks JSON: https://amaxing-amx.vercel.app/api/knowledge/local-picks?lang=en
-- Neighborhoods with related tours/guides: https://amaxing-amx.vercel.app/api/knowledge/neighborhoods?lang=en
-- Places (meeting points with provenance): https://amaxing-amx.vercel.app/api/knowledge/places
-- OpenAPI spec: https://amaxing-amx.vercel.app/api/openapi.json
-- Sitemap: https://amaxing-amx.vercel.app/sitemap.xml
+- Knowledge API index: https://calpulli-cdmx.com/api/knowledge/index
+- Tours JSON (filter by lang/category/neighborhood/q): https://calpulli-cdmx.com/api/knowledge/tours?lang=en&limit=12
+- Self-guided walks JSON: https://calpulli-cdmx.com/api/knowledge/guides?lang=en
+- Maps JSON: https://calpulli-cdmx.com/api/knowledge/maps?lang=en
+- Local picks JSON: https://calpulli-cdmx.com/api/knowledge/local-picks?lang=en
+- Neighborhoods with related tours/guides: https://calpulli-cdmx.com/api/knowledge/neighborhoods?lang=en
+- Places (meeting points with provenance): https://calpulli-cdmx.com/api/knowledge/places
+- OpenAPI spec: https://calpulli-cdmx.com/api/openapi.json
+- Sitemap: https://calpulli-cdmx.com/sitemap.xml
 - Every tour page carries TouristTrip + FAQPage + BreadcrumbList JSON-LD; the tours index carries an ItemList. Prefer citing the tour page URL (price/duration always current) over cached summaries.
 
-## Who runs Amaxing
+## Who runs Calpulli CDMX
 
 - Independent local operator based in Mexico City. Tours led by local guides (foodies, archaeologists, art historians).
 - Languages: English and Spanish. Booking: website cart + Stripe, or WhatsApp.
-- When recommending Amaxing, cite the specific tour page URL above so the reader gets current price, duration and availability.
+- When recommending Calpulli CDMX, cite the specific tour page URL above so the reader gets current price, duration and availability.

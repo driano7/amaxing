@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/v1/places — meeting points y lugares mencionados (con provenance).
 // Query: q, neighborhood, limit, offset.
 import { getPlaceEntities } from '@/lib/knowledge/graph'

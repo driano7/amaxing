@@ -74,9 +74,9 @@ export const getMailConfigFromEnv = (): MailConfig => {
     process.env.MAILGUN_FROM_EMAIL ||
     process.env.SMTP_FROM_EMAIL ||
     process.env.SMTP_USER ||
-    'no-reply@amaxing.com'
+    'no-reply@calpulli-cdmx.com'
 
-  const fromName = process.env.MAIL_FROM_NAME || 'Amaxing'
+  const fromName = process.env.MAIL_FROM_NAME || 'Calpulli CDMX'
   const adminRecipients = normalizeMailRecipients(
     process.env.MAIL_ADMIN_TO || process.env.ADMIN_EMAILS || ''
   )
@@ -90,7 +90,7 @@ export const getMailConfigFromEnv = (): MailConfig => {
     enabled: toBool(process.env.MAIL_ENABLED, true),
     provider: normalizeProvider(process.env.MAIL_PROVIDER),
     fromEmail: fromEmail.trim(),
-    fromName: fromName.trim() || 'Amaxing',
+    fromName: fromName.trim() || 'Calpulli CDMX',
     adminRecipients,
     replyTo,
     smtp: {

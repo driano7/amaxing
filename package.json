@@ -24,6 +24,7 @@
     "@fontsource/playfair-display": "^4.0.3",
     "@giscus/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "@libsql/client": "^0.18.0",
     "@mailchimp/mailchimp_marketing": "^3.0.58",
     "@phosphor-icons/react": "^2.1.10",
     "@react-three/drei": "^9.122.0",

@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://amaxing-amx.vercel.app/knowledge/schemas/entity.json",
-  "title": "AmaxingKnowledgeEntity",
-  "description": "Base shape shared by every entity in Amaxing knowledge exports.",
+  "$id": "https://donovan-amx.vercel.app/knowledge/schemas/entity.json",
+  "title": "Calpulli CDMXKnowledgeEntity",
+  "description": "Base shape shared by every entity in Calpulli CDMX knowledge exports.",
   "type": "object",
   "required": ["id", "type", "url", "canonicalUrl", "@id", "name", "provenance", "relations"],
   "properties": {

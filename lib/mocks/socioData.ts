@@ -133,7 +133,7 @@ export const MOCK_SOCIO_BOOKINGS: BookingLite[] = [
   // Donovan — ocasional (1 reserva)
   {
     id: 'd1',
-    customerEmail: 'donovan@amaxing.com',
+    customerEmail: 'donovan@calpulli-cdmx.com',
     customerName: 'Donovan Riaño',
     experienceTitle: 'Lucha Libre: Noche de Campeones',
     category: 'cultura',
@@ -290,7 +290,7 @@ export const MOCK_ANALYTICS_ENTRIES: AnalyticsEntry[] = (() => {
   const users = [
     'maria@example.com',
     'ana@example.com',
-    'donovan@amaxing.com',
+    'donovan@calpulli-cdmx.com',
     null,
     null,
     'carlos@example.com',

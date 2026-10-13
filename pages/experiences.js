@@ -51,7 +51,7 @@ export default function Experiences() {
                       'Creamos tours a la medida: cuéntanos tus intereses, tiempos y grupo y diseñamos tu experiencia perfecta en CDMX.'}
                   </p>
                   <a
-                    href="https://wa.me/525512291607?text=Hola%20Amaxing%2C%20quiero%20un%20tour%20a%20la%20medida"
+                    href="https://wa.me/525512291607?text=Hola%20Calpulli CDMX%2C%20quiero%20un%20tour%20a%20la%20medida"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-1 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-[#9F0E7F] shadow-lg transition hover:bg-white/90"

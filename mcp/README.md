@@ -1,4 +1,4 @@
-# Amaxing MCP Server
+# Calpulli CDMX MCP Server
 
 Read-only MCP server for discovering, combining and planning tours in Mexico City.
 
@@ -56,15 +56,15 @@ No environment variables required. The server reads from the local knowledge gra
 
 ## Resources (9)
 
-- `amaxing://tours` — all tours
-- `amaxing://tours/{id}` — single tour
-- `amaxing://places/{id}` — single place
-- `amaxing://neighborhoods/{id}` — single neighborhood
-- `amaxing://itineraries/{id}` — single itinerary
-- `amaxing://taxonomies` — controlled vocabularies
-- `amaxing://knowledge-graph` — full graph index
-- `amaxing://data-policy` — attribution and use policy
-- `amaxing://attribution` — entity attribution
+- `Calpulli CDMX://tours` — all tours
+- `Calpulli CDMX://tours/{id}` — single tour
+- `Calpulli CDMX://places/{id}` — single place
+- `Calpulli CDMX://neighborhoods/{id}` — single neighborhood
+- `Calpulli CDMX://itineraries/{id}` — single itinerary
+- `Calpulli CDMX://taxonomies` — controlled vocabularies
+- `Calpulli CDMX://knowledge-graph` — full graph index
+- `Calpulli CDMX://data-policy` — attribution and use policy
+- `Calpulli CDMX://attribution` — entity attribution
 
 ## Prompts (5)
 
@@ -101,7 +101,7 @@ No environment variables required. The server reads from the local knowledge gra
   "result": {
     "schemaVersion": "1.0.0",
     "retrievedAt": "2026-10-11T19:25:53.902Z",
-    "attribution": "Amaxing — https://amaxing-amx.vercel.app",
+    "attribution": "Calpulli CDMX — https://Calpulli CDMX-amx.vercel.app",
     "data": [...],
     "appliedFilters": {...},
     "warnings": [],

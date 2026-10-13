@@ -34,7 +34,7 @@ const isMockMode = () => {
 const createMockSession = (items, customerEmail, customerName, locale, baseUrl) => {
   const sessionId = `mock_cs_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
   const metadata = {
-    source: 'amaxing-tours-checkout',
+    source: 'calpulli-tours-checkout',
     locale,
     ...(customerEmail ? { customer_email: customerEmail } : {}),
     ...(customerName ? { customer_name: customerName } : {}),
@@ -117,7 +117,7 @@ export default async function handler(req, res) {
     const stripe = getStripeClient()
 
     const metadata = {
-      source: 'amaxing-tours-checkout',
+      source: 'calpulli-tours-checkout',
       locale,
       ...(customerEmail ? { customer_email: customerEmail } : {}),
       ...(customerName ? { customer_name: customerName } : {}),

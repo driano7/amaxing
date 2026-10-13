@@ -154,7 +154,7 @@ export function FlipCard({
           <div className="mb-4 flex items-start justify-between gap-3 sm:mb-6">
             <div className="flex flex-col gap-1">
               <span className="text-[8px] uppercase tracking-[0.3em] text-slate-400 sm:text-[9px]">
-                Amaxing Pay
+                Calpulli CDMX Pay
               </span>
               <span
                 className={`text-[9px] font-semibold uppercase sm:text-xs ${
@@ -198,7 +198,7 @@ export function FlipCard({
           </div>
           <div className="mt-6 flex items-center justify-between opacity-80">
             <span className="text-[12px] font-semibold tracking-[0.35em]">Seguro</span>
-            <span className="text-[12px] tracking-[0.3em]">Amaxing</span>
+            <span className="text-[12px] tracking-[0.3em]">Calpulli CDMX</span>
           </div>
         </div>
       </div>

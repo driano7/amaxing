@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // POST /api/mcp/oauth/introspect — Token Introspection (RFC 7662)
 import { introspectToken, validateClient, getClientByClientId } from '@/lib/mcp/oauth'
 

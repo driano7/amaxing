@@ -418,7 +418,7 @@ export function AdvancedMetricsPanel({
   )
 }
 
-const AD_SPEND_KEY = 'amaxing_ad_spend_v1'
+const AD_SPEND_KEY = 'calpulli_ad_spend_v1'
 
 function loadAdSpend(): Record<string, number> {
   try {

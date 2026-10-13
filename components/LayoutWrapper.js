@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import siteMetadata from '@/data/siteMetadata'
 import Logo from '@/data/jaguarColor.svg'
 import Link from './Link'

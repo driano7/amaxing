@@ -1,5 +1,5 @@
 /**
- * ML-style metrics adapted from Xoco-POS for amaxing (tours platform).
+ * ML-style metrics adapted from Xoco-POS for calpulli (tours platform).
  * All computations are heuristic (no external ML libs):
  *  - k-means-like threshold clustering
  *  - linear revenue projection

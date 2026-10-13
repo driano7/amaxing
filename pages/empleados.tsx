@@ -23,47 +23,45 @@ import {
   Camera,
 } from 'lucide-react'
 
-const MOCK_TODAY = [
-  {
-    time: '09:00',
-    title: 'Ruta del Jaguar en Baja',
-    guests: 12,
-    client: 'M***a G.',
-    meetingPoint: 'Hotel Coral & Marina',
-    status: 'checked-in',
-  },
-  {
-    time: '11:30',
-    title: 'Historia Viva: Centro Histórico CDMX',
-    guests: 8,
-    client: 'J***a L.',
-    meetingPoint: 'Zócalo, frente a Catedral',
-    status: 'pending',
-  },
-  {
-    time: '16:00',
-    title: 'Barrios Mágicos: Roma y Condesa',
-    guests: 10,
-    client: 'A***z R.',
-    meetingPoint: 'Parque México',
-    status: 'pending',
-  },
-  {
-    time: '18:30',
-    title: 'Sabores de Oaxaca: Mercado 20 de Noviembre',
-    guests: 8,
-    client: 'M***a G.',
-    meetingPoint: 'Mercado 20 de Noviembre',
-    status: 'pending',
-  },
-]
-
 export default function EmployeePanel() {
   const { user, isLoading } = useAuth()
   const { currentLanguage } = useLanguage()
   const isEs = currentLanguage === 'es'
   const [roleResolved, setRoleResolved] = useState<'admin' | 'employee' | 'client' | null>(null)
-  const [tours, setTours] = useState(MOCK_TODAY)
+  const [tours, setTours] = useState<any[]>([])
+  const [loadingTours, setLoadingTours] = useState(true)
+
+  // Fetch real tours from the server (Turso) — never from the browser
+  useEffect(() => {
+    const fetchTours = async () => {
+      setLoadingTours(true)
+      try {
+        const token = localStorage.getItem('authToken')
+        const res = await fetch('/api/admin/tours', {
+          headers: { Authorization: token ? `Bearer ${token}` : '' },
+        })
+        if (!res.ok) throw new Error('Failed to fetch tours')
+        const json = await res.json()
+        const tours = (json.tours ?? []).map((t: any) => ({
+          id: t.id,
+          date: t.date,
+          time: String(t.date ?? '').slice(11, 16) || '09:00',
+          title: t.title,
+          guests: t.guests,
+          client: `${t.client?.name?.[0] ?? ''}***${t.client?.name?.slice(-1) ?? ''}.`,
+          location: t.location,
+          status: t.status === 'completed' ? 'checked-in' : 'pending',
+        }))
+        setTours(tours)
+      } catch (error) {
+        console.error('Failed to fetch tours:', error)
+        setTours([])
+      } finally {
+        setLoadingTours(false)
+      }
+    }
+    fetchTours()
+  }, [])
 
   useEffect(() => {
     const resolve = async () => {
@@ -71,16 +69,17 @@ export default function EmployeePanel() {
       try {
         const token = localStorage.getItem('authToken')
         const res = await fetch('/api/admin/me', {
-          headers: { Authorization: token ? `Bearer ${token}` : '', 'x-demo-email': user.email },
+          headers: { Authorization: token ? `Bearer ${token}` : '' },
         })
+        if (!res.ok) {
+          setRoleResolved('client')
+          return
+        }
         const json = await res.json()
         setRoleResolved(json?.data?.role ?? 'client')
-        return
       } catch {
-        /* demo */
+        setRoleResolved('client')
       }
-      // Demo local: cualquier usuario logueado previsualiza la vista de empleado
-      setRoleResolved('employee')
     }
     void resolve()
   }, [user])
@@ -325,7 +324,7 @@ export default function EmployeePanel() {
                             {isEs ? 'huéspedes' : 'guests'}
                           </span>
                           <span className="flex items-center gap-1">
-                            <MapPin className="h-3.5 w-3.5" /> {tour.meetingPoint}
+                            <MapPin className="h-3.5 w-3.5" /> {tour.location}
                           </span>
                         </div>
                       </div>

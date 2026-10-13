@@ -1,11 +1,11 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://amaxing-amx.vercel.app'
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://donovan-amx.vercel.app'
 
 const siteMetadata = {
-  title: "Mexico's Amaxing",
+  title: "Mexico's Calpulli CDMX",
   author: 'Donovan Riaño',
-  headerTitle: 'Amaxing',
+  headerTitle: 'Calpulli CDMX',
   description:
-    'Amaxing — tours y experiencias premium en la Ciudad de México. Rutas gastronómicas, historia, barrios y museos con guías locales, en inglés y español.',
+    'Calpulli CDMX — tours y experiencias premium en la Ciudad de México. Rutas gastronómicas, historia, barrios y museos con guías locales, en inglés y español.',
   language: 'es-419',
   theme: 'system', // system, dark or light
   siteUrl,
@@ -33,7 +33,7 @@ const siteMetadata = {
     // If you want to use an analytics provider you have to add it to the
     // content security policy in the `next.config.js` file.
     // supports plausible, simpleAnalytics, umami or googleAnalytics
-    plausibleDataDomain: 'amaxing-amx.vercel.app', // e.g. tailwind-nextjs-starter-blog.vercel.app
+    plausibleDataDomain: 'donovan-amx.vercel.app', // e.g. tailwind-nextjs-starter-blog.vercel.app
     simpleAnalytics: false, // true or false
     umamiWebsiteId: '', // e.g. 123e4567-e89b-12d3-a456-426614174000
     googleAnalyticsId: 'G-6XT6EFY1BL', // e.g. UA-000000-2 or G-XXXXXXX

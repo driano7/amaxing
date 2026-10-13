@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // POST /api/mcp/oauth/revoke — Token Revocation (RFC 7009)
 import { revokeToken, validateClient, getClientByClientId } from '@/lib/mcp/oauth'
 

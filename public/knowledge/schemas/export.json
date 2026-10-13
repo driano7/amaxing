@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://amaxing-amx.vercel.app/knowledge/schemas/export.json",
-  "title": "AmaxingKnowledgeExport",
+  "$id": "https://donovan-amx.vercel.app/knowledge/schemas/export.json",
+  "title": "Calpulli CDMXKnowledgeExport",
   "description": "Envelope for every file under /knowledge/*.json",
   "type": "object",
   "required": ["schemaVersion", "generatedAt", "entity", "total", "count", "data"],

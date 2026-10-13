@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/mcp/oauth/authorize — Authorization endpoint (RFC 6749 + PKCE RFC 7636)
 import {
   getClientByClientId,
@@ -208,7 +208,7 @@ function generateConsentPage({
         <small style="color: #666;">${client_id}</small>
       </div>
     </div>
-    <p>is requesting access to your Amaxing account.</p>
+    <p>is requesting access to your Calpulli CDMX account.</p>
     <div class="scope-list">
       <strong>Requested permissions:</strong><br>
       ${scope

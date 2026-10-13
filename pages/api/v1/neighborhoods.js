@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/v1/neighborhoods — barrios con tours y guías relacionados.
 // Query: lang, q, limit, offset.
 import { getNeighborhoodEntities } from '@/lib/knowledge/graph'

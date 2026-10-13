@@ -1,5 +1,5 @@
 /**
- * Amaxing Assistant — pages/api/chatbot/prefs.js
+ * Calpulli CDMX Assistant — pages/api/chatbot/prefs.js
  * Guarda las preferencias del onboarding del asistente en Supabase.
  * Como el onboarding se hace sin iniciar sesión, se almacena como registro
  * público (tabla `chatbot_prefs`, RLS con inserción anónima permitida).

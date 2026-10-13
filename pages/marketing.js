@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Head from 'next/head'
 import Link from '@/components/Link'
@@ -31,7 +31,7 @@ import {
   Check,
 } from 'lucide-react'
 
-const STORAGE_KEY = 'amaxing_marketing_map_v1'
+const STORAGE_KEY = 'calpulli_marketing_map_v1'
 const uid = () => Math.random().toString(36).slice(2, 9)
 const createEmptyTour = () => ({
   id: uid(),
@@ -186,7 +186,7 @@ export default function MarketingPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `amaxing-marketing-${(activeTour.name || 'tour')
+    a.download = `calpulli-marketing-${(activeTour.name || 'tour')
       .replace(/\s+/g, '-')
       .toLowerCase()}.json`
     a.click()
@@ -200,7 +200,7 @@ export default function MarketingPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `amaxing-marketing-${(t.name || 'tour').replace(/\s+/g, '-').toLowerCase()}.txt`
+    a.download = `calpulli-marketing-${(t.name || 'tour').replace(/\s+/g, '-').toLowerCase()}.txt`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -235,7 +235,7 @@ export default function MarketingPage() {
   return (
     <div className="min-h-screen bg-transparent">
       <Head>
-        <title>Mapa de Marketing | Amaxing</title>
+        <title>Mapa de Marketing | Calpulli CDMX</title>
         <meta
           name="description"
           content="Guía visual de comunicación y marketing — qué decir, cuándo y por qué canal, de TOFU a BOFU y post-venta."
@@ -278,8 +278,8 @@ export default function MarketingPage() {
               ))}
             </div>
             <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-gray-300">
-              No le hablamos igual a alguien que acaba de descubrir Amaxing que a alguien que ya
-              está listo para reservar. Este mapa explica{' '}
+              No le hablamos igual a alguien que acaba de descubrir Calpulli CDMX que a alguien que
+              ya está listo para reservar. Este mapa explica{' '}
               <strong>qué decir, por qué canal y qué queremos que haga después</strong> en cada
               momento.
             </p>
@@ -532,7 +532,7 @@ export default function MarketingPage() {
                   </tr>
                   <tr>
                     <td className="px-4 py-2 font-medium">Título SEO</td>
-                    <td className="px-4 py-2">Tour Amanecer en Xochimilco (3h) | Amaxing</td>
+                    <td className="px-4 py-2">Tour Amanecer en Xochimilco (3h) | Calpulli CDMX</td>
                   </tr>
                   <tr>
                     <td className="px-4 py-2 font-medium">H1</td>

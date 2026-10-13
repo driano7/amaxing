@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // POST /api/mcp/oauth/token — Token endpoint (RFC 6749 + RFC 7636 PKCE + RFC 8707)
 import {
   validateClient,

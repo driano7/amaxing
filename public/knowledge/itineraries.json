@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-11T19:31:02.633Z",
   "meta": {
     "version": "1.0.0",
-    "source": "amaxing/amaxing data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
+    "source": "calpulli/calpulli data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
     "license": "MIT — ver LICENSE del repositorio",
     "generatedAt": "2026-10-11T19:31:02.626Z"
   },
@@ -16,7 +16,7 @@
       "type": "Itinerary",
       "url": "/guides/condesa-a-pie",
       "alternateUrl": "/guides/condesa-walk",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/condesa-a-pie",
+      "absoluteUrl": "https://donovan-amx.vercel.app/guides/condesa-a-pie",
       "name": {
         "es": "Condesa a Pie — Art Deco & Jacarandas",
         "en": "Condesa Walk — Art Deco & Jacarandas"
@@ -41,7 +41,7 @@
       "type": "Itinerary",
       "url": "/guides/centro-palacios",
       "alternateUrl": "/guides/historic-center-palaces",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/centro-palacios",
+      "absoluteUrl": "https://donovan-amx.vercel.app/guides/centro-palacios",
       "name": {
         "es": "Centro de Palacios — 400 años en 1 km",
         "en": "Palace District — 400 Years in 1 km"
@@ -66,7 +66,7 @@
       "type": "Itinerary",
       "url": "/guides/chapultepec-agua",
       "alternateUrl": "/guides/chapultepec-agua",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/chapultepec-agua",
+      "absoluteUrl": "https://donovan-amx.vercel.app/guides/chapultepec-agua",
       "name": {
         "es": "Chapultepec II — Agua, Bosque y Murales",
         "en": "Chapultepec II — Water, Forest & Murals"
@@ -91,7 +91,7 @@
       "type": "Itinerary",
       "url": "/guides/chimalistac-puentes",
       "alternateUrl": "/guides/chimalistac-bridges",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/chimalistac-puentes",
+      "absoluteUrl": "https://donovan-amx.vercel.app/guides/chimalistac-puentes",
       "name": {
         "es": "Chimalistac — Puentes de Piedra y Acequias",
         "en": "Chimalistac — Stone Bridges & Canals"
@@ -116,7 +116,7 @@
       "type": "Itinerary",
       "url": "/guides/unam-murales",
       "alternateUrl": "/guides/unam-murals",
-      "absoluteUrl": "https://amaxing-amx.vercel.app/guides/unam-murales",
+      "absoluteUrl": "https://donovan-amx.vercel.app/guides/unam-murales",
       "name": {
         "es": "CU UNAM — Murales de Piedra",
         "en": "UNAM Campus — Stone Murals"

@@ -213,7 +213,7 @@ export function Navbar() {
           )}
         >
           <div className="flex shrink-0 items-center gap-2.5">
-            <Link href="/" className="group flex items-center" aria-label="Amaxing">
+            <Link href="/" className="group flex items-center" aria-label="Calpulli CDMX">
               <div
                 className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full transition-transform group-hover:rotate-6"
                 style={{
@@ -223,7 +223,7 @@ export function Navbar() {
               >
                 <Image
                   src="/static/images/jaguarBaja.png"
-                  alt="Amaxing"
+                  alt="Calpulli CDMX"
                   width={36}
                   height={36}
                   className="h-full w-full object-cover"
@@ -234,7 +234,7 @@ export function Navbar() {
               href="/"
               className="hidden font-serif text-lg font-bold tracking-wide text-zinc-900 transition-colors hover:text-orange-500 dark:text-white sm:block"
             >
-              Amaxing
+              Calpulli CDMX
             </Link>
           </div>
 

@@ -34,7 +34,7 @@ export function QrScanner({ onScan, onClose }: QrScannerProps) {
         manualLabel: 'Código manual',
         placeholder: 'AMX-T-7K9M2X o AMX-C-D4R1A',
         notIdentified: 'No pudimos identificar ese código. Intenta con otro.',
-        footer: 'Compatible con QRs de reservas y clientes de amaxing',
+        footer: 'Compatible con QRs de reservas y clientes de calpulli',
       }
     : {
         eyebrow: 'Code reader',
@@ -45,7 +45,7 @@ export function QrScanner({ onScan, onClose }: QrScannerProps) {
         manualLabel: 'Manual code',
         placeholder: 'AMX-T-7K9M2X or AMX-C-D4R1A',
         notIdentified: "We couldn't identify that code. Try another one.",
-        footer: 'Compatible with amaxing booking and client QRs',
+        footer: 'Compatible with calpulli booking and client QRs',
       }
 
   const processPayload = useCallback(

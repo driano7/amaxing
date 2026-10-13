@@ -1,5 +1,5 @@
 /**
- * Minimal QR codes for amaxing.
+ * Minimal QR codes for calpulli.
  *
  * Two types:
  *   AMX-T-{code}  → booking/ticket

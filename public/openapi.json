@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Amaxing Knowledge API",
+    "title": "Calpulli CDMX Knowledge API",
     "version": "1.0.0",
     "description": "Public read-only knowledge graph of Mexico City tours, walks, maps, local picks and neighborhoods. CORS open. No auth. Designed for LLMs and AI agents.",
     "contact": { "url": "https://wa.me/525512291607" },
     "license": { "name": "MIT" }
   },
-  "servers": [{ "url": "https://amaxing-amx.vercel.app" }],
+  "servers": [{ "url": "https://calpulli-cdmx.com" }],
   "paths": {
     "/api/knowledge/{entity}": {
       "get": {

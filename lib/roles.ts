@@ -1,8 +1,14 @@
 // Resolución de roles estilo Criptec: sets de emails en .env con fallback a BD.
-// ADMIN_EMAILS > EMPLOYEE_EMAILS > cliente (default).
+// ADMIN_EMAILS > EMPLOYEE_EMAILS > tabla user_roles > cliente (default).
 import type { NextApiRequest } from 'next'
+import { getSessionUser, type AuthUser } from '@/lib/auth'
 
 export type Role = 'admin' | 'employee' | 'client'
+
+// Cuentas.bootstrap: acceso inicial garantizado aunque falten las vars en Vercel.
+// Mover a ADMIN_EMAILS / EMPLOYEE_EMAILS en cuanto las variables existan en prod.
+const BOOTSTRAP_ADMINS = ['donovanriano@gmail.com']
+const BOOTSTRAP_EMPLOYEES = ['dnvn77@gmail.com']
 
 const toList = (raw: string | undefined): string[] =>
   (raw || '')
@@ -10,19 +16,12 @@ const toList = (raw: string | undefined): string[] =>
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean)
 
-export const getAdminEmails = (): string[] => {
-  const list = toList(process.env.ADMIN_EMAILS)
-  // Fallback demo: asegura que los emails de Donovan siempre resuelvan aunque falte env en Vercel
-  if (!list.includes('donovanriano@gmail.com')) list.push('donovanriano@gmail.com')
-  return list
-}
-export const getEmployeeEmails = (): string[] => {
-  const list = toList(process.env.EMPLOYEE_EMAILS)
-  if (!list.includes('dnvn77@gmail.com')) list.push('dnvn77@gmail.com')
-  // donovan también es empleado (admin implica empleado)
-  if (!list.includes('donovanriano@gmail.com')) list.push('donovanriano@gmail.com')
-  return list
-}
+export const getAdminEmails = (): string[] => [
+  ...new Set([...toList(process.env.ADMIN_EMAILS), ...BOOTSTRAP_ADMINS]),
+]
+export const getEmployeeEmails = (): string[] => [
+  ...new Set([...toList(process.env.EMPLOYEE_EMAILS), ...BOOTSTRAP_EMPLOYEES, ...BOOTSTRAP_ADMINS]),
+]
 
 const normalize = (email: string): string => (email || '').trim().toLowerCase()
 
@@ -51,31 +50,18 @@ export interface SessionUser {
 }
 
 /**
- * Extrae el usuario del request vía token Bearer.
- * En modo demo (sin Supabase auth conectado), acepta el header x-demo-email
- * para poder probar los paneles sin backend completo.
+ * Extrae el usuario autenticado del request vía token Bearer, validando la
+ * sesión contra Turso. No acepta headers de suplantación ni JWT sin verificar.
  */
-export function getSessionFromRequest(req: NextApiRequest): SessionUser | null {
-  // Modo demo/testing: header explícito (solo útil en desarrollo)
-  const demoEmail = req.headers['x-demo-email']
-  if (typeof demoEmail === 'string' && demoEmail.includes('@')) {
-    return { id: 'demo-user', email: normalize(demoEmail) }
-  }
-
+export async function getSessionFromRequest(req: NextApiRequest): Promise<SessionUser | null> {
   const authHeader = req.headers.authorization
   if (!authHeader?.startsWith('Bearer ')) return null
-  const token = authHeader.replace('Bearer ', '').trim()
+  const token = authHeader.slice(7).trim()
   if (!token) return null
 
-  try {
-    // Payload JWT sin verificar firma (verificación real requiere SUPABASE_JWT_SECRET).
-    // La firma se valida en producción vía Supabase; aquí solo decodificamos claims.
-    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'))
-    if (!payload.email && !payload.sub) return null
-    return { id: payload.sub || payload.id || '', email: normalize(payload.email || '') }
-  } catch {
-    return null
-  }
+  const user: AuthUser | null = await getSessionUser(token)
+  if (!user) return null
+  return { id: user.id, email: normalize(user.email) }
 }
 
 /** Permisos por rol — define qué puede ver/gestionar cada panel */
@@ -102,7 +88,7 @@ export function getPermissions(role: Role): RolePermissions {
         canViewBookings: true,
         canViewPayments: true,
         canExportGDPR: true,
-        canViewAdvancedMetrics: true, // socio = admin en amaxing
+        canViewAdvancedMetrics: true, // socio = admin en calpulli
       }
     case 'employee':
       return {

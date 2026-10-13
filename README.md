@@ -1,4 +1,4 @@
-# Amaxing
+# Calpulli CDMX
 
 Plataforma digital de turismo premium en México. Experiencias seleccionadas, guías de viaje, mapas interactivos, noticias de turismo generadas con IA y reservas, en inglés y español.
 
@@ -60,7 +60,7 @@ components/
 ├── tickets/             # VirtualTicket (dark mode) con QR minimalista AMX-T-
 ├── QrScanner.tsx        # Lector: cámara (BarcodeDetector/zxing) + código manual
 ├── CryptoPayment.tsx    # Modal cripto: QR por red + verificación on-chain polling
-├── SiteCookie.jsx       # Cookie amaxing_visited (30d) + localStorage + prefetch de imágenes críticas para retorno rápido
+├── SiteCookie.jsx       # Cookie calpulli_visited (30d) + localStorage + prefetch de imágenes críticas para retorno rápido
 ├── GdprBanner.tsx       # Banner privacidad i18n en home → /profile?tab=security
 ├── Particles.tsx        # Canvas partículas 200, accentRatio 0.25, color #DE1D8D, resolvedTheme aware, z-0
 ├── Background.jsx       # fixed inset-0 z-0 con Particles, fuera de SectionContainer para visibilidad en ambos temas
@@ -96,8 +96,8 @@ public/static/images/
 Los roles se resuelven por variables de entorno con efecto inmediato:
 
 ```env
-ADMIN_EMAILS=socio1@amaxing.com,socio2@amaxing.com   # socios (acceso total)
-EMPLOYEE_EMAILS=guia@amaxing.com                     # empleados
+ADMIN_EMAILS=socio1@calpulli.com,socio2@calpulli.com   # socios (acceso total)
+EMPLOYEE_EMAILS=guia@calpulli.com                     # empleados
 ```
 
 | Vista                                                | Cliente | Empleado | Socio (admin)     |
@@ -135,13 +135,13 @@ Visibles solo con rol admin en `/admin`. Modelos heurísticos (sin librerías ML
 - **Mejores horarios** (top 5 slots día+hora)
 - **Anomalías** z-score (demanda inusualmente alta/baja)
 - **Ticket promedio**, clientes activos, ingresos totales
-- **CAC por canal**: `computeCAC()` (`CAC = inversión ÷ clientes del canal`) con gasto manual por canal (`localStorage amaxing_ad_spend_v1`, input en el panel hasta integración Meta/Google Ads) + ROAS por canal
+- **CAC por canal**: `computeCAC()` (`CAC = inversión ÷ clientes del canal`) con gasto manual por canal (`localStorage calpulli_ad_spend_v1`, input en el panel hasta integración Meta/Google Ads) + ROAS por canal
 
 Sin datos reales muestra un dataset mock etiquetado «Datos demo».
 
 ## Analítica pasiva 🔒
 
-Tracking automático de visitas (sin cookies de terceros): sesiones, usuarios únicos, tiempo en página, rutas más visitadas, dispositivos/navegadores/OS (parseo de user-agent) y flujo de navegación entre páginas. **SiteCookie** añade `amaxing_visited` (30d, SameSite=Lax) + `localStorage amaxing_cache_v1` y prefetch de imágenes críticas (`/static/images/guides/condesa.jpg` etc.) para retorno rápido en todo el sitio.
+Tracking automático de visitas (sin cookies de terceros): sesiones, usuarios únicos, tiempo en página, rutas más visitadas, dispositivos/navegadores/OS (parseo de user-agent) y flujo de navegación entre páginas. **SiteCookie** añade `calpulli_visited` (30d, SameSite=Lax) + `localStorage calpulli_cache_v1` y prefetch de imágenes críticas (`/static/images/guides/condesa.jpg` etc.) para retorno rápido en todo el sitio.
 
 **Fuentes de tráfico incl. IA**: `classifyReferrer()` + `buildReferrerStats()` (`lib/analytics/ml-metrics.ts`) clasifican cada visita por `referrerUrl` en `ai` (chatgpt, perplexity, copilot, claude, gemini, grok, poe, you, phind), `search`, `social`, `email`, `referral`, `direct`. El panel muestra gráfica por canal, contador `Visitas desde IAs` y top-10 orígenes con badge AI (con PNG/CSV/XLSX).
 
@@ -165,7 +165,7 @@ Tracking automático de visitas (sin cookies de terceros): sesiones, usuarios ú
 `mcp/server.js` — servidor MCP especializado en descubrir, combinar y planificar tours en CDMX. Protocolo JSON-RPC 2.0 sobre stdio (MCP spec). Sin dependencias nuevas (usa `esbuild` ya existente para bundlear la capa de servicios).
 
 - **14 tools**: `search_tours`, `get_tour_details`, `match_tours_to_preferences`, `build_half_day_plan`, `build_day_plan`, `build_itinerary`, `combine_tours_and_places`, `find_activities_near`, `find_before_or_after_tour`, `suggest_for_time_available`, `suggest_for_location`, `suggest_for_weather`, `suggest_for_first_time_visitor`, `explain_recommendation`.
-- **9 resources**: `amaxing://tours`, `tours/{id}`, `places/{id}`, `neighborhoods/{id}`, `itineraries/{id}`, `taxonomies`, `knowledge-graph`, `data-policy`, `attribution`.
+- **9 resources**: `calpulli://tours`, `tours/{id}`, `places/{id}`, `neighborhoods/{id}`, `itineraries/{id}`, `taxonomies`, `knowledge-graph`, `data-policy`, `attribution`.
 - **5 prompts**: `plan-first-visit-to-cdmx`, `build-half-day-plan`, `combine-tour-with-nearby-activities`, `explain-tour-match`, `plan-around-existing-booking`.
 - **Tests**: `node --test mcp/tests/` — 18 tests (inputs válidos/inválidos, filtros incompatibles, datos faltantes, sin secretos, sin scores opacos, consistencia API↔MCP).
 - **Docs**: [`mcp/README.md`](mcp/README.md) — arquitectura, instalación, tools, resources, prompts, ejemplos, seguridad, limitaciones.
@@ -274,4 +274,4 @@ FRED (macros, opcional): `FRED` o `FRED_API_KEY`.
 
 ## Licencia
 
-MIT — ver [LICENSE](LICENSE). © 2024–2026 Donovan Riaño / Amaxing. Todos los nuevos archivos (`data/selfGuidesData.js`, `data/cdmxMapsData.js`, `components/InteractiveGuidesSplitScroll.jsx`, `components/CDMXInteractiveExperience.jsx`, `components/SiteCookie.jsx`, `components/Particles.tsx`, `public/static/images/guides/*`, `public/static/images/local-picks/*`, `data/guides/*.mdx`, `data/maps/*.mdx`, `data/local-picks/*.mdx`, `pages/guides/*`, `pages/maps/*`, `pages/local/*`, `lib/localPicks/*`, `lib/knowledge/graph.js`, `lib/knowledge/taxonomy.js`, `lib/knowledge/provenance.js`, `lib/knowledge/service.js`, `lib/booking/utm.ts`, `pages/api/knowledge/*`, `pages/api/v1/*`, `pages/sitemap.xml.js`, `public/llms.txt`, `public/llms-full.txt`, `public/openapi.json`, `public/knowledge/*`, `mcp/server.js`, `mcp/tests/*`, `scripts/export-knowledge.js`, `scripts/validate-knowledge.js`, `scripts/validate-jsonld.js`, `data/blog/mezcalPulqueCDMX.mdx`, `data/blog/guiaMezcalPulqueCDMX.mdx`, `data/blog/coyoacanBeyondFrida.mdx`, `data/blog/coyoacanMasAllaFrida.mdx`) bajo misma licencia MIT.
+MIT — ver [LICENSE](LICENSE). © 2024–2026 Donovan Riaño / Calpulli CDMX. Todos los nuevos archivos (`data/selfGuidesData.js`, `data/cdmxMapsData.js`, `components/InteractiveGuidesSplitScroll.jsx`, `components/CDMXInteractiveExperience.jsx`, `components/SiteCookie.jsx`, `components/Particles.tsx`, `public/static/images/guides/*`, `public/static/images/local-picks/*`, `data/guides/*.mdx`, `data/maps/*.mdx`, `data/local-picks/*.mdx`, `pages/guides/*`, `pages/maps/*`, `pages/local/*`, `lib/localPicks/*`, `lib/knowledge/graph.js`, `lib/knowledge/taxonomy.js`, `lib/knowledge/provenance.js`, `lib/knowledge/service.js`, `lib/booking/utm.ts`, `pages/api/knowledge/*`, `pages/api/v1/*`, `pages/sitemap.xml.js`, `public/llms.txt`, `public/llms-full.txt`, `public/openapi.json`, `public/knowledge/*`, `mcp/server.js`, `mcp/tests/*`, `scripts/export-knowledge.js`, `scripts/validate-knowledge.js`, `scripts/validate-jsonld.js`, `data/blog/mezcalPulqueCDMX.mdx`, `data/blog/guiaMezcalPulqueCDMX.mdx`, `data/blog/coyoacanBeyondFrida.mdx`, `data/blog/coyoacanMasAllaFrida.mdx`) bajo misma licencia MIT.

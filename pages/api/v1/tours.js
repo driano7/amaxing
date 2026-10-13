@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/v1/tours — lista tours con filtros reales.
 // Query: lang, category, neighborhood, q, interests, maxDurationMinutes,
 // maxPriceUSD, limit, offset. Read-only, CORS abierto, caché CDN 1h.

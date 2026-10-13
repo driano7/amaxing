@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
-// Travel-themed elements for amaxing
+// Travel-themed elements for calpulli
 const elements = [
   { name: 'Jaguar', emoji: '🐆', bg: '#DE1D8D', delay: 0 },
   { name: 'Compass', emoji: '🧭', bg: '#2775CA', delay: 0.1 },

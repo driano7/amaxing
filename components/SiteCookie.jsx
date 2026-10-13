@@ -7,13 +7,13 @@ export default function SiteCookie() {
   useEffect(() => {
     try {
       // Site-wide visited cookie for faster return (30 days)
-      const hasVisited = document.cookie.includes('amaxing_visited=')
+      const hasVisited = document.cookie.includes('calpulli_visited=')
       if (!hasVisited) {
         const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString()
-        document.cookie = `amaxing_visited=1; expires=${expires}; path=/; SameSite=Lax`
+        document.cookie = `calpulli_visited=1; expires=${expires}; path=/; SameSite=Lax`
       }
       // Cache flag in localStorage for instant shell
-      const cacheKey = 'amaxing_cache_v1'
+      const cacheKey = 'calpulli_cache_v1'
       if (!localStorage.getItem(cacheKey)) {
         localStorage.setItem(cacheKey, String(Date.now()))
       }

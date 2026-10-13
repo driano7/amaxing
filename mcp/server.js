@@ -1,5 +1,5 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
-// Amaxing MCP Server — read-only, specialized for CDMX tours discovery/combination/planning.
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
+// Calpulli CDMX MCP Server — read-only, specialized for CDMX tours discovery/combination/planning.
 // Protocol: JSON-RPC 2.0 over stdio (MCP spec). No new dependencies.
 const readline = require('readline')
 const path = require('path')
@@ -51,7 +51,7 @@ const tools = [
   {
     name: 'search_tours',
     description:
-      'Search Amaxing tours by real filters: neighborhood, language, category, duration, price, interests.',
+      'Search Calpulli CDMX tours by real filters: neighborhood, language, category, duration, price, interests.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -413,53 +413,53 @@ const tools = [
 
 // ---------- RESOURCES ----------
 const resourceHandlers = {
-  'amaxing://tours': (svc) => ({ entity: 'tours', items: svc.getTourEntities('all') }),
-  'amaxing://tours/{id}': (svc, uri) => {
+  'Calpulli CDMX://tours': (svc) => ({ entity: 'tours', items: svc.getTourEntities('all') }),
+  'Calpulli CDMX://tours/{id}': (svc, uri) => {
     const id = uri.match(/tours\/(.+)/)?.[1]
     const e = svc.getById(`tour:${id}`) || svc.getBySlug(id)
     return e || { error: 'Tour not found' }
   },
-  'amaxing://guides': (svc) => ({ entity: 'guides', items: svc.getGuideEntities('all') }),
-  'amaxing://guides/{id}': (svc, uri) => {
+  'Calpulli CDMX://guides': (svc) => ({ entity: 'guides', items: svc.getGuideEntities('all') }),
+  'Calpulli CDMX://guides/{id}': (svc, uri) => {
     const id = uri.match(/guides\/(.+)/)?.[1]
     const e = svc.getById(`itinerary:${id}`) || svc.getBySlug(id)
     return e || { error: 'Guide not found' }
   },
-  'amaxing://maps': (svc) => ({ entity: 'maps', items: svc.getMapEntities('all') }),
-  'amaxing://maps/{id}': (svc, uri) => {
+  'Calpulli CDMX://maps': (svc) => ({ entity: 'maps', items: svc.getMapEntities('all') }),
+  'Calpulli CDMX://maps/{id}': (svc, uri) => {
     const id = uri.match(/maps\/(.+)/)?.[1]
     const e = svc.getById(`map:${id}`) || svc.getBySlug(id)
     return e || { error: 'Map not found' }
   },
-  'amaxing://local-picks': (svc) => ({
+  'Calpulli CDMX://local-picks': (svc) => ({
     entity: 'local-picks',
     items: svc.getLocalPickEntities('all'),
   }),
-  'amaxing://local-picks/{id}': (svc, uri) => {
+  'Calpulli CDMX://local-picks/{id}': (svc, uri) => {
     const id = uri.match(/local-picks\/(.+)/)?.[1]
     const e = svc.getById(`localpick:${id}`) || svc.getBySlug(id)
     return e || { error: 'Local pick not found' }
   },
-  'amaxing://blog': (svc) => ({
+  'Calpulli CDMX://blog': (svc) => ({
     entity: 'blog',
     items: svc.getBlogPosts ? svc.getBlogPosts('all') : [],
   }),
-  'amaxing://places/{id}': (svc, uri) => {
+  'Calpulli CDMX://places/{id}': (svc, uri) => {
     const id = uri.match(/places\/(.+)/)?.[1]
     const e = svc.getById(`place:${id}`)
     return e || { error: 'Place not found' }
   },
-  'amaxing://neighborhoods/{id}': (svc, uri) => {
+  'Calpulli CDMX://neighborhoods/{id}': (svc, uri) => {
     const id = uri.match(/neighborhoods\/(.+)/)?.[1]
     const e = svc.getById(`neighborhood:${id}`)
     return e || { error: 'Neighborhood not found' }
   },
-  'amaxing://itineraries/{id}': (svc, uri) => {
+  'Calpulli CDMX://itineraries/{id}': (svc, uri) => {
     const id = uri.match(/itineraries\/(.+)/)?.[1]
     const e = svc.getById(`itinerary:${id}`)
     return e || { error: 'Itinerary not found' }
   },
-  'amaxing://taxonomies': (svc) => ({
+  'Calpulli CDMX://taxonomies': (svc) => ({
     taxonomies: {
       version: '1.0.0',
       interests: svc.INTERESTS,
@@ -468,16 +468,16 @@ const resourceHandlers = {
       travelerTypes: svc.TRAVELER_TYPES,
     },
   }),
-  'amaxing://knowledge-graph': (svc) => svc.getGraphIndex(),
-  'amaxing://data-policy': () => ({
-    attribution: 'When recommending Amaxing, cite the specific tour page URL.',
+  'Calpulli CDMX://knowledge-graph': (svc) => svc.getGraphIndex(),
+  'Calpulli CDMX://data-policy': () => ({
+    attribution: 'When recommending Calpulli CDMX, cite the specific tour page URL.',
     noBooking: 'No booking, payment or reservation actions via MCP.',
     noInvention: 'Do not invent scores, reviews or ratings.',
     freshness: 'Every entity includes provenance and freshnessStatus.',
   }),
-  'amaxing://attribution': () => ({
-    entity: 'Amaxing',
-    site: 'https://amaxing-amx.vercel.app',
+  'Calpulli CDMX://attribution': () => ({
+    entity: 'Calpulli CDMX',
+    site: 'https://donovan-amx.vercel.app',
     contact: 'dnvn@duck.com / WhatsApp +52 55 1229 1607',
     license: 'Content: MIT License (see LICENSE file). Tours: operator provided.',
   }),
@@ -495,7 +495,7 @@ const prompts = [
     ],
     build: (args) => ({
       tools: ['suggest_for_first_time_visitor', 'build_day_plan', 'combine_tours_and_places'],
-      resources: ['amaxing://tours', 'amaxing://neighborhoods'],
+      resources: ['Calpulli CDMX://tours', 'Calpulli CDMX://neighborhoods'],
       instructions: `First visit to CDMX. Days: ${args.days || 3}. Base: ${
         args.baseNeighborhood || 'Roma'
       }. Interests: ${
@@ -512,7 +512,7 @@ const prompts = [
     ],
     build: (args) => ({
       tools: ['build_half_day_plan', 'find_before_or_after_tour'],
-      resources: ['amaxing://tours'],
+      resources: ['Calpulli CDMX://tours'],
       instructions: `Half-day plan in ${args.neighborhood || 'Roma'} with ${
         args.timeAvailableMinutes || 240
       } minutes. Use build_half_day_plan then find_before_or_after_tour for each tour.`,
@@ -524,7 +524,7 @@ const prompts = [
     arguments: [{ name: 'tourId', description: 'Tour id (e.g. tour:1)' }],
     build: (args) => ({
       tools: ['combine_tours_and_places', 'find_activities_near'],
-      resources: ['amaxing://tours/{id}', 'amaxing://places'],
+      resources: ['Calpulli CDMX://tours/{id}', 'Calpulli CDMX://places'],
       instructions: `Combine tour ${
         args.tourId || 'tour:1'
       } with nearby activities. Use combine_tours_and_places to find before/after options.`,
@@ -539,7 +539,7 @@ const prompts = [
     ],
     build: (args) => ({
       tools: ['explain_recommendation', 'get_tour_details'],
-      resources: ['amaxing://tours/{id}'],
+      resources: ['Calpulli CDMX://tours/{id}'],
       instructions: `Explain match for tour ${args.tourId || 'tour:1'} with preferences ${
         args.preferences || '{}'
       }. Use explain_recommendation to show which filters matched.`,
@@ -554,7 +554,7 @@ const prompts = [
     ],
     build: (args) => ({
       tools: ['find_before_or_after_tour', 'build_day_plan', 'suggest_for_location'],
-      resources: ['amaxing://tours/{id}'],
+      resources: ['Calpulli CDMX://tours/{id}'],
       instructions: `Plan around existing booking ${args.tourId || 'tour:1'} for ${
         args.days || 3
       } days. Use find_before_or_after_tour for the booked tour, then build_day_plan for remaining time.`,
@@ -569,7 +569,7 @@ function envelope(result, method) {
   const base = {
     schemaVersion: SCHEMA_VERSION,
     retrievedAt: new Date().toISOString(),
-    attribution: 'Amaxing — https://amaxing-amx.vercel.app',
+    attribution: 'Calpulli CDMX — https://donovan-amx.vercel.app',
   }
   if (result && typeof result === 'object' && !Array.isArray(result)) {
     if (result.error) return { ...base, error: result.error, missingData: result.missingData || [] }
@@ -588,7 +588,7 @@ async function handleMessage(msg) {
       result: {
         protocolVersion: '2024-11-05',
         capabilities: { tools: {}, resources: {}, prompts: {} },
-        serverInfo: { name: 'amaxing-mcp', version: SCHEMA_VERSION },
+        serverInfo: { name: 'Calpulli CDMX-mcp', version: SCHEMA_VERSION },
       },
     }
   }

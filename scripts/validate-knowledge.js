@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // Valida knowledge exports: JSON válido, envelope, IDs únicos/estables,
 // URLs canónicas consistentes, relaciones que resuelven, provenance completa,
 // sin secretos. Uso: npm run knowledge:validate (tras knowledge:export).

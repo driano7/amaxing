@@ -68,7 +68,7 @@ export default function Stories() {
         title={t('stories.title') || 'Traveler Stories'}
         description={
           t('stories.subtitle') ||
-          'Real stories from real travelers experiencing the magic of Mexico with Amaxing.'
+          'Real stories from real travelers experiencing the magic of Mexico with Calpulli CDMX.'
         }
       />
       <div className="bg-transparent py-20">
@@ -82,7 +82,7 @@ export default function Stories() {
             </div>
             <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
               {t('stories.subtitle') ||
-                'Real stories from real travelers experiencing the magic of Mexico with Amaxing.'}
+                'Real stories from real travelers experiencing the magic of Mexico with Calpulli CDMX.'}
             </p>
           </div>
 

@@ -239,7 +239,7 @@ export function CryptoPayment({
   const handleMockFill = () => {
     const mockHash =
       selectedWallet?.network === 'LIGHTNING'
-        ? 'lnbc1mock_amaxing_test'
+        ? 'lnbc1mock_calpulli_test'
         : 'mock_0x' + 'a'.repeat(64).slice(0, 64)
     setTxHash(mockHash)
     setTimeout(() => {
@@ -436,7 +436,7 @@ export function CryptoPayment({
                           a.href = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(
                             selectedWallet.address
                           )}`
-                          a.download = `amaxing-${selectedWallet.network}-qr.png`
+                          a.download = `calpulli-${selectedWallet.network}-qr.png`
                           a.click()
                         }}
                         className="dark:border-white/15 inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-bold text-zinc-600 hover:bg-zinc-50 dark:text-zinc-300"

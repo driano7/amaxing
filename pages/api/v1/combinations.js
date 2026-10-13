@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/v1/combinations — qué combinar antes/después de un tour o guía.
 // Query: id (requerido, ej. tour:3), timeAvailableMinutes, language.
 // Lógica explicable, sin scores: mismo barrio + cabe en el tiempo.

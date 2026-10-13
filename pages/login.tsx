@@ -23,24 +23,34 @@ export default function Login() {
     e.preventDefault()
     setError('')
 
-    // Demo sin BD: se crea un usuario mock inmediatamente, con los campos que
-    // el usuario haya tecleado o valores por defecto. No valida nada.
-    const mockUser = {
-      id: mode === 'login' ? 'user_1' : 'user_' + Date.now(),
-      email: email.trim() || 'demo@amaxing.com',
-      firstName: firstName.trim() || 'Juan',
-      lastName: lastName.trim() || 'Pérez',
-      avatar: '/static/images/avatar-placeholder.jpg',
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mode,
+          email: email.trim(),
+          password,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+        }),
+      })
+
+      if (!res.ok) {
+        const err = await res.json()
+        setError(err.message || 'Authentication failed')
+        return
+      }
+
+      const json = await res.json()
+      localStorage.setItem('authToken', json.token)
+      localStorage.setItem('authUser', JSON.stringify(json.user))
+
+      window.dispatchEvent(new Event('authChange'))
+      router.push('/profile')
+    } catch (err) {
+      setError('Network error. Please try again.')
     }
-    const mockToken = 'mock_jwt_token_' + Date.now()
-
-    localStorage.setItem('authToken', mockToken)
-    localStorage.setItem('authUser', JSON.stringify(mockUser))
-
-    // Trigger auth context update
-    window.dispatchEvent(new Event('authChange'))
-
-    router.push('/profile')
   }
 
   const toggleMode = () => {
@@ -66,14 +76,14 @@ export default function Login() {
               <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ring-2 ring-orange-500/60">
                 <Image
                   src="/static/images/jaguarBaja.png"
-                  alt="Amaxing"
+                  alt="Calpulli CDMX"
                   width={32}
                   height={32}
                   className="h-full w-full object-cover"
                 />
               </div>
               <span className="font-serif text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
-                Amaxing
+                Calpulli CDMX
               </span>
             </a>
           </Link>
@@ -84,7 +94,7 @@ export default function Login() {
           </h1>
           <p className="text-zinc-500 dark:text-gray-400">
             {mode === 'login'
-              ? t('auth.login.welcome') || 'Bienvenido de nuevo a Amaxing'
+              ? t('auth.login.welcome') || 'Bienvenido de nuevo a Calpulli CDMX'
               : t('auth.login.join') || 'Únete a la comunidad de viajeros'}
           </p>
         </div>

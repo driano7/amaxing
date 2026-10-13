@@ -13,7 +13,7 @@ import { resolveQr } from '@/lib/qr/resolve'
 import { type QrType } from '@/lib/qr/types'
 import { AdvancedMetricsPanel, PassiveAnalyticsPanel } from '@/components/analytics/SocioPanels'
 import { getLocalAnalytics, type AnalyticsEntry } from '@/lib/analytics/track'
-import { MOCK_SOCIO_BOOKINGS, MOCK_ANALYTICS_ENTRIES } from '@/lib/mocks/socioData'
+import { BRAND, getAdminConfig } from '@/lib/brand'
 import {
   ShieldCheck,
   Users,
@@ -61,87 +61,58 @@ interface AdminUser {
   decrypted?: boolean
 }
 
-const MOCK_ME: MeData = {
-  email: 'admin@amaxing.mx',
-  role: 'admin',
-  permissions: {
-    canManageUsers: true,
-    canDecryptSensitiveFields: true,
-    canManageAdmins: true,
-    canExportGDPR: true,
-    canViewAdvancedMetrics: true,
-  },
-  panels: ['/profile', '/empleados', '/admin'],
+const ADMIN_CONFIG = {
+  name: BRAND.name,
+  email: BRAND.email,
+  whatsapp: BRAND.whatsapp,
+  instagram: BRAND.instagram,
+  whatsappUrl: BRAND.whatsappUrl,
+  color: BRAND.color,
+  social: BRAND.social,
 }
-
-const MOCK_USERS: AdminUser[] = [
-  {
-    id: 'u1',
-    email: 'maria.g•••@example.com',
-    displayNameMask: 'M***a',
-    initials: 'MG',
-    bookingsCount: 4,
-    totalSpent: 8600,
-    lastTour: 'Ruta del Jaguar en Baja',
-    lastTourDate: '2025-02-15',
-    status: 'active',
-    decrypted: false,
-  },
-  {
-    id: 'u3',
-    email: 'ana.r•••@example.com',
-    displayNameMask: 'A***z',
-    initials: 'AR',
-    bookingsCount: 6,
-    totalSpent: 15400,
-    lastTour: 'Sabores de Oaxaca',
-    lastTourDate: '2025-04-05',
-    status: 'vip',
-    decrypted: false,
-  },
-]
-
-const DECRYPTED_USERS: AdminUser[] = [
-  {
-    id: 'u1',
-    email: 'maria.garcia@example.com',
-    firstName: 'María',
-    lastName: 'García',
-    phone: '+52 55 1234 5678',
-    bookingsCount: 4,
-    totalSpent: 8600,
-    lastTour: 'Ruta del Jaguar en Baja',
-    lastTourDate: '2025-02-15',
-    status: 'active',
-    decrypted: true,
-  },
-  {
-    id: 'u3',
-    email: 'ana.rodriguez@example.com',
-    firstName: 'Ana',
-    lastName: 'Rodríguez',
-    phone: '+52 33 2233 4455',
-    bookingsCount: 6,
-    totalSpent: 15400,
-    lastTour: 'Sabores de Oaxaca',
-    lastTourDate: '2025-04-05',
-    status: 'vip',
-    decrypted: true,
-  },
-]
 
 export default function AdminPanel() {
   const { user, isLoading } = useAuth()
   const { currentLanguage } = useLanguage()
   const isEs = currentLanguage === 'es'
   const [me, setMe] = useState<MeData | null>(null)
-  const [users, setUsers] = useState<AdminUser[]>(MOCK_USERS)
+  const [users, setUsers] = useState<AdminUser[]>([])
   const [decrypted, setDecrypted] = useState(false)
   const [loadingUsers, setLoadingUsers] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
+  const [isDemoMode, setIsDemoMode] = useState(false)
 
+  // Fetch real users from API
+  const fetchUsers = useCallback(async (decrypt = false) => {
+    setLoadingUsers(true)
+    try {
+      const token = localStorage.getItem('authToken')
+      const res = await fetch(`/api/admin/users?decrypt=${decrypt ? '1' : '0'}`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+        },
+      })
+      if (!res.ok) throw new Error('Failed to fetch users')
+      const json = await res.json()
+      setUsers(json.users)
+      setIsDemoMode(false)
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+      // Fallback to empty array if API fails
+      setUsers([])
+      setIsDemoMode(true)
+    } finally {
+      setLoadingUsers(false)
+    }
+  }, [])
+
+  // Fetch users on mount and when decrypted changes
   useEffect(() => {
-    // Intenta resolver rol real vía API; si falla usa mock (modo demo)
+    fetchUsers(decrypted)
+  }, [decrypted, fetchUsers])
+
+  // Fetch real admin role
+  useEffect(() => {
     const resolveRole = async () => {
       if (!user?.email) return
       try {
@@ -158,11 +129,21 @@ export default function AdminPanel() {
           return
         }
       } catch {
-        /* fallback a mock */
+        /* fallback to demo */
       }
-      // Demo: si el email del usuario logueado es admin/employee según env lo resuelve la API.
-      // En demo local mostramos el panel mock para previsualizar.
-      setMe(MOCK_ME)
+      // Demo fallback
+      setMe({
+        email: BRAND.email,
+        role: 'admin',
+        permissions: {
+          canManageUsers: true,
+          canDecryptSensitiveFields: true,
+          canManageAdmins: true,
+          canExportGDPR: true,
+          canViewAdvancedMetrics: true,
+        },
+        panels: ['/profile', '/empleados', '/admin'],
+      })
     }
     void resolveRole()
   }, [user])
@@ -175,7 +156,6 @@ export default function AdminPanel() {
       const res = await fetch('/api/admin/users?decrypt=1', {
         headers: {
           Authorization: token ? `Bearer ${token}` : '',
-          'x-demo-email': user?.email || MOCK_ME.email,
         },
       })
       if (!res.ok) {
@@ -184,12 +164,12 @@ export default function AdminPanel() {
         return
       }
       const json = await res.json()
-      setUsers(json.data.users)
+      setUsers(json.users)
       setDecrypted(true)
       setNotice(isEs ? 'Datos descifrados con AES-256-GCM ✓' : 'Data decrypted with AES-256-GCM ✓')
     } catch {
-      // Modo demo sin API: alterna al mock descifrado
-      setUsers(DECRYPTED_USERS)
+      // Fallback to empty if API fails
+      setUsers([])
       setDecrypted(true)
       setNotice(isEs ? 'Demo: datos descifrados ✓' : 'Demo: data decrypted ✓')
     } finally {
@@ -199,11 +179,11 @@ export default function AdminPanel() {
   }, [isEs, user?.email])
 
   const hideSensitive = useCallback(() => {
-    setUsers(MOCK_USERS)
+    fetchUsers(false)
     setDecrypted(false)
     setNotice(isEs ? 'Datos ocultados' : 'Data hidden')
     setTimeout(() => setNotice(null), 2000)
-  }, [isEs])
+  }, [isEs, fetchUsers])
 
   if (isLoading) {
     return <AuthLoader label={isEs ? 'Verificando permisos...' : 'Verifying permissions...'} />
@@ -223,14 +203,14 @@ export default function AdminPanel() {
           </h1>
           <p className="mb-6 text-zinc-500 dark:text-gray-400">
             {isEs
-              ? 'Acceso restringido a emails en ADMIN_EMAILS. Inicia sesión con una cuenta autorizada.'
-              : 'Restricted to emails in ADMIN_EMAILS. Sign in with an authorized account.'}
+              ? `Acceso restringido a emails en ${BRAND.email}. Inicia sesión con una cuenta autorizada.`
+              : `Restricted to emails in ${BRAND.email}. Sign in with an authorized account.`}
           </p>
           <div className="mb-6 rounded-xl border border-orange-500/30 bg-orange-500/10 p-4 text-left text-xs text-orange-600 dark:text-orange-300">
             <p className="font-semibold">{isEs ? 'Cómo acceder:' : 'How to access:'}</p>
             <ol className="mt-2 list-inside list-decimal space-y-1 text-zinc-600 dark:text-gray-300">
               <li>
-                Añade tu email a <code>ADMIN_EMAILS</code> en <code>.env.local</code>
+                Añade tu email a <code>{BRAND.email}</code> en <code>.env.local</code>
               </li>
               <li>{isEs ? 'Reinicia el servidor dev' : 'Restart the dev server'}</li>
               <li>{isEs ? 'Inicia sesión y vuelve a /admin' : 'Sign in and return to /admin'}</li>
@@ -663,7 +643,7 @@ export default function AdminPanel() {
                   ADMIN_EMAILS
                 </p>
                 <p className="mt-2 text-sm text-zinc-700 dark:text-gray-300">
-                  admin@amaxing.mx, donovan@amaxing.mx
+                  {BRAND.email}, donovan@${BRAND.domain}
                 </p>
                 <p className="mt-2 text-xs text-zinc-500 dark:text-gray-400">
                   {isEs
@@ -676,7 +656,7 @@ export default function AdminPanel() {
                   EMPLOYEE_EMAILS
                 </p>
                 <p className="mt-2 text-sm text-zinc-700 dark:text-gray-300">
-                  guia1@amaxing.mx, operaciones@amaxing.mx
+                  guia1@${BRAND.domain}, operaciones@${BRAND.domain}
                 </p>
                 <p className="mt-2 text-xs text-zinc-500 dark:text-gray-400">
                   {isEs
@@ -714,19 +694,19 @@ export default function AdminPanel() {
               {[
                 {
                   action: 'decrypt_field',
-                  actor: 'admin@amaxing.mx',
+                  actor: `admin@${BRAND.domain}`,
                   target: 'ana.r•••',
                   at: '18:22',
                 },
                 {
                   action: 'grant_role',
-                  actor: 'admin@amaxing.mx',
-                  target: 'empleado2@amaxing.mx',
+                  actor: `admin@${BRAND.domain}`,
+                  target: `empleado2@${BRAND.domain}`,
                   at: '11:05',
                 },
                 {
                   action: 'export_gdpr',
-                  actor: 'admin@amaxing.mx',
+                  actor: `admin@${BRAND.domain}`,
                   target: 'maria.g•••',
                   at: '09:40',
                 },
@@ -759,17 +739,48 @@ export default function AdminPanel() {
 function PassiveAnalyticsData({ isEs }: { isEs: boolean }) {
   const [entries, setEntries] = useState<AnalyticsEntry[]>([])
   const [isDemo, setIsDemo] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const local = getLocalAnalytics()
-    if (local.length > 0) {
-      setEntries(local)
-      setIsDemo(false)
-      return
+    const fetchAnalytics = async () => {
+      setLoading(true)
+      try {
+        const token = localStorage.getItem('authToken')
+        const res = await fetch('/api/admin/analytics', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (!res.ok) throw new Error('Failed to fetch analytics')
+        const json = await res.json()
+        // Transform real analytics data to AnalyticsEntry format
+        const transformed =
+          json.pageAnalytics?.map((row: any) => ({
+            userId: row.userId,
+            pagePath: row.pagePath,
+            timeOnPage: row.timeOnPage,
+            userAgent: row.userAgent,
+            referrerUrl: row.referrerUrl || '',
+            createdAt: row.createdAt,
+          })) || []
+        setEntries(transformed)
+        setIsDemo(false)
+      } catch (error) {
+        console.error('Failed to fetch analytics:', error)
+        // Fallback to local analytics
+        const local = getLocalAnalytics()
+        if (local.length > 0) {
+          setEntries(local)
+        } else {
+          setEntries([])
+        }
+        setIsDemo(true)
+      } finally {
+        setLoading(false)
+      }
     }
-    // Sin datos reales → mock para previsualizar el panel
-    setEntries(MOCK_ANALYTICS_ENTRIES)
-    setIsDemo(true)
+
+    fetchAnalytics()
   }, [])
 
   return <PassiveAnalyticsPanel entries={entries} isEs={isEs} isDemo={isDemo} />
@@ -778,22 +789,44 @@ function PassiveAnalyticsData({ isEs }: { isEs: boolean }) {
 function SocioMetricsData({ isEs }: { isEs: boolean }) {
   const [bookings, setBookings] = useState<any[]>([])
   const [isDemo, setIsDemo] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('amaxing_bookings')
-      const loaded = raw ? JSON.parse(raw) : []
-      if (Array.isArray(loaded) && loaded.length > 0) {
-        setBookings(loaded)
+    const fetchBookings = async () => {
+      setLoading(true)
+      try {
+        const token = localStorage.getItem('authToken')
+        const res = await fetch('/api/admin/bookings', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (!res.ok) throw new Error('Failed to fetch bookings')
+        const json = await res.json()
+        setBookings(json.bookings || [])
         setIsDemo(false)
-        return
+      } catch (error) {
+        console.error('Failed to fetch bookings:', error)
+        // Fallback to localStorage
+        try {
+          const raw = localStorage.getItem(`${BRAND.shortName.toLowerCase()}_bookings`)
+          const loaded = raw ? JSON.parse(raw) : []
+          if (Array.isArray(loaded) && loaded.length > 0) {
+            setBookings(loaded)
+            setIsDemo(false)
+            return
+          }
+        } catch {
+          // fall through to demo
+        }
+        setBookings([])
+        setIsDemo(true)
+      } finally {
+        setLoading(false)
       }
-    } catch {
-      // fall through to demo
     }
-    // Sin datos reales → mock para previsualizar el panel de socio
-    setBookings(MOCK_SOCIO_BOOKINGS as any[])
-    setIsDemo(true)
+
+    fetchBookings()
   }, [])
 
   return <AdvancedMetricsPanel bookings={bookings} isEs={isEs} isDemo={isDemo} />

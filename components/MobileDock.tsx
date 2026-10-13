@@ -100,10 +100,10 @@ export function MobileDock() {
             type="button"
             onClick={() => {
               resetTimer()
-              window.dispatchEvent(new CustomEvent('open-amaxing-chatbot'))
+              window.dispatchEvent(new CustomEvent('open-calpulli-chatbot'))
             }}
-            title="Amaxing AI"
-            aria-label="Amaxing AI"
+            title="Calpulli CDMX AI"
+            aria-label="Calpulli CDMX AI"
             className={classNames(
               DOCK_BUTTON_BASE,
               compact ? 'h-10 w-10' : 'h-11 w-11',

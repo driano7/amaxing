@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 'use client'
 
 import type { ReactNode } from 'react'
@@ -283,7 +283,7 @@ function WalletMock({
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-0.5">
           <p className="text-[11px] font-semibold tracking-wide text-slate-700 dark:text-white/75">
-            Amaxing Tours
+            Calpulli CDMX Tours
           </p>
           <p className="text-xs font-bold text-slate-900 dark:text-white">
             {connected ? '3 tours guardados' : 'Explora CDMX'}

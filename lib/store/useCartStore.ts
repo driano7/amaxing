@@ -36,7 +36,7 @@ let lastActivity = Date.now()
 
 const listeners = new Set<() => void>()
 
-const STORAGE_KEY = 'amaxing_cart'
+const STORAGE_KEY = 'calpulli_cart'
 
 function loadFromStorage(): CartTourItem[] {
   if (typeof window === 'undefined') return []

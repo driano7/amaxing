@@ -32,7 +32,7 @@ export const sendMailTemplate = async (input: {
   const recipients = toArray(input.to)
   if (!recipients.length) return { sent: false, skipped: true, reason: 'no_recipients' }
 
-  // Solo SMTP para Amaxing (simple, sin Mailgun)
+  // Solo SMTP para Calpulli CDMX (simple, sin Mailgun)
   const transporter = await getSmtpTransporter()
   if (!transporter) return { sent: false, skipped: true, reason: 'mail_not_configured' }
 
@@ -60,7 +60,7 @@ export const sendMailTemplate = async (input: {
   return { sent: true, skipped: false }
 }
 
-// Helpers específicos Amaxing
+// Helpers específicos Calpulli CDMX
 
 import {
   buildBookingConfirmationTemplate,

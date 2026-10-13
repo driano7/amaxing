@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // Sitemap dinámico (Pages Router, Next 12): rutas estáticas + tours + guides +
 // maps + local picks + posts del blog. Sin dependencias nuevas (fs + gray-matter,
 // ambas ya usadas en lib/mdx). Cacheado 24h en CDN vía s-maxage.
@@ -9,7 +9,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { tours } from '@/data/toursData'
 import { getAllLocalPickSlugs } from '@/lib/localPicks'
 
-const SITE = (siteMetadata.siteUrl || 'https://amaxing-amx.vercel.app').replace(/\/+$/, '')
+const SITE = (siteMetadata.siteUrl || 'https://donovan-amx.vercel.app').replace(/\/+$/, '')
 
 function listFilesRecursive(dir, exts = ['.mdx', '.md']) {
   const out = []

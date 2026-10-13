@@ -39,12 +39,12 @@ export default function AboutPage() {
   return (
     <>
       <Head>
-        <title>{`Amaxing — ${t('aboutPage.whoTitle')}`}</title>
+        <title>{`Calpulli CDMX — ${t('aboutPage.whoTitle')}`}</title>
         <meta
           name="description"
           content={
             t('aboutPage.whoLead') ||
-            'Amaxing nace del cruce de dos historias en la Ciudad de México.'
+            'Calpulli CDMX nace del cruce de dos historias en la Ciudad de México.'
           }
         />
       </Head>

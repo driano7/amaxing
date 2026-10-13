@@ -1,4 +1,4 @@
-# Amaxing — robots.txt
+# Calpulli CDMX — robots.txt
 # Zonas privadas fuera del índice para no gastar crawl budget
 User-agent: *
 Allow: /
@@ -29,4 +29,4 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
-Sitemap: https://amaxing-amx.vercel.app/sitemap.xml
+Sitemap: https://calpulli-cdmx.com/sitemap.xml

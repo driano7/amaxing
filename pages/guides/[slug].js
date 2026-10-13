@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import Link from '@/components/Link'
 import { PageSEO } from '@/components/SEO'
 import { getFileBySlug, getAllFilesFrontMatter } from '@/lib/mdx'

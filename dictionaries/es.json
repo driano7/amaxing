@@ -25,7 +25,7 @@
   "hero": {
     "titleStart": "Descubre la",
     "titleHighlight": "CDMX-traordinaria que nadie te enseña.",
-    "subtitle": "amaxing, la ciudad en cada bocado: tours de chilangos para sentir la CDMX de verdad.",
+    "subtitle": "Calpulli CDMX, la ciudad en cada bocado: tours de chilangos para sentir la CDMX de verdad.",
     "cta": "Reservar un Viaje",
     "scrollHint": "Desplázate para explorar"
   },
@@ -35,18 +35,18 @@
   },
   "aboutPage": {
     "kicker": "CDMX · Tours con alma local",
-    "heroTitle": "Amaxing",
+    "heroTitle": "Calpulli CDMX",
     "taglineEs": "El abrazo de la ciudad que amamos.",
     "taglineEn": "Mexico City, the way we hug it.",
     "whoTitle": "Quiénes somos",
-    "whoLead": "Amaxing nace del cruce de dos historias en la Ciudad de México: uno de nosotros es oaxaqueño y hoy vive aquí; el otro es defeño de nacimiento, aunque hace años que no vive en la ciudad. Entre los dos conocemos, casi por azares de la vida, los polos más distintos de esta ciudad — sus mercados, sus azoteas, sus rincones que no salen en ninguna guía. Un día decidimos que valía la pena compartirlo.",
+    "whoLead": "Calpulli CDMX nace del cruce de dos historias en la Ciudad de México: uno de nosotros es oaxaqueño y hoy vive aquí; el otro es defeño de nacimiento, aunque hace años que no vive en la ciudad. Entre los dos conocemos, casi por azares de la vida, los polos más distintos de esta ciudad — sus mercados, sus azoteas, sus rincones que no salen en ninguna guía. Un día decidimos que valía la pena compartirlo.",
     "founderOax": "El oaxaqueño",
     "founderOaxDesc": "vive en CDMX, la camina todos los días",
     "founderDef": "El defeño",
     "founderDefDesc": "nació aquí, hoy la mira desde lejos y con ganas",
     "aboutUsTitle": "Sobre nosotros",
     "whyTitle": "Por qué “chilango”",
-    "whyLead": "“Chilango” se ha usado durante años como una forma de menospreciar a quien vive en esta ciudad. Nosotros creemos que es al revés: ser chilango es haber aprendido a querer una ciudad enorme, ruidosa y contradictoria, y encontrar en ella algo que se parece al hogar. Amaxing existe para mostrar esa versión de la Ciudad de México — la de los sabores, los lugares, los olores y el surrealismo que solo se entienden caminándola con alguien de aquí.",
+    "whyLead": "“Chilango” se ha usado durante años como una forma de menospreciar a quien vive en esta ciudad. Nosotros creemos que es al revés: ser chilango es haber aprendido a querer una ciudad enorme, ruidosa y contradictoria, y encontrar en ella algo que se parece al hogar. Calpulli CDMX existe para mostrar esa versión de la Ciudad de México — la de los sabores, los lugares, los olores y el surrealismo que solo se entienden caminándola con alguien de aquí.",
     "forWhoTitle": "Para quién",
     "forWhoLead": "Diseñamos cada recorrido para quien viaja solo o en grupos pequeños y quiere algo más que una lista de fotos.",
     "cardFlavors": "Sabores",
@@ -71,7 +71,7 @@
       "oaxContent": "Vive en CDMX, la camina todos los días. Conoce los mercados que abren antes del amanecer, las azoteas donde se toma el mezcal más honesto, y los rincones que ningún mapa digital señala.",
       "defTitle": "El defeño",
       "defContent": "Nació aquí, hoy la mira desde lejos y con ganas. Esa distancia le da una perspectiva que el que vive aquí a veces pierde: sabe cuáles son los tesoros que un visitante nunca encontraría solo.",
-      "amxTitle": "Amaxing",
+      "amxTitle": "Calpulli CDMX",
       "amxContent": "El cruce de dos historias. Entre los dos cubrimos los polos más distintos de esta ciudad — y decidimos que valía la pena compartirlo con quien quiera sentir la CDMX de verdad."
     }
   },
@@ -97,7 +97,7 @@
   },
   "stories": {
     "title": "Historias de Viajeros",
-    "subtitle": "Historias reales de viajeros que experimentan la magia de México con Amaxing.",
+    "subtitle": "Historias reales de viajeros que experimentan la magia de México con Calpulli CDMX.",
     "readStory": "Leer historia"
   },
   "experienceDetail": {
@@ -176,7 +176,7 @@
       "signIn": "Iniciar Sesión",
       "noAccount": "¿No tienes una cuenta?",
       "signUp": "Registrarse",
-      "welcome": "Bienvenido de nuevo a Amaxing",
+      "welcome": "Bienvenido de nuevo a Calpulli CDMX",
       "join": "Únete a la comunidad de viajeros",
       "firstName": "Nombre",
       "lastName": "Apellido",
@@ -283,7 +283,7 @@
   },
   "support": {
     "title": "Apoya el proyecto",
-    "subtitle": "Donaciones abiertas para seguir construyendo. Copia el método que prefieras o escanea el código. Gracias por impulsar Amaxing.",
+    "subtitle": "Donaciones abiertas para seguir construyendo. Copia el método que prefieras o escanea el código. Gracias por impulsar Calpulli CDMX.",
     "note": "Tu contribución llega directamente al equipo para financiar mejoras en la experiencia.",
     "copy": "Copiar",
     "copied": "Copiado",

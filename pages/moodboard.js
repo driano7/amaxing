@@ -211,13 +211,13 @@ export default function Moodboard() {
   return (
     <>
       <PageSEO
-        title="Amaxing — Moodboard de Identidad Visual"
-        description="Dirección visual de la marca Amaxing: paleta, tipografía, mascota y nombre."
+        title="Calpulli CDMX — Moodboard de Identidad Visual"
+        description="Dirección visual de la marca Calpulli CDMX: paleta, tipografía, mascota y nombre."
       />
       <style>{styles}</style>
       <div className="moodboard">
         <header>
-          <h1>Amaxing — Dirección Visual</h1>
+          <h1>Calpulli CDMX — Dirección Visual</h1>
           <p>
             v2: que la marca se sienta como el abrazo de un mexicano — cálida, orgullosamente
             chilanga, y con raíz en el oficio popular. Mascota ajustada tras feedback: fuera ajolote
@@ -284,7 +284,7 @@ export default function Moodboard() {
           <div className="type-card">
             <span className="tag">Titulares — Fraunces</span>
             <div className="headline-sample">Descubre el CDMX que abraza</div>
-            <div className="headline-sample italic">amaxing, la ciudad en cada bocado</div>
+            <div className="headline-sample italic">calpulli, la ciudad en cada bocado</div>
           </div>
 
           <div className="type-card">
@@ -404,7 +404,7 @@ export default function Moodboard() {
           </p>
           <div className="naming-grid">
             <div className="name-card">
-              <div className="name">Amaxing</div>
+              <div className="name">Calpulli CDMX</div>
               <p>
                 El actual. Ya funciona en inglés/español, fácil de decir, reconocible. Cambiarlo
                 tiene costo de continuidad.
@@ -449,7 +449,7 @@ export default function Moodboard() {
           <span></span>
         </div>
 
-        <footer>Amaxing · Documento de trabajo · Identidad visual v1 · Agosto 2026</footer>
+        <footer>Calpulli CDMX · Documento de trabajo · Identidad visual v1 · Agosto 2026</footer>
       </div>
     </>
   )

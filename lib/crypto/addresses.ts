@@ -17,7 +17,7 @@ export interface WalletConfig {
 const EVM_WALLET =
   process.env.NEXT_PUBLIC_CRYPTO_WALLET_EVM || '0xd717d02a2434f8506b14143f60d998337d6f5649'
 const LIGHTNING_WALLET =
-  process.env.NEXT_PUBLIC_CRYPTO_WALLET_LIGHTNING || 'amaxing@walletofsatoshi.com'
+  process.env.NEXT_PUBLIC_CRYPTO_WALLET_LIGHTNING || 'calpulli@walletofsatoshi.com'
 
 export const WALLETS: WalletConfig[] = [
   {
@@ -61,7 +61,7 @@ export const MOCK_WALLETS: WalletConfig[] = [
   {
     network: 'LIGHTNING',
     label: 'Lightning (MOCK)',
-    address: 'lnbc1mock_amaxing_test_invoice',
+    address: 'lnbc1mock_calpulli_test_invoice',
     icon: '🧪',
     hint: 'Invoice mock — pega cualquier lnbc mock y se confirma',
   },

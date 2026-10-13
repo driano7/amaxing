@@ -55,99 +55,35 @@ import { buildDemographics } from '@/lib/analytics/ml-metrics'
 
 type Tab = 'profile' | 'bookings' | 'dashboard' | 'favorites' | 'commented' | 'security'
 
-// Mock bookings data for animation preview
-const MOCK_BOOKINGS = [
-  {
-    id: 'bk_1',
-    userId: 'user_1',
-    experienceId: '1',
-    experienceTitle: 'Ruta del Jaguar en Baja',
-    experienceImage: '/static/images/jaguarBaja.png',
-    date: '2025-02-15',
-    time: '09:00',
-    totalPrice: 2500,
-    status: 'confirmed',
-    category: 'gastronomy',
-    location: 'Ensenada, Baja California',
-    meetingPoint: 'Hotel Coral & Marina',
-    createdAt: '2025-01-20T10:30:00Z',
-  },
-  {
-    id: 'bk_2',
-    userId: 'user_1',
-    experienceId: '2',
-    experienceTitle: 'Historia Viva: Centro Histórico CDMX',
-    experienceImage: '/static/images/jaguarBaja.png',
-    date: '2025-01-20',
-    time: '10:00',
-    totalPrice: 1800,
-    status: 'completed',
-    category: 'history',
-    location: 'Ciudad de México',
-    meetingPoint: 'Zócalo, frente a Catedral',
-    createdAt: '2024-12-10T14:00:00Z',
-  },
-  {
-    id: 'bk_3',
-    userId: 'user_1',
-    experienceId: '3',
-    experienceTitle: 'Barrios Mágicos: Roma y Condesa',
-    experienceImage: '/static/images/jaguarBaja.png',
-    date: '2025-03-10',
-    time: '16:00',
-    totalPrice: 2200,
-    status: 'pending',
-    category: 'neighborhoods',
-    location: 'Ciudad de México',
-    meetingPoint: 'Parque México',
-    createdAt: '2025-02-01T09:15:00Z',
-  },
-  {
-    id: 'bk_4',
-    userId: 'user_1',
-    experienceId: '4',
-    experienceTitle: 'Arte y Museos: Museo Nacional de Antropología',
-    experienceImage: '/static/images/jaguarBaja.png',
-    date: '2024-11-25',
-    time: '11:00',
-    totalPrice: 1500,
-    status: 'completed',
-    category: 'museums',
-    location: 'Ciudad de México',
-    meetingPoint: 'Entrada principal del museo',
-    createdAt: '2024-10-15T16:45:00Z',
-  },
-  {
-    id: 'bk_5',
-    userId: 'user_1',
-    experienceId: '5',
-    experienceTitle: 'Sabores de Oaxaca: Mercado 20 de Noviembre',
-    experienceImage: '/static/images/jaguarBaja.png',
-    date: '2025-04-05',
-    time: '08:00',
-    totalPrice: 3200,
-    status: 'confirmed',
-    category: 'gastronomy',
-    location: 'Oaxaca, Oaxaca',
-    meetingPoint: 'Mercado 20 de Noviembre',
-    createdAt: '2025-02-20T11:20:00Z',
-  },
-  {
-    id: 'bk_6',
-    userId: 'user_1',
-    experienceId: '6',
-    experienceTitle: 'Rutas del Mezcal: Santiago Matatlán',
-    experienceImage: '/static/images/jaguarBaja.png',
-    date: '2024-10-12',
-    time: '14:00',
-    totalPrice: 2800,
-    status: 'completed',
-    category: 'gastronomy',
-    location: 'Oaxaca, Oaxaca',
-    meetingPoint: 'Palacio Municipal',
-    createdAt: '2024-09-01T12:00:00Z',
-  },
-]
+// Real bookings fetched from the server (Turso) — never from the browser
+const getRealBookings = async (userId: string) => {
+  try {
+    const token = localStorage.getItem('authToken')
+    const res = await fetch(`/api/admin/bookings?userId=${encodeURIComponent(userId)}`, {
+      headers: { Authorization: token ? `Bearer ${token}` : '' },
+    })
+    if (!res.ok) throw new Error('Failed to fetch bookings')
+    const json = await res.json()
+    return (json.bookings ?? []).map((b: any) => ({
+      id: b.id,
+      userId,
+      experienceId: b.experienceId,
+      experienceTitle: b.experienceTitle,
+      experienceImage: b.experienceImage,
+      date: b.date,
+      time: b.time,
+      totalPrice: b.totalPrice,
+      status: b.status,
+      category: b.category,
+      location: b.location,
+      meetingPoint: b.meetingPoint,
+      createdAt: b.createdAt,
+    }))
+  } catch (error) {
+    console.error('Failed to fetch bookings:', error)
+    return []
+  }
+}
 
 export default function Profile() {
   const { user, isLoading, updateUser, logout } = useAuth()
@@ -198,7 +134,7 @@ export default function Profile() {
   const fetchBookings = useCallback(async () => {
     setIsLoadingBookings(true)
     try {
-      const raw = localStorage.getItem('amaxing_bookings')
+      const raw = localStorage.getItem('calpulli_bookings')
       const loaded = raw ? JSON.parse(raw) : []
       const mine = Array.isArray(loaded)
         ? loaded
@@ -227,14 +163,15 @@ export default function Profile() {
 
   const loadProfileData = useCallback(async () => {
     if (user) {
-      // Use mock data for animation preview
-      setBookings(MOCK_BOOKINGS)
+      // Fetch real bookings from Turso
+      const realBookings = await getRealBookings(user.id)
+      setBookings(realBookings.length > 0 ? realBookings : [])
       setIsLoadingBookings(false)
-      // Mock favoritos/comentados si el usuario aún no tiene datos reales
+      // Real favorites/commented from localStorage
       const realFavs = getFavorites()
       const realCommented = getCommented()
-      setFavorites(realFavs.length > 0 ? realFavs : ['1', '3', '5'])
-      setCommented(realCommented.length > 0 ? realCommented : ['2'])
+      setFavorites(realFavs.length > 0 ? realFavs : [])
+      setCommented(realCommented.length > 0 ? realCommented : [])
       const profileData = await getProfileData(user)
       setForm({
         ...profileData,
@@ -315,7 +252,7 @@ export default function Profile() {
       return
     }
     try {
-      localStorage.setItem('amaxing_password', next)
+      localStorage.setItem('calpulli_password', next)
     } catch {
       /* ignore */
     }

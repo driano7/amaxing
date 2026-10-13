@@ -8,14 +8,14 @@ import { useLanguage } from '@/lib/hooks/useLanguage'
 export function HeroSection() {
   const { t, currentLanguage } = useLanguage()
   const isEn = currentLanguage === 'en'
-  // Identidad Amaxing — badge, H1 y párrafo según locale
+  // Identidad Calpulli CDMX — badge, H1 y párrafo según locale
   const badge = isEn
-    ? 'Amaxing • Tourism & Culture Platform'
-    : 'Amaxing • Plataforma de Turismo y Cultura'
-  const title = isEn ? 'Discover Mexico with Amaxing' : 'Descubre México con Amaxing'
+    ? 'Calpulli CDMX • Tourism & Culture Platform'
+    : 'Calpulli CDMX • Plataforma de Turismo y Cultura'
+  const title = isEn ? 'Discover Mexico with Calpulli CDMX' : 'Descubre México con Calpulli CDMX'
   const subtitle = isEn
-    ? 'Amaxing is the specialized tool any tourist would want at hand at any moment while traveling — interactive maps, tours, recommendations, places to avoid, the complete culture. Developed with care to explore Mexico City without clichés or complications.'
-    : 'Amaxing es la herramienta especializada en lo que cualquier turista desearía tener a la mano en cualquier momento al viajar, mapas interactivos, recorridos, recomendaciones, lugares a evitar, la cultura completa. Desarrollada con cariño para explorar Ciudad de México sin clichés ni complicaciones.'
+    ? 'Calpulli CDMX is the specialized tool any tourist would want at hand at any moment while traveling — interactive maps, tours, recommendations, places to avoid, the complete culture. Developed with care to explore Mexico City without clichés or complications.'
+    : 'Calpulli CDMX es la herramienta especializada en lo que cualquier turista desearía tener a la mano en cualquier momento al viajar, mapas interactivos, recorridos, recomendaciones, lugares a evitar, la cultura completa. Desarrollada con cariño para explorar Ciudad de México sin clichés ni complicaciones.'
   const scrollHint = t('hero.scrollHint') || 'Scroll to explore'
 
   return (

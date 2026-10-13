@@ -198,7 +198,7 @@ export default function SupportBanner() {
           <p className="max-w-lg text-lg font-medium leading-relaxed text-white/90">
             {st(
               'subtitle',
-              'Open donations to keep building. Copy the method you prefer or scan the code. Thank you for powering Amaxing.'
+              'Open donations to keep building. Copy the method you prefer or scan the code. Thank you for powering Calpulli CDMX.'
             )}
           </p>
           <p className="max-w-lg text-sm text-white/80">

@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // GET /api/mcp/oauth/jwks — JWKS endpoint (RFC 7517)
 import { getJwks } from '@/lib/mcp/oauth'
 

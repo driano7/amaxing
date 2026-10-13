@@ -27,20 +27,29 @@ export default function Register() {
 
     try {
       if (email && password && firstName && lastName) {
-        const mockUser = {
-          id: 'user_' + Date.now(),
-          email,
-          firstName,
-          lastName,
-          avatar: '/static/images/avatar-placeholder.jpg',
-        }
-        const mockToken = 'mock_jwt_token_' + Date.now()
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mode: 'register',
+            email,
+            password,
+            firstName,
+            lastName,
+          }),
+        })
 
-        localStorage.setItem('authToken', mockToken)
-        localStorage.setItem('authUser', JSON.stringify(mockUser))
+        if (!res.ok) {
+          const err = await res.json()
+          setError(err.message || 'Error creating account')
+          return
+        }
+
+        const json = await res.json()
+        localStorage.setItem('authToken', json.token)
+        localStorage.setItem('authUser', JSON.stringify(json.user))
 
         window.dispatchEvent(new Event('authChange'))
-
         router.push('/profile')
       } else {
         setError(t('auth.signup.fillAll') || 'Por favor completa todos los campos')
@@ -74,14 +83,14 @@ export default function Register() {
               <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ring-2 ring-orange-500/60">
                 <Image
                   src="/static/images/jaguarBaja.png"
-                  alt="Amaxing"
+                  alt="Calpulli CDMX"
                   width={32}
                   height={32}
                   className="h-full w-full object-cover"
                 />
               </div>
               <span className="font-serif text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
-                Amaxing
+                Calpulli CDMX
               </span>
             </a>
           </Link>

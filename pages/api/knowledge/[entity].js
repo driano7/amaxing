@@ -1,4 +1,4 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // API pública de conocimiento para IAs y agentes (solo lectura).
 // GET /api/knowledge/tours?lang=es&category=gastronomy&q=taco&limit=10&offset=0
 // Entidades: tours, guides, maps, local-picks, neighborhoods, categories, places

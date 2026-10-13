@@ -1,9 +1,9 @@
-// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Amaxing - See LICENSE
+// MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // Captura del canal de adquisición (first-touch) para CAC por canal.
 // Lee utm_source / utm_medium / ref / gclid / fbclid de la URL una vez por
 // sesión y lo guarda en sessionStorage; el checkout lo adjunta al crear la reserva.
 // Sin UTM: 'organic'. Sin backend: 100% client-side.
-const KEY = 'amaxing_acquisition_channel'
+const KEY = 'Calpulli CDMX_acquisition_channel'
 
 function channelFromParams(params: URLSearchParams): string | null {
   const source = (params.get('utm_source') || '').toLowerCase()
