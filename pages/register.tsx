@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, type FormEvent } from 'react'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -24,6 +24,8 @@ export default function Register() {
   const [lastName, setLastName] = useState('')
   // Paso 2: demografía opcional. Solo alimenta métricas agregadas.
   const [step, setStep] = useState<1 | 2>(1)
+  // dirección del barrido: 1->2 sale a la izquierda, 2->1 entra desde la izquierda
+  const [dir, setDir] = useState(1)
   const [country, setCountry] = useState('')
   const [state, setState] = useState('')
   const [ageBand, setAgeBand] = useState('')
@@ -48,6 +50,7 @@ export default function Register() {
           setError(isEs ? 'Las contraseñas no coinciden' : 'Passwords do not match')
           return
         }
+        setDir(1)
         setStep(2)
         return
       }
@@ -166,256 +169,283 @@ export default function Register() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {step === 1 && (
-              <div className="flex gap-1" aria-hidden="true">
-                <span className="h-1 flex-1 rounded-full bg-orange-500" />
-                <span className="h-1 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-              </div>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className={labelClass}>
-                  {t('auth.signup.firstName') || 'Nombre'}
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  className={inputClass}
-                  placeholder="Juan"
-                />
-              </div>
-              <div>
-                <label htmlFor="lastName" className={labelClass}>
-                  {t('auth.signup.lastName') || 'Apellido'}
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                  className={inputClass}
-                  placeholder="Pérez"
-                />
-              </div>
-            </div>
+            <AnimatePresence mode="wait" initial={false} custom={dir}>
+              <motion.div
+                key={step}
+                custom={dir}
+                initial={{ opacity: 0, x: dir * 48 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: dir * -48 }}
+                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="firstName" className={labelClass}>
+                      {t('auth.signup.firstName') || 'Nombre'}
+                    </label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                      className={inputClass}
+                      placeholder="Juan"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className={labelClass}>
+                      {t('auth.signup.lastName') || 'Apellido'}
+                    </label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                      className={inputClass}
+                      placeholder="Pérez"
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label htmlFor="email" className={labelClass}>
-                {t('auth.signup.email') || 'Email'}
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={inputClass}
-                placeholder="tu@email.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className={labelClass}>
-                {t('auth.signup.password') || 'Contraseña'}
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className={inputClass}
-                placeholder="••••••••"
-              />
-            </div>
-
-            {step === 2 && (
-              <div className="space-y-5" data-step="2">
                 <div>
-                  <label htmlFor="country" className={labelClass}>
-                    {t('auth.signup.country') || 'País'}
+                  <label htmlFor="email" className={labelClass}>
+                    {t('auth.signup.email') || 'Email'}
                   </label>
-                  <SearchableSelect
-                    id="country"
-                    value={country}
-                    onChange={(next) => {
-                      setCountry(next)
-                      if (next !== 'MX') setState('')
-                    }}
-                    options={sortCountries().map((c) => ({ value: c.code, label: c.es }))}
-                    placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
-                    optionalLabel={isEs ? 'Opcional' : 'Optional'}
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className={inputClass}
+                    placeholder="tu@email.com"
                   />
                 </div>
 
-                {country === 'MX' && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="overflow-hidden"
-                  >
-                    <label htmlFor="state" className={labelClass}>
-                      {isEs ? 'Estado' : 'State'}
-                    </label>
-                    <SearchableSelect
-                      id="state"
-                      value={state}
-                      onChange={setState}
-                      options={MEXICAN_STATES.map((s) => ({ value: s.code, label: s.es }))}
-                      placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
-                      optionalLabel={isEs ? 'Opcional' : 'Optional'}
-                    />
-                  </motion.div>
+                <div>
+                  <label htmlFor="password" className={labelClass}>
+                    {t('auth.signup.password') || 'Contraseña'}
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className={inputClass}
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                {step === 2 && (
+                  <div className="space-y-5" data-step="2">
+                    <div>
+                      <label htmlFor="country" className={labelClass}>
+                        {t('auth.signup.country') || 'País'}
+                      </label>
+                      <SearchableSelect
+                        id="country"
+                        value={country}
+                        onChange={(next) => {
+                          setCountry(next)
+                          if (next !== 'MX') setState('')
+                        }}
+                        options={sortCountries().map((c) => ({ value: c.code, label: c.es }))}
+                        placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
+                        optionalLabel={isEs ? 'Opcional' : 'Optional'}
+                      />
+                    </div>
+
+                    {country === 'MX' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="overflow-hidden"
+                      >
+                        <label htmlFor="state" className={labelClass}>
+                          {isEs ? 'Estado' : 'State'}
+                        </label>
+                        <SearchableSelect
+                          id="state"
+                          value={state}
+                          onChange={setState}
+                          options={MEXICAN_STATES.map((s) => ({ value: s.code, label: s.es }))}
+                          placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
+                          optionalLabel={isEs ? 'Opcional' : 'Optional'}
+                        />
+                      </motion.div>
+                    )}
+
+                    <div>
+                      <label htmlFor="ageBand" className={labelClass}>
+                        {isEs ? 'Rango de edad' : 'Age range'}
+                      </label>
+                      <SearchableSelect
+                        id="ageBand"
+                        value={ageBand}
+                        onChange={setAgeBand}
+                        options={AGE_BANDS.map((b) => ({ value: b.value, label: b.es }))}
+                        placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
+                        optionalLabel={isEs ? 'Prefiero no decir' : 'Prefer not to say'}
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="gender" className={labelClass}>
+                        {isEs ? 'Género' : 'Gender'}
+                      </label>
+                      <SearchableSelect
+                        id="gender"
+                        value={gender}
+                        onChange={setGender}
+                        options={GENDERS.map((g) => ({ value: g.value, label: g.es }))}
+                        placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
+                        optionalLabel={isEs ? 'Prefiero no decir' : 'Prefer not to say'}
+                      />
+                    </div>
+
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                      {isEs
+                        ? 'Todo es opcional. Lo usamos solo en conjunto para entender mejor a nuestros visitantes; nunca de forma individual. Si borras tu cuenta, estas estadísticas se conservan sin tu nombre.'
+                        : 'Everything is optional. We only use it in aggregate to understand our visitors better, never individually. If you delete your account, these stats are kept without your name.'}
+                    </p>
+
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDir(-1)
+                          setStep(1)
+                        }}
+                        className="flex-1 rounded-xl border border-zinc-300 px-4 py-3 text-sm font-semibold text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                      >
+                        {isEs ? 'Atrás' : 'Back'}
+                      </button>
+                      <motion.button
+                        type="submit"
+                        disabled={isLoading}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="flex-1 rounded-xl bg-orange-500 py-3 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                      >
+                        {isLoading
+                          ? isEs
+                            ? 'Creando cuenta…'
+                            : 'Creating…'
+                          : isEs
+                          ? 'Crear cuenta'
+                          : 'Create account'}
+                      </motion.button>
+                    </div>
+                  </div>
                 )}
 
-                <div>
-                  <label htmlFor="ageBand" className={labelClass}>
-                    {isEs ? 'Rango de edad' : 'Age range'}
-                  </label>
-                  <SearchableSelect
-                    id="ageBand"
-                    value={ageBand}
-                    onChange={setAgeBand}
-                    options={AGE_BANDS.map((b) => ({ value: b.value, label: b.es }))}
-                    placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
-                    optionalLabel={isEs ? 'Prefiero no decir' : 'Prefer not to say'}
-                  />
-                </div>
+                {step === 1 && (
+                  <div className="space-y-1.5">
+                    <label htmlFor="passwordConfirm" className={labelClass}>
+                      {isEs ? 'Confirma tu contraseña' : 'Confirm password'}
+                    </label>
+                    <input
+                      type="password"
+                      id="passwordConfirm"
+                      value={passwordConfirm}
+                      onChange={(e) => setPasswordConfirm(e.target.value)}
+                      required
+                      autoComplete="new-password"
+                      className={inputClass}
+                      placeholder="••••••••"
+                    />
+                    {passwordConfirm.length > 0 && password !== passwordConfirm && (
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        {isEs ? 'Las contraseñas no coinciden' : 'Passwords do not match'}
+                      </p>
+                    )}
+                  </div>
+                )}
 
-                <div>
-                  <label htmlFor="gender" className={labelClass}>
-                    {isEs ? 'Género' : 'Gender'}
-                  </label>
-                  <SearchableSelect
-                    id="gender"
-                    value={gender}
-                    onChange={setGender}
-                    options={GENDERS.map((g) => ({ value: g.value, label: g.es }))}
-                    placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
-                    optionalLabel={isEs ? 'Prefiero no decir' : 'Prefer not to say'}
-                  />
-                </div>
+                {step === 1 && password.length > 0 && (
+                  <ul className="space-y-1" aria-live="polite">
+                    {PASSWORD_RULES.map((rule) => {
+                      const ok = rule.test(password)
+                      return (
+                        <li
+                          key={rule.id}
+                          className={`flex items-center gap-2 text-xs ${
+                            ok
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-zinc-500 dark:text-zinc-400'
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] ${
+                              ok ? 'bg-emerald-500 text-white' : 'border border-zinc-300'
+                            }`}
+                          >
+                            {ok ? '✓' : ''}
+                          </span>
+                          {rule.label}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
 
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {isEs
-                    ? 'Todo es opcional. Lo usamos solo en conjunto para entender mejor a nuestros visitantes; nunca de forma individual. Si borras tu cuenta, estas estadísticas se conservan sin tu nombre.'
-                    : 'Everything is optional. We only use it in aggregate to understand our visitors better, never individually. If you delete your account, these stats are kept without your name.'}
-                </p>
-
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="flex-1 rounded-xl border border-zinc-300 px-4 py-3 text-sm font-semibold text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-zinc-800"
-                  >
-                    {isEs ? 'Atrás' : 'Back'}
-                  </button>
+                {step === 1 && (
                   <motion.button
                     type="submit"
                     disabled={isLoading}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex-1 rounded-xl bg-orange-500 py-3 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                    className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
                   >
-                    {isLoading
-                      ? isEs
-                        ? 'Creando cuenta…'
-                        : 'Creating…'
-                      : isEs
-                      ? 'Crear cuenta'
-                      : 'Create account'}
-                  </motion.button>
-                </div>
-              </div>
-            )}
-
-            {step === 1 && (
-              <div className="space-y-1.5">
-                <label htmlFor="passwordConfirm" className={labelClass}>
-                  {isEs ? 'Confirma tu contraseña' : 'Confirm password'}
-                </label>
-                <input
-                  type="password"
-                  id="passwordConfirm"
-                  value={passwordConfirm}
-                  onChange={(e) => setPasswordConfirm(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                  className={inputClass}
-                  placeholder="••••••••"
-                />
-                {passwordConfirm.length > 0 && password !== passwordConfirm && (
-                  <p className="text-xs text-red-600 dark:text-red-400">
-                    {isEs ? 'Las contraseñas no coinciden' : 'Passwords do not match'}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {step === 1 && password.length > 0 && (
-              <ul className="space-y-1" aria-live="polite">
-                {PASSWORD_RULES.map((rule) => {
-                  const ok = rule.test(password)
-                  return (
-                    <li
-                      key={rule.id}
-                      className={`flex items-center gap-2 text-xs ${
-                        ok
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-zinc-500 dark:text-zinc-400'
-                      }`}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] ${
-                          ok ? 'bg-emerald-500 text-white' : 'border border-zinc-300'
-                        }`}
+                    {isLoading ? (
+                      <svg
+                        className="-ml-1 mr-2 h-5 w-5 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
                       >
-                        {ok ? '✓' : ''}
-                      </span>
-                      {rule.label}
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
-
-            {step === 1 && (
-              <motion.button
-                type="submit"
-                disabled={isLoading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <svg className="-ml-1 mr-2 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                ) : isEs ? (
-                  'Continuar'
-                ) : (
-                  'Continue'
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                    ) : isEs ? (
+                      'Continuar'
+                    ) : (
+                      'Continue'
+                    )}
+                  </motion.button>
                 )}
-              </motion.button>
-            )}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Puntos de paso */}
+            <div className="flex items-center justify-center gap-2 pt-2" aria-hidden="true">
+              {[1, 2].map((n) => (
+                <motion.span
+                  key={n}
+                  animate={{
+                    width: step === n ? 26 : 8,
+                    backgroundColor: step === n ? '#DE1D8D' : 'rgba(120,113,108,0.35)',
+                  }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  className="h-2 rounded-full"
+                />
+              ))}
+            </div>
           </form>
 
           <div className="mt-6 text-center">
