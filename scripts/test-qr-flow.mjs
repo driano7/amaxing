@@ -17,6 +17,7 @@ const { createBookingInTurso, getTicketByCode, checkIn, ticketCodeFor, generateB
     // lib/booking/turso.ts depende de ./turso (js)
     const tursoJs = fs.readFileSync(path.resolve('lib/turso.js'), 'utf8')
     const tursoMod = new Module(path.resolve('lib/turso.js'))
+    tursoMod.filename = path.resolve('lib/turso.js')
     tursoMod.paths = Module._nodeModulePaths(process.cwd())
     tursoMod._compile(
       transformSync(tursoJs, { loader: 'js', format: 'cjs', target: 'es2020' }).code,
@@ -25,7 +26,35 @@ const { createBookingInTurso, getTicketByCode, checkIn, ticketCodeFor, generateB
 
     const src = fs.readFileSync(path.resolve('lib/booking/turso.ts'), 'utf8')
     let code = transformSync(src, { loader: 'ts', format: 'cjs', target: 'es2020' }).code
-    code = code.replace(/require\(["']\.\.\/turso["']\)/g, 'global.__tursoModule')
+    // lib/booking/turso.ts usa dos modulos locales: el cliente y los
+    // normalizadores de demografia. Se inyectan como requires resueltos.
+    const demoSrc = fs.readFileSync(path.resolve('lib/demographics-shared.ts'), 'utf8')
+    const demoMod = new Module(path.resolve('lib/demographics-shared.ts'))
+    demoMod.paths = Module._nodeModulePaths(process.cwd())
+    demoMod._compile(
+      transformSync(demoSrc, { loader: 'ts', format: 'cjs', target: 'es2020' })
+        .code.replace(/require\(["']\.\/demographics["']\)/g, 'global.__demographicsStub'),
+      path.resolve('lib/demographics-shared.js')
+    )
+    demoMod.filename = path.resolve('lib/demographics-shared.ts')
+
+    global.__demographicsStub = {
+      AGE_BAND_VALUES: ['menor_de_18','18_24','25_34','35_44','45_54','55_64','65_mas'],
+      GENDER_VALUES: ['femenino','masculino','no_binario','otro','prefiero_no_decir'],
+      STATE_CODES: ['CMX','JAL','NLE'],
+    }
+    const demo = path.resolve('lib/demographics-shared.ts')
+    code = code.replace(
+      /require\(["'](\.\.\/turso|\.\.\/demographics-shared)["']\)/g,
+      (_m, spec) => {
+        if (spec.includes('turso')) return 'global.__tursoModule'
+        void demo
+        return 'global.__demoModule'
+      }
+    )
+    global.__demoModule = demoMod.exports
+
+
     global.__tursoModule = tursoMod.exports
     const mod = new Module(path.resolve('lib/booking/turso.ts'))
     mod.paths = Module._nodeModulePaths(process.cwd())

@@ -150,7 +150,7 @@ export default function Register() {
             </a>
           </Link>
           <h1 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">
-            {t('auth.signup.title') || 'Crear cuenta'}
+            {t('auth.signup.title') || 'Crea Tu Cuenta'}
           </h1>
           <p className="text-zinc-500 dark:text-gray-400">
             {t('auth.signup.subtitle') || 'Únete a la comunidad de viajeros'}
@@ -333,11 +333,11 @@ export default function Register() {
                       >
                         {isLoading
                           ? isEs
-                            ? 'Creando cuenta…'
+                            ? 'Creando Cuenta…'
                             : 'Creating…'
                           : isEs
-                          ? 'Crear cuenta'
-                          : 'Create account'}
+                          ? 'Crear Cuenta'
+                          : 'Create Account'}
                       </motion.button>
                     </div>
                   </div>
