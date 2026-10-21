@@ -8,7 +8,7 @@ import Link from '@/components/Link'
 import { CHAPULTEPEC_JOURNEY } from '@/data/journeys/chapultepec'
 import { JOURNEY_NEUTRALS, journeyVars } from '@/lib/journeyTheme'
 import { ChapterNav } from './ChapterNav'
-import { ChapultepecMoment } from './ChapultepecMoment'
+import { EditorialMoment } from './EditorialMoment'
 import { DiscoveryCards } from './DiscoveryCards'
 import { DISCOVERY_KINDS } from '@/data/journeys/chapultepec'
 import { Reveal } from './Reveal'
@@ -138,7 +138,7 @@ export function ChapultepecJourney() {
       ---------------------------------------------------------------- */}
       <div className="mx-auto max-w-6xl px-6">
         {journey.moments.map((moment) => (
-          <ChapultepecMoment
+          <EditorialMoment
             key={moment.id}
             moment={moment}
             photos={journey.photos}

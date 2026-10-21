@@ -101,7 +101,7 @@ export function JourneyStep({
           )}
 
           {pending && (
-            <p className="dark:border-white/15 mt-4 rounded-lg border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-xs leading-relaxed text-zinc-500 dark:bg-zinc-900/40 dark:text-zinc-400">
+            <p className="mt-4 rounded-lg border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-xs leading-relaxed text-zinc-500 dark:border-white/15 dark:bg-zinc-900/40 dark:text-zinc-400">
               <span className="font-semibold">Recurso pendiente: </span>
               {pending}
             </p>

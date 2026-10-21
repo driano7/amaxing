@@ -1,0 +1,182 @@
+{
+  "chapultepec": {
+    "dest": "public/static/images/journeys/chapultepec",
+    "items": [
+      {
+        "file": "File:Estación Chapultepec del Metro de la Ciudad de México 02.jpg",
+        "local": "metro-chapultepec.jpg",
+        "place": "Metro Chapultepec"
+      },
+      {
+        "file": "File:Puerta de los leones en Chapultepec 5.jpg",
+        "local": "puerta-de-los-leones.jpg",
+        "place": "Puerta de los Leones"
+      },
+      {
+        "file": "File:Bosque de Chapultepec IMG 8516 (25262610094).jpg",
+        "local": "calzada-juventud-heroica.jpg",
+        "place": "Calzada Juventud Heroica (acceso peatonal)"
+      },
+      {
+        "file": "File:Monumento a los Niños Heroes - Mexico 2024.jpg",
+        "local": "altar-a-la-patria.jpg",
+        "place": "Altar a la Patria"
+      },
+      {
+        "file": "File:Escultura central Altar a la Patria.jpg",
+        "local": "altar-escultura-central.jpg",
+        "place": "Altar a la Patria, escultura central"
+      },
+      {
+        "file": "File:Audiorama de Chapultepec 1.jpg",
+        "local": "audiorama.jpg",
+        "place": "Audiorama"
+      },
+      {
+        "file": "File:Audiorama de Chapultepec 3.jpg",
+        "local": "cincalco-acceso.jpg",
+        "place": "Acceso a la cueva conocida como Cincalco"
+      },
+      {
+        "file": "File:Baños de Moctezuma 35.JPG",
+        "local": "banos-de-moctezuma.jpg",
+        "place": "Baños de Moctezuma"
+      },
+      {
+        "file": "File:Escalinatas históricas en Baños de Moctezuma - Primera Sección del Bosque de Chapultepec - 6.jpg",
+        "local": "banos-de-moctezuma-escalinatas.jpg",
+        "place": "Baños de Moctezuma, escalinatas"
+      },
+      {
+        "file": "File:Castillo de Chapultepec exterior.jpg",
+        "local": "castillo-exterior.jpg",
+        "place": "Castillo de Chapultepec, fachada"
+      },
+      {
+        "file": "File:Vista aérea del Castillo de Chapultepec 1.jpg",
+        "local": "castillo-aereo.jpg",
+        "place": "Castillo de Chapultepec, vista aérea"
+      },
+      {
+        "file": "File:Castillo de Chapultepec de día.jpg",
+        "local": "castillo-de-dia.jpg",
+        "place": "Castillo de Chapultepec"
+      },
+      {
+        "file": "File:Lago Mayor de Chapultepec - 2.jpg",
+        "local": "lago-chapultepec.jpg",
+        "place": "Lago de Chapultepec"
+      },
+      {
+        "file": "File:Bosque de Chapultepec Arboles.jpg",
+        "local": "bosque-arboles.jpg",
+        "place": "Bosque de Chapultepec"
+      }
+    ]
+  },
+  "centro": {
+    "dest": "public/static/images/journeys/centro",
+    "items": [
+      {
+        "file": "File:Plaza de la Constitución - Zócalo de la Ciudad de México - 6.jpg",
+        "local": "zocalo-aereo.jpg",
+        "place": "Zócalo, vista aérea"
+      },
+      {
+        "file": "File:Ruinas del Templo Mayor - Centro Histórico de la Ciudad de México.jpg",
+        "local": "templo-mayor.jpg",
+        "place": "Ruinas del Templo Mayor"
+      },
+      {
+        "file": "File:Balcón principal del Palacio Nacional, México D.F., México, 2013-10-16, DD 103.JPG",
+        "local": "balcon-nacional.jpg",
+        "place": "Balcón principal del Palacio Nacional (La Aguilita)"
+      },
+      {
+        "file": "File:Fuente Salto del Agua, CDMX - detalle 003.jpg",
+        "local": "salto-del-agua.jpg",
+        "place": "Fuente de Salto del Agua"
+      },
+      {
+        "file": "File:Fuente del Salto del Agua.jpg",
+        "local": "salto-del-agua-litografia.jpg",
+        "place": "Fuente de Salto del Agua, litografía de Casimiro Castro"
+      },
+      {
+        "file": "File:Fuente original de Salto del Agua.JPG",
+        "local": "salto-del-agua-original.jpg",
+        "place": "Fuente original de Salto del Agua (Tepotzotlán, 1779)"
+      },
+      {
+        "file": "File:Casa de los Azulejos - Mexico 2024 (4).jpg",
+        "local": "casa-azulejos.jpg",
+        "place": "Casa de los Azulejos"
+      },
+      {
+        "file": "File:Casa de los Azulejos 1858 Reform War.jpg",
+        "local": "casa-azulejos-1858.jpg",
+        "place": "Casa de los Azulejos en 1858"
+      },
+      {
+        "file": "File:Calle Madero - Mexico City.jpg",
+        "local": "madero.jpg",
+        "place": "Corredor peatonal de Francisco I. Madero"
+      },
+      {
+        "file": "File:Fachada del Palacio de Bellas Artes en restauración 2026 01.jpg",
+        "local": "bellas-artes-fachada.jpg",
+        "place": "Fachada del Palacio de Bellas Artes en restauración"
+      },
+      {
+        "file": "File:Detalles arquitectónicos de la fachada del Palacio de Bellas Artes 03.jpg",
+        "local": "bellas-artes-keystone.jpg",
+        "place": "Clave del Palacio de Bellas Artes en forma de cabeza de guerrero águila mexica"
+      },
+      {
+        "file": "File:El hombre controlador del universo, Diego Rivera.jpg",
+        "local": "rivera-hombre-controlador.jpg",
+        "place": "El hombre controlador del universo (Diego Rivera), Palacio de Bellas Artes"
+      },
+      {
+        "file": "File:Lenin - 'El Hombre Controlador del Universo' (Diogo Rivera) - Palacio de Bellas Artes - Mexico 2024 (2).jpg",
+        "local": "rivera-lenin.jpg",
+        "place": "Detalle de Lenin en El hombre controlador del universo"
+      },
+      {
+        "file": "File:Katharsis, mural de José Clemente Orozco, en el Palacio de Bellas Artes 01.jpg",
+        "local": "orozco-katharsis.jpg",
+        "place": "Katharsis (José Clemente Orozco), Palacio de Bellas Artes"
+      },
+      {
+        "file": "File:Alameda Central - Mexico 2024.jpg",
+        "local": "alameda.jpg",
+        "place": "Alameda Central"
+      },
+      {
+        "file": "File:Alameda Central 20th century. Mexico City.jpg",
+        "local": "alameda-siglo-xx.jpg",
+        "place": "Alameda Central en el siglo XX"
+      },
+      {
+        "file": "File:Facade - Museo Mural Diego Rivera - Mexico 2024.jpg",
+        "local": "museo-mural.jpg",
+        "place": "Museo Mural Diego Rivera"
+      },
+      {
+        "file": "File:Librerías de viejo en Calle Donceles 03.jpg",
+        "local": "donceles-librerias.jpg",
+        "place": "Librerías de viejo en Donceles"
+      },
+      {
+        "file": "File:Calle Republica de Uruguay Centro Historico de la Ciudad de Mexico.JPG",
+        "local": "calle-uruguay.jpg",
+        "place": "Calle República de Uruguay"
+      },
+      {
+        "file": "File:Pastelería Ideal Centro Histórico - Mexico 2024.jpg",
+        "local": "pasteleria-ideal.jpg",
+        "place": "Pastelería Ideal, República de Uruguay"
+      }
+    ]
+  }
+}

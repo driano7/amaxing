@@ -64,6 +64,7 @@
  * el contenido llega en fases posteriores, no se completa con material inventado.
  */
 import { CHAPULTEPEC_JOURNEY } from './journeys/chapultepec'
+import { CENTRO_JOURNEY } from './journeys/centro'
 
 export const JOURNEYS = [
   {
@@ -111,16 +112,20 @@ export const JOURNEYS = [
     moments: [],
   },
   {
-    id: 'centro',
-    slug: 'centro',
-    title_es: 'Centro',
-    title_en: 'Centro',
-    subtitle_es: '',
-    subtitle_en: '',
-    intro_es: '',
-    intro_en: '',
-    heroImage: null,
-    accents: [],
+    // Capitulo ya desarrollado: su experiencia editorial vive en
+    // components/journeys/CentroJourney.tsx y su contenido en
+    // data/journeys/centro.js.
+    id: CENTRO_JOURNEY.id,
+    slug: CENTRO_JOURNEY.slug,
+    experience: CENTRO_JOURNEY.experience,
+    title_es: CENTRO_JOURNEY.title_es,
+    title_en: CENTRO_JOURNEY.title_en,
+    subtitle_es: CENTRO_JOURNEY.subtitle_es,
+    subtitle_en: CENTRO_JOURNEY.subtitle_en,
+    intro_es: CENTRO_JOURNEY.intro_es,
+    intro_en: CENTRO_JOURNEY.intro_en,
+    heroImage: CENTRO_JOURNEY.heroImage,
+    accents: CENTRO_JOURNEY.accents,
     moments: [],
   },
   {

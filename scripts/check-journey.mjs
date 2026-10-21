@@ -27,6 +27,27 @@ try {
 }
 
 const URL = process.argv[2] || 'http://localhost:3000/journeys/chapultepec'
+
+// Frases que deben estar en el HTML de cada journey: comprueban que el
+// contenido narrativo no dependa de que el script se ejecute.
+const CONTENT_BY_SLUG = {
+  chapultepec: [
+    'In xochitl',
+    'changuito mión',
+    'A los defensores de la Patria',
+    'no está demostrado por una fuente sólida',
+    'es una relación de tradición',
+  ],
+  centro: [
+    'Katharsis',
+    'Lenin',
+    '1629',
+    'no están enfrentados',
+    'Interpretación de Amaxing',
+    'República de Uruguay 75',
+  ],
+}
+const slug = (process.argv[3] || 'chapultepec').toLowerCase()
 const failures = []
 const notes = []
 
@@ -103,7 +124,11 @@ const images = await page.evaluate(() =>
   }))
 )
 const sinAlt = images.filter((i) => !i.hasAttr)
-check(sinAlt.length === 0, 'todas las imagenes tienen atributo alt', sinAlt.map((i) => i.src).join(' | '))
+check(
+  sinAlt.length === 0,
+  'todas las imagenes tienen atributo alt',
+  sinAlt.map((i) => i.src).join(' | ')
+)
 const rotas = images.filter((i) => i.w === 0)
 check(rotas.length === 0, 'ninguna imagen rota', rotas.map((i) => i.src).join(' | '))
 notes.push(`     imagenes: ${images.length}`)
@@ -125,13 +150,7 @@ check(h1 === 1, 'exactamente un h1', `h1=${h1}`)
 
 // --- 5. El contenido esta en el HTML sin interactuar ---
 const html = await page.content()
-for (const texto of [
-  'In xochitl',
-  'changuito mión',
-  'A los defensores de la Patria',
-  'no está demostrado por una fuente sólida',
-  'es una relación de tradición',
-]) {
+for (const texto of CONTENT_BY_SLUG[slug] || CONTENT_BY_SLUG.chapultepec) {
   check(html.includes(texto), `contenido en el HTML: "${texto.slice(0, 34)}"`)
 }
 

@@ -7,51 +7,62 @@ import { momentEntry, withReduced, transition } from './animations'
 import { ParallaxFigure } from './ParallaxFigure'
 import { JourneyStep } from './JourneyStep'
 import { StoryTimeline, type TimelineEntry } from './StoryTimeline'
+import { InterpretationNote } from './InterpretationNote'
 
-export interface ChapultepecStep {
+export interface EditorialStep {
   title: string
   body: string
   observe?: string[]
   pending?: string
 }
 
-export interface ChapultepecMomentData {
+export interface EditorialMomentData {
   id: string
   number: number
   title: string
+  title_en?: string
   location: string
   kicker: string
+  duration_min?: number
   lead: string
   image: string
   secondaryImage?: string
-  steps: ChapultepecStep[]
+  steps: EditorialStep[]
   question?: string
   closing?: string
   timeline?: TimelineEntry[]
+  interpretation?: { title: string; body: string }
+  operational_note?: string
+  next_hint?: string
+  /** 'hero' cambia la composicion: mas aire, la foto a sangre y un bloque de interpretacion. */
   hero?: boolean
 }
 
-interface ChapultepecMomentProps {
-  moment: ChapultepecMomentData
+interface EditorialMomentProps {
+  moment: EditorialMomentData
   photos: Record<string, { src: string; alt: string; credit: string }>
   accent: string
-  /** Momento 5: el Castillo, que lleva la línea de tiempo del edificio. */
   timelineTitle: string
+  isEs?: boolean
 }
 
 /**
- * Un momento del recorrido de Chapultepec.
+ * Un momento de un journey editorial.
  *
- * Composicion editorial: numero grande en el margen, titular, localizacion y
- * despues el texto. La fotografia es protagonista y ocupa la mitad de la
- * pantalla; el texto la acompaña. En movil la fotografia va arriba.
+ * Compone: numero en el margen, titular, ubicacion, duracion estimada, lead,
+ * steps, y — si el momento los trae — una nota de interpretacion de Amaxing,
+ * una nota operativa y la pista del siguiente paso.
+ *
+ * La variante 'hero' invierte el peso visual: la fotografia manda y el texto
+ * se acomoda debajo. Se usa una sola vez por journey, en el momento central.
  */
-export function ChapultepecMoment({
+export function EditorialMoment({
   moment,
   photos,
   accent,
   timelineTitle,
-}: ChapultepecMomentProps) {
+  isEs = true,
+}: EditorialMomentProps) {
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-100px' })
   const reduced = useReducedMotion()
@@ -59,7 +70,8 @@ export function ChapultepecMoment({
 
   const photo = photos[moment.image]
   const secondary = moment.secondaryImage ? photos[moment.secondaryImage] : null
-  const isHeroMoment = Boolean(moment.hero)
+  const isHero = Boolean(moment.hero)
+  const title = isEs ? moment.title : moment.title_en || moment.title
 
   return (
     <motion.section
@@ -74,10 +86,12 @@ export function ChapultepecMoment({
     >
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
         {/* Columna de texto */}
-        <div className="lg:col-span-6 lg:col-start-1">
+        <div className={isHero ? 'lg:col-span-7 lg:col-start-1' : 'lg:col-span-6 lg:col-start-1'}>
           <div className="mb-5 flex items-center gap-4">
             <span
-              className="text-5xl font-black tabular-nums leading-none sm:text-6xl"
+              className={`font-black tabular-nums leading-none ${
+                isHero ? 'text-6xl sm:text-7xl' : 'text-5xl sm:text-6xl'
+              }`}
               style={{ color: accent }}
               aria-hidden
             >
@@ -96,13 +110,13 @@ export function ChapultepecMoment({
           <h2
             id={`${moment.id}-title`}
             className={`mb-3 font-serif font-bold leading-[1.05] tracking-tight text-zinc-900 dark:text-zinc-50 ${
-              isHeroMoment ? 'text-4xl sm:text-5xl' : 'text-3xl sm:text-4xl'
+              isHero ? 'text-4xl sm:text-5xl' : 'text-3xl sm:text-4xl'
             }`}
           >
-            {moment.title}
+            {title}
           </h2>
 
-          <p className="mb-6 flex items-start gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mb-2 flex items-start gap-2 text-sm text-zinc-500 dark:text-zinc-400">
             <svg
               viewBox="0 0 24 24"
               className="mt-0.5 h-4 w-4 shrink-0"
@@ -117,13 +131,33 @@ export function ChapultepecMoment({
             {moment.location}
           </p>
 
+          {typeof moment.duration_min === 'number' && (
+            <p className="mb-6 pl-6 text-xs uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              {isEs
+                ? `≈ ${moment.duration_min} min en este momento`
+                : `≈ ${moment.duration_min} min in this moment`}
+            </p>
+          )}
+
           <p
             className={`mb-8 leading-relaxed text-zinc-700 dark:text-zinc-200 ${
-              isHeroMoment ? 'text-xl' : 'text-lg'
+              isHero ? 'text-xl' : 'text-lg'
             }`}
           >
             {moment.lead}
           </p>
+
+          {moment.operational_note && (
+            <p
+              className="mb-8 rounded-xl border-l-2 bg-zinc-50 px-4 py-3 text-sm leading-relaxed text-zinc-600 dark:bg-zinc-900/40 dark:text-zinc-300"
+              style={{ borderColor: accent }}
+            >
+              <span className="font-semibold text-zinc-800 dark:text-zinc-100">
+                {isEs ? 'Nota operativa. ' : 'Operational note. '}
+              </span>
+              {moment.operational_note}
+            </p>
+          )}
 
           {moment.question && (
             <blockquote
@@ -149,24 +183,49 @@ export function ChapultepecMoment({
             ))}
           </div>
 
+          {moment.interpretation && (
+            <InterpretationNote
+              title={moment.interpretation.title}
+              body={moment.interpretation.body}
+              accent={accent}
+            />
+          )}
+
           {moment.closing && (
             <p className="mt-12 font-serif text-2xl leading-relaxed text-zinc-900 dark:text-zinc-50 sm:text-3xl">
               {moment.closing}
             </p>
           )}
+
+          {moment.next_hint && (
+            <p className="mt-10 flex items-center gap-2 text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden
+                style={{ color: accent }}
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {moment.next_hint}
+            </p>
+          )}
         </div>
 
         {/* Columna de fotografía */}
-        <div className="lg:col-span-6 lg:col-start-7">
+        <div className={isHero ? 'lg:col-span-5 lg:col-start-8' : 'lg:col-span-6 lg:col-start-7'}>
           <div className="lg:sticky lg:top-24">
             {photo && (
               <ParallaxFigure
                 src={photo.src}
                 alt={photo.alt}
-                ratio={isHeroMoment ? '3 / 4' : '4 / 3'}
+                ratio={isHero ? '3 / 4' : '4 / 3'}
                 credit={photo.credit}
                 priority={moment.number === 1}
-                shift={isHeroMoment ? 36 : 24}
+                shift={isHero ? 36 : 24}
                 sizes="(max-width: 1024px) 100vw, 46vw"
               />
             )}
