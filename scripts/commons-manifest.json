@@ -71,6 +71,16 @@
         "file": "File:Bosque de Chapultepec Arboles.jpg",
         "local": "bosque-arboles.jpg",
         "place": "Bosque de Chapultepec"
+      },
+      {
+        "file": "File:Castillo de Chapultepec 1880-1900.tif",
+        "local": "castillo-1880.jpg",
+        "place": "Castillo de Chapultepec entre 1880 y 1900"
+      },
+      {
+        "file": "File:Mexico. Castillo de Chapultepec, Chapultepec Castel - Abel Briquet. LCCN2009632227.jpg",
+        "local": "castillo-briquet.jpg",
+        "place": "Castillo de Chapultepec, desde el poniente (Abel Briquet)"
       }
     ]
   },

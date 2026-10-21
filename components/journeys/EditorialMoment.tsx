@@ -9,6 +9,7 @@ import { ImageReveal } from './ImageReveal'
 import { JourneyStep } from './JourneyStep'
 import { StoryTimeline, type TimelineEntry } from './StoryTimeline'
 import { InterpretationNote } from './InterpretationNote'
+import { BeforeAfter } from './BeforeAfter'
 import { momentMotion, INTENSITY_SCALE, type MomentMotion } from './motionConfig'
 
 export interface EditorialStep {
@@ -37,6 +38,15 @@ export interface EditorialMomentData {
   operational_note?: string
   next_hint?: string
   hero?: boolean
+  /**
+   * Comparador de dos epocas. Solo se usa cuando hay dos imagenes
+   * autenticas y correctamente identificadas del mismo lugar.
+   */
+  comparison?: {
+    before: { src: string; alt: string; label: string; credit: string }
+    after: { src: string; alt: string; label: string; credit: string }
+    note?: string
+  }
 }
 
 interface EditorialMomentProps {
@@ -92,6 +102,7 @@ export function EditorialMoment({
   // Sin tratamiento declarado: composicion estandar (comportamiento previo).
   const t = movement ? momentMotion(moment.id) : null
   const layout = t?.layout ?? 'standard'
+  const wide = layout === 'wide-image'
   const scale = t ? INTENSITY_SCALE[t.intensity] : 1
   const entryDuration = 0.65 * scale
 
@@ -219,6 +230,18 @@ export function EditorialMoment({
     />
   )
 
+  const secondaryImage = secondary ? (
+    <ImageReveal
+      src={secondary.src}
+      alt={secondary.alt}
+      className="w-full"
+      ratio="16 / 10"
+      treatment="scale-in"
+      delay={0.1}
+      caption={secondary.credit}
+    />
+  ) : null
+
   const stepsBlock = (
     <div className="border-t border-zinc-200/70 dark:border-white/10">
       {moment.steps.map((step, index) => (
@@ -285,10 +308,36 @@ export function EditorialMoment({
     >
       {/* Bloque escalonado: numero, titular, lead y contenido entran por turno. */}
       {staggered ? (
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
+        <div
+          className={
+            layout === 'wide-image'
+              ? 'flex flex-col gap-10'
+              : 'grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14'
+          }
+        >
+          {layout === 'wide-image' && (
+            <motion.div
+              variants={reduced ? undefined : quietEntry}
+              transition={reduced ? { duration: 0 } : transition(0.5, 0.02)}
+              className="w-full"
+            >
+              {imageBlock}
+              {secondary && (
+                <motion.div
+                  variants={reduced ? undefined : quietEntry}
+                  transition={reduced ? { duration: 0 } : transition(0.5, 0.16)}
+                  className="mt-6"
+                >
+                  {secondaryImage}
+                </motion.div>
+              )}
+            </motion.div>
+          )}
           <div
             className={
-              layout === 'reverse'
+              layout === 'wide-image'
+                ? 'max-w-3xl'
+                : layout === 'reverse'
                 ? 'lg:order-2 lg:col-span-6 lg:col-start-7'
                 : layout === 'object'
                 ? 'lg:col-span-5 lg:col-start-1'
@@ -307,6 +356,20 @@ export function EditorialMoment({
             >
               {stepsBlock}
             </motion.div>
+            {moment.comparison && (
+              <motion.div
+                variants={reduced ? undefined : quietEntry}
+                transition={reduced ? { duration: 0 } : transition(0.5, 0.16)}
+              >
+                <BeforeAfter
+                  before={moment.comparison.before}
+                  after={moment.comparison.after}
+                  note={moment.comparison.note}
+                  accent={accent}
+                  emphasisAccent={emphasisAccent === 'var(--j2)' ? '#F2A03D' : emphasisAccent}
+                />
+              </motion.div>
+            )}
             <motion.div
               variants={reduced ? undefined : quietEntry}
               transition={reduced ? { duration: 0 } : transition(0.5, 0.2)}
@@ -317,7 +380,9 @@ export function EditorialMoment({
 
           <div
             className={
-              layout === 'reverse'
+              layout === 'wide-image'
+                ? 'hidden'
+                : layout === 'reverse'
                 ? 'lg:order-1 lg:col-span-6 lg:col-start-1'
                 : layout === 'object'
                 ? 'lg:col-span-5 lg:col-start-8'
@@ -330,21 +395,13 @@ export function EditorialMoment({
             >
               {imageBlock}
             </motion.div>
-            {secondary && (
+            {secondary && !wide && (
               <motion.div
                 variants={reduced ? undefined : quietEntry}
                 transition={reduced ? { duration: 0 } : transition(0.5, 0.16)}
                 className="mt-6"
               >
-                <ImageReveal
-                  src={secondary.src}
-                  alt={secondary.alt}
-                  className="w-full"
-                  ratio="16 / 10"
-                  treatment="scale-in"
-                  delay={0.1}
-                  caption={secondary.credit}
-                />
+                {secondaryImage}
               </motion.div>
             )}
             {moment.timeline && moment.timeline.length > 0 && (

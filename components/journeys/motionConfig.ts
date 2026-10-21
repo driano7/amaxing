@@ -27,6 +27,7 @@ export type ImageTreatment =
   | 'mask-left' // se destapa de izquierda a derecha
   | 'mask-right' // se destapa de derecha a izquierda
   | 'scale-in' // entra con escala, sin mascara
+  | 'slow-zoom' // zoom lento dentro del marco: el clasico del hero
   | 'still' // sin movimiento: la pieza se mira, no se anima
 
 /** Intensidad del bloque. */
@@ -51,6 +52,53 @@ export interface MomentMotion {
  * resto de journeys, asi que un moment sin entrada se comporta como antes.
  */
 export const MOMENT_TREATMENTS: Record<string, MomentMotion> = {
+  // --- Chapultepec ---------------------------------------------------
+  umbral: {
+    // Entrada cinematografica: la foto hace un zoom lento mientras el
+    // titular entra por lineas.
+    layout: 'wide-image',
+    imageTreatment: 'slow-zoom',
+    intensity: 'calm',
+    stagger: true,
+  },
+  puente: {
+    // Direccion de revelado distinta a la del momento anterior.
+    layout: 'reverse',
+    imageTreatment: 'mask-left',
+    intensity: 'medium',
+    stagger: true,
+  },
+  memoria: {
+    // Revelado vertical y pausado del monumento.
+    layout: 'standard',
+    imageTreatment: 'mask-up',
+    intensity: 'medium',
+    stagger: true,
+  },
+  dioses: {
+    // Parallax muy sutil y los "que observar" entran uno a uno.
+    layout: 'reverse',
+    imageTreatment: 'mask-right',
+    intensity: 'medium',
+    stagger: true,
+    progressiveObserve: true,
+  },
+  castillo: {
+    // HERO. El Castillo es el punto visual mas importante: imagen a sangre
+    // con zoom lento y el texto en columna corta.
+    layout: 'wide-image',
+    imageTreatment: 'slow-zoom',
+    intensity: 'focus',
+    stagger: true,
+  },
+  regreso: {
+    // Cierre: fundido tranquilo, sin prisa.
+    layout: 'wide-image',
+    imageTreatment: 'scale-in',
+    intensity: 'calm',
+    stagger: true,
+  },
+
   // --- Museo Nacional de Antropologia -------------------------------
   'mna-patio': {
     layout: 'wide-image',
@@ -163,6 +211,12 @@ export const MASK_VARIANTS: Record<ImageTreatment, Variants> = {
     hidden: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1.06 },
     visible: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 },
   },
+  'slow-zoom': {
+    // Entra de lejos y se acerca muy despacio. Es el tratamiento del hero:
+    // el encuadre se abre mientras el visitante ya esta leyendo.
+    hidden: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1, opacity: 0.4 },
+    visible: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1.12, opacity: 1 },
+  },
   still: {
     hidden: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 },
     visible: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 },
@@ -175,5 +229,6 @@ export const MASK_DURATION: Record<ImageTreatment, number> = {
   'mask-left': 0.95,
   'mask-right': 0.95,
   'scale-in': 1.2,
+  'slow-zoom': 6,
   still: 0,
 }

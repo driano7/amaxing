@@ -1,26 +1,27 @@
-# Créditos fotográficos — Journey Chapultepec
+# Créditos fotográficos — Journey chapultepec
 
 Todas las imágenes de este Journey provienen de Wikimedia Commons y se
 redistribuyen localmente para poder servirse optimizadas con `next/image`.
 La licencia y el autor se leyeron de la ficha de Commons en el momento de la
-descarga (ver `scripts/commons-fetch.mjs`).
+descarga (ver `scripts/commons-fetch.mjs` y `scripts/commons-manifest.json`).
 
-| Archivo local                        | Lugar                                      | Licencia                                                                | Autor                       | Origen                                                                                                                                                               |
-| ------------------------------------ | ------------------------------------------ | ----------------------------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metro-chapultepec.jpg`              | Metro Chapultepec                          | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AEstaci%C3%B3n_Chapultepec_del_Metro_de_la_Ciudad_de_M%C3%A9xico_02.jpg)                                          |
-| `puerta-de-los-leones.jpg`           | Puerta de los Leones                       | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | EneasMx                     | [Commons](https://commons.wikimedia.org/wiki/File%3APuerta_de_los_leones_en_Chapultepec_5.jpg)                                                                       |
-| `calzada-juventud-heroica.jpg`       | Calzada Juventud Heroica (acceso peatonal) | CC0 ([texto](http://creativecommons.org/publicdomain/zero/1.0/deed.en)) | Gobierno CDMX               | [Commons](<https://commons.wikimedia.org/wiki/File%3ABosque_de_Chapultepec_IMG_8516_(25262610094).jpg>)                                                              |
-| `altar-a-la-patria.jpg`              | Altar a la Patria                          | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | José Luiz                   | [Commons](https://commons.wikimedia.org/wiki/File%3AMonumento_a_los_Ni%C3%B1os_Heroes_-_Mexico_2024.jpg)                                                             |
-| `altar-escultura-central.jpg`        | Altar a la Patria, escultura central       | CC BY 4.0 ([texto](https://creativecommons.org/licenses/by/4.0))        | Tucita33                    | [Commons](https://commons.wikimedia.org/wiki/File%3AEscultura_central_Altar_a_la_Patria.jpg)                                                                         |
-| `audiorama.jpg`                      | Audiorama                                  | CC0 ([texto](http://creativecommons.org/publicdomain/zero/1.0/deed.en)) | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AAudiorama_de_Chapultepec_1.jpg)                                                                                  |
-| `cincalco-acceso.jpg`                | Acceso a la cueva conocida como Cincalco   | CC0 ([texto](http://creativecommons.org/publicdomain/zero/1.0/deed.en)) | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AAudiorama_de_Chapultepec_3.jpg)                                                                                  |
-| `banos-de-moctezuma.jpg`             | Baños de Moctezuma                         | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | Dge                         | [Commons](https://commons.wikimedia.org/wiki/File%3ABa%C3%B1os_de_Moctezuma_35.JPG)                                                                                  |
-| `banos-de-moctezuma-escalinatas.jpg` | Baños de Moctezuma, escalinatas            | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AEscalinatas_hist%C3%B3ricas_en_Ba%C3%B1os_de_Moctezuma_-_Primera_Secci%C3%B3n_del_Bosque_de_Chapultepec_-_6.jpg) |
-| `castillo-exterior.jpg`              | Castillo de Chapultepec, fachada           | CC BY 4.0 ([texto](https://creativecommons.org/licenses/by/4.0))        | PlanoAbierto                | [Commons](https://commons.wikimedia.org/wiki/File%3ACastillo_de_Chapultepec_exterior.jpg)                                                                            |
-| `castillo-aereo.jpg`                 | Castillo de Chapultepec, vista aérea       | CC BY 4.0 ([texto](https://creativecommons.org/licenses/by/4.0))        | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AVista_a%C3%A9rea_del_Castillo_de_Chapultepec_1.jpg)                                                              |
-| `castillo-de-dia.jpg`                | Castillo de Chapultepec                    | CC BY 4.0 ([texto](https://creativecommons.org/licenses/by/4.0))        | Lasibris                    | [Commons](https://commons.wikimedia.org/wiki/File%3ACastillo_de_Chapultepec_de_d%C3%ADa.jpg)                                                                         |
-| `lago-chapultepec.jpg`               | Lago de Chapultepec                        | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3ALago_Mayor_de_Chapultepec_-_2.jpg)                                                                               |
-| `bosque-arboles.jpg`                 | Bosque de Chapultepec                      | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | Luis Angel Barrientos Salas | [Commons](https://commons.wikimedia.org/wiki/File%3ABosque_de_Chapultepec_Arboles.jpg)                                                                               |
+| Archivo local                        | Lugar                                                     | Licencia                                                                | Autor                       | Origen                                                                                                                                                               |
+| ------------------------------------ | --------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `metro-chapultepec.jpg`              | Metro Chapultepec                                         | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AEstaci%C3%B3n_Chapultepec_del_Metro_de_la_Ciudad_de_M%C3%A9xico_02.jpg)                                          |
+| `puerta-de-los-leones.jpg`           | Puerta de los Leones                                      | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | EneasMx                     | [Commons](https://commons.wikimedia.org/wiki/File%3APuerta_de_los_leones_en_Chapultepec_5.jpg)                                                                       |
+| `calzada-juventud-heroica.jpg`       | Calzada Juventud Heroica (acceso peatonal)                | CC0 ([texto](http://creativecommons.org/publicdomain/zero/1.0/deed.en)) | Gobierno CDMX               | [Commons](<https://commons.wikimedia.org/wiki/File%3ABosque_de_Chapultepec_IMG_8516_(25262610094).jpg>)                                                              |
+| `altar-a-la-patria.jpg`              | Altar a la Patria                                         | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | José Luiz                   | [Commons](https://commons.wikimedia.org/wiki/File%3AMonumento_a_los_Ni%C3%B1os_Heroes_-_Mexico_2024.jpg)                                                             |
+| `altar-escultura-central.jpg`        | Altar a la Patria, escultura central                      | CC BY 4.0 ([texto](https://creativecommons.org/licenses/by/4.0))        | Tucita33                    | [Commons](https://commons.wikimedia.org/wiki/File%3AEscultura_central_Altar_a_la_Patria.jpg)                                                                         |
+| `audiorama.jpg`                      | Audiorama                                                 | CC0 ([texto](http://creativecommons.org/publicdomain/zero/1.0/deed.en)) | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AAudiorama_de_Chapultepec_1.jpg)                                                                                  |
+| `cincalco-acceso.jpg`                | Acceso a la cueva conocida como Cincalco                  | CC0 ([texto](http://creativecommons.org/publicdomain/zero/1.0/deed.en)) | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AAudiorama_de_Chapultepec_3.jpg)                                                                                  |
+| `banos-de-moctezuma.jpg`             | Baños de Moctezuma                                        | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | Dge                         | [Commons](https://commons.wikimedia.org/wiki/File%3ABa%C3%B1os_de_Moctezuma_35.JPG)                                                                                  |
+| `banos-de-moctezuma-escalinatas.jpg` | Baños de Moctezuma, escalinatas                           | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3AEscalinatas_hist%C3%B3ricas_en_Ba%C3%B1os_de_Moctezuma_-_Primera_Secci%C3%B3n_del_Bosque_de_Chapultepec_-_6.jpg) |
+| `castillo-exterior.jpg`              | Castillo de Chapultepec, fachada                          | CC BY 4.0 ([texto](https://creativecommons.org/licenses/by/4.0))        | PlanoAbierto                | [Commons](https://commons.wikimedia.org/wiki/File%3ACastillo_de_Chapultepec_exterior.jpg)                                                                            |
+| `castillo-de-dia.jpg`                | Castillo de Chapultepec                                   | CC BY 4.0 ([texto](https://creativecommons.org/licenses/by/4.0))        | Lasibris                    | [Commons](https://commons.wikimedia.org/wiki/File%3ACastillo_de_Chapultepec_de_d%C3%ADa.jpg)                                                                         |
+| `lago-chapultepec.jpg`               | Lago de Chapultepec                                       | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | ProtoplasmaKid              | [Commons](https://commons.wikimedia.org/wiki/File%3ALago_Mayor_de_Chapultepec_-_2.jpg)                                                                               |
+| `bosque-arboles.jpg`                 | Bosque de Chapultepec                                     | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0))  | Luis Angel Barrientos Salas | [Commons](https://commons.wikimedia.org/wiki/File%3ABosque_de_Chapultepec_Arboles.jpg)                                                                               |
+| `castillo-1880.jpg`                  | Castillo de Chapultepec entre 1880 y 1900                 | Public domain                                                           | Abel Briquet                | [Commons](https://commons.wikimedia.org/wiki/File%3ACastillo_de_Chapultepec_1880-1900.tif)                                                                           |
+| `castillo-briquet.jpg`               | Castillo de Chapultepec, desde el poniente (Abel Briquet) | Public domain                                                           | Briquet, Abel, photographer | [Commons](https://commons.wikimedia.org/wiki/File%3AMexico._Castillo_de_Chapultepec%2C_Chapultepec_Castel_-_Abel_Briquet._LCCN2009632227.jpg)                        |
 
 ## Detalle por imagen
 
@@ -114,15 +115,6 @@ descarga (ver `scripts/commons-fetch.mjs`).
 - Ficha en Commons: https://commons.wikimedia.org/wiki/File%3ACastillo_de_Chapultepec_exterior.jpg
 - Descripcion en Commons: Vista fachada exterior del Castillo de Chapultepec exterior
 
-### `castillo-aereo.jpg`
-
-- Lugar: Castillo de Chapultepec, vista aérea
-- Licencia: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0
-- Autor: ProtoplasmaKid
-- Fecha: 2024-04-28 15:22:37
-- Ficha en Commons: https://commons.wikimedia.org/wiki/File%3AVista_a%C3%A9rea_del_Castillo_de_Chapultepec_1.jpg
-- Descripcion en Commons: Aerial drone view of Chapultepec Castle, Mexico City, Mexico.
-
 ### `castillo-de-dia.jpg`
 
 - Lugar: Castillo de Chapultepec
@@ -149,3 +141,21 @@ descarga (ver `scripts/commons-fetch.mjs`).
 - Fecha: 2019-01-29 14:21:35
 - Ficha en Commons: https://commons.wikimedia.org/wiki/File%3ABosque_de_Chapultepec_Arboles.jpg
 - Descripcion en Commons: Flora del Bosque de Chapultepec
+
+### `castillo-1880.jpg`
+
+- Lugar: Castillo de Chapultepec entre 1880 y 1900
+- Licencia: Public domain
+- Autor: Abel Briquet
+- Fecha: 1880-01-02
+- Ficha en Commons: https://commons.wikimedia.org/wiki/File%3ACastillo_de_Chapultepec_1880-1900.tif
+- Descripcion en Commons: Castillo de Chapultepec, Ciudad de México entre 1880 y 1900
+
+### `castillo-briquet.jpg`
+
+- Lugar: Castillo de Chapultepec, desde el poniente (Abel Briquet)
+- Licencia: Public domain
+- Autor: Briquet, Abel, photographer
+- Fecha: 1880
+- Ficha en Commons: https://commons.wikimedia.org/wiki/File%3AMexico._Castillo_de_Chapultepec%2C_Chapultepec_Castel_-_Abel_Briquet._LCCN2009632227.jpg
+- Descripcion en Commons: Title: Mexico. Castillo de Chapultepec, Chapultepec Castel / Abel Briquet. Abstract/medium: 1 photographic print : albumen, on mount.

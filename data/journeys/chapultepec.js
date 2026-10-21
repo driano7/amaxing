@@ -79,6 +79,16 @@ export const CHAPULTEPEC_PHOTOS = {
     alt: 'Escalinatas históricas de los Baños de Moctezuma en el Bosque de Chapultepec.',
     credit: 'Wikimedia Commons, CC BY-SA 4.0',
   },
+  castillo1880: {
+    src: `${IMG}/castillo-1880.jpg`,
+    alt: 'El Castillo de Chapultepec visto desde el poniente, hacia 1880-1900, con los agaves en primer plano.',
+    credit: 'Wikimedia Commons, dominio público',
+  },
+  castilloBriquet: {
+    src: `${IMG}/castillo-briquet.jpg`,
+    alt: 'El Castillo de Chapultepec desde el poniente, impresion de albumina de Abel Briquet.',
+    credit: 'Abel Briquet / Library of Congress, dominio público',
+  },
   castillo: {
     src: `${IMG}/castillo-exterior.jpg`,
     alt: 'Fachada exterior del Castillo de Chapultepec.',
@@ -246,10 +256,12 @@ export const SOURCES = [
 export const CHAPULTEPEC_MOMENTS = [
   {
     id: 'umbral',
+    duration_min: 15,
     number: 1,
     title: 'El umbral de las épocas',
     location: 'Metro Chapultepec → Puerta de los Leones',
     kicker: 'Del ruido urbano al bosque',
+    next_hint: 'Sigue al Puente del Tiempo, al otro lado de la avenida.',
     image: 'metro',
     secondaryImage: 'puerta',
     lead: 'Hay lugares que no pertenecen a una sola época. Chapultepec ha sido territorio sagrado, espacio de descanso, escenario de batallas y refugio de una ciudad que nunca deja de transformarse. Hoy vamos a recorrer algunas de las huellas que dejaron quienes pasaron por aquí.',
@@ -272,10 +284,12 @@ export const CHAPULTEPEC_MOMENTS = [
   },
   {
     id: 'puente',
+    duration_min: 15,
     number: 2,
     title: 'El Puente del Tiempo',
     location: 'Acceso peatonal y galería fotográfica, rumbo al Altar a la Patria',
     kicker: 'Cruzar y comparar',
+    next_hint: 'Continua al Altar a la Patria, en la entrada de la calzada.',
     image: 'galeria',
     lead: 'Cruzar este puente es más que cambiar de lado de la avenida. También es una oportunidad para mirar cómo se transforma el paisaje. Las fotografías nos permiten comparar distintas épocas y reconocer qué permanece, qué desaparece y qué cambia de significado.',
     steps: [
@@ -299,10 +313,12 @@ export const CHAPULTEPEC_MOMENTS = [
   },
   {
     id: 'memoria',
+    duration_min: 20,
     number: 3,
     title: 'La memoria de una nación',
     location: 'Altar a la Patria, monumento a los Niños Héroes',
     kicker: 'El bosque cambia de tono',
+    next_hint: 'Baja hacia la zona del Audiorama, entre la arboleda.',
     image: 'altar',
     secondaryImage: 'altarEscultura',
     lead: 'En este punto, el bosque cambia de tono. El monumento recuerda a los cadetes vinculados con la defensa del Castillo durante la intervención estadounidense de 1847. Más allá de su presencia monumental, también invita a pensar cómo una sociedad conserva la memoria de sus acontecimientos.',
@@ -326,10 +342,12 @@ export const CHAPULTEPEC_MOMENTS = [
   },
   {
     id: 'dioses',
+    duration_min: 30,
     number: 4,
     title: 'El Chapultepec de los Dioses',
     location: 'Audiorama, cueva de Cincalco, Baños de Moctezuma',
     kicker: 'Paisaje, agua y memoria',
+    next_hint: 'Empieza la subida al Castillo.',
     image: 'audiorama',
     secondaryImage: 'cincalco',
     lead: 'Antes de ser escenario de emperadores y presidentes, Chapultepec estuvo ligado a historias sagradas, al agua y a las tradiciones de los pueblos que habitaron el valle. Aquí conviene mirar con atención: algunas historias pertenecen a la documentación histórica; otras sobreviven como leyendas que han dado significado al paisaje.',
@@ -367,13 +385,17 @@ export const CHAPULTEPEC_MOMENTS = [
         observe: [],
       },
     ],
+    operational_note:
+      'El Audiorama publica un horario de martes a domingo, de 9:00 a 16:00, con entrada libre. El acceso al interior de la cueva de Cincalco esta restringido: se visita desde el exterior. Confirma el dia de la visita.',
   },
   {
     id: 'castillo',
+    duration_min: 60,
     number: 5,
     title: 'De virreyes a emperadores',
     location: 'Subida y visita al Castillo de Chapultepec',
     kicker: 'El capítulo mayor',
+    next_hint: 'Baja hacia el lago para el ultimo tramo.',
     hero: true,
     image: 'castillo',
     secondaryImage: 'castilloAereo',
@@ -424,13 +446,32 @@ export const CHAPULTEPEC_MOMENTS = [
       },
     ],
     timeline: CASTILLO_TIMELINE,
+    operational_note:
+      'El Castillo alberga el Museo Nacional de Historia. El acceso interior y los horarios de las salas dependen de la agenda del museo y de los montajes: confirma el dia de la visita. Las tres horas de referencia NO incluyen una visita completa al museo: el bloque de 60 minutos es para el edificio, sus murales y las vistas.',
+    comparison: {
+      before: {
+        src: CHAPULTEPEC_PHOTOS.castillo1880.src,
+        alt: CHAPULTEPEC_PHOTOS.castillo1880.alt,
+        label: '1880-1900',
+        credit: CHAPULTEPEC_PHOTOS.castillo1880.credit,
+      },
+      after: {
+        src: CHAPULTEPEC_PHOTOS.castilloAereo.src,
+        alt: CHAPULTEPEC_PHOTOS.castilloAereo.alt,
+        label: 'Hoy',
+        credit: CHAPULTEPEC_PHOTOS.castilloAereo.credit,
+      },
+      note: 'Mismo edificio, distinta epoca y distinto punto de vista.',
+    },
   },
   {
     id: 'regreso',
+    duration_min: 20,
     number: 6,
     title: 'Volver al presente',
     location: 'Descenso del Castillo → lago → Metro Chapultepec',
     kicker: 'El bosque sigue',
+    next_hint: 'Termina de vuelta en el Metro Chapultepec.',
     image: 'lago',
     secondaryImage: 'bosque',
     lead: 'Después de recorrer dioses, batallas y emperadores, el bosque vuelve a su ritmo cotidiano. El agua, los árboles y las personas que lo visitan forman parte de una historia que sigue escribiéndose.',
@@ -461,20 +502,35 @@ export const CHAPULTEPEC_MOMENTS = [
 ]
 
 /**
- * Ruta aprobada, en el orden aprobado. Se muestra como referencia, no como
- * una distancia verificada: no se ha hecho inspección presencial.
+ * La ruta, por tramos. `walk` son minutos a pie estimados entre zonas; no son
+ * una distancia verificada sobre el sitio y no se presentan como exactos.
  */
 export const CHAPULTEPEC_ROUTE = [
-  'Metro Chapultepec',
-  'Puerta de los Leones',
-  'Puente',
-  'Altar a la Patria',
-  'Audiorama y cueva de Cincalco',
-  'Baños de Moctezuma',
-  'Castillo de Chapultepec',
-  'Lago',
-  'Metro Chapultepec',
+  { zone: 'Metro Chapultepec', walk: 0, note: 'Punto de partida y de regreso.' },
+  {
+    zone: 'Puerta de los Leones',
+    walk: 2,
+    note: 'La entrada al bosque, al otro lado de la avenida.',
+  },
+  { zone: 'Puente del Tiempo', walk: 5, note: 'El puente peatonal y la galeria fotografica.' },
+  { zone: 'Altar a la Patria', walk: 3, note: 'El monumento, en la entrada de la calzada.' },
+  { zone: 'Audiorama y Cincalco', walk: 8, note: 'Baja por la arboleda, entre el bosque alto.' },
+  { zone: 'Baños de Moctezuma', walk: 4, note: 'Junto al Audiorama, sobre el camino de subida.' },
+  { zone: 'Castillo de Chapultepec', walk: 9, note: 'La subida al cerro. Es el tramo exigente.' },
+  { zone: 'Lago', walk: 5, note: 'El descenso hacia el agua.' },
+  { zone: 'Metro Chapultepec', walk: 10, note: 'Regreso por la calzada y la avenida.' },
 ]
+
+/**
+ * Escenarios de duracion. Son estimaciones: el recorrido no tiene una duracion
+ * garantizada y las tres horas de referencia no incluyen una visita completa
+ * al interior del Castillo.
+ */
+export const CHAPULTEPEC_DURATIONS = {
+  minimo: '3 h 10 min',
+  realista: '3 h 45 min',
+  relajado: '4 h 20 min',
+}
 
 /** Advertencias de verificación que se muestran al visitante. */
 export const CHAPULTEPEC_NOTES = [
@@ -509,6 +565,7 @@ export const CHAPULTEPEC_JOURNEY = {
   moments: CHAPULTEPEC_MOMENTS,
   discoveries: CHAPULTEPEC_DISCOVERIES,
   route: CHAPULTEPEC_ROUTE,
+  durations: CHAPULTEPEC_DURATIONS,
   notes: CHAPULTEPEC_NOTES,
   sources: SOURCES,
 }
