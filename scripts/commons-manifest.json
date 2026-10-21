@@ -323,5 +323,70 @@
         "place": "Año Nuevo en la Glorieta de Palma"
       }
     ]
+  },
+  "luchas": {
+    "dest": "public/static/images/journeys/luchas",
+    "items": [
+      {
+        "file": "File:Arena Coliseo CDMX 02.jpg",
+        "local": "arena-coliseo.jpg",
+        "place": "Arena Coliseo (Embudo de Perú 77)"
+      },
+      {
+        "file": "File:Arena Coliseo CDMX 03.jpg",
+        "local": "arena-coliseo-2.jpg",
+        "place": "Arena Coliseo, Tepito"
+      },
+      {
+        "file": "File:Embudo de la lagunilla.jpg",
+        "local": "embudo-lagunilla.jpg",
+        "place": "Arena Coliseo desde la Lagunilla"
+      },
+      {
+        "file": "File:Mural de la arena México 2.jpg",
+        "local": "mural-historia-lucha.jpg",
+        "place": "Mural sobre la historia de la lucha libre en la Arena México"
+      },
+      {
+        "file": "File:Mural de la arena México.jpg",
+        "local": "mural-historia-lucha-2.jpg",
+        "place": "Mural de la Arena México"
+      },
+      {
+        "file": "File:Maligna luchadora.jpg",
+        "local": "maligna-puesto.jpg",
+        "place": "Maligna luchadora en un puesto de la Arena México"
+      },
+      {
+        "file": "File:Blue Demon Jr. with fans.jpg",
+        "local": "blue-demon-fans.jpg",
+        "place": "Blue Demon Jr. con aficionados"
+      },
+      {
+        "file": "File:Blue Demon Jr entrance.jpg",
+        "local": "blue-demon-entrada.jpg",
+        "place": "Blue Demon Jr. entre el ring"
+      },
+      {
+        "file": "File:Blue Demon, Jr. entrance 2017.jpg",
+        "local": "blue-demon-entrada-2017.jpg",
+        "place": "Blue Demon Jr. salutando al publico"
+      },
+      {
+        "file": "File:Blue Demon, Jr.jpg",
+        "local": "blue-demon.jpg",
+        "place": "Blue Demon Jr."
+      },
+      {
+        "file": "File:Mascara de luchador.jpg",
+        "local": "mascara-luchador.jpg",
+        "place": "Mascara de luchador"
+      },
+      {
+        "file": "File:Entrada de Mexico City Arena - Ar3.jpg",
+        "local": "arena-mexico-entrada.jpg",
+        "place": "Entrada de la Arena Mexico"
+      }
+    ]
   }
 }
