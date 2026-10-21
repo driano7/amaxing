@@ -73,7 +73,7 @@ export function JourneyHero({ title, subtitle, image, eyebrow, children }: Journ
             animate="visible"
             variants={variants}
             transition={reduced ? { duration: 0 } : transition(0.7, 0.22)}
-            className="text-white/85 mt-5 max-w-2xl text-lg leading-relaxed"
+            className="mt-5 max-w-2xl text-lg leading-relaxed text-white"
           >
             {subtitle}
           </motion.p>

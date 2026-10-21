@@ -12,21 +12,29 @@ interface RevealProps {
   delay?: number
   /** true = solo se revela una vez; false = vuelve a ocultarse al salir. */
   once?: boolean
+  as?: 'div' | 'section' | 'li' | 'article'
 }
 
 /**
  * Revelado genérico al hacer scroll. Envuelve cualquier bloque editorial.
  * Con prefers-reduced-motion no anima: el contenido ya está visible.
  */
-export function Reveal({ children, className = '', delay = 0, once = true }: RevealProps) {
+export function Reveal({
+  children,
+  className = '',
+  delay = 0,
+  once = true,
+  as = 'div',
+}: RevealProps) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once, margin: '-60px' })
   const reduced = useReducedMotion()
   const variants = withReduced(cardAppear, Boolean(reduced))
+  const Tag = motion[as]
 
   return (
-    <motion.div
-      ref={ref}
+    <Tag
+      ref={ref as never}
       className={className}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -34,6 +42,6 @@ export function Reveal({ children, className = '', delay = 0, once = true }: Rev
       transition={reduced ? { duration: 0 } : transition(0.6, delay)}
     >
       {children}
-    </motion.div>
+    </Tag>
   )
 }

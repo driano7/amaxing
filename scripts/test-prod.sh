@@ -5,6 +5,8 @@ set +e
 set -a; source .env.local >/dev/null 2>&1; set +a
 B=${BASE_URL:-https://donovan-amx.vercel.app}
 S=$(date +%s)
+# La politica de contrasenas vigente exige caracter especial.
+PW='Prueba12345!'
 P=0; F=0
 ok()   { P=$((P+1)); printf "  \033[32mok\033[0m    %-46s %s\n" "$1" "$2"; }
 fail() { F=$((F+1)); printf "  \033[31mFALLA\033[0m  %-46s %s\n" "$1" "$2"; }
@@ -12,7 +14,7 @@ chk()  { [ "$2" = "$3" ] && ok "$1" "$2" || fail "$1" "esperado $3, hubo $2"; }
 code() { curl -s -o /dev/null -w '%{http_code}' --max-time 25 "$@"; }
 json() { node -pe "try{const j=JSON.parse(require('fs').readFileSync(0,'utf8'));$1}catch(e){'ERR'}"; }
 tok()  { curl -s --max-time 25 -X POST $B/api/auth -H "Content-Type: application/json" \
-           -d "{\"mode\":\"login\",\"email\":\"$1\",\"password\":\"Prueba12345\"}" \
+           -d "{\"mode\":\"login\",\"email\":\"$1\",\"password\":\"$PW\"}" \
          | json "j.token||''"; }
 
 echo ""
@@ -28,7 +30,7 @@ chk "POST /api/analytics/track" "$(code -X POST $B/api/analytics/track -H 'Conte
 echo ""
 echo "════════ 2. ALTA CON DEMOGRAFÍA ════════"
 E="smoke$S@t.com"
-chk "POST /api/auth register" "$(code -X POST $B/api/auth -H 'Content-Type: application/json' -d '{"mode":"register","email":"'$E'","password":"Prueba12345","firstName":"Smoke","lastName":"Test","country":"MX","gender":"femenino"}')" "201"
+chk "POST /api/auth register" "$(code -X POST $B/api/auth -H 'Content-Type: application/json' -d '{"mode":"register","email":"'$E'","password":"'$PW'","firstName":"Smoke","lastName":"Test","country":"MX","gender":"femenino"}')" "201"
 T=$(tok "$E")
 [ -n "$T" ] && ok "login devuelve token" "${T:0:14}..." || fail "login devuelve token" "vacio"
 chk "GET /api/auth/me con token" "$(code $B/api/auth/me -H "Authorization: Bearer $T")" "200"

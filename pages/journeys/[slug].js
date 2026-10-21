@@ -11,11 +11,23 @@ import { journeyVars } from '@/lib/journeyTheme'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { JourneyHero } from '@/components/journeys/JourneyHero'
 import { JourneyMoment } from '@/components/journeys/JourneyMoment'
+import { ChapultepecJourney } from '@/components/journeys/ChapultepecJourney'
 import { Reveal } from '@/components/journeys/Reveal'
 
 export default function JourneyDetail({ journey }) {
   const { currentLanguage } = useLanguage()
   const isEs = currentLanguage === 'es'
+
+  // Los journeys con experiencia propia se renderizan con su componente
+  // dedicado; el resto usa la presentacion editorial generica de abajo.
+  if (journey.experience === 'chapultepec') {
+    return (
+      <>
+        <PageSEO title={journey.title_es} description={journey.subtitle_es} />
+        <ChapultepecJourney />
+      </>
+    )
+  }
 
   const title = pickLocalized(journey.title_es, journey.title_en, isEs)
   const subtitle = pickLocalized(journey.subtitle_es, journey.subtitle_en, isEs)

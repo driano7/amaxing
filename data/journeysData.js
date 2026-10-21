@@ -63,6 +63,8 @@
  * Los seis Journeys editoriales. `moments: []` y `accents: []` a propósito:
  * el contenido llega en fases posteriores, no se completa con material inventado.
  */
+import { CHAPULTEPEC_JOURNEY } from './journeys/chapultepec'
+
 export const JOURNEYS = [
   {
     id: 'luchas',
@@ -78,16 +80,21 @@ export const JOURNEYS = [
     moments: [],
   },
   {
-    id: 'chapultepec',
-    slug: 'chapultepec',
-    title_es: 'Chapultepec',
-    title_en: 'Chapultepec',
-    subtitle_es: '',
-    subtitle_en: '',
-    intro_es: '',
-    intro_en: '',
-    heroImage: null,
-    accents: [],
+    // Capitulo ya desarrollado: su experiencia editorial vive en
+    // components/journeys/ChapultepecJourney.tsx y su contenido en
+    // data/journeys/chapultepec.js. Aqui solo queda la ficha que necesita el
+    // indice de /journeys.
+    id: CHAPULTEPEC_JOURNEY.id,
+    slug: CHAPULTEPEC_JOURNEY.slug,
+    experience: CHAPULTEPEC_JOURNEY.experience,
+    title_es: CHAPULTEPEC_JOURNEY.title_es,
+    title_en: CHAPULTEPEC_JOURNEY.title_en,
+    subtitle_es: CHAPULTEPEC_JOURNEY.subtitle_es,
+    subtitle_en: CHAPULTEPEC_JOURNEY.subtitle_en,
+    intro_es: CHAPULTEPEC_JOURNEY.intro_es,
+    intro_en: CHAPULTEPEC_JOURNEY.intro_en,
+    heroImage: CHAPULTEPEC_JOURNEY.heroImage,
+    accents: CHAPULTEPEC_JOURNEY.accents,
     moments: [],
   },
   {
