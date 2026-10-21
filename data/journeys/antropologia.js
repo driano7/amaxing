@@ -432,6 +432,9 @@ export const ANTROPOLOGIA_JOURNEY = {
   meta: ['Planta baja · arqueología', 'Diez momentos', 'Contenido editorial en construcción'],
   accents: ['talavera', 'cempasuchil'],
   heroImage: `${IMG}/patio-exterior-1974.jpg`,
+  // Calificacion: null mientras el journey no tenga reseñas.
+  rating: null,
+  reviewCount: 0,
   photos: ANTROPOLOGIA_PHOTOS,
   moments: ANTROPOLOGIA_MOMENTS,
   discoveries: ANTROPOLOGIA_DISCOVERIES,

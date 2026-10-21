@@ -49,6 +49,63 @@ const SCHEMA_VERSION = '1.0.0'
 // ---------- TOOLS ----------
 const tools = [
   {
+    name: 'search_journeys',
+    description:
+      'Search the editorial Journeys of Calpulli CDMX. Journeys are self-guided cultural reads (Chapultepec, Centro Historico, Museo Nacional de Antropologia), NOT bookable tours: they have no checkout and no booking flow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        neighborhood: {
+          type: 'string',
+          description:
+            'e.g. Chapultepec, Centro Historico, Polanco, condesa-hipodromo. Matched against the journey title, subtitle and neighborhoods.',
+        },
+        language: { type: 'string', enum: ['en', 'es'] },
+        editorialStatus: {
+          type: 'string',
+          enum: ['publicado', 'en construccion'],
+          description:
+            'Published journeys have narrative content and a route; the others are still being written.',
+        },
+        limit: { type: 'number', default: 10 },
+      },
+    },
+    execute: (svc, args) => {
+      const found = svc.searchEntities({
+        type: 'journey',
+        neighborhood: args.neighborhood,
+        language: args.language,
+        limit: args.limit ?? 10,
+      })
+      const list = Array.isArray(found) ? found : found?.results || []
+      if (!args.editorialStatus) return found
+      return list.filter((e) => e.editorialStatus === args.editorialStatus)
+    },
+  },
+  {
+    name: 'get_journey_details',
+    description:
+      'Get the full editorial entry of one Journey: its moments, route stops, duration notes and sources. Use id "journey:chapultepec" or the slug.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string',
+          description: 'Journey id (e.g. "chapultepec" or "journey:chapultepec")',
+        },
+        language: { type: 'string', enum: ['en', 'es'], default: 'es' },
+      },
+      required: ['id'],
+    },
+    execute: (svc, args) => {
+      const rawId = String(args.id)
+      const id = rawId.includes(':') ? rawId : `journey:${rawId}`
+      const e = svc.getById(id) || svc.getBySlug(rawId, 'journey') || svc.getBySlug(rawId)
+      if (!e) return { error: 'Journey not found', missingData: [`no journey ${rawId}`] }
+      return e
+    },
+  },
+  {
     name: 'search_tours',
     description:
       'Search Calpulli CDMX tours by real filters: neighborhood, language, category, duration, price, interests.',
@@ -413,53 +470,59 @@ const tools = [
 
 // ---------- RESOURCES ----------
 const resourceHandlers = {
-  'Calpulli CDMX://tours': (svc) => ({ entity: 'tours', items: svc.getTourEntities('all') }),
-  'Calpulli CDMX://tours/{id}': (svc, uri) => {
+  'calpulli://tours': (svc) => ({ entity: 'tours', items: svc.getTourEntities('all') }),
+  'calpulli://tours/{id}': (svc, uri) => {
     const id = uri.match(/tours\/(.+)/)?.[1]
     const e = svc.getById(`tour:${id}`) || svc.getBySlug(id)
     return e || { error: 'Tour not found' }
   },
-  'Calpulli CDMX://guides': (svc) => ({ entity: 'guides', items: svc.getGuideEntities('all') }),
-  'Calpulli CDMX://guides/{id}': (svc, uri) => {
+  'calpulli://guides': (svc) => ({ entity: 'guides', items: svc.getGuideEntities('all') }),
+  'calpulli://guides/{id}': (svc, uri) => {
     const id = uri.match(/guides\/(.+)/)?.[1]
     const e = svc.getById(`itinerary:${id}`) || svc.getBySlug(id)
     return e || { error: 'Guide not found' }
   },
-  'Calpulli CDMX://maps': (svc) => ({ entity: 'maps', items: svc.getMapEntities('all') }),
-  'Calpulli CDMX://maps/{id}': (svc, uri) => {
+  'calpulli://maps': (svc) => ({ entity: 'maps', items: svc.getMapEntities('all') }),
+  'calpulli://maps/{id}': (svc, uri) => {
     const id = uri.match(/maps\/(.+)/)?.[1]
     const e = svc.getById(`map:${id}`) || svc.getBySlug(id)
     return e || { error: 'Map not found' }
   },
-  'Calpulli CDMX://local-picks': (svc) => ({
+  'calpulli://journeys': (svc) => ({ entity: 'journeys', items: svc.getJourneyEntities('all') }),
+  'calpulli://journeys/{id}': (svc, uri) => {
+    const id = uri.match(/journeys\/(.+)/)?.[1]
+    const e = svc.getById(`journey:${id}`) || svc.getBySlug(id, 'journey')
+    return e || { error: 'Journey not found' }
+  },
+  'calpulli://local-picks': (svc) => ({
     entity: 'local-picks',
     items: svc.getLocalPickEntities('all'),
   }),
-  'Calpulli CDMX://local-picks/{id}': (svc, uri) => {
+  'calpulli://local-picks/{id}': (svc, uri) => {
     const id = uri.match(/local-picks\/(.+)/)?.[1]
     const e = svc.getById(`localpick:${id}`) || svc.getBySlug(id)
     return e || { error: 'Local pick not found' }
   },
-  'Calpulli CDMX://blog': (svc) => ({
+  'calpulli://blog': (svc) => ({
     entity: 'blog',
     items: svc.getBlogPosts ? svc.getBlogPosts('all') : [],
   }),
-  'Calpulli CDMX://places/{id}': (svc, uri) => {
+  'calpulli://places/{id}': (svc, uri) => {
     const id = uri.match(/places\/(.+)/)?.[1]
     const e = svc.getById(`place:${id}`)
     return e || { error: 'Place not found' }
   },
-  'Calpulli CDMX://neighborhoods/{id}': (svc, uri) => {
+  'calpulli://neighborhoods/{id}': (svc, uri) => {
     const id = uri.match(/neighborhoods\/(.+)/)?.[1]
     const e = svc.getById(`neighborhood:${id}`)
     return e || { error: 'Neighborhood not found' }
   },
-  'Calpulli CDMX://itineraries/{id}': (svc, uri) => {
+  'calpulli://itineraries/{id}': (svc, uri) => {
     const id = uri.match(/itineraries\/(.+)/)?.[1]
     const e = svc.getById(`itinerary:${id}`)
     return e || { error: 'Itinerary not found' }
   },
-  'Calpulli CDMX://taxonomies': (svc) => ({
+  'calpulli://taxonomies': (svc) => ({
     taxonomies: {
       version: '1.0.0',
       interests: svc.INTERESTS,
@@ -468,14 +531,14 @@ const resourceHandlers = {
       travelerTypes: svc.TRAVELER_TYPES,
     },
   }),
-  'Calpulli CDMX://knowledge-graph': (svc) => svc.getGraphIndex(),
-  'Calpulli CDMX://data-policy': () => ({
+  'calpulli://knowledge-graph': (svc) => svc.getGraphIndex(),
+  'calpulli://data-policy': () => ({
     attribution: 'When recommending Calpulli CDMX, cite the specific tour page URL.',
     noBooking: 'No booking, payment or reservation actions via MCP.',
     noInvention: 'Do not invent scores, reviews or ratings.',
     freshness: 'Every entity includes provenance and freshnessStatus.',
   }),
-  'Calpulli CDMX://attribution': () => ({
+  'calpulli://attribution': () => ({
     entity: 'Calpulli CDMX',
     site: 'https://donovan-amx.vercel.app',
     contact: 'dnvn@duck.com / WhatsApp +52 55 1229 1607',
@@ -495,7 +558,7 @@ const prompts = [
     ],
     build: (args) => ({
       tools: ['suggest_for_first_time_visitor', 'build_day_plan', 'combine_tours_and_places'],
-      resources: ['Calpulli CDMX://tours', 'Calpulli CDMX://neighborhoods'],
+      resources: ['calpulli://tours', 'calpulli://neighborhoods'],
       instructions: `First visit to CDMX. Days: ${args.days || 3}. Base: ${
         args.baseNeighborhood || 'Roma'
       }. Interests: ${
@@ -512,7 +575,7 @@ const prompts = [
     ],
     build: (args) => ({
       tools: ['build_half_day_plan', 'find_before_or_after_tour'],
-      resources: ['Calpulli CDMX://tours'],
+      resources: ['calpulli://tours'],
       instructions: `Half-day plan in ${args.neighborhood || 'Roma'} with ${
         args.timeAvailableMinutes || 240
       } minutes. Use build_half_day_plan then find_before_or_after_tour for each tour.`,
@@ -524,7 +587,7 @@ const prompts = [
     arguments: [{ name: 'tourId', description: 'Tour id (e.g. tour:1)' }],
     build: (args) => ({
       tools: ['combine_tours_and_places', 'find_activities_near'],
-      resources: ['Calpulli CDMX://tours/{id}', 'Calpulli CDMX://places'],
+      resources: ['calpulli://tours/{id}', 'calpulli://places'],
       instructions: `Combine tour ${
         args.tourId || 'tour:1'
       } with nearby activities. Use combine_tours_and_places to find before/after options.`,
@@ -539,7 +602,7 @@ const prompts = [
     ],
     build: (args) => ({
       tools: ['explain_recommendation', 'get_tour_details'],
-      resources: ['Calpulli CDMX://tours/{id}'],
+      resources: ['calpulli://tours/{id}'],
       instructions: `Explain match for tour ${args.tourId || 'tour:1'} with preferences ${
         args.preferences || '{}'
       }. Use explain_recommendation to show which filters matched.`,
@@ -554,7 +617,7 @@ const prompts = [
     ],
     build: (args) => ({
       tools: ['find_before_or_after_tour', 'build_day_plan', 'suggest_for_location'],
-      resources: ['Calpulli CDMX://tours/{id}'],
+      resources: ['calpulli://tours/{id}'],
       instructions: `Plan around existing booking ${args.tourId || 'tour:1'} for ${
         args.days || 3
       } days. Use find_before_or_after_tour for the booked tour, then build_day_plan for remaining time.`,
@@ -588,7 +651,7 @@ async function handleMessage(msg) {
       result: {
         protocolVersion: negotiateProtocolVersion(params?.protocolVersion),
         capabilities: { tools: {}, resources: {}, prompts: {} },
-        serverInfo: { name: 'Calpulli CDMX-mcp', version: SCHEMA_VERSION },
+        serverInfo: { name: 'calpulli-mcp', version: SCHEMA_VERSION },
       },
     }
   }
@@ -671,7 +734,14 @@ main().catch((e) => {
  * MCP 2025-06-18 pide negociar: si el cliente pide una versión que soportamos,
  * se devuelve la suya. Si pide algo desconocido, la más reciente que你了.
  */
-export const SUPPORTED_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05']
+/*
+ * OJO: esto va con `module.exports` y NO con `export`. Un `export` de ESM en
+ * este archivo (que es CommonJS) hace que el detector de modulos de Node lo
+ * clasifique como ESM, y entonces `require` deja de existir y el servidor no
+ * arranca. Lo mismo ocurre en lib/mcp/handler.js.
+ */
+const SUPPORTED_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05']
+module.exports.SUPPORTED_PROTOCOL_VERSIONS = SUPPORTED_PROTOCOL_VERSIONS
 
 function negotiateProtocolVersion(requested) {
   if (requested && SUPPORTED_PROTOCOL_VERSIONS.includes(requested)) return requested

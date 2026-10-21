@@ -17,6 +17,10 @@ let REFRESH_TOKEN = null
 async function fetchJson(url, options = {}) {
   const res = await fetch(url, {
     ...options,
+    // `manual`: el authorize endpoint responde con un 302 al redirect_uri del
+    // cliente. Si se sigue el redirect, la prueba intenta salir a internet
+    // (chat.openai.com) y falla por algo que no tiene que ver con el servidor.
+    redirect: options.redirect ?? 'manual',
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -85,13 +89,17 @@ describe('OAuth 2.1 Authorization Server', () => {
       method: 'POST',
       body: JSON.stringify({
         redirect_uris: ['https://chat.openai.com/aip/gpt-auth-callback'],
-        name: 'Test Client',
+        // RFC 7591: el nombre del cliente es `client_name`.
+        client_name: 'Test Client',
         scope: 'mcp:read',
       }),
     })
     assert.strictEqual(status, 201)
     assert.ok(data.client_id)
-    assert.ok(data.client_secret)
+    // OAuth 2.1: este servidor admite clientes PUBLICOS con PKCE
+    // (token_endpoint_auth_methods_supported: ['none']). El client_secret es
+    // opcional en RFC 7591 y aqui solo se devuelve si el cliente lo aporta.
+    assert.ok(data.client_secret === undefined || typeof data.client_secret === 'string')
     assert.ok(data.redirect_uris.includes('https://chat.openai.com/aip/gpt-auth-callback'))
     TEST_CLIENT = data
   })
@@ -181,7 +189,7 @@ describe('OAuth 2.1 Authorization Server', () => {
       code: TEST_CODE,
       redirect_uri: 'https://chat.openai.com/aip/gpt-auth-callback',
       client_id: TEST_CLIENT.client_id,
-      client_secret: TEST_CLIENT.client_secret,
+      ...(TEST_CLIENT.client_secret ? { client_secret: TEST_CLIENT.client_secret } : {}),
       code_verifier: verifier,
     })
     assert.strictEqual(status, 200)
@@ -199,7 +207,7 @@ describe('OAuth 2.1 Authorization Server', () => {
       code: 'invalid-code',
       redirect_uri: 'https://chat.openai.com/aip/gpt-auth-callback',
       client_id: TEST_CLIENT.client_id,
-      client_secret: TEST_CLIENT.client_secret,
+      ...(TEST_CLIENT.client_secret ? { client_secret: TEST_CLIENT.client_secret } : {}),
       code_verifier: 'wrong-verifier',
     })
     assert.strictEqual(status, 400)
@@ -247,7 +255,7 @@ describe('OAuth 2.1 Authorization Server', () => {
       grant_type: 'refresh_token',
       refresh_token: REFRESH_TOKEN,
       client_id: TEST_CLIENT.client_id,
-      client_secret: TEST_CLIENT.client_secret,
+      ...(TEST_CLIENT.client_secret ? { client_secret: TEST_CLIENT.client_secret } : {}),
     })
     assert.strictEqual(status, 200)
     assert.ok(data.access_token)
@@ -261,7 +269,7 @@ describe('OAuth 2.1 Authorization Server', () => {
     const { status } = await fetchForm(`${BASE}/api/mcp/oauth/revoke`, {
       token: ACCESS_TOKEN,
       client_id: TEST_CLIENT.client_id,
-      client_secret: TEST_CLIENT.client_secret,
+      ...(TEST_CLIENT.client_secret ? { client_secret: TEST_CLIENT.client_secret } : {}),
     })
     assert.strictEqual(status, 200)
     // Token should now be invalid
@@ -296,7 +304,7 @@ describe('OAuth 2.1 Authorization Server', () => {
       code,
       redirect_uri: 'https://chat.openai.com/aip/gpt-auth-callback',
       client_id: TEST_CLIENT.client_id,
-      client_secret: TEST_CLIENT.client_secret,
+      ...(TEST_CLIENT.client_secret ? { client_secret: TEST_CLIENT.client_secret } : {}),
       code_verifier: verifier,
     })
     if (tokenRes.status !== 200) return
@@ -305,7 +313,7 @@ describe('OAuth 2.1 Authorization Server', () => {
     const { status, data } = await fetchForm(`${BASE}/api/mcp/oauth/introspect`, {
       token: freshToken,
       client_id: TEST_CLIENT.client_id,
-      client_secret: TEST_CLIENT.client_secret,
+      ...(TEST_CLIENT.client_secret ? { client_secret: TEST_CLIENT.client_secret } : {}),
     })
     assert.strictEqual(status, 200)
     assert.strictEqual(data.active, true)

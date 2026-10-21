@@ -22,6 +22,8 @@ type ImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt' | 'wid
   placeholder?: string
   blurDataURL?: string
   unoptimized?: boolean
+  /** Fuerza el optimizador de Next en imagenes locales. */
+  optimize?: boolean
 }
 
 declare const Image: (props: ImageProps) => ReactElement

@@ -2,7 +2,8 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useMemo, type CSSProperties } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Image from '@/components/Image'
 import Link from '@/components/Link'
 import { CHAPULTEPEC_JOURNEY } from '@/data/journeys/chapultepec'
@@ -10,6 +11,9 @@ import { JOURNEY_NEUTRALS, journeyVars } from '@/lib/journeyTheme'
 import { ChapterNav } from './ChapterNav'
 import { JourneyDetailProvider } from './JourneyDetailContext'
 import { DetailToggle } from './DetailToggle'
+import { JourneyRating } from './JourneyRating'
+import { useLanguage } from '@/lib/hooks/useLanguage'
+import SupportBanner from '@/components/SupportBanner'
 import { EditorialHero } from './EditorialHero'
 import { ChapterDivider } from './ChapterDivider'
 import { JourneyRoute } from './JourneyRoute'
@@ -32,7 +36,9 @@ const CEMPASUCHIL = '#F2A03D'
  * cempasuchil Lowry acentua (fechas, datos). El rosa mexicano no aparece.
  */
 export function ChapultepecJourney() {
-  const reduced = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
+  const { currentLanguage } = useLanguage()
+  const isEs = currentLanguage === 'es'
   const journey = CHAPULTEPEC_JOURNEY
 
   const chapters = useMemo(
@@ -50,7 +56,12 @@ export function ChapultepecJourney() {
   return (
     <JourneyDetailProvider ids={detailIds}>
       <div style={journeyVars(journey.accents) as CSSProperties}>
-        <ChapterNav chapters={chapters} accent={TALAVERA} title={journey.title_es} />
+        <ChapterNav
+          chapters={chapters}
+          accent={TALAVERA}
+          title={journey.title_es}
+          header={<DetailToggle accent={TALAVERA} variant="inline" />}
+        />
 
         {/* ---------------------------------------------------------------
           HERO. Componente compartido: la foto se destapa con una mascara,

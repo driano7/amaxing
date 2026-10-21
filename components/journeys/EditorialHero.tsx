@@ -2,7 +2,8 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Image from '@/components/Image'
 import { EASE_EDITORIAL, lineReveal, quietEntry } from './animations'
 
@@ -52,7 +53,7 @@ export function EditorialHero({
   emphasisAccent = '#F2A03D',
   className = '',
 }: EditorialHeroProps) {
-  const reduced = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
   const heroRef = useRef<HTMLElement>(null)
 
   // Paralax muy moderado entre la imagen y el texto: la imagen baja un poco
@@ -83,7 +84,15 @@ export function EditorialHero({
         }
       >
         <motion.div className="h-full w-full" style={reduced ? undefined : { y: imageY }}>
-          <Image src={image} alt={imageAlt} fill priority sizes="100vw" className="object-cover" />
+          <Image
+            src={image}
+            alt={imageAlt}
+            fill
+            priority
+            optimize
+            sizes="100vw"
+            className="object-cover"
+          />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#2E2E33] via-[rgba(46,46,51,0.68)] to-[rgba(46,46,51,0.18)]" />
       </motion.div>

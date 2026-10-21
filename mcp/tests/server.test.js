@@ -55,7 +55,11 @@ test('initialize returns protocol version and capabilities', async () => {
   const { proc, call } = startServer()
   try {
     const res = await call('initialize', {})
-    assert.equal(res.result.protocolVersion, '2024-11-05')
+    // Sin version declarada, el servidor ofrece la mas reciente que soporta.
+    assert.equal(res.result.protocolVersion, '2025-06-18')
+    // Y si se pide una version concreta que soporta, la respeta.
+    const older = await call('initialize', { protocolVersion: '2024-11-05' })
+    assert.equal(older.result.protocolVersion, '2024-11-05')
     assert.equal(res.result.serverInfo.name, 'calpulli-mcp')
     assert.ok(res.result.capabilities.tools)
     assert.ok(res.result.capabilities.resources)
@@ -65,12 +69,14 @@ test('initialize returns protocol version and capabilities', async () => {
   }
 })
 
-test('tools/list returns 18 tools with schemas', async () => {
+test('tools/list returns every tool with schemas', async () => {
   const { proc, call } = startServer()
   try {
     const res = await call('tools/list', {})
     const names = res.result.tools.map((t) => t.name)
-    assert.equal(names.length, 18)
+    assert.equal(names.length, 20)
+    assert.ok(names.includes('search_journeys'))
+    assert.ok(names.includes('get_journey_details'))
     for (const t of res.result.tools) {
       assert.ok(t.description, `${t.name} sin descripción`)
       assert.ok(t.inputSchema, `${t.name} sin inputSchema`)

@@ -2,7 +2,8 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useMemo, type CSSProperties } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Image from '@/components/Image'
 import Link from '@/components/Link'
 import { CENTRO_JOURNEY } from '@/data/journeys/centro'
@@ -11,6 +12,9 @@ import { journeyVars } from '@/lib/journeyTheme'
 import { ChapterNav } from './ChapterNav'
 import { JourneyDetailProvider } from './JourneyDetailContext'
 import { DetailToggle } from './DetailToggle'
+import { JourneyRating } from './JourneyRating'
+import { useLanguage } from '@/lib/hooks/useLanguage'
+import SupportBanner from '@/components/SupportBanner'
 import { EditorialMoment } from './EditorialMoment'
 import { DiscoveryCards } from './DiscoveryCards'
 import { JourneyRoute } from './JourneyRoute'
@@ -30,7 +34,9 @@ const TERRACOTA = '#C1440E'
  * acentua (numeros de momento, datos). El rosa mexicano no aparece.
  */
 export function CentroJourney() {
-  const reduced = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
+  const { currentLanguage } = useLanguage()
+  const isEs = currentLanguage === 'es'
   const journey = CENTRO_JOURNEY
 
   const chapters = useMemo(
@@ -48,7 +54,12 @@ export function CentroJourney() {
   return (
     <JourneyDetailProvider ids={detailIds}>
       <div style={journeyVars(journey.accents) as CSSProperties}>
-        <ChapterNav chapters={chapters} accent={TALAVERA} title={journey.title_es} />
+        <ChapterNav
+          chapters={chapters}
+          accent={TALAVERA}
+          title={journey.title_es}
+          header={<DetailToggle accent={TALAVERA} variant="inline" />}
+        />
 
         {/* ---------------------------------------------------------------
           HERO. Entrada cinematografica: el titulo sube, el subtitulo

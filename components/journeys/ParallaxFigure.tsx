@@ -2,7 +2,8 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Image from '@/components/Image'
 
 interface ParallaxFigureProps {
@@ -37,7 +38,7 @@ export function ParallaxFigure({
   credit,
 }: ParallaxFigureProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const reduced = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
 
   const { scrollYProgress } = useScroll({
     target: ref,

@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-10-21T19:00:31.104Z",
+  "meta": {
+    "version": "1.0.0",
+    "source": "Calpulli CDMX/Calpulli CDMX data files (toursData, selfGuidesData, cdmxMapsData, journeysData, MDX)",
+    "license": "MIT — ver LICENSE del repositorio",
+    "generatedAt": "2026-10-21T19:00:31.098Z"
+  },
+  "entity": "journeys",
+  "total": 6,
+  "count": 6,
+  "data": [
+    {
+      "id": "journey:luchas",
+      "type": "Journey",
+      "url": "/journeys/luchas",
+      "absoluteUrl": "https://donovan-amx.vercel.app/journeys/luchas",
+      "name": {
+        "es": "Luchas",
+        "en": "Luchas"
+      },
+      "tagline": {
+        "es": "",
+        "en": ""
+      },
+      "description": {
+        "es": "",
+        "en": ""
+      },
+      "priceMXN": 100,
+      "momentCount": 0,
+      "hasMoments": false,
+      "editorialStatus": "en construccion",
+      "routeStops": 0,
+      "momentTitles": [],
+      "relations": {
+        "neighborhoods": []
+      }
+    },
+    {
+      "id": "journey:chapultepec",
+      "type": "Journey",
+      "url": "/journeys/chapultepec",
+      "absoluteUrl": "https://donovan-amx.vercel.app/journeys/chapultepec",
+      "name": {
+        "es": "Chapultepec — De los Dioses a Emperadores",
+        "en": "Chapultepec — From Gods to Emperors"
+      },
+      "tagline": {
+        "es": "Un recorrido por las capas del bosque que fue territorio sagrado, campo de batalla y palacio.",
+        "en": "A walk through the layers of a forest that was sacred ground, battlefield and palace."
+      },
+      "description": {
+        "es": "Chapultepec no es un solo lugar. Es un acumulador de épocas que se leen en el mismo cerro. Este recorrido sigue seis momentos: del Metro al león de la entrada, del altar a la patria a la cueva, del bosque de los dioses al castillo de los emperadores, y de vuelta al agua.",
+        "en": "Chapultepec is not a single place. It is an accumulation of eras readable on the same hill. This route follows six moments: from the Metro to the lion at the gate, from the national altar to the cave, from the forest of the gods to the castle of the emperors, and back to the water."
+      },
+      "priceMXN": 100,
+      "momentCount": 6,
+      "hasMoments": true,
+      "editorialStatus": "publicado",
+      "routeStops": 9,
+      "momentTitles": [
+        "El umbral de las épocas",
+        "El Puente del Tiempo",
+        "La memoria de una nación",
+        "El Chapultepec de los Dioses",
+        "De virreyes a emperadores",
+        "Volver al presente"
+      ],
+      "relations": {
+        "neighborhoods": ["chapultepec"]
+      }
+    },
+    {
+      "id": "journey:jamaica",
+      "type": "Journey",
+      "url": "/journeys/jamaica",
+      "absoluteUrl": "https://donovan-amx.vercel.app/journeys/jamaica",
+      "name": {
+        "es": "Jamaica",
+        "en": "Jamaica"
+      },
+      "tagline": {
+        "es": "",
+        "en": ""
+      },
+      "description": {
+        "es": "",
+        "en": ""
+      },
+      "priceMXN": 100,
+      "momentCount": 0,
+      "hasMoments": false,
+      "editorialStatus": "en construccion",
+      "routeStops": 0,
+      "momentTitles": [],
+      "relations": {
+        "neighborhoods": []
+      }
+    },
+    {
+      "id": "journey:centro",
+      "type": "Journey",
+      "url": "/journeys/centro",
+      "absoluteUrl": "https://donovan-amx.vercel.app/journeys/centro",
+      "name": {
+        "es": "Centro Histórico — El futuro se pintó aquí",
+        "en": "Historic Centre — The Future Was Painted Here"
+      },
+      "tagline": {
+        "es": "Seis capas en una tarde: el agua que hundió la ciudad, las piedras que quedaron arriba y los dos frescos que pintaron el porvenir en un edificio del Eje Central.",
+        "en": "Six layers in one afternoon: the water that sank the city, the stones that stayed on top, and the two murals that painted the future inside a building on Eje Central."
+      },
+      "description": {
+        "es": "Ciudad de México no borra: superpone. Cada capa —el agua, la piedra, el mural, el tender— deja su marca sobre la anterior sin taparla del todo. Este recorrido empieza en el Zócalo, sube por el corredor del agua, entra al Palacio de Bellas Artes y sale por la Alameda, para terminar entre puestos de artesanías y una pastelería de barrio. Y termina donde empezó, que es la mejor manera de mostrar que la ciudad no es una sola época.",
+        "en": "Mexico City does not erase: it layers. Each layer — water, stone, mural, street stall — leaves its mark on the one before without covering it completely. This route starts in the Zócalo, climbs the water corridor, goes inside the Palacio de Bellas Artes and comes out at the Alameda, to end among craft stalls and a neighbourhood bakery. It finishes where it began, which is the best way to show that a city is not a single era."
+      },
+      "priceMXN": 100,
+      "momentCount": 6,
+      "hasMoments": true,
+      "editorialStatus": "publicado",
+      "routeStops": 10,
+      "momentTitles": [
+        "El origen bajo la ciudad",
+        "El encuentro y la ruptura",
+        "La ciudad del agua y sus transformaciones",
+        "El futuro se pintó aquí",
+        "Alameda Central: la ciudad vivida",
+        "Las joyas del Centro: artesanía y vida local"
+      ],
+      "relations": {
+        "neighborhoods": ["centro-historico"]
+      }
+    },
+    {
+      "id": "journey:roma-condesa",
+      "type": "Journey",
+      "url": "/journeys/roma-condesa",
+      "absoluteUrl": "https://donovan-amx.vercel.app/journeys/roma-condesa",
+      "name": {
+        "es": "Roma-Condesa",
+        "en": "Roma-Condesa"
+      },
+      "tagline": {
+        "es": "",
+        "en": ""
+      },
+      "description": {
+        "es": "",
+        "en": ""
+      },
+      "priceMXN": 100,
+      "momentCount": 0,
+      "hasMoments": false,
+      "editorialStatus": "en construccion",
+      "routeStops": 0,
+      "momentTitles": [],
+      "relations": {
+        "neighborhoods": ["condesa", "roma"]
+      }
+    },
+    {
+      "id": "journey:antropologia",
+      "type": "Journey",
+      "url": "/journeys/antropologia",
+      "absoluteUrl": "https://donovan-amx.vercel.app/journeys/antropologia",
+      "name": {
+        "es": "Museo Nacional de Antropología — Un viaje por el tiempo y las costumbres mexicanas en la actualidad",
+        "en": "National Museum of Anthropology — A journey through time and Mexican customs today"
+      },
+      "tagline": {
+        "es": "Diez salas, una capa cada vez: lo que se ve de frente, lo que las fuentes cuentan y lo que todavía no está verificado.",
+        "en": "Ten rooms, one layer at a time: what is seen in the flesh, what the sources tell, and what is still unverified."
+      },
+      "description": {
+        "es": "El Museo Nacional de Antropología se recorre como se lee una publicación: por capas. Cada bloque separa lo que el visitante tiene delante, lo que la institución documenta y lo que todavía no se ha verificado. Este recorrido está en construcción: la estructura, el orden y el movimiento ya están; el relato, no.",
+        "en": "The National Museum of Anthropology is walked like a publication is read: in layers. Each block separates what the visitor has in front of them, what the institution documents, and what is still unverified. This route is under construction: the structure, the order and the movement are done; the story is not."
+      },
+      "priceMXN": 100,
+      "momentCount": 10,
+      "hasMoments": true,
+      "editorialStatus": "publicado",
+      "routeStops": 0,
+      "momentTitles": [
+        "El patio: antes de entrar",
+        "Dualidad",
+        "Códice Boturini",
+        "La fuente",
+        "Calendario Azteca",
+        "Teotihuacan",
+        "Juego de pelota",
+        "Mexicas y Conquista",
+        "Tzompantli",
+        "Xoloitzcuintle"
+      ],
+      "relations": {
+        "neighborhoods": []
+      }
+    }
+  ]
+}

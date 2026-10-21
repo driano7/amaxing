@@ -18,7 +18,7 @@ const isKnownHost = (src) => {
 }
 
 // eslint-disable-next-line jsx-a11y/alt-text
-const Image = ({ src, alt, fill, width, height, layout, ...rest }) => {
+const Image = ({ src, alt, fill, width, height, layout, optimize, ...rest }) => {
   // If fill is used, ensure parent has relative positioning
   // If no width/height/fill provided, default to fill with responsive behavior
   const shouldFill = fill || (!width && !height && layout !== 'fixed')
@@ -31,7 +31,9 @@ const Image = ({ src, alt, fill, width, height, layout, ...rest }) => {
       width={shouldFill ? undefined : width}
       height={shouldFill ? undefined : height}
       layout={shouldFill ? 'fill' : layout}
-      unoptimized={typeof src === 'string' && !isKnownHost(src)}
+      // `optimize` fuerza el paso por el optimizador de Next en imagenes
+      // locales: por defecto, lo que no es de un host conocido se sirve crudo.
+      unoptimized={optimize === true ? false : typeof src === 'string' && !isKnownHost(src)}
       {...rest}
     />
   )

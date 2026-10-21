@@ -30,12 +30,13 @@ async function main() {
     },
   }
   const entry = `
-import { getTourEntities, getGuideEntities, getMapEntities, getLocalPickEntities, getNeighborhoodEntities, getCategoryEntities, getPlaceEntities, getGraphMeta } from ${JSON.stringify(
+import { getTourEntities, getJourneyEntities, getGuideEntities, getMapEntities, getLocalPickEntities, getNeighborhoodEntities, getCategoryEntities, getPlaceEntities, getGraphMeta } from ${JSON.stringify(
     path.join(root, 'lib/knowledge/graph.js')
   )};
 import * as service from ${JSON.stringify(path.join(root, 'lib/knowledge/service.js'))};
 const dump = {
   tours: getTourEntities('all'),
+  journeys: getJourneyEntities('all'),
   guides: getGuideEntities('all'),
   maps: getMapEntities('all'),
   picks: getLocalPickEntities('all'),
@@ -102,6 +103,12 @@ main()
       total: dump.tours.length,
       count: dump.tours.length,
       data: dump.tours,
+    })
+    write(outDir, dump, 'journeys.json', {
+      entity: 'journeys',
+      total: dump.journeys.length,
+      count: dump.journeys.length,
+      data: dump.journeys,
     })
     write(outDir, dump, 'itineraries.json', {
       entity: 'itineraries',

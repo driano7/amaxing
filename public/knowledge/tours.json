@@ -1,11 +1,11 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-10-11T19:31:02.632Z",
+  "generatedAt": "2026-10-21T19:00:31.103Z",
   "meta": {
     "version": "1.0.0",
-    "source": "calpulli/calpulli data files (toursData, selfGuidesData, cdmxMapsData, MDX)",
+    "source": "Calpulli CDMX/Calpulli CDMX data files (toursData, selfGuidesData, cdmxMapsData, journeysData, MDX)",
     "license": "MIT — ver LICENSE del repositorio",
-    "generatedAt": "2026-10-11T19:31:02.626Z"
+    "generatedAt": "2026-10-21T19:00:31.098Z"
   },
   "entity": "tours",
   "total": 12,

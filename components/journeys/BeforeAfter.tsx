@@ -2,7 +2,8 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Image from '@/components/Image'
 
 export interface ComparisonSide {
@@ -46,7 +47,7 @@ export function BeforeAfter({
   note,
 }: BeforeAfterProps) {
   const [side, setSide] = useState<'before' | 'after'>('after')
-  const reduced = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
 
   const sides: Array<{ key: 'before' | 'after'; data: ComparisonSide }> = [
     { key: 'before', data: before },
@@ -107,6 +108,7 @@ export function BeforeAfter({
                 alt={data.alt}
                 fill
                 priority
+                optimize
                 sizes="(max-width: 1024px) 100vw, 46vw"
                 className="object-cover"
               />

@@ -1,6 +1,20 @@
 # Calpulli CDMX MCP Server
 
-Read-only MCP server for discovering, combining and planning tours in Mexico City.
+Read-only MCP server for discovering, combining and planning **tours** and **editorial Journeys** in Mexico City.
+
+## Two kinds of thing
+
+|         | Tours                                 | Journeys                                 |
+| ------- | ------------------------------------- | ---------------------------------------- |
+| What    | guided experiences you book           | editorial routes you read and walk       |
+| Where   | `data/toursData.js`                   | `data/journeys/*.js`                     |
+| Booking | yes, with checkout                    | **no**: no reservation, no checkout      |
+| Money   | price USD per person                  | reference price MXN                      |
+| Shape   | one experience                        | N moments, each with steps               |
+| Tools   | `search_tours`, `get_tour_details`, … | `search_journeys`, `get_journey_details` |
+
+A Journey is a cultural read, not a product. The tools say so explicitly so an
+agent does not try to book one.
 
 ## Architecture
 

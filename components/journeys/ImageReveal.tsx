@@ -2,7 +2,9 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useRef } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
+import Image from '@/components/Image'
+import { motion, useInView } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import { withReduced } from './animations'
 import { MASK_VARIANTS, MASK_DURATION, type ImageTreatment } from './motionConfig'
 
@@ -34,6 +36,8 @@ interface ImageRevealProps {
   containBackground?: string
   /** Pie de imagen con credito. */
   caption?: string
+  /** Ancho de la imagen para el srcset. */
+  sizes?: string
 }
 
 /**
@@ -62,10 +66,11 @@ export function ImageReveal({
   contain = false,
   containBackground = 'transparent',
   caption,
+  sizes = '(max-width: 768px) 100vw, 60vw',
 }: ImageRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
-  const reduced = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
 
   const variants = withReduced(
     MASK_VARIANTS[treatment] ?? MASK_VARIANTS['mask-up'],
@@ -94,14 +99,22 @@ export function ImageReveal({
               : { duration, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }
           }
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          {/*
+            Se usa next/image directamente (y no el envoltorio components/Image)
+            porque este marca las imagenes locales como no optimizadas: con el
+            <img> crudo se descarga el JPEG entero, que en movil son cientos
+            de kilobytes por foto. Aqui si pasan por el optimizador, con
+            srcset y formatos ligeros.
+          */}
+          <Image
             src={src}
             alt={alt}
-            loading={priority ? 'eager' : 'lazy'}
-            width={width}
-            height={height}
-            className="h-full w-full"
+            fill
+            priority={priority}
+            quality={72}
+            sizes={sizes}
+            optimize
+            className="object-cover"
             style={{ objectFit: contain ? 'contain' : 'cover' }}
           />
         </motion.div>

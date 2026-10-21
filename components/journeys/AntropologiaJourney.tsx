@@ -2,7 +2,8 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useMemo, type CSSProperties } from 'react'
-import { useReducedMotion } from 'framer-motion'
+import {} from 'framer-motion'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Link from '@/components/Link'
 import { ANTROPOLOGIA_JOURNEY } from '@/data/journeys/antropologia'
 import { ANTROPOLOGIA_DISCOVERY_KINDS } from '@/data/journeys/antropologia'
@@ -10,6 +11,9 @@ import { journeyVars } from '@/lib/journeyTheme'
 import { ChapterNav } from './ChapterNav'
 import { JourneyDetailProvider } from './JourneyDetailContext'
 import { DetailToggle } from './DetailToggle'
+import { JourneyRating } from './JourneyRating'
+import { useLanguage } from '@/lib/hooks/useLanguage'
+import SupportBanner from '@/components/SupportBanner'
 import { EditorialHero } from './EditorialHero'
 import { EditorialMoment } from './EditorialMoment'
 import { ChapterDivider } from './ChapterDivider'
@@ -30,7 +34,9 @@ const CEMPASUCHIL = '#F2A03D'
  * por id. Nada se decide por el titulo de la pieza.
  */
 export function AntropologiaJourney() {
-  const reduced = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
+  const { currentLanguage } = useLanguage()
+  const isEs = currentLanguage === 'es'
   const journey = ANTROPOLOGIA_JOURNEY
 
   const chapters = useMemo(
@@ -54,7 +60,12 @@ export function AntropologiaJourney() {
   return (
     <JourneyDetailProvider ids={detailIds}>
       <div style={journeyVars(journey.accents) as CSSProperties}>
-        <ChapterNav chapters={chapters} accent={TALAVERA} title={journey.title_es} />
+        <ChapterNav
+          chapters={chapters}
+          accent={TALAVERA}
+          title={journey.title_es}
+          header={<DetailToggle accent={TALAVERA} variant="inline" />}
+        />
 
         <EditorialHero
           title={journey.title_es}

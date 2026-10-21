@@ -2,7 +2,8 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useRef, type CSSProperties } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import { momentEntry, quietEntry, staggerParent, withReduced, transition } from './animations'
 import { ParallaxFigure } from './ParallaxFigure'
 import { ImageReveal } from './ImageReveal'
@@ -11,6 +12,7 @@ import { StoryTimeline, type TimelineEntry } from './StoryTimeline'
 import { InterpretationNote } from './InterpretationNote'
 import { BeforeAfter } from './BeforeAfter'
 import { Disclosure } from './Disclosure'
+import { ProgressiveText } from './ProgressiveText'
 import { useJourneyDetail } from './JourneyDetailContext'
 import { momentMotion, INTENSITY_SCALE, type MomentMotion } from './motionConfig'
 
@@ -100,7 +102,7 @@ export function EditorialMoment({
 }: EditorialMomentProps) {
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-100px' })
-  const reduced = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
   const variants = withReduced(momentEntry, Boolean(reduced))
 
   const photo = photos[moment.image]
@@ -174,13 +176,13 @@ export function EditorialMoment({
         </p>
       )}
 
-      <p
+      <ProgressiveText
+        text={moment.lead}
+        visible={reduced || inView}
         className={`mb-8 leading-relaxed text-zinc-700 dark:text-zinc-200 ${
           isHero ? 'text-xl' : 'text-lg'
         }`}
-      >
-        {moment.lead}
-      </p>
+      />
 
       {moment.operational_note && (
         <p

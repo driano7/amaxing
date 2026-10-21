@@ -3,6 +3,7 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import type { CSSProperties } from 'react'
 import { Disclosure } from './Disclosure'
+import { ProgressiveText } from './ProgressiveText'
 
 interface JourneyStepProps {
   index: number
@@ -106,7 +107,11 @@ export function JourneyStep({
       >
         <div className="pl-[3.25rem]">
           {body && (
-            <p className="max-w-2xl leading-relaxed text-zinc-600 dark:text-zinc-300">{body}</p>
+            <ProgressiveText
+              text={body}
+              mode="step"
+              className="max-w-2xl leading-relaxed text-zinc-600 dark:text-zinc-300"
+            />
           )}
 
           {hasDetails && (

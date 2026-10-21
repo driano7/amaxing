@@ -1,7 +1,7 @@
 'use client'
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 
 export interface ChapterRef {
@@ -15,6 +15,12 @@ interface ChapterNavProps {
   /** Color de la barra de progreso. Por defecto, talavera. */
   accent?: string
   title: string
+  /**
+   * Control que se dibuja ARRIBA de la lista de capitulos. Aqui va el
+   * "ver todo el detalle", para que el usuario lo encuentre justo donde
+   * esta la lista de los capitulos.
+   */
+  header?: ReactNode
 }
 
 /**
@@ -29,7 +35,7 @@ interface ChapterNavProps {
  * lectores de pantalla. En móvil la lista se colapsa en un botón que abre el
  * índice, para no tapar el contenido.
  */
-export function ChapterNav({ chapters, accent = '#0E8C7A', title }: ChapterNavProps) {
+export function ChapterNav({ chapters, accent = '#0E8C7A', title, header }: ChapterNavProps) {
   const [activeId, setActiveId] = useState<string>('')
   const [progress, setProgress] = useState(0)
   const [open, setOpen] = useState(false)
@@ -100,6 +106,7 @@ export function ChapterNav({ chapters, accent = '#0E8C7A', title }: ChapterNavPr
         aria-label={`Capítulos de ${title}`}
         className="fixed right-6 top-1/2 z-30 hidden -translate-y-1/2 lg:block"
       >
+        {header && <div className="mb-4 w-56">{header}</div>}
         <ol className="flex flex-col items-end gap-3">
           {chapters.map((chapter) => {
             const isActive = chapter.id === activeId

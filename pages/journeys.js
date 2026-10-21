@@ -8,6 +8,7 @@ import { journeyVars } from '@/lib/journeyTheme'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { Reveal } from '@/components/journeys/Reveal'
 import { ImageReveal } from '@/components/journeys/ImageReveal'
+import { Sparkles } from 'lucide-react'
 
 /**
  * Preview de foto de un journey en el indice.
@@ -15,7 +16,7 @@ import { ImageReveal } from '@/components/journeys/ImageReveal'
  * Si el journey todavia no tiene una fotografia verificada, se muestra el
  * tratamiento de reserva: nunca una imagen inventada.
  */
-function JourneyPreview({ journey, title, accent, isEs }) {
+function JourneyPreview({ journey, title, isEs }) {
   if (journey.heroImage) {
     return (
       <ImageReveal
@@ -58,7 +59,7 @@ export default function JourneysIndex() {
       />
 
       {/* Hero editorial del índice */}
-      <header className="mx-auto max-w-5xl px-6 pb-14 pt-24 sm:pt-32">
+      <header className="mx-auto max-w-5xl px-6 pb-12 pt-24 sm:pt-32">
         <Reveal>
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#C1440E]">
             Journeys
@@ -74,7 +75,50 @@ export default function JourneysIndex() {
         </Reveal>
       </header>
 
-      {/* Lista editorial: foto, numero, titulo, reseña y precio */}
+      {/* ---------------------------------------------------------------
+          BANNER. El bloque con degradado y desenfoque que abria las
+          experiencias: misma presencia, texto del mundo de los journeys.
+      ---------------------------------------------------------------- */}
+      <section className="mx-auto max-w-5xl px-6 pb-16">
+        <Reveal>
+          <div
+            className="relative overflow-hidden rounded-3xl px-6 py-7 text-white shadow-xl sm:px-8 sm:py-8"
+            style={{
+              background:
+                'linear-gradient(135deg, #DE1D8D 0%, #BE1588 25%, #9F0E7F 50%, #7B2BD9 75%, #6A0568 100%)',
+            }}
+          >
+            <div className="relative mx-auto flex w-full max-w-3xl flex-col items-center gap-3 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
+                <Sparkles className="h-6 w-6 text-white" aria-hidden />
+              </span>
+              <h2 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+                {isEs ? '¿Quieres tu propio Journey?' : 'Want your own Journey?'}
+              </h2>
+              <p className="max-w-2xl text-sm font-medium leading-relaxed text-white/90 sm:text-base">
+                {isEs
+                  ? 'Estos seis journeys son el archivo editorial. Si buscas algo distinto, te armamos un recorrido a la medida: barrio, ritmo, duración y a qué hora quieres que la ciudad te cuente lo que sabe.'
+                  : 'These six journeys are the editorial archive. If you are looking for something else, we build a route to measure: neighborhood, pace, duration and the hour you want the city to tell you what it knows.'}
+              </p>
+              <a
+                href="https://wa.me/525512291607?text=Hola%20Calpulli%20CDMX%2C%20quiero%20un%20Journey%20a%20la%20medida"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-[#9F0E7F] shadow-lg transition hover:bg-white/90"
+              >
+                {isEs ? 'Pedir un Journey a la medida' : 'Request a custom Journey'}
+              </a>
+              <p className="text-xs text-white/70">
+                {isEs
+                  ? 'Te respondemos con propuesta, duración y precio.'
+                  : 'We reply with a proposal, duration and price.'}
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Lista editorial: numero, texto, foto a la derecha y precio */}
       <section className="mx-auto max-w-5xl px-6 pb-28">
         <div className="border-t border-zinc-200/70 dark:border-white/10">
           {JOURNEYS.map((journey, index) => {
@@ -89,7 +133,7 @@ export default function JourneysIndex() {
                 <Link
                   href={`/journeys/${journey.slug}`}
                   style={journeyVars(journey.accents)}
-                  className="group grid grid-cols-1 items-center gap-6 border-b border-zinc-200/70 py-10 transition-colors hover:bg-[var(--j1-softer)] dark:border-white/10 sm:grid-cols-[auto_180px_1fr_auto] sm:gap-8 lg:grid-cols-[auto_260px_1fr_auto] lg:gap-10"
+                  className="group grid grid-cols-1 items-center gap-6 border-b border-zinc-200/70 py-10 transition-colors hover:bg-[var(--j1-softer)] dark:border-white/10 sm:grid-cols-[auto_1fr_200px] sm:gap-8 lg:grid-cols-[auto_1fr_280px] lg:gap-10"
                 >
                   <span
                     className="hidden text-3xl font-black leading-none text-[var(--j1)] sm:block sm:text-4xl"
@@ -98,17 +142,7 @@ export default function JourneysIndex() {
                     {String(index + 1).padStart(2, '0')}
                   </span>
 
-                  {/* Preview de la foto */}
-                  <div className="overflow-hidden rounded-xl">
-                    <JourneyPreview
-                      journey={journey}
-                      title={title}
-                      accent={journey.accents?.[0] || '#0E8C7A'}
-                      isEs={isEs}
-                    />
-                  </div>
-
-                  {/* Titulo y breve reseña */}
+                  {/* Titulo y breve resumen */}
                   <span className="min-w-0">
                     <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--j1)] sm:hidden">
                       {String(index + 1).padStart(2, '0')}
@@ -116,38 +150,22 @@ export default function JourneysIndex() {
                     <span className="block text-2xl font-bold leading-tight text-zinc-900 transition-transform duration-300 group-hover:translate-x-1 dark:text-zinc-50 sm:text-3xl">
                       {title}
                     </span>
-                    {subtitle ? (
-                      <span className="mt-2 block max-w-xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-                        {subtitle}
+                    <span className="mt-2 block max-w-xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                      {subtitle ??
+                        (isEs
+                          ? 'El contenido editorial de este journey se publica proximamente.'
+                          : 'The editorial content of this journey is published progressively.')}
+                    </span>
+                    {price ? (
+                      <span className="mt-3 inline-block rounded-full border border-[var(--j2-soft)] px-3 py-1 text-xs font-semibold tabular-nums text-[var(--j2)]">
+                        ${price} MXN
                       </span>
                     ) : null}
                   </span>
 
-                  {/* Precio de referencia y flecha */}
-                  <span className="flex items-center gap-4 sm:flex-col sm:items-end sm:gap-3">
-                    {price ? (
-                      <span className="rounded-full border border-[var(--j2-soft)] px-3 py-1.5 text-xs font-semibold tabular-nums text-[var(--j2)]">
-                        ${price} MXN
-                      </span>
-                    ) : null}
-                    <span
-                      aria-hidden
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--j1-soft)] text-[var(--j1)] transition-transform duration-300 group-hover:translate-x-1"
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          d="M5 12h14M13 6l6 6-6 6"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
+                  {/* Preview de la foto, a la derecha */}
+                  <span className="order-last block overflow-hidden rounded-xl">
+                    <JourneyPreview journey={journey} title={title} isEs={isEs} />
                   </span>
                 </Link>
               </Reveal>
