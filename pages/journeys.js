@@ -4,7 +4,7 @@
 import Link from '@/components/Link'
 import { PageSEO } from '@/components/SEO'
 import { JOURNEYS } from '@/data/journeysData'
-import { journeyVars, JOURNEY_NEUTRALS } from '@/lib/journeyTheme'
+import { journeyVars } from '@/lib/journeyTheme'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { Reveal } from '@/components/journeys/Reveal'
 
@@ -43,59 +43,62 @@ export default function JourneysIndex() {
       {/* Lista editorial, no una cuadrícula de tarjetas */}
       <section className="mx-auto max-w-5xl px-6 pb-28">
         <div className="border-t border-zinc-200/70 dark:border-white/10">
-          {JOURNEYS.map((journey, index) => (
-            <Reveal key={journey.id} delay={0.05} className="w-full">
-              <Link
-                href={`/journeys/${journey.slug}`}
-                style={journeyVars(journey.accents)}
-                className="group grid grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-zinc-200/70 py-10 transition-colors hover:bg-[var(--j1-softer)] dark:border-white/10 sm:gap-10"
-              >
-                <span
-                  className="text-3xl font-black leading-none text-[var(--j1)] sm:text-4xl"
-                  aria-hidden
-                >
-                  {String(index + 1).padStart(2, '0')}
-                </span>
+          {JOURNEYS.map((journey, index) => {
+            const subtitle = isEs
+              ? journey.subtitle_es || journey.intro_es
+              : journey.subtitle_en || journey.intro_en
 
-                <span className="min-w-0">
-                  <span className="block text-2xl font-bold leading-tight text-zinc-900 transition-transform duration-300 group-hover:translate-x-2 dark:text-zinc-50 sm:text-3xl">
-                    {isEs ? journey.title_es : journey.title_en}
-                  </span>
-                  {isEs ? (
-                    journey.subtitle_es || journey.intro_es
-                  ) : journey.subtitle_en || journey.intro_en ? (
-                    <span className="mt-2 block max-w-xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-                      {isEs
-                        ? journey.subtitle_es || journey.intro_es
-                        : journey.subtitle_en || journey.intro_en}
-                    </span>
-                  ) : null}
-                </span>
-
-                <span
-                  aria-hidden
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--j1-soft)] text-[var(--j1)] transition-transform duration-300 group-hover:translate-x-1"
+            return (
+              <Reveal key={journey.id} delay={0.05} className="w-full">
+                <Link
+                  href={`/journeys/${journey.slug}`}
+                  style={journeyVars(journey.accents)}
+                  className="group grid grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-zinc-200/70 py-10 transition-colors hover:bg-[var(--j1-softer)] dark:border-white/10 sm:gap-10"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
+                  <span
+                    className="text-3xl font-black leading-none text-[var(--j1)] sm:text-4xl"
+                    aria-hidden
                   >
-                    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-              </Link>
-            </Reveal>
-          ))}
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+
+                  <span className="min-w-0">
+                    <span className="block text-2xl font-bold leading-tight text-zinc-900 transition-transform duration-300 group-hover:translate-x-2 dark:text-zinc-50 sm:text-3xl">
+                      {isEs ? journey.title_es : journey.title_en}
+                    </span>
+                    {subtitle ? (
+                      <span className="mt-2 block max-w-xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                        {subtitle}
+                      </span>
+                    ) : null}
+                  </span>
+
+                  <span
+                    aria-hidden
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--j1-soft)] text-[var(--j1)] transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        d="M5 12h14M13 6l6 6-6 6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </Link>
+              </Reveal>
+            )
+          })}
         </div>
 
         <Reveal delay={0.1} className="mt-14">
-          <p
-            className="text-sm italic text-zinc-500 dark:text-zinc-400"
-            style={{ color: JOURNEY_NEUTRALS.tinta }}
-          >
+          <p className="text-sm italic text-zinc-500 dark:text-zinc-400">
             {isEs
               ? 'Cada Journey abre con su propia entrada editorial. El contenido narrativo, las fotografías y la paleta de cada uno se publican progresivamente.'
               : 'Each Journey opens with its own editorial entry. Narrative content, photography and each palette are published progressively.'}
