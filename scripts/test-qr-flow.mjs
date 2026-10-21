@@ -38,18 +38,31 @@ const { createBookingInTurso, getTicketByCode, checkIn, ticketCodeFor, generateB
     )
     demoMod.filename = path.resolve('lib/demographics-shared.ts')
 
+    // lib/demographics.ts aporta las listas de valores y los validadores que
+    // usa lib/booking/turso.ts. Se inyectan aqui para no cargar el modulo
+    // completo (trae listas grandes de paises y estados).
     global.__demographicsStub = {
       AGE_BAND_VALUES: ['menor_de_18','18_24','25_34','35_44','45_54','55_64','65_mas'],
       GENDER_VALUES: ['femenino','masculino','no_binario','otro','prefiero_no_decir'],
       STATE_CODES: ['CMX','JAL','NLE'],
+      COUNTRY_CODES: ['MX', 'US', 'CA', 'ES', 'FR', 'DE', 'GB', 'IT', 'PT', 'NL'],
+      isValidAgeBand: (value) =>
+        typeof value === 'string' &&
+        ['menor_de_18', '18_24', '25_34', '35_44', '45_54', '55_64', '65_mas'].includes(value),
+      isValidGender: (value) =>
+        typeof value === 'string' &&
+        ['femenino', 'masculino', 'no_binario', 'otro', 'prefiero_no_decir'].includes(value),
+      isValidCountry: (value) =>
+        typeof value === 'string' &&
+        ['MX', 'US', 'CA', 'ES', 'FR', 'DE', 'GB', 'IT', 'PT', 'NL'].includes(value),
     }
     const demo = path.resolve('lib/demographics-shared.ts')
     code = code.replace(
-      /require\(["'](\.\.\/turso|\.\.\/demographics-shared)["']\)/g,
+      /require\(["'](\.\.\/turso|\.\.\/demographics-shared|\.\.\/demographics)["']\)/g,
       (_m, spec) => {
         if (spec.includes('turso')) return 'global.__tursoModule'
-        void demo
-        return 'global.__demoModule'
+        if (spec.includes('demographics-shared')) return 'global.__demoModule'
+        return 'global.__demographicsStub'
       }
     )
     global.__demoModule = demoMod.exports

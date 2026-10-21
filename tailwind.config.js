@@ -13,6 +13,17 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      // La escala de opacidad por defecto de Tailwind 3.2.4 salta varios
+      // pasos (no incluye 12, 15, 55 ni 85). Varias clases del proyecto usan
+      // esos valores, y sin esta extension NO se generan: la propiedad se
+      // queda sin aplicar y el elemento hereda el color del padre.
+      // Es aditivo: solo habilita clases que antes no existian.
+      opacity: {
+        12: '0.12',
+        15: '0.15',
+        55: '0.55',
+        85: '0.85',
+      },
       spacing: {
         '9/16': '56.25%',
       },
@@ -42,6 +53,24 @@ module.exports = {
         zinc: {
           950: '#2E2E33',
         },
+        // slate-950 también se añadió en Tailwind 3.3. Sin esta entrada las
+        // clases slate-950 del proyecto (bg-slate-950, dark:bg-slate-950/55)
+        // no generan CSS y se quedan sin aplicar. Valor de Tailwind 3.3.
+        slate: {
+          950: '#020617',
+        },
+        // Igual que slate-950: estos tonos 950 llegaron en Tailwind 3.3. Se
+        // usan como fondo de aviso en modo oscuro (ErrorBoundary, escaner,
+        // perfil). Valores de Tailwind 3.3.
+        red: {
+          950: '#450A0A',
+        },
+        blue: {
+          950: '#172554',
+        },
+        emerald: {
+          950: '#022C22',
+        },
         // Hueso / crema — reemplaza el blanco frío en superficies claras.
         white: '#FAF3EA',
         // Rosa mexicano: orange is remapped to the brand pink palette so all
@@ -57,6 +86,9 @@ module.exports = {
           700: '#A30059',
           800: '#820047',
           900: '#660037',
+          // orange-950 llego en Tailwind 3.3; se usa como fondo de aviso en
+          // modo oscuro (pages/profile.tsx). Valor de Tailwind 3.3.
+          950: '#431407',
         },
         primary: {
           100: '#FAC4DE',
