@@ -13,6 +13,7 @@ import { CollapsibleSection } from './CollapsibleSection'
 import { JourneyRouteGallery } from './JourneyRouteGallery'
 import { JourneyRoute } from './JourneyRoute'
 import { onAllJourneyDetails } from './journeyDetailBus'
+import { areAllMomentsShown, showAllMoments } from './momentsVisibility'
 import { JourneyDetailProvider } from './JourneyDetailContext'
 import { DetailToggle } from './DetailToggle'
 import { JourneyRating } from './JourneyRating'
@@ -47,7 +48,8 @@ export function AntropologiaJourney() {
     () =>
       journey.moments.map((moment) => ({
         id: moment.id,
-        title: moment.title,
+        // El indice lateral de capitulos tambien va en el idioma de la pagina.
+        title: (isEs ? moment.title : moment.title_en) || moment.title,
         number: moment.number,
       })),
     [journey.moments]
@@ -60,9 +62,13 @@ export function AntropologiaJourney() {
   )
 
   const detailIds = journey.moments.map((m) => m.id)
+  const hiddenCount = journey.moments.filter((m) => m.featured !== true).length
   // Cuando el visitante despliega TODO, la ruta deja de ser galeria y se
   // lee como el resto: una lista vertical que aparece al hacer scroll.
   const [everythingOpen, setEverythingOpen] = useState(false)
+  // Los momentos vienen condensados: solo los 3 clave, con un boton para
+  // ver el resto. Una vez pulsado, no se vuelve a plegar hasta recargar.
+  const [showAll, setShowAll] = useState(areAllMomentsShown())
   useEffect(() => onAllJourneyDetails(setEverythingOpen), [])
 
   return (
@@ -121,29 +127,64 @@ export function AntropologiaJourney() {
           LOS DIEZ MOMENTOS, con separador entre capitulos
       ---------------------------------------------------------------- */}
         <div className="mx-auto max-w-6xl px-6">
-          {journey.moments.map((moment) => (
-            <div key={moment.id}>
-              {chapterStarts.has(moment.id) && (
-                <ChapterDivider
-                  chapter={moment.number}
-                  accent={TALAVERA}
-                  emphasisAccent={CEMPASUCHIL}
-                />
-              )}
+          {journey.moments
+            .filter((moment) => showAll || moment.featured === true || journey.moments.length <= 3)
+            .map((moment) => (
+              <div key={moment.id}>
+                {chapterStarts.has(moment.id) && (
+                  <ChapterDivider
+                    chapter={moment.number}
+                    accent={TALAVERA}
+                    emphasisAccent={CEMPASUCHIL}
+                  />
+                )}
 
-              <EditorialMoment
-                moment={moment}
-                photos={journey.photos}
-                accent={TALAVERA}
-                timelineTitle="El Castillo a través del tiempo"
-                movement={MOMENT_TREATMENTS[moment.id]}
-                collapsible
-                emphasisAccent={CEMPASUCHIL}
-                isEs={isEs}
-              />
-            </div>
-          ))}
+                <EditorialMoment
+                  moment={moment}
+                  photos={journey.photos}
+                  accent={TALAVERA}
+                  timelineTitle="El Castillo a través del tiempo"
+                  movement={MOMENT_TREATMENTS[moment.id]}
+                  collapsible
+                  emphasisAccent={CEMPASUCHIL}
+                  isEs={isEs}
+                />
+              </div>
+            ))}
         </div>
+
+        {!showAll && hiddenCount > 0 && (
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                showAllMoments()
+                setShowAll(true)
+              }}
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--j1-soft)] bg-white/70 px-6 py-3 text-sm font-semibold text-[var(--j1)] transition-colors hover:bg-[var(--j1-softer)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              style={{ ['--tw-ring-color' as string]: '#0E8C7A' }}
+            >
+              {isEs
+                ? `Ver los ${hiddenCount} momentos mas`
+                : `See the other ${hiddenCount} moments`}
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <p className="text-xs text-zinc-400">
+              {isEs
+                ? 'Al verlos, ya no se pueden volver a plegar sin recargar la pagina.'
+                : 'Once shown, they cannot be folded back without reloading the page.'}
+            </p>
+          </div>
+        )}
 
         {/* ---------------------------------------------------------------
           HALLAZGOS
@@ -232,20 +273,9 @@ export function AntropologiaJourney() {
           </Reveal>
         </section>
 
-        {/* El support banner es un dropdown sin preview: se abre desde el
-            titulo y se pliega con la flecha. */}
+        {/* El support banner va completo: sin dropdown y sin preview. */}
         <section className="mx-auto max-w-5xl px-6 pb-24">
-          <CollapsibleSection
-            title={isEs ? 'Apoya Amaxing' : 'Support Amaxing'}
-            subtitle={
-              isEs
-                ? 'Si estos recorridos te sirvieron, hay formas de ayudar.'
-                : 'If these routes were useful, there are ways to help.'
-            }
-            accent={TALAVERA}
-          >
-            <SupportBanner />
-          </CollapsibleSection>
+          <SupportBanner />
         </section>
       </div>
       <DetailToggle

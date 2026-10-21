@@ -51,6 +51,7 @@ export function JourneyStep({
   imageAlt,
   defaultOpen = false,
   pending,
+  pending_en,
   progressiveObserve = false,
   accent = 'var(--j1)',
   emphasisAccent = 'var(--j2)',

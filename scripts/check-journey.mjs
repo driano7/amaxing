@@ -32,11 +32,11 @@ const URL = process.argv[2] || 'http://localhost:3000/journeys/chapultepec'
 // contenido narrativo no dependa de que el script se ejecute.
 const CONTENT_BY_SLUG = {
   chapultepec: [
-    'In xochitl',
-    'changuito mión',
-    'A los defensores de la Patria',
-    'no está demostrado por una fuente sólida',
-    'es una relación de tradición',
+    'The threshold of the ages',
+    'stop at the lions',
+    'Altar a la Patria was built',
+    'Audiorama',
+    'climb up the hill',
   ],
   antropologia: [
     'Dualidad',
@@ -48,12 +48,13 @@ const CONTENT_BY_SLUG = {
     'Recurso pendiente',
   ],
   centro: [
-    'Katharsis',
-    'Lenin',
-    '1629',
-    'no están enfrentados',
-    'Interpretación de Amaxing',
-    'República de Uruguay 75',
+    // Solo los tres momentos que quedan visibles al entrar (los destacados):
+    // el resto esta plegado hasta que se pulsa "ver los momentos".
+    'The origin under the city',
+    'The city of water',
+    'The Future Was Painted Here',
+    'Two giant frescoes',
+    'walked-on',
   ],
 }
 const slug = (process.argv[3] || 'chapultepec').toLowerCase()

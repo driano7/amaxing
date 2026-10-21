@@ -19,8 +19,14 @@ import { momentMotion, INTENSITY_SCALE, type MomentMotion } from './motionConfig
 
 export interface EditorialStep {
   title: string
+  /** Version en ingles del titulo. Si no existe, se usa el de arriba. */
+  title_en?: string
   body: string
+  /** Version en ingles del cuerpo. */
+  body_en?: string
   observe?: string[]
+  /** Version en ingles de los detalles por observar. */
+  observe_en?: string[]
   pending?: string
 }
 
@@ -33,11 +39,15 @@ export interface EditorialMomentData {
   kicker: string
   duration_min?: number
   lead: string
+  /** Version en ingles del texto de apertura. */
+  lead_en?: string
   image: string
   secondaryImage?: string
   steps: EditorialStep[]
   question?: string
+  question_en?: string
   closing?: string
+  closing_en?: string
   timeline?: TimelineEntry[]
   interpretation?: { title: string; body: string }
   operational_note?: string
@@ -184,7 +194,7 @@ export function EditorialMoment({
       )}
 
       <ProgressiveText
-        text={moment.lead}
+        text={(isEs ? moment.lead : moment.lead_en) || moment.lead}
         visible={reduced || inView}
         className={`mb-6 leading-relaxed text-zinc-700 dark:text-zinc-200 ${
           isHero ? 'text-xl' : 'text-lg'
@@ -338,9 +348,9 @@ export function EditorialMoment({
         <JourneyStep
           key={step.title}
           index={index}
-          title={step.title}
-          body={step.body}
-          observe={step.observe}
+          title={(isEs ? step.title : step.title_en) || step.title}
+          body={(isEs ? step.body : step.body_en) || step.body}
+          observe={(isEs ? step.observe : step.observe_en) || step.observe}
           pending={step.pending}
           defaultOpen={index === 0}
           progressiveObserve={Boolean(t?.progressiveObserve)}
