@@ -142,6 +142,9 @@ export const JOURNEYS = [
     moments: [],
   },
   {
+    // Base de movimiento lista; el contenido editorial sigue pendiente, asi
+    // que moments, accents y heroImage se dejan como estan a proposito.
+    experience: 'antropologia',
     id: 'antropologia',
     slug: 'antropologia',
     title_es: 'Antropología',

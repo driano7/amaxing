@@ -59,7 +59,16 @@ export function withReduced<T extends Record<string, unknown>>(variants: T, redu
   if (!reduced) return variants
   const neutral: Record<string, unknown> = {}
   Object.keys(variants).forEach((key) => {
-    neutral[key] = { opacity: 1, x: 0, y: 0, scale: 1, height: 'auto' }
+    neutral[key] = {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      scaleX: 1,
+      height: 'auto',
+      // Sin movimiento: nada queda tapado por una mascara.
+      clipPath: 'inset(0% 0% 0% 0%)',
+    }
   })
   return neutral as T
 }
@@ -71,4 +80,44 @@ export function transition(dur: number, delay = 0) {
     delay,
     ease: EASE_EDITORIAL as unknown as [number, number, number, number],
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * Extensiones para el movimiento editorial cinematico.
+ *
+ * Son aditivas: las variantes de arriba (heroEntry, imageReveal, cardAppear,
+ * momentEntry, stepOpen) no cambian, para no alterar los journeys que ya
+ * usan el sistema.
+ * ------------------------------------------------------------------------- */
+
+/** Titular revelado por lineas: cada linea sube desde su propia linea base. */
+export const lineReveal = {
+  hidden: { opacity: 0, y: '0.4em' },
+  visible: { opacity: 1, y: '0em' },
+}
+
+/** Revelado por mascara: la imagen se destapa, no aparece. */
+export const maskReveal = {
+  hidden: { clipPath: 'inset(0% 0% 100% 0%)', scale: 1.05 },
+  visible: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 },
+}
+
+/** Contenedor que escalona a sus hijos. */
+export const staggerParent = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.07, delayChildren: 0.04 },
+  },
+}
+
+/** Entrada minima para bloques de texto pequenos. */
+export const quietEntry = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0 },
+}
+
+/** Apertura de una linea editorial (regla de capitulo). */
+export const ruleGrow = {
+  hidden: { scaleX: 0 },
+  visible: { scaleX: 1 },
 }

@@ -1,6 +1,7 @@
 'use client'
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
+import type { CSSProperties } from 'react'
 import { Disclosure } from './Disclosure'
 
 interface JourneyStepProps {
@@ -17,14 +18,28 @@ interface JourneyStepProps {
    * históricas verificadas). Se muestra dentro del Step, no oculta nada.
    */
   pending?: string
+  /** Los "que observar" entran uno a uno al abrirse el Step. */
+  progressiveObserve?: boolean
+  /**
+   * Color de acento (regla, icono, encabezado abierto). Por defecto la
+   * variable --j1 del journey, para que cada journey conserve su color.
+   */
+  accent?: string
+  /**
+   * Color de enfasis (numeracion y vinetas). Por defecto la variable --j2 del
+   * journey. El Journey del MNA pasa cempasuchil de forma explicita.
+   */
+  emphasisAccent?: string
 }
 
 /**
  * Un Step dentro de un Moment.
  *
- * El texto narrativo y los detalles por observar se despliegan con <details>
- * nativo: el contenido permanece en el DOM, asi que se lee sin JavaScript y la
- * navegacion por teclado es la del navegador.
+ * Se comporta como una capa de lectura de una publicacion cultural, no como
+ * un acordeon: el encabezado marca visualmente el estado activo (una regla
+ * vertical crece, el numero toma el enfasis, el icono se llena) y el contenido
+ * se despliega con la transicion de <details> nativo, que no depende de
+ * JavaScript para completarse.
  */
 export function JourneyStep({
   index,
@@ -35,34 +50,50 @@ export function JourneyStep({
   imageAlt,
   defaultOpen = false,
   pending,
+  progressiveObserve = false,
+  accent = 'var(--j1)',
+  emphasisAccent = 'var(--j2)',
 }: JourneyStepProps) {
   const hasDetails = Boolean(observe && observe.length > 0)
 
   return (
-    <div className="border-b border-zinc-200/70 last:border-b-0 dark:border-white/10">
+    <div
+      className="border-b border-zinc-200/70 last:border-b-0 dark:border-white/10"
+      style={{ '--step-accent': accent, '--step-emphasis': emphasisAccent } as CSSProperties}
+    >
       <Disclosure
         defaultOpen={defaultOpen}
-        className="[&[data-open='true']_.step-icon]:rotate-45"
+        className="group/step"
         summaryClassName="flex items-center gap-4 py-5 text-left"
         panelClassName="pb-6 pr-2"
         summary={
           <>
-            <span
-              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--j1-softer)] text-sm font-semibold text-[var(--j1)]"
-              aria-hidden
-            >
-              {index + 1}
+            <span className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center">
+              {/* Regla vertical que crece cuando el step esta abierto */}
+              <span
+                aria-hidden
+                className="absolute -left-4 top-0 h-0 w-px bg-[var(--step-accent)] transition-all duration-300 group-open/step:h-9"
+              />
+              <span
+                className="text-sm font-semibold tabular-nums text-[var(--step-emphasis)]"
+                aria-hidden
+              >
+                {String(index + 1).padStart(2, '0')}
+              </span>
             </span>
-            <span className="min-w-0 flex-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
+
+            <span className="min-w-0 flex-1 text-base font-semibold text-zinc-900 transition-colors duration-300 group-open/step:text-[var(--step-accent)] dark:text-zinc-50">
               {title}
             </span>
+
             <span
-              className="step-icon flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-zinc-300 text-zinc-500 transition-transform duration-200 dark:border-white/20 dark:text-zinc-300"
+              className="step-icon relative flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-zinc-300 text-zinc-500 transition-all duration-300 group-open/step:rotate-45 group-open/step:border-transparent group-open/step:text-white dark:border-white/20 dark:text-zinc-300"
               aria-hidden
             >
+              <span className="absolute inset-0 rounded-full bg-[var(--step-accent)] opacity-0 transition-opacity duration-300 group-open/step:opacity-100" />
               <svg
                 viewBox="0 0 24 24"
-                className="h-4 w-4"
+                className="relative h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
@@ -80,17 +111,24 @@ export function JourneyStep({
 
           {hasDetails && (
             <div className="mt-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--j1)]">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--step-accent)]">
                 Qué observar
               </p>
               <ul className="space-y-2">
                 {observe?.map((item, i) => (
                   <li
                     key={i}
-                    className="flex gap-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300"
+                    className={
+                      progressiveObserve
+                        ? 'flex -translate-x-2 gap-2 text-sm leading-relaxed text-zinc-600 opacity-0 transition-all duration-500 group-open/step:translate-x-0 group-open/step:opacity-100 dark:text-zinc-300'
+                        : 'flex gap-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300'
+                    }
+                    style={
+                      progressiveObserve ? { transitionDelay: `${120 + i * 90}ms` } : undefined
+                    }
                   >
                     <span
-                      className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--j2)]"
+                      className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--step-emphasis)]"
                       aria-hidden
                     />
                     {item}

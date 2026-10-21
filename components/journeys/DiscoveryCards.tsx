@@ -6,7 +6,12 @@ import { Disclosure } from './Disclosure'
 
 export interface DiscoveryEntry {
   id: string
-  kind: 'documentado' | 'curiosidad' | 'tradicion'
+  /**
+   * Tipo de bloque. Se declara como string y no como union cerrada porque el
+   * contenido editorial vive en archivos .js: el catalogo de tonos es lo que
+   * decide como se ve, y anadir un tipo nuevo no debe romper la pagina.
+   */
+  kind: string
   title: string
   body: string
   source?: string

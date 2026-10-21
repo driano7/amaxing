@@ -178,5 +178,55 @@
         "place": "Pastelería Ideal, República de Uruguay"
       }
     ]
+  },
+  "antropologia": {
+    "dest": "public/static/images/journeys/antropologia",
+    "items": [
+      {
+        "file": "File:Museo Nacional de Antropología, Mexico DF, Marzo 1974 - Outside.jpg",
+        "local": "patio-exterior-1974.jpg",
+        "place": "Museo Nacional de Antropología, exterior (1974)"
+      },
+      {
+        "file": "File:Museo Nacional de Antropología, Mexico DF, Marzo 1974 - Entrance IFrog.jpg",
+        "local": "acceso-1974.jpg",
+        "place": "Acceso al Museo Nacional de Antropología (1974)"
+      },
+      {
+        "file": "File:Museo Nacional de Antropología e Historia - Acceso al Auditorio Jaime Torres Bodet.tif",
+        "local": "auditorio-torres-bodet.jpg",
+        "place": "Acceso al Auditorio Jaime Torres Bodet, con el mural Día y la noche de Rufino Tamayo"
+      },
+      {
+        "file": "File:Boceto de la obra Dualidad de Rufino Tamayo.png",
+        "local": "dualidad-boceto.png",
+        "place": "Boceto de la obra Dualidad, de Rufino Tamayo"
+      },
+      {
+        "file": "File:Mexico City (21953257678).jpg",
+        "local": "piedra-del-sol-sala-mexica.jpg",
+        "place": "Piedra del Sol en la Sala Mexica del Museo Nacional de Antropología"
+      },
+      {
+        "file": "File:Monolito de la Piedra del Sol.jpg",
+        "local": "piedra-del-sol.jpg",
+        "place": "Monolito de la Piedra del Sol"
+      },
+      {
+        "file": "File:File-Monolito de la Piedra del Sol (centro).jpg",
+        "local": "piedra-del-sol-centro.jpg",
+        "place": "Centro del monolito de la Piedra del Sol"
+      },
+      {
+        "file": "File:Sala del Doctor Velarde.jpg",
+        "local": "sala-doctor-velarde.jpg",
+        "place": "Sala del Doctor Velarde"
+      },
+      {
+        "file": "File:Antropología e historia 11.jpg",
+        "local": "sala-museo.jpg",
+        "place": "Sala de arqueología del Museo Nacional de Antropología"
+      }
+    ]
   }
 }

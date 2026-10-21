@@ -38,6 +38,15 @@ const CONTENT_BY_SLUG = {
     'no está demostrado por una fuente sólida',
     'es una relación de tradición',
   ],
+  antropologia: [
+    'Dualidad',
+    'Códice Boturini',
+    'Piedra del Sol',
+    'Tzompantli',
+    'Xoloitzcuintle',
+    'Imagen pendiente de verificar',
+    'Recurso pendiente',
+  ],
   centro: [
     'Katharsis',
     'Lenin',
@@ -115,6 +124,54 @@ for (const viewport of [
 // --- 3. Imagenes: alt y dimensiones ---
 await page.setViewportSize({ width: 1440, height: 900 })
 await page.waitForTimeout(300)
+
+// Recorrido completo antes de comprobar: las imagenes usan loading="lazy" y
+// sin desplazarse no llegan a cargarse. Sin esto, la comprobacion daria
+// falsos positivos por imagenes que si existen.
+// El scroll se hace paso a paso y con reintentos: durante la carga el sitio
+// puede hacer un router.replace (selector de idioma) y eso destruye el
+// contexto de ejecucion de un evaluate largo.
+for (let step = 0; step < 60; step += 1) {
+  let done = false
+  try {
+    done = await page.evaluate(() => {
+      const y = window.scrollY + window.innerHeight * 0.7
+      window.scrollTo(0, y)
+      return y >= document.body.scrollHeight - window.innerHeight
+    })
+  } catch {
+    await page.waitForTimeout(200)
+    continue
+  }
+  if (done) break
+  await page.waitForTimeout(160)
+}
+
+// Se espera abajo: si se vuelve arriba de golpe, el navegador cancela las
+// cargas perezosas que estaban en curso.
+try {
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+} catch {
+  /* el contexto puede cambiar en este punto */
+}
+await page.waitForTimeout(900)
+try {
+  await page.evaluate(() => window.scrollTo(0, 0))
+} catch {
+  /* idem */
+}
+await page.waitForLoadState('networkidle').catch(() => {})
+
+// Se espera a que todas las imagenes terminen de cargar antes de medirlas.
+await page
+  .waitForFunction(
+    () => Array.from(document.images).every((i) => i.complete && i.naturalWidth > 0),
+    null,
+    { timeout: 15000 }
+  )
+  .catch(() => {})
+await page.waitForTimeout(400)
+
 const images = await page.evaluate(() =>
   Array.from(document.images).map((img) => ({
     src: img.currentSrc || img.src,

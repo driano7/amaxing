@@ -13,6 +13,7 @@ import { JourneyHero } from '@/components/journeys/JourneyHero'
 import { JourneyMoment } from '@/components/journeys/JourneyMoment'
 import { ChapultepecJourney } from '@/components/journeys/ChapultepecJourney'
 import { CentroJourney } from '@/components/journeys/CentroJourney'
+import { AntropologiaJourney } from '@/components/journeys/AntropologiaJourney'
 import { Reveal } from '@/components/journeys/Reveal'
 
 export default function JourneyDetail({ journey }) {
@@ -21,6 +22,15 @@ export default function JourneyDetail({ journey }) {
 
   // Los journeys con experiencia propia se renderizan con su componente
   // dedicado; el resto usa la presentacion editorial generica de abajo.
+  if (journey.experience === 'antropologia') {
+    return (
+      <>
+        <PageSEO title={journey.title_es} description={journey.subtitle_es} />
+        <AntropologiaJourney />
+      </>
+    )
+  }
+
   if (journey.experience === 'centro') {
     return (
       <>

@@ -3,61 +3,114 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useRef } from 'react'
 import { motion, useInView, useReducedMotion } from 'framer-motion'
-import { imageReveal, withReduced, transition } from './animations'
+import { withReduced } from './animations'
+import { MASK_VARIANTS, MASK_DURATION, type ImageTreatment } from './motionConfig'
 
 interface ImageRevealProps {
   src: string
   alt: string
-  /** Rellena el contenedor (object-cover). Requiere contenedor con altura. */
-  fill?: boolean
   width?: number
   height?: number
   className?: string
   /** Calidad de next/image. */
   priority?: boolean
   delay?: number
+  /**
+   * Como se revela. 'mask-up' por defecto: la imagen se destapa de abajo
+   * arriba. 'still' la deja quieta (piezas que se miran, no se animan).
+   */
+  treatment?: ImageTreatment
+  /**
+   * Proporcion del marco. El marco reserva el espacio ANTES de que la imagen
+   * cargue, para que no haya salto de layout.
+   */
+  ratio?: string
+  /**
+   * Encuadre de pieza de museo: la imagen se contiene entera en vez de
+   * recortarse. Deja fondo a los lados, que es como se ve una escultura.
+   */
+  contain?: boolean
+  /** Fondo del encuadre de pieza. */
+  containBackground?: string
+  /** Pie de imagen con credito. */
+  caption?: string
 }
 
 /**
- * Revelado progresivo de imagen: el marco aparece con el degradado del Journey
- * y la foto entra al hacer scroll.
+ * Revelado editorial de imagen.
  *
- * El `aspect-ratio` lo pone el contenedor para no reservar espacio con height
- * fijo y no romper el layout móvil.
+ * Tres recursos:
+ *  - la mascara destapa la foto en vez de fundirla;
+ *  - el encuadre de pieza (contain) deja ver el objeto entero con aire a los
+ *    lados, que es como se ve una escultura en un museo;
+ *  - el pie de imagen con el credito, como en una publicacion.
+ *
+ * El marco lleva siempre su proporcion, de modo que la imagen no desplaza
+ * nada al cargar. Con prefers-reduced-motion no hay mascara ni escala: la
+ * imagen aparece completa y nada queda tapado.
  */
 export function ImageReveal({
   src,
   alt,
-  fill = false,
   width,
   height,
   className = '',
   priority = false,
   delay = 0,
+  treatment = 'mask-up',
+  ratio = '4 / 3',
+  contain = false,
+  containBackground = 'transparent',
+  caption,
 }: ImageRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const reduced = useReducedMotion()
-  const variants = withReduced(imageReveal, Boolean(reduced))
+
+  const variants = withReduced(
+    MASK_VARIANTS[treatment] ?? MASK_VARIANTS['mask-up'],
+    Boolean(reduced)
+  )
+  const duration = MASK_DURATION[treatment] ?? 1.1
 
   return (
-    <div ref={ref} className={`relative overflow-hidden ${className}`}>
-      <motion.div
-        className="absolute inset-0"
-        initial="hidden"
-        animate={inView ? 'visible' : 'hidden'}
-        variants={variants}
-        transition={reduced ? { duration: 0 } : transition(0.9, delay)}
+    <figure className="w-full">
+      <div
+        ref={ref}
+        className={`relative overflow-hidden ${className}`}
+        style={{
+          aspectRatio: ratio,
+          ...(contain ? { backgroundColor: containBackground } : null),
+        }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt={alt}
-          loading={priority ? 'eager' : 'lazy'}
-          className={fill ? 'h-full w-full object-cover' : 'w-full object-cover'}
-          style={fill ? undefined : { width: '100%', height: 'auto' }}
-        />
-      </motion.div>
-    </div>
+        <motion.div
+          className="absolute inset-0"
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={variants}
+          transition={
+            reduced
+              ? { duration: 0 }
+              : { duration, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }
+          }
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src}
+            alt={alt}
+            loading={priority ? 'eager' : 'lazy'}
+            width={width}
+            height={height}
+            className="h-full w-full"
+            style={{ objectFit: contain ? 'contain' : 'cover' }}
+          />
+        </motion.div>
+      </div>
+      {caption && (
+        <figcaption className="mt-2 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-500">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
   )
 }
