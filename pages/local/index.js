@@ -6,9 +6,10 @@ import Image from '@/components/Image'
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
 import { getAllLocalPicksAsync } from '@/lib/localPicks'
+import { getFeaturedLocalPicks } from '@/lib/localPicksSelection'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AnimatedSection } from '@/components/AnimatedSection'
-import { Star } from 'lucide-react'
+import { Pin, Star } from 'lucide-react'
 
 const pageTranslations = {
   en: {
@@ -20,6 +21,11 @@ const pageTranslations = {
     readMore: 'Read More',
     neighborhood: 'Neighborhood',
     budget: 'Budget',
+    pinnedBadge: 'Festival',
+    pinnedTitle: 'Pinned: this festival stays all year',
+    pinnedHeading: 'Always here',
+    pinnedNote:
+      'Three Mexican festivals that never leave the calendar. They are pinned, and they are in pink.',
   },
   es: {
     title: 'Selección Local',
@@ -30,12 +36,21 @@ const pageTranslations = {
     readMore: 'Leer Más',
     neighborhood: 'Colonia',
     budget: 'Presupuesto',
+    pinnedBadge: 'Festival',
+    pinnedTitle: 'Fijado: esta fiesta se queda todo el año',
+    pinnedHeading: 'Siempre aquí',
+    pinnedNote:
+      'Tres festividades mexicanas que no se van del calendario. Van fijadas, y van en rosa.',
   },
 }
 
 export async function getStaticProps() {
-  const picksEs = await getAllLocalPicksAsync('es')
-  const picksEn = await getAllLocalPicksAsync('en')
+  // Los fijados (3 festividades) + los que rotan (6). El orden lo decide
+  // getFeaturedLocalPicks, no el orden del archivo.
+  const allEs = await getAllLocalPicksAsync('es')
+  const allEn = await getAllLocalPicksAsync('en')
+  const picksEs = getFeaturedLocalPicks(allEs)
+  const picksEn = getFeaturedLocalPicks(allEn)
   // Pre-generated at build, revalidate cada hora para nuevos picks sin rebuild
   return { props: { picksEs, picksEn }, revalidate: 3600 }
 }
@@ -50,13 +65,103 @@ const formatDate = (dateStr, locale) => {
   })
 }
 
+/**
+ * La tarjeta de un pick. Se usa igual para los fijados (en rosa, con la
+ * chincheta) y para los que rotan (en ambar).
+ */
+const pickCard = (pick, index, t) => (
+  <Link
+    href={`/local/${pick.slug}`}
+    className={`group relative flex h-full flex-col overflow-hidden rounded-xl border bg-white/70 backdrop-blur-md transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:bg-black/40 dark:hover:bg-zinc-900/70 ${
+      pick.pinned
+        ? 'hover:ring-[#E4007C]/45 border-[#E4007C]/40 ring-1 ring-[#E4007C]/25 hover:border-[#E4007C]/70'
+        : 'border-zinc-200/50 hover:border-amber-500/40 dark:border-white/10'
+    }`}
+  >
+    <div className="relative h-48 w-full overflow-hidden">
+      <Image
+        src={pick.images?.[0] || '/static/images/local-picks/cover.jpg'}
+        alt={pick.title}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
+        priority={index < 2}
+        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+      />
+      <div className="absolute left-3 top-3 flex gap-2">
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-bold text-white ${
+            pick.pinned ? 'bg-[#E4007C]' : 'bg-amber-500'
+          }`}
+        >
+          {pick.pinned ? t.pinnedBadge : pick.neighborhood}
+        </span>
+        {!pick.pinned && (
+          <span className="rounded-full bg-black/60 px-3 py-1 text-xs font-bold text-white backdrop-blur">
+            {pick.budget}
+          </span>
+        )}
+      </div>
+
+      {/* Chincheta de los fijados, en la esquina superior derecha */}
+      {pick.pinned && (
+        <span
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-[#E4007C] text-white shadow-lg ring-2 ring-white/70"
+          title={t.pinnedTitle}
+        >
+          <Pin className="h-4 w-4" fill="currentColor" aria-hidden />
+          <span className="sr-only">{t.pinnedTitle}</span>
+        </span>
+      )}
+    </div>
+    <div className="flex flex-1 flex-col p-6">
+      <div className="mb-2 flex items-center gap-2 text-sm text-zinc-500 dark:text-gray-500">
+        <Star className="h-3.5 w-3.5 text-amber-500" />
+        <span>{pick.neighborhood}</span>
+        <span>•</span>
+        <span>{pick.budget}</span>
+      </div>
+      <h3
+        className={`line-clamp-2 mb-3 text-xl font-bold text-gray-900 dark:text-white ${
+          pick.pinned ? 'group-hover:text-[#E4007C]' : 'group-hover:text-amber-500'
+        }`}
+      >
+        {pick.title}
+      </h3>
+      {pick.summary && (
+        <p className="line-clamp-3 text-sm text-zinc-600 dark:text-gray-300">{pick.summary}</p>
+      )}
+      <div
+        className={`mt-4 flex items-center gap-2 text-sm font-medium ${
+          pick.pinned ? 'text-[#E4007C]' : 'text-amber-500'
+        }`}
+      >
+        {t.readMore} <span aria-hidden>→</span>
+      </div>
+    </div>
+    {pick.tags && pick.tags.length > 0 && (
+      <div className="flex flex-wrap gap-2 border-t border-zinc-200 p-4 dark:border-white/10">
+        {pick.tags.slice(0, 3).map((tag) => (
+          <span
+            key={tag}
+            className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-zinc-600 dark:bg-white/5 dark:text-gray-400"
+          >
+            #{tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </Link>
+)
+
 export default function LocalPicksPage({ picksEs, picksEn }) {
   const { currentLanguage } = useLanguage()
   const lang = currentLanguage === 'en' ? 'en' : 'es'
   const picks = lang === 'es' ? picksEs : picksEn
   const t = pageTranslations[lang] || pageTranslations.en
 
-  const monthPicks = picks.filter((p) => !p.isMonthlyGuide)
+  // Los fijados van primero, en rosa; despues los que rotan.
+  const pinnedPicks = picks.filter((p) => p.pinned === true)
+  const monthPicks = picks.filter((p) => p.pinned !== true && !p.isMonthlyGuide)
   const guides = picks.filter((p) => p.isMonthlyGuide)
 
   return (
@@ -80,73 +185,51 @@ export default function LocalPicksPage({ picksEs, picksEn }) {
             </p>
           </div>
 
-          {monthPicks.length > 0 && (
+          {pinnedPicks.length > 0 && (
             <section className="mb-16">
-              <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">
-                {t.currentMonth} — {monthPicks.length} picks
-              </h2>
+              <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {t.pinnedHeading}
+                  </h2>
+                  <p className="mt-1 max-w-2xl text-sm text-zinc-500 dark:text-zinc-400">
+                    {t.pinnedNote}
+                  </p>
+                </div>
+                <span className="flex items-center gap-2 rounded-full bg-[#E4007C]/10 px-3 py-1.5 text-xs font-semibold text-[#E4007C]">
+                  <Pin className="h-3.5 w-3.5" fill="currentColor" aria-hidden />
+                  {pinnedPicks.length}
+                </span>
+              </div>
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {monthPicks.slice(0, 9).map((pick, index) => (
+                {pinnedPicks.map((pick, index) => (
                   <AnimatedSection
                     key={pick.slug}
                     delay={index * 0.08}
                     direction="up"
                     className="w-full"
                   >
-                    <Link
-                      href={`/local/${pick.slug}`}
-                      className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-zinc-200/50 bg-white/70 backdrop-blur-md transition-all duration-300 hover:scale-[1.02] hover:border-amber-500/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-black/40 dark:hover:bg-zinc-900/70"
-                    >
-                      <div className="relative h-48 w-full overflow-hidden">
-                        <Image
-                          src={pick.images?.[0] || '/static/images/local-picks/cover.jpg'}
-                          alt={pick.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
-                          priority={index < 2}
-                          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                        />
-                        <div className="absolute left-3 top-3 flex gap-2">
-                          <span className="rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white">
-                            {pick.neighborhood}
-                          </span>
-                          <span className="rounded-full bg-black/60 px-3 py-1 text-xs font-bold text-white backdrop-blur">
-                            {pick.budget}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex flex-1 flex-col p-6">
-                        <div className="mb-2 flex items-center gap-2 text-sm text-zinc-500 dark:text-gray-500">
-                          <Star className="h-3.5 w-3.5 text-amber-500" />
-                          <span>{pick.neighborhood}</span>
-                          <span>•</span>
-                          <span>{pick.budget}</span>
-                        </div>
-                        <h3 className="line-clamp-2 mb-3 text-xl font-bold text-gray-900 group-hover:text-amber-500 dark:text-white">
-                          {pick.title}
-                        </h3>
-                        {pick.summary && (
-                          <p className="line-clamp-3 text-sm text-zinc-600 dark:text-gray-300">
-                            {pick.summary}
-                          </p>
-                        )}
-                        <div className="mt-4 flex items-center gap-2 text-sm font-medium text-amber-500">
-                          {t.readMore} <span aria-hidden>→</span>
-                        </div>
-                      </div>
-                      {pick.tags && pick.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 border-t border-zinc-200 p-4 dark:border-white/10">
-                          {pick.tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-zinc-600 dark:bg-white/5 dark:text-gray-400"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </Link>
+                    {pickCard(pick, index, t)}
+                  </AnimatedSection>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {monthPicks.length > 0 && (
+            <section className="mb-16">
+              <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">
+                {t.currentMonth} — {monthPicks.length} picks
+              </h2>
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {monthPicks.map((pick, index) => (
+                  <AnimatedSection
+                    key={pick.slug}
+                    delay={index * 0.08}
+                    direction="up"
+                    className="w-full"
+                  >
+                    {pickCard(pick, index, t)}
                   </AnimatedSection>
                 ))}
               </div>

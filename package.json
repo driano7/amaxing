@@ -11,6 +11,7 @@
     "analyze": "cross-env ANALYZE=true next build",
     "news:generate": "node scripts/generate-news-notes.js",
     "knowledge:export": "node scripts/export-knowledge.js",
+    "local-picks:generate": "node scripts/generate-local-picks.mjs",
     "knowledge:validate": "node scripts/validate-knowledge.js",
     "validate:jsonld": "node scripts/validate-jsonld.js",
     "lint": "next lint && eslint tailwind.config.js postcss.config.js",

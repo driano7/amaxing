@@ -238,5 +238,55 @@
         "place": "Sala de arqueología del Museo Nacional de Antropología"
       }
     ]
+  },
+  "local-picks": {
+    "dest": "public/static/images/local-picks",
+    "items": [
+      {
+        "file": "File:Giant Calavera de la Catrina in the Zocalo (2988545640).jpg",
+        "local": "fiesta-dia-muertos-1.jpg",
+        "place": "Calavera gigante de la Catrina en el Zócalo"
+      },
+      {
+        "file": "File:Día de muertos en la Ciudad de México..JPG",
+        "local": "fiesta-dia-muertos-2.jpg",
+        "place": "Catrina en el Palacio de Bellas Artes, Día de Muertos"
+      },
+      {
+        "file": "File:José Guadalupe Posada, Calavera oaxaqueña, ca. 1903.jpg",
+        "local": "fiesta-dia-muertos-3.jpg",
+        "place": "Calavera oaxaqueña de José Guadalupe Posada, c. 1903"
+      },
+      {
+        "file": "File:Dia de los Muertos display in the Zocalo (2988648166).jpg",
+        "local": "fiesta-dia-muertos-4.jpg",
+        "place": "Instalación del Día de Muertos en el Zócalo"
+      },
+      {
+        "file": "File:GritoIndependencia20240915 ohs16.jpg",
+        "local": "fiesta-independencia-1.jpg",
+        "place": "El Grito en la Plaza de la Constitución, 15 de septiembre de 2024"
+      },
+      {
+        "file": "File:Angel de la independencia170409.jpg",
+        "local": "fiesta-independencia-2.jpg",
+        "place": "Ángel de la Independencia"
+      },
+      {
+        "file": "File:ZocaloIluminado20230905 ohs02.jpg",
+        "local": "fiesta-independencia-3.jpg",
+        "place": "Zócalo iluminado por las fiestas patrias"
+      },
+      {
+        "file": "File:Zocalo Mexico City panorama at nightfall.jpg",
+        "local": "fiesta-ano-nuevo-1.jpg",
+        "place": "El Zócalo al anochecer"
+      },
+      {
+        "file": "File:Christmas street ornament.jpg",
+        "local": "fiesta-ano-nuevo-2.jpg",
+        "place": "Adorno de la calle durante las fiestas decembrinas en la Ciudad de México"
+      }
+    ]
   }
 }
