@@ -65,6 +65,7 @@
  */
 import { CHAPULTEPEC_JOURNEY } from './journeys/chapultepec'
 import { CENTRO_JOURNEY } from './journeys/centro'
+import { ANTROPOLOGIA_JOURNEY } from './journeys/antropologia'
 
 /**
  * Precio de referencia, en pesos mexicanos, de todos los journeys.
@@ -153,19 +154,21 @@ export const JOURNEYS = [
     moments: [],
   },
   {
-    // Base de movimiento lista; el contenido editorial sigue pendiente, asi
-    // que moments, accents y heroImage se dejan como estan a proposito.
-    experience: 'antropologia',
-    id: 'antropologia',
-    slug: 'antropologia',
-    title_es: 'Antropología',
-    title_en: 'Antropología',
-    subtitle_es: '',
-    subtitle_en: '',
-    intro_es: '',
-    intro_en: '',
-    heroImage: null,
-    accents: [],
+    // El journey ya tiene contenido, fotografia verificada y titulo proprio.
+    // El registro toma la ficha de su modulo de datos, igual que Centro y
+    // Chapultepec. `moments` sigue vacio a proposito: el detalle lee del
+    // modulo, no del registro, y asi el payload de la pagina no se duplica.
+    id: ANTROPOLOGIA_JOURNEY.id,
+    slug: ANTROPOLOGIA_JOURNEY.slug,
+    experience: ANTROPOLOGIA_JOURNEY.experience,
+    title_es: ANTROPOLOGIA_JOURNEY.title_es,
+    title_en: ANTROPOLOGIA_JOURNEY.title_en,
+    subtitle_es: ANTROPOLOGIA_JOURNEY.subtitle_es,
+    subtitle_en: ANTROPOLOGIA_JOURNEY.subtitle_en,
+    intro_es: ANTROPOLOGIA_JOURNEY.intro_es,
+    intro_en: ANTROPOLOGIA_JOURNEY.intro_en,
+    heroImage: ANTROPOLOGIA_JOURNEY.heroImage,
+    accents: ANTROPOLOGIA_JOURNEY.accents,
     price: JOURNEY_PRICE_MXN,
     moments: [],
   },
