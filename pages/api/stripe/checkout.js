@@ -1,6 +1,7 @@
 import { getStripeClient } from '@/lib/stripe'
 import { tours } from '@/data/toursData'
 import { JOURNEYS } from '@/data/journeysData'
+import { MXN_PER_USD } from '@/lib/currency'
 
 export const config = { runtime: 'nodejs' }
 
@@ -12,10 +13,15 @@ const getBaseUrl = (req) => {
 
 // Precios servidor-side a partir de data/toursData.js (USD). El cliente puede
 // mandar su propio price, pero el cobro se calcula contra esta fuente de verdad.
+/**
+ * Precio en pesos, siempre. El de los tours viene de data/toursData.js (que
+ * los guarda en dolares) y se convierte con la tasa del sitio; el de los
+ * journeys ya esta en pesos. El precio de verdad se calcula aqui, en el
+ * servidor: el cliente no puede mandarlo.
+ */
 const priceFor = (experienceId) => {
   const tour = tours.find((t) => t.id === String(experienceId))
-  if (tour) return tour.price
-  // Los journeys editoriales son producto aparte: se cobran en pesos.
+  if (tour) return Math.round(tour.price * MXN_PER_USD)
   const journey = JOURNEYS.find((j) => j.experience === String(experienceId))
   return journey?.price ?? 0
 }
@@ -103,16 +109,8 @@ export default async function handler(req, res) {
       }
     }
 
-    // Moneda: los journeys van en MXN y los tours en USD. No se mezclan.
-    const journeyItems = items.filter((item) => isJourneyItem(item.experienceId))
-    const tourItems = items.filter((item) => !isJourneyItem(item.experienceId))
-    if (journeyItems.length > 0 && tourItems.length > 0) {
-      return res.status(400).json({
-        error:
-          'No se pueden reservar un journey y un tour en la misma orden: cobran en monedas distintas.',
-      })
-    }
-    const currency = journeyItems.length > 0 ? 'mxn' : 'usd'
+    // Todo se cobra en pesos mexicanos: lo que se ve es lo que se paga.
+    const currency = 'mxn'
 
     const baseUrl = getBaseUrl(req)
 

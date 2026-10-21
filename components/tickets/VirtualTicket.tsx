@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useLanguage } from '@/lib/hooks/useLanguage'
+import { formatPriceByLocale } from '@/lib/currency'
 
 interface VirtualTicketProps {
   ticket: {
@@ -72,14 +73,7 @@ export function VirtualTicket({
     })
   }
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: ticket.currency || 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
-  }
+  const formatPrice = (price: number) => formatPriceByLocale(price, 'es')
 
   const ticketCode = ticket.ticketCode || ticket.code || ticket.id
 

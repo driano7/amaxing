@@ -6,6 +6,7 @@ import { useLanguage } from '@/lib/hooks/useLanguage'
 import { PageSEO } from '@/components/SEO'
 import { tours } from '@/data/toursData'
 import ProseReveal from '@/components/ProseReveal'
+import { formatPriceByLocale } from '@/lib/currency'
 
 export default function ExperienceDetail({ experience, locale }) {
   const { t, currentLanguage } = useLanguage()
@@ -19,14 +20,7 @@ export default function ExperienceDetail({ experience, locale }) {
   const location = isEs ? experience.locationEs || experience.location : experience.location
   const highlights = isEs ? experience.highlightsEs || experience.highlights : experience.highlights
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat(isEs ? 'es-MX' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
-  }
+  const formatPrice = (price) => formatPriceByLocale(price, isEs ? 'es' : 'en')
 
   const formatDuration = (hours) => {
     if (hours === 1) {

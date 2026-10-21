@@ -31,6 +31,7 @@ import ProseReveal from '@/components/ProseReveal'
 import { TourReviews } from '@/components/experiences/TourReviews'
 import { AddToCartButton } from '@/components/tours/AddToCartButton'
 import { getCategoryTheme, themeVars } from '@/lib/tourTheme'
+import { formatPriceByLocale } from '@/lib/currency'
 
 const categoryLabels = {
   en: {
@@ -71,14 +72,7 @@ export default function TourDetail({ tour, locale }) {
   const faq = isEs ? tour.faqEs || tour.faq : tour.faq
   const [faqOpen, setFaqOpen] = useState(null)
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat(isEs ? 'es-MX' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
-  }
+  const formatPrice = (price) => formatPriceByLocale(price, isEs ? 'es' : 'en')
 
   const formatDuration = (hours) => {
     if (hours === 1) {

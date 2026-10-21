@@ -100,9 +100,13 @@ export function DetailToggle({
           href={`/checkout?journey=${journeySlug || ''}`}
           className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-[#E4007C] px-3.5 py-2.5 text-xs font-bold tabular-nums text-white shadow-lg transition-transform duration-200 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           style={{ ['--tw-ring-color' as string]: '#E4007C' }}
-          title={isEs ? 'Reservar este journey' : 'Book this journey'}
+          title={
+            isEs
+              ? 'Reservar este journey. Precio en pesos mexicanos.'
+              : 'Book this journey. Price in Mexican pesos.'
+          }
         >
-          {isEs ? `Reserva por $${price}` : `Book for $${price}`}
+          {isEs ? `Reserva por $${price} MXN` : `Book for $${price} MXN`}
         </a>
       ) : null}
     </div>

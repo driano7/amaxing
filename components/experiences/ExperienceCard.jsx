@@ -14,6 +14,7 @@ import {
   Palette,
 } from 'lucide-react'
 import { useCartStore } from '@/lib/store/useCartStore'
+import { formatPriceByLocale } from '@/lib/currency'
 
 const categoryIconMap = {
   gastronomy: Utensils,
@@ -36,14 +37,7 @@ export function ExperienceCard({ experience, onSelect, locale }) {
   const title = isEs ? experience.titleEs || experience.title : experience.title
   const tagline = isEs ? experience.taglineEs || experience.tagline : experience.tagline
   const location = isEs ? experience.locationEs || experience.location : experience.location
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
-  }
+  const formatPrice = (price) => formatPriceByLocale(price, isEs ? 'es' : 'en')
 
   const formatDuration = (hours) => {
     if (hours === 1) {
@@ -105,7 +99,7 @@ export function ExperienceCard({ experience, onSelect, locale }) {
 
       <div className="p-6">
         <div className="mb-3 flex items-center gap-2">
-          <span className="bg-orange-500/15 flex h-7 w-7 items-center justify-center rounded-full text-orange-500">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-500/15 text-orange-500">
             <CategoryIcon className="h-3.5 w-3.5" />
           </span>
           <span className="text-xs font-semibold uppercase tracking-wide text-orange-400">

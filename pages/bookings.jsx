@@ -9,6 +9,7 @@ import { useLanguage } from '@/lib/hooks/useLanguage'
 import { VirtualTicket } from '@/components/tickets/VirtualTicket'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import { formatBookingDate } from '@/lib/booking/types'
+import { formatPriceByLocale } from '@/lib/currency'
 
 export default function BookingsPage() {
   const { user, isLoading: authLoading } = useAuth()
@@ -44,14 +45,7 @@ export default function BookingsPage() {
     }
   }
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
-  }
+  const formatPrice = (price) => formatPriceByLocale(price, 'es')
 
   const getStatusColor = (status) => {
     switch (status) {
