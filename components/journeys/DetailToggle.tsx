@@ -21,12 +21,15 @@ export function DetailToggle({
   variant = 'floating',
   price,
   isEs = true,
+  journeySlug,
 }: {
   accent?: string
   variant?: 'floating' | 'inline'
   /** Precio de referencia. Si viene, se muestra siempre junto al control. */
   price?: number | null
   isEs?: boolean
+  /** Slug del journey, para llevar al checkout. */
+  journeySlug?: string
 }) {
   const detail = useJourneyDetail()
   const reduced = useReducedMotion()
@@ -93,12 +96,14 @@ export function DetailToggle({
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-center gap-2 px-4 pb-[5.75rem] sm:bottom-auto sm:top-24 sm:px-6 sm:pb-0">
       {button}
       {price ? (
-        <span
-          className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-[#E4007C] px-3.5 py-2.5 text-xs font-bold tabular-nums text-white shadow-lg"
-          title={isEs ? 'Precio de referencia de este journey' : 'Reference price for this journey'}
+        <a
+          href={`/checkout?journey=${journeySlug || ''}`}
+          className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-[#E4007C] px-3.5 py-2.5 text-xs font-bold tabular-nums text-white shadow-lg transition-transform duration-200 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          style={{ ['--tw-ring-color' as string]: '#E4007C' }}
+          title={isEs ? 'Reservar este journey' : 'Book this journey'}
         >
-          ${price} MXN
-        </span>
+          {isEs ? `Reserva por $${price}` : `Book for $${price}`}
+        </a>
       ) : null}
     </div>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
-import { useMemo, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Image from '@/components/Image'
@@ -18,6 +18,8 @@ import { EditorialHero } from './EditorialHero'
 import { ChapterDivider } from './ChapterDivider'
 import { CollapsibleSection } from './CollapsibleSection'
 import { JourneyRouteGallery } from './JourneyRouteGallery'
+import { JourneyRoute } from './JourneyRoute'
+import { onAllJourneyDetails } from './journeyDetailBus'
 import { EditorialMoment } from './EditorialMoment'
 import { MOMENT_TREATMENTS } from './motionConfig'
 import { DiscoveryCards } from './DiscoveryCards'
@@ -53,6 +55,10 @@ export function ChapultepecJourney() {
   )
 
   const detailIds = journey.moments.map((m) => m.id)
+  // Cuando el visitante despliega TODO, la ruta deja de ser galeria y se
+  // lee como el resto: una lista vertical que aparece al hacer scroll.
+  const [everythingOpen, setEverythingOpen] = useState(false)
+  useEffect(() => onAllJourneyDetails(setEverythingOpen), [])
 
   return (
     <JourneyDetailProvider ids={detailIds}>
@@ -181,12 +187,24 @@ export function ChapultepecJourney() {
                   )} min walking`
             }
           >
-            <JourneyRouteGallery
-              stops={journey.route}
-              accent={TALAVERA}
-              emphasisAccent={CEMPASUCHIL}
-              isEs={isEs}
-            />
+            {everythingOpen ? (
+              <JourneyRoute
+                legs={journey.route}
+                accent={TALAVERA}
+                title=""
+                totalLabel={isEs ? 'Recorrido de referencia' : 'Reference route'}
+                totalNote={`${isEs ? 'minimo' : 'minimum'} ${journey.durations?.minimo || ''} · ${
+                  isEs ? 'realista' : 'realistic'
+                } ${journey.durations?.realista || ''}`}
+              />
+            ) : (
+              <JourneyRouteGallery
+                stops={journey.route}
+                accent={TALAVERA}
+                emphasisAccent={CEMPASUCHIL}
+                isEs={isEs}
+              />
+            )}
           </CollapsibleSection>
         </section>
 
@@ -281,7 +299,12 @@ export function ChapultepecJourney() {
           </CollapsibleSection>
         </section>
       </div>
-      <DetailToggle accent={TALAVERA} price={journey.price} isEs={isEs} />
+      <DetailToggle
+        accent={TALAVERA}
+        price={journey.price}
+        isEs={isEs}
+        journeySlug={journey.slug}
+      />
     </JourneyDetailProvider>
   )
 }

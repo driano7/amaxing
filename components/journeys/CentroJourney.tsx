@@ -1,7 +1,7 @@
 'use client'
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
-import { useMemo, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Image from '@/components/Image'
@@ -19,6 +19,8 @@ import { EditorialMoment } from './EditorialMoment'
 import { DiscoveryCards } from './DiscoveryCards'
 import { CollapsibleSection } from './CollapsibleSection'
 import { JourneyRouteGallery } from './JourneyRouteGallery'
+import { JourneyRoute } from './JourneyRoute'
+import { onAllJourneyDetails } from './journeyDetailBus'
 import { Reveal } from './Reveal'
 import { InterpretationNote } from './InterpretationNote'
 
@@ -52,6 +54,10 @@ export function CentroJourney() {
   )
 
   const detailIds = journey.moments.map((m) => m.id)
+  // Cuando el visitante despliega TODO, la ruta deja de ser galeria y se
+  // lee como el resto: una lista vertical que aparece al hacer scroll.
+  const [everythingOpen, setEverythingOpen] = useState(false)
+  useEffect(() => onAllJourneyDetails(setEverythingOpen), [])
 
   return (
     <JourneyDetailProvider ids={detailIds}>
@@ -274,12 +280,24 @@ export function CentroJourney() {
                   )} min walking`
             }
           >
-            <JourneyRouteGallery
-              stops={journey.route}
-              accent={TALAVERA}
-              emphasisAccent={CEMPASUCHIL}
-              isEs={isEs}
-            />
+            {everythingOpen ? (
+              <JourneyRoute
+                legs={journey.route}
+                accent={TALAVERA}
+                title=""
+                totalLabel={isEs ? 'Recorrido de referencia' : 'Reference route'}
+                totalNote={`${isEs ? 'minimo' : 'minimum'} ${journey.durations?.minimo || ''} · ${
+                  isEs ? 'realista' : 'realistic'
+                } ${journey.durations?.realista || ''}`}
+              />
+            ) : (
+              <JourneyRouteGallery
+                stops={journey.route}
+                accent={TALAVERA}
+                emphasisAccent={CEMPASUCHIL}
+                isEs={isEs}
+              />
+            )}
           </CollapsibleSection>
         </section>
 
@@ -370,7 +388,12 @@ export function CentroJourney() {
           </CollapsibleSection>
         </section>
       </div>
-      <DetailToggle accent={TALAVERA} price={journey.price} isEs={isEs} />
+      <DetailToggle
+        accent={TALAVERA}
+        price={journey.price}
+        isEs={isEs}
+        journeySlug={journey.slug}
+      />
     </JourneyDetailProvider>
   )
 }

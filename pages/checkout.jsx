@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from '@/components/Link'
 import Image from '@/components/Image'
@@ -15,6 +16,7 @@ import {
   Mail,
 } from 'lucide-react'
 import { useCartStore } from '@/lib/store/useCartStore'
+import { JOURNEYS } from '@/data/journeysData'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { FlipCard } from '@/components/ui/FlipCard'
@@ -24,7 +26,7 @@ import { formatPriceByLocale } from '@/lib/currency'
 import { captureAcquisitionChannel, getAcquisitionChannel } from '@/lib/booking/utm'
 
 export default function CheckoutPage() {
-  const { items, subtotal, itemCount, clearCart } = useCartStore()
+  const { items, subtotal, itemCount, clearCart, addItem } = useCartStore()
   const { user, token, isLoading } = useAuth()
   const { t, currentLanguage } = useLanguage()
   const locale = currentLanguage === 'es' ? 'es' : 'en'
@@ -77,6 +79,39 @@ export default function CheckoutPage() {
   const authDisplayName = user
     ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email
     : ''
+
+  /**
+   * Un journey se puede reservar sin pasar por el carrito: /checkout?journey=slug
+   * mete la linea sola. La fecha por defecto es hoy (es un recorrido
+   * autoguiado: se reserva el dia que vienes) y la hora, la de inicio
+   * recomendada.
+   */
+  const router = useRouter()
+  const journeySlug = typeof router?.query?.journey === 'string' ? router.query.journey : ''
+  const addedJourney = useRef(null)
+
+  useEffect(() => {
+    if (!journeySlug || addedJourney.current === journeySlug) return
+    const journey = JOURNEYS.find((j) => j.slug === journeySlug)
+    if (!journey) return
+    addedJourney.current = journeySlug
+    const today = new Date()
+    const iso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(
+      today.getDate()
+    ).padStart(2, '0')}`
+    addItem({
+      experienceId: journey.experience || journey.id,
+      title: journey.title_es || journey.title_en,
+      imageUrl: journey.heroImage || null,
+      price: journey.price || 100,
+      currency: 'mxn',
+      location: journey.neighborhood || 'Ciudad de México',
+      date: iso,
+      time: '10:00',
+      maxGuests: 8,
+      highlights: [],
+    })
+  }, [journeySlug, addItem])
 
   // Inicializa / sincroniza participantNames cuando cambian items o user
   useEffect(() => {
@@ -638,7 +673,7 @@ export default function CheckoutPage() {
                   {locale === 'es'
                     ? 'Paga como invitado — sin crear cuenta'
                     : 'Pay as guest — no account needed'}
-                  <span className="bg-orange-500/15 rounded-full px-2 py-0.5 text-xs font-semibold text-orange-600 dark:text-orange-300">
+                  <span className="rounded-full bg-orange-500/15 px-2 py-0.5 text-xs font-semibold text-orange-600 dark:text-orange-300">
                     {locale === 'es' ? 'Invitado' : 'Guest'}
                   </span>
                 </div>
@@ -847,7 +882,7 @@ export default function CheckoutPage() {
                   className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
                     payMethod === 'card'
                       ? 'border-orange-500 bg-orange-500/10 text-orange-600 dark:text-orange-400'
-                      : 'dark:border-white/15 border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:text-gray-400'
+                      : 'border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:border-white/15 dark:text-gray-400'
                   }`}
                 >
                   <CreditCard className="h-4 w-4" />
@@ -859,7 +894,7 @@ export default function CheckoutPage() {
                   className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
                     payMethod === 'crypto'
                       ? 'border-orange-500 bg-orange-500/10 text-orange-600 dark:text-orange-400'
-                      : 'dark:border-white/15 border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:text-gray-400'
+                      : 'border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:border-white/15 dark:text-gray-400'
                   }`}
                 >
                   <span aria-hidden="true">₿</span>
@@ -871,7 +906,7 @@ export default function CheckoutPage() {
                   className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
                     payMethod === 'cash'
                       ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                      : 'dark:border-white/15 border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:text-gray-400'
+                      : 'border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:border-white/15 dark:text-gray-400'
                   }`}
                 >
                   💵 {locale === 'es' ? 'Efectivo' : 'Cash'}

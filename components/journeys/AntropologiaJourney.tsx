@@ -1,7 +1,7 @@
 'use client'
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
-import { useMemo, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import {} from 'framer-motion'
 import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import Link from '@/components/Link'
@@ -11,6 +11,8 @@ import { journeyVars } from '@/lib/journeyTheme'
 import { ChapterNav } from './ChapterNav'
 import { CollapsibleSection } from './CollapsibleSection'
 import { JourneyRouteGallery } from './JourneyRouteGallery'
+import { JourneyRoute } from './JourneyRoute'
+import { onAllJourneyDetails } from './journeyDetailBus'
 import { JourneyDetailProvider } from './JourneyDetailContext'
 import { DetailToggle } from './DetailToggle'
 import { JourneyRating } from './JourneyRating'
@@ -58,6 +60,10 @@ export function AntropologiaJourney() {
   )
 
   const detailIds = journey.moments.map((m) => m.id)
+  // Cuando el visitante despliega TODO, la ruta deja de ser galeria y se
+  // lee como el resto: una lista vertical que aparece al hacer scroll.
+  const [everythingOpen, setEverythingOpen] = useState(false)
+  useEffect(() => onAllJourneyDetails(setEverythingOpen), [])
 
   return (
     <JourneyDetailProvider ids={detailIds}>
@@ -242,7 +248,12 @@ export function AntropologiaJourney() {
           </CollapsibleSection>
         </section>
       </div>
-      <DetailToggle accent={TALAVERA} price={journey.price} isEs={isEs} />
+      <DetailToggle
+        accent={TALAVERA}
+        price={journey.price}
+        isEs={isEs}
+        journeySlug={journey.slug}
+      />
     </JourneyDetailProvider>
   )
 }

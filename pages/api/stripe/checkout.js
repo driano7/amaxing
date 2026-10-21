@@ -1,5 +1,6 @@
 import { getStripeClient } from '@/lib/stripe'
 import { tours } from '@/data/toursData'
+import { JOURNEYS } from '@/data/journeysData'
 
 export const config = { runtime: 'nodejs' }
 
@@ -13,13 +14,27 @@ const getBaseUrl = (req) => {
 // mandar su propio price, pero el cobro se calcula contra esta fuente de verdad.
 const priceFor = (experienceId) => {
   const tour = tours.find((t) => t.id === String(experienceId))
-  return tour?.price ?? 0
+  if (tour) return tour.price
+  // Los journeys editoriales son producto aparte: se cobran en pesos.
+  const journey = JOURNEYS.find((j) => j.experience === String(experienceId))
+  return journey?.price ?? 0
 }
 
 const tourTitleFor = (experienceId, fallback) => {
   const tour = tours.find((t) => t.id === String(experienceId))
-  return tour?.title || fallback || `Experience ${experienceId}`
+  if (tour) return tour.title
+  const journey = JOURNEYS.find((j) => j.experience === String(experienceId))
+  if (journey) return journey.title_es || journey.title_en || fallback
+  return fallback || `Experience ${experienceId}`
 }
+
+/**
+ * Un journey y un tour no se pueden cobrar en la misma sesion: Stripe usa
+ * una sola moneda por sesion y los tours van en USD mientras que los journeys
+ * van en MXN. Si se mezclan, se avisa en vez de cobrar una cantidad
+ * equivocada.
+ */
+const isJourneyItem = (experienceId) => JOURNEYS.some((j) => j.experience === String(experienceId))
 
 // ─── MOCK MODE ────────────────────────────────────────────────────────────────
 // Si no hay STRIPE_SECRET_KEY configurada, usamos un "mock checkout" que simula
@@ -80,13 +95,24 @@ export default async function handler(req, res) {
 
     // Validar que todos los items tengan precio conocido
     for (const item of items) {
-      const unitUsd = priceFor(item.experienceId)
-      if (unitUsd <= 0) {
+      const unit = priceFor(item.experienceId)
+      if (unit <= 0) {
         return res
           .status(400)
           .json({ error: `Precio no encontrado para la experiencia ${item.experienceId}` })
       }
     }
+
+    // Moneda: los journeys van en MXN y los tours en USD. No se mezclan.
+    const journeyItems = items.filter((item) => isJourneyItem(item.experienceId))
+    const tourItems = items.filter((item) => !isJourneyItem(item.experienceId))
+    if (journeyItems.length > 0 && tourItems.length > 0) {
+      return res.status(400).json({
+        error:
+          'No se pueden reservar un journey y un tour en la misma orden: cobran en monedas distintas.',
+      })
+    }
+    const currency = journeyItems.length > 0 ? 'mxn' : 'usd'
 
     const baseUrl = getBaseUrl(req)
 
@@ -104,7 +130,7 @@ export default async function handler(req, res) {
       return {
         quantity: qty,
         price_data: {
-          currency: 'usd',
+          currency,
           unit_amount: Math.round(unitUsd * 100),
           product_data: {
             name: tourTitleFor(item.experienceId, item.title),
