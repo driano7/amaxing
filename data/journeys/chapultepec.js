@@ -560,6 +560,8 @@ export const CHAPULTEPEC_JOURNEY = {
   duration_note_en:
     'A walk of about three hours as an estimate. It is not a guaranteed duration: it depends on access to the Castle and the Audiorama on the day of the visit.',
   accents: ['talavera', 'cempasuchil'],
+  // Precio de referencia, en pesos. Se muestra siempre en el detalle.
+  price: 100,
   heroImage: `${IMG}/castillo-aereo.jpg`,
   // Calificacion: null mientras el journey no tenga reseñas.
   rating: null,

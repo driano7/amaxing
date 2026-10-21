@@ -9,6 +9,8 @@ import { ANTROPOLOGIA_JOURNEY } from '@/data/journeys/antropologia'
 import { ANTROPOLOGIA_DISCOVERY_KINDS } from '@/data/journeys/antropologia'
 import { journeyVars } from '@/lib/journeyTheme'
 import { ChapterNav } from './ChapterNav'
+import { CollapsibleSection } from './CollapsibleSection'
+import { JourneyRouteGallery } from './JourneyRouteGallery'
 import { JourneyDetailProvider } from './JourneyDetailContext'
 import { DetailToggle } from './DetailToggle'
 import { JourneyRating } from './JourneyRating'
@@ -64,7 +66,7 @@ export function AntropologiaJourney() {
           chapters={chapters}
           accent={TALAVERA}
           title={journey.title_es}
-          header={<DetailToggle accent={TALAVERA} variant="inline" />}
+          header={<DetailToggle accent={TALAVERA} variant="inline" isEs={isEs} />}
         />
 
         <EditorialHero
@@ -131,6 +133,7 @@ export function AntropologiaJourney() {
                 movement={MOMENT_TREATMENTS[moment.id]}
                 collapsible
                 emphasisAccent={CEMPASUCHIL}
+                isEs={isEs}
               />
             </div>
           ))}
@@ -222,8 +225,24 @@ export function AntropologiaJourney() {
             </Link>
           </Reveal>
         </section>
+
+        {/* El support banner es un dropdown sin preview: se abre desde el
+            titulo y se pliega con la flecha. */}
+        <section className="mx-auto max-w-5xl px-6 pb-24">
+          <CollapsibleSection
+            title={isEs ? 'Apoya Amaxing' : 'Support Amaxing'}
+            subtitle={
+              isEs
+                ? 'Si estos recorridos te sirvieron, hay formas de ayudar.'
+                : 'If these routes were useful, there are ways to help.'
+            }
+            accent={TALAVERA}
+          >
+            <SupportBanner />
+          </CollapsibleSection>
+        </section>
       </div>
-      <DetailToggle accent={TALAVERA} />
+      <DetailToggle accent={TALAVERA} price={journey.price} isEs={isEs} />
     </JourneyDetailProvider>
   )
 }

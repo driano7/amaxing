@@ -54,6 +54,12 @@ export function Disclosure({
   // atributo dispara el evento, que volveria a pedir el cambio, y el bloque
   // se reabria solo (bucle de realimentacion).
   const syncing = useRef(false)
+  // Ultimo valor de la prop `open` conocido. Sirve para distinguir un cambio
+  // programmatico de uno hecho por la persona: si el atributo del DOM ya
+  // coincide con la prop, el evento `toggle` viene de la sincronizacion y no
+  // hay que rebotarlo (si no, abrir el bloque lo cerraba al instante).
+  const openRef = useRef(open)
+  openRef.current = open
 
   // Estado inicial sin JS: el atributo open del DOM.
   useEffect(() => {
@@ -79,6 +85,10 @@ export function Disclosure({
       if (syncing.current) {
         // Cambio hecho por el padre: no se rebota.
         syncing.current = false
+        return
+      }
+      if (isControlled && node.open === openRef.current) {
+        // El DOM ya coincide con la prop: es la sincronizacion, no la persona.
         return
       }
       if (!isControlled) setInternalOpen(node.open)

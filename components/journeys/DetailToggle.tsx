@@ -3,6 +3,7 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { motion, useReducedMotion } from 'framer-motion'
 import { useJourneyDetail } from './JourneyDetailContext'
+import { setAllJourneyDetails } from './journeyDetailBus'
 
 /**
  * Control global del detalle desplegable.
@@ -18,9 +19,14 @@ import { useJourneyDetail } from './JourneyDetailContext'
 export function DetailToggle({
   accent = '#0E8C7A',
   variant = 'floating',
+  price,
+  isEs = true,
 }: {
   accent?: string
   variant?: 'floating' | 'inline'
+  /** Precio de referencia. Si viene, se muestra siempre junto al control. */
+  price?: number | null
+  isEs?: boolean
 }) {
   const detail = useJourneyDetail()
   const reduced = useReducedMotion()
@@ -31,7 +37,10 @@ export function DetailToggle({
   const button = (
     <button
       type="button"
-      onClick={detail.toggleAll}
+      onClick={() => {
+        detail?.toggleAll()
+        setAllJourneyDetails(!detail?.allOpen)
+      }}
       aria-pressed={expanded}
       className={
         variant === 'inline'
@@ -61,7 +70,15 @@ export function DetailToggle({
           +
         </motion.span>
       </span>
-      <span className="flex-1">{expanded ? 'Ocultar todo el detalle' : 'Ver todo el detalle'}</span>
+      <span className="flex-1">
+        {expanded
+          ? isEs
+            ? 'Ocultar todo el detalle'
+            : 'Hide all the detail'
+          : isEs
+          ? 'Ver todo el detalle'
+          : 'See the full detail'}
+      </span>
       {variant === 'inline' && (
         <span className="text-[10px] font-normal opacity-70">
           {expanded ? 'plegar' : 'desplegar'}
@@ -73,8 +90,16 @@ export function DetailToggle({
   if (variant === 'inline') return button
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-start px-4 pb-[5.75rem] sm:bottom-auto sm:top-24 sm:px-6 sm:pb-0">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-center gap-2 px-4 pb-[5.75rem] sm:bottom-auto sm:top-24 sm:px-6 sm:pb-0">
       {button}
+      {price ? (
+        <span
+          className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-[#E4007C] px-3.5 py-2.5 text-xs font-bold tabular-nums text-white shadow-lg"
+          title={isEs ? 'Precio de referencia de este journey' : 'Reference price for this journey'}
+        >
+          ${price} MXN
+        </span>
+      ) : null}
     </div>
   )
 }

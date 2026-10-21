@@ -36,3 +36,29 @@ input:-webkit-autofill,
 input:-webkit-autofill:focus {
   transition: background-color 600000s 0s, color 600000s 0s;
 }
+
+/* ---------------------------------------------------------------------------
+   Cambio de tema (claro <-> oscuro) mas suave.
+
+   La clase `theme-transition` se pone en <html> durante el cambio y se quita
+   despues. Mientras esta, todos los elementos transicionan sus colores a la
+   vez: sin ella, cada superficie cambiaria de golpe y el sitio daria un
+   parpadeo. Se limita a color, fondo, borde y relleno: no toca transform ni
+   layout, asi que no puede provocar saltos de disposicion.
+   --------------------------------------------------------------------------- */
+.theme-transition,
+.theme-transition body,
+.theme-transition body * {
+  transition: background-color 420ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 420ms cubic-bezier(0.4, 0, 0.2, 1), color 420ms cubic-bezier(0.4, 0, 0.2, 1),
+    fill 420ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Con movimiento reducido, el cambio de tema es instantaneo. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition,
+  .theme-transition body,
+  .theme-transition body * {
+    transition: none !important;
+  }
+}

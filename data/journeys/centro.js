@@ -610,6 +610,8 @@ export const CENTRO_JOURNEY = {
   duration_note_en:
     'Three-hour reference: it includes the visit inside the Palacio de Bellas Artes. Without the interior, the circuit drops to about two hours twenty.',
   accents: ['talavera', 'terracota'],
+  // Precio de referencia, en pesos. Se muestra siempre en el detalle.
+  price: 100,
   heroImage: `${IMG}/madero.jpg`,
   // Calificacion: null mientras el journey no tenga reseñas.
   rating: null,

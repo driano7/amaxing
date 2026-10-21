@@ -10,7 +10,10 @@ interface RevealProps {
   className?: string
   /** Retraso en segundos, para escalonar listas. */
   delay?: number
-  /** true = solo se revela una vez; false = vuelve a ocultarse al salir. */
+  /**
+   * false = vuelve a ocultarse al salir y se revela otra vez al entrar.
+   * Es lo que hace que el recorrido se sienta vivo al subir y al bajar.
+   */
   once?: boolean
   as?: 'div' | 'section' | 'li' | 'article'
 }

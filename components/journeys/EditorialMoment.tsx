@@ -1,7 +1,7 @@
 'use client'
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
-import { useRef, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import { momentEntry, quietEntry, staggerParent, withReduced, transition } from './animations'
@@ -14,6 +14,7 @@ import { BeforeAfter } from './BeforeAfter'
 import { Disclosure } from './Disclosure'
 import { ProgressiveText } from './ProgressiveText'
 import { useJourneyDetail } from './JourneyDetailContext'
+import { onAllJourneyDetails } from './journeyDetailBus'
 import { momentMotion, INTENSITY_SCALE, type MomentMotion } from './motionConfig'
 
 export interface EditorialStep {
@@ -101,7 +102,9 @@ export function EditorialMoment({
   collapsible: collapsibleProp = false,
 }: EditorialMomentProps) {
   const ref = useRef<HTMLElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-100px' })
+  // once: false para que el momento se vuelva a revelar al subir: el
+  // recorrido tiene que sentirse vivo en las dos direcciones.
+  const inView = useInView(ref, { once: false, margin: '-100px' })
   const reduced = usePrefersReducedMotion()
   const variants = withReduced(momentEntry, Boolean(reduced))
 
@@ -110,6 +113,10 @@ export function EditorialMoment({
   const isHero = Boolean(moment.hero)
   const detail = useJourneyDetail()
   const collapsible = Boolean(collapsibleProp && detail)
+  // Estado local del bloque: el boton de cada momento y el global se
+  // coordinan por el bus, no por el contexto.
+  const [open, setOpen] = useState(false)
+  useEffect(() => onAllJourneyDetails(setOpen), [])
   const title = isEs ? moment.title : moment.title_en || moment.title
 
   // Sin tratamiento declarado: composicion estandar (comportamiento previo).
@@ -179,10 +186,40 @@ export function EditorialMoment({
       <ProgressiveText
         text={moment.lead}
         visible={reduced || inView}
-        className={`mb-8 leading-relaxed text-zinc-700 dark:text-zinc-200 ${
+        className={`mb-6 leading-relaxed text-zinc-700 dark:text-zinc-200 ${
           isHero ? 'text-xl' : 'text-lg'
         }`}
       />
+
+      {collapsible && (
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls={`detail-${moment.id}`}
+          className="mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          style={{
+            borderColor: `${accent}66`,
+            color: accent,
+            ['--tw-ring-color' as string]: accent,
+          }}
+        >
+          <span
+            aria-hidden
+            className="flex h-5 w-5 items-center justify-center rounded-full text-xs"
+            style={{ backgroundColor: `${accent}1F` }}
+          >
+            {open ? '−' : '+'}
+          </span>
+          {open
+            ? isEs
+              ? 'Ocultar el detalle'
+              : 'Hide the detail'
+            : isEs
+            ? 'Ver el detalle completo'
+            : 'See the full detail'}
+        </button>
+      )}
 
       {moment.operational_note && (
         <p
@@ -374,8 +411,9 @@ export function EditorialMoment({
                 transition={reduced ? { duration: 0 } : transition(0.5, 0.12)}
               >
                 <Disclosure
-                  open={detail?.isOpen(moment.id)}
-                  onToggle={() => detail?.toggle(moment.id)}
+                  id={`detail-${moment.id}`}
+                  open={open}
+                  onToggle={(next) => setOpen(next)}
                   className="group/detail"
                   summaryClassName="my-5 flex items-center gap-3 text-sm font-semibold text-[var(--j1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                   panelClassName="pb-2"
@@ -386,7 +424,18 @@ export function EditorialMoment({
                           +
                         </span>
                       </span>
-                      {detail?.isOpen(moment.id) ? 'Ocultar el detalle' : 'Ver el detalle completo'}
+                      {/* Control compacto: el boton visible esta arriba, bajo
+                          el resumen. Este queda para el teclado y el lector de
+                          pantalla, sin repetir el mismo texto a la vista. */}
+                      <span className="sr-only">
+                        {detail?.isOpen(moment.id)
+                          ? isEs
+                            ? 'Ocultar el detalle'
+                            : 'Hide the detail'
+                          : isEs
+                          ? 'Ver el detalle completo'
+                          : 'See the full detail'}
+                      </span>
                     </>
                   }
                 >

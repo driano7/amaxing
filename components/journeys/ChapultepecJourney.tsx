@@ -16,7 +16,8 @@ import { useLanguage } from '@/lib/hooks/useLanguage'
 import SupportBanner from '@/components/SupportBanner'
 import { EditorialHero } from './EditorialHero'
 import { ChapterDivider } from './ChapterDivider'
-import { JourneyRoute } from './JourneyRoute'
+import { CollapsibleSection } from './CollapsibleSection'
+import { JourneyRouteGallery } from './JourneyRouteGallery'
 import { EditorialMoment } from './EditorialMoment'
 import { MOMENT_TREATMENTS } from './motionConfig'
 import { DiscoveryCards } from './DiscoveryCards'
@@ -60,7 +61,7 @@ export function ChapultepecJourney() {
           chapters={chapters}
           accent={TALAVERA}
           title={journey.title_es}
-          header={<DetailToggle accent={TALAVERA} variant="inline" />}
+          header={<DetailToggle accent={TALAVERA} variant="inline" isEs={isEs} />}
         />
 
         {/* ---------------------------------------------------------------
@@ -73,7 +74,11 @@ export function ChapultepecJourney() {
           titleLines={['Chapultepec', 'De los Dioses a Emperadores']}
           subtitle={journey.subtitle_es}
           eyebrow={journey.eyebrow_es}
-          meta={['6 momentos', 'Talavera y Cempasuchil', 'Recorrido de unas 3 horas (estimado)']}
+          meta={[
+            isEs ? '6 momentos' : '6 moments',
+            isEs ? 'Talavera y Cempasuchil' : 'Talavera and Cempasuchil',
+            isEs ? 'Precio de referencia: $100 MXN' : 'Reference price: $100 MXN',
+          ]}
           image={journey.heroImage}
           imageAlt="Vista aerea del Castillo de Chapultepec dentro del cerco de arboles del bosque."
           chapters={chapters.length}
@@ -132,6 +137,7 @@ export function ChapultepecJourney() {
                 movement={MOMENT_TREATMENTS[moment.id]}
                 collapsible
                 emphasisAccent={CEMPASUCHIL}
+                isEs={isEs}
               />
             </div>
           ))}
@@ -155,14 +161,33 @@ export function ChapultepecJourney() {
           RUTA
       ---------------------------------------------------------------- */}
         <section className="mx-auto max-w-5xl px-6 pb-16 sm:pb-24">
-          <JourneyRoute
-            legs={journey.route}
+          <CollapsibleSection
+            title={isEs ? 'La ruta' : 'The route'}
+            subtitle={
+              isEs
+                ? 'El hilo de barrios, con los minutos a pie entre parada y parada.'
+                : 'The thread of neighbourhoods, with the walking minutes between stops.'
+            }
             accent={TALAVERA}
-            title="La ruta"
-            intro="El orden aprobado, sin paradas añadidas. Los minutos son estimaciones de traslado entre zonas: no se ha hecho una inspección presencial del sitio, así que no se presentan como distancias verificadas."
-            totalLabel="Recorrido de referencia"
-            totalNote={`${journey.durations.minimo} como mínimo, sin entrar al Castillo · ${journey.durations.realista} con el interior y pausas normales · ${journey.durations.relajado} con margins amplios. Ninguno de estos tiempos garantiza el acceso: los recintos con control cambian de horario.`}
-          />
+            preview={
+              isEs
+                ? `${journey.route.length} paradas · ~${journey.route.reduce(
+                    (a, r) => a + (r.walk || 0),
+                    0
+                  )} min a pie`
+                : `${journey.route.length} stops · ~${journey.route.reduce(
+                    (a, r) => a + (r.walk || 0),
+                    0
+                  )} min walking`
+            }
+          >
+            <JourneyRouteGallery
+              stops={journey.route}
+              accent={TALAVERA}
+              emphasisAccent={CEMPASUCHIL}
+              isEs={isEs}
+            />
+          </CollapsibleSection>
         </section>
 
         {/* ---------------------------------------------------------------
@@ -239,8 +264,24 @@ export function ChapultepecJourney() {
             </Link>
           </Reveal>
         </section>
+
+        {/* El support banner es un dropdown sin preview: se abre desde el
+            titulo y se pliega con la flecha. */}
+        <section className="mx-auto max-w-5xl px-6 pb-24">
+          <CollapsibleSection
+            title={isEs ? 'Apoya Amaxing' : 'Support Amaxing'}
+            subtitle={
+              isEs
+                ? 'Si estos recorridos te sirvieron, hay formas de ayudar.'
+                : 'If these routes were useful, there are ways to help.'
+            }
+            accent={TALAVERA}
+          >
+            <SupportBanner />
+          </CollapsibleSection>
+        </section>
       </div>
-      <DetailToggle accent={TALAVERA} />
+      <DetailToggle accent={TALAVERA} price={journey.price} isEs={isEs} />
     </JourneyDetailProvider>
   )
 }

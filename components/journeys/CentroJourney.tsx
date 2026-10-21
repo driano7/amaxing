@@ -17,11 +17,13 @@ import { useLanguage } from '@/lib/hooks/useLanguage'
 import SupportBanner from '@/components/SupportBanner'
 import { EditorialMoment } from './EditorialMoment'
 import { DiscoveryCards } from './DiscoveryCards'
-import { JourneyRoute } from './JourneyRoute'
+import { CollapsibleSection } from './CollapsibleSection'
+import { JourneyRouteGallery } from './JourneyRouteGallery'
 import { Reveal } from './Reveal'
 import { InterpretationNote } from './InterpretationNote'
 
 const TALAVERA = '#0E8C7A'
+const CEMPASUCHIL = '#F2A03D'
 const TERRACOTA = '#C1440E'
 
 /**
@@ -58,7 +60,7 @@ export function CentroJourney() {
           chapters={chapters}
           accent={TALAVERA}
           title={journey.title_es}
-          header={<DetailToggle accent={TALAVERA} variant="inline" />}
+          header={<DetailToggle accent={TALAVERA} variant="inline" isEs={isEs} />}
         />
 
         {/* ---------------------------------------------------------------
@@ -252,14 +254,33 @@ export function CentroJourney() {
           RUTA
       ---------------------------------------------------------------- */}
         <section className="mx-auto max-w-5xl px-6 pb-16 sm:pb-24">
-          <JourneyRoute
-            legs={journey.route}
+          <CollapsibleSection
+            title={isEs ? 'La ruta' : 'The route'}
+            subtitle={
+              isEs
+                ? 'El hilo de barrios, con los minutos a pie entre parada y parada.'
+                : 'The thread of neighbourhoods, with the walking minutes between stops.'
+            }
             accent={TALAVERA}
-            title="La ruta"
-            intro="El circuito se lee por zonas, no por puntos exactos: la idea es saber hacia dónde va uno, no seguir un marcador. Los minutos son estimaciones de traslado."
-            totalLabel="Recorrido de referencia"
-            totalNote={`${journey.durations.minimo} como mínimo · ${journey.durations.realista} en un ritmo normal · ${journey.durations.relajado} con el módulo de Donceles o la extensión al Museo Mural Diego Rivera.`}
-          />
+            preview={
+              isEs
+                ? `${journey.route.length} paradas · ~${journey.route.reduce(
+                    (a, r) => a + (r.walk || 0),
+                    0
+                  )} min a pie`
+                : `${journey.route.length} stops · ~${journey.route.reduce(
+                    (a, r) => a + (r.walk || 0),
+                    0
+                  )} min walking`
+            }
+          >
+            <JourneyRouteGallery
+              stops={journey.route}
+              accent={TALAVERA}
+              emphasisAccent={CEMPASUCHIL}
+              isEs={isEs}
+            />
+          </CollapsibleSection>
         </section>
 
         {/* ---------------------------------------------------------------
@@ -332,8 +353,24 @@ export function CentroJourney() {
             </Link>
           </Reveal>
         </section>
+
+        {/* El support banner es un dropdown sin preview: se abre desde el
+            titulo y se pliega con la flecha. */}
+        <section className="mx-auto max-w-5xl px-6 pb-24">
+          <CollapsibleSection
+            title={isEs ? 'Apoya Amaxing' : 'Support Amaxing'}
+            subtitle={
+              isEs
+                ? 'Si estos recorridos te sirvieron, hay formas de ayudar.'
+                : 'If these routes were useful, there are ways to help.'
+            }
+            accent={TALAVERA}
+          >
+            <SupportBanner />
+          </CollapsibleSection>
+        </section>
       </div>
-      <DetailToggle accent={TALAVERA} />
+      <DetailToggle accent={TALAVERA} price={journey.price} isEs={isEs} />
     </JourneyDetailProvider>
   )
 }

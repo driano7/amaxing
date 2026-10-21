@@ -431,6 +431,8 @@ export const ANTROPOLOGIA_JOURNEY = {
     'Ten moments. The ground-floor archaeology route is the base; the upper-floor ethnography wing is an optional extension.',
   meta: ['Planta baja · arqueología', 'Diez momentos', 'Contenido editorial en construcción'],
   accents: ['talavera', 'cempasuchil'],
+  // Precio de referencia, en pesos. Se muestra siempre en el detalle.
+  price: 100,
   heroImage: `${IMG}/patio-exterior-1974.jpg`,
   // Calificacion: null mientras el journey no tenga reseñas.
   rating: null,
