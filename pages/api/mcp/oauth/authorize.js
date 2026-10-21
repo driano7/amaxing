@@ -57,6 +57,7 @@ export default async function handler(req, res) {
   // ---- Validaciones RFC 6749 / RFC 8707 ----
   if (response_type !== 'code') {
     return redirectError(
+      res,
       redirect_uri,
       'unsupported_response_type',
       state,
@@ -66,7 +67,7 @@ export default async function handler(req, res) {
 
   const client = await getClientByClientId(client_id)
   if (!client) {
-    return redirectError(redirect_uri, 'invalid_client', state, 'Unknown client_id')
+    return redirectError(res, redirect_uri, 'invalid_client', state, 'Unknown client_id')
   }
 
   // redirect_uris se guarda como JSON en TEXT: hay que parsearlo.
@@ -80,6 +81,7 @@ export default async function handler(req, res) {
   // Validate redirect_uri exactly matches registered URI
   if (!registeredUris.includes(redirect_uri)) {
     return redirectError(
+      res,
       redirect_uri,
       'invalid_redirect_uri',
       state,
@@ -97,6 +99,7 @@ export default async function handler(req, res) {
   )
   if (invalidScopes.length > 0) {
     return redirectError(
+      res,
       redirect_uri,
       'invalid_scope',
       state,
@@ -107,6 +110,7 @@ export default async function handler(req, res) {
   // PKCE validation (RFC 7636) - REQUIRED for public clients
   if (!code_challenge) {
     return redirectError(
+      res,
       redirect_uri,
       'invalid_request',
       state,
@@ -115,6 +119,7 @@ export default async function handler(req, res) {
   }
   if (code_challenge_method && !['S256'].includes(code_challenge_method)) {
     return redirectError(
+      res,
       redirect_uri,
       'invalid_request',
       state,
@@ -125,7 +130,7 @@ export default async function handler(req, res) {
   // Resource parameter (RFC 8707): debe ser este servidor o un origen
   // registrado por el cliente.
   if (resource && !isValidResource(resource, registeredUris)) {
-    return redirectError(redirect_uri, 'invalid_target', state, 'Invalid resource parameter')
+    return redirectError(res, redirect_uri, 'invalid_target', state, 'Invalid resource parameter')
   }
 
   // ---- AUTENTICACIÓN REAL ----
@@ -186,19 +191,28 @@ export default async function handler(req, res) {
   return res.redirect(302, redirectUrl.toString())
 }
 
-function redirectError(redirectUri, error, state, description) {
-  if (!redirectUri) {
-    return { error, error_description: description }
+/**
+ * Envia un error de OAuth.
+ *
+ * Antes esta funcion DEVOLVIA un objeto y los call sites hacían
+ * `return redirectError(...)`. En un handler de Next.js, devolver un objeto
+ * plano no termina la respuesta: la peticion se queda colgada y retiene un
+ * worker del servidor. Ahora responde de verdad: 302 al redirect_uri si es
+ * valido, y 400 con el error en JSON si no lo es.
+ */
+function redirectError(res, redirectUri, error, state, description) {
+  if (redirectUri) {
+    try {
+      const url = new URL(redirectUri)
+      url.searchParams.set('error', error)
+      if (description) url.searchParams.set('error_description', description)
+      if (state) url.searchParams.set('state', state)
+      return res.redirect(302, url.toString())
+    } catch {
+      /* redirect_uri no es una URL valida: se responde con JSON */
+    }
   }
-  try {
-    const url = new URL(redirectUri)
-    url.searchParams.set('error', error)
-    if (description) url.searchParams.set('error_description', description)
-    if (state) url.searchParams.set('state', state)
-    return { redirect: url.toString() }
-  } catch {
-    return { error, error_description: description }
-  }
+  return res.status(400).json({ error, error_description: description })
 }
 
 function generateConsentPage({
