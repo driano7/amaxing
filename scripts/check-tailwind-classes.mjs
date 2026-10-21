@@ -56,8 +56,11 @@ function walk(dir) {
       if (!/node_modules|\.next/.test(full)) walk(full)
     } else if (EXTS.includes(path.extname(entry.name))) {
       const source = fs.readFileSync(full, 'utf8')
+      // La clase se captura COMPLETA, incluido el modificador de opacidad
+      // (/85, /15...). Sin el, la comprobacion validaba "text-white" en vez
+      // de "text-white/85" y no encontraba nunca esta familia de fallos.
       const re =
-        /(?:^|[\s"'`])((?:(?:dark|sm|md|lg|xl|2xl|hover|focus|focus-visible|active|group-hover|group-open|motion-reduce|print):)*(?:text|bg|border|from|via|to|ring|fill|stroke|divide|placeholder|decoration|shadow|accent|caret|outline)-[a-z0-9-]+)\b/g
+        /(?:^|[\s"'`])((?:(?:dark|sm|md|lg|xl|2xl|hover|focus|focus-visible|active|group-hover|group-open|motion-reduce|print):)*(?:text|bg|border|from|via|to|ring|fill|stroke|divide|placeholder|decoration|shadow|accent|caret|outline)-[a-z0-9-]+(?:\/\d+)?)\b/g
       let m
       while ((m = re.exec(source))) {
         if (NOT_CLASSES.has(m[1])) continue

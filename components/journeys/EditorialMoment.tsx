@@ -10,6 +10,8 @@ import { JourneyStep } from './JourneyStep'
 import { StoryTimeline, type TimelineEntry } from './StoryTimeline'
 import { InterpretationNote } from './InterpretationNote'
 import { BeforeAfter } from './BeforeAfter'
+import { Disclosure } from './Disclosure'
+import { useJourneyDetail } from './JourneyDetailContext'
 import { momentMotion, INTENSITY_SCALE, type MomentMotion } from './motionConfig'
 
 export interface EditorialStep {
@@ -66,6 +68,12 @@ interface EditorialMomentProps {
   movement?: MomentMotion
   /** Color de enfasis para numeracion y vinetas. */
   emphasisAccent?: string
+  /**
+   * Muestra solo el resumen y deja el relato completo (steps, comparador,
+   * interpretacion) en un desplegable. El estado se comparte con el resto del
+   * journey, asi que un control global puede abrirlo o cerrarlo entero.
+   */
+  collapsible?: boolean
 }
 
 /**
@@ -88,6 +96,7 @@ export function EditorialMoment({
   isEs = true,
   movement,
   emphasisAccent = 'var(--j2)',
+  collapsible: collapsibleProp = false,
 }: EditorialMomentProps) {
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-100px' })
@@ -97,6 +106,8 @@ export function EditorialMoment({
   const photo = photos[moment.image]
   const secondary = moment.secondaryImage ? photos[moment.secondaryImage] : null
   const isHero = Boolean(moment.hero)
+  const detail = useJourneyDetail()
+  const collapsible = Boolean(collapsibleProp && detail)
   const title = isEs ? moment.title : moment.title_en || moment.title
 
   // Sin tratamiento declarado: composicion estandar (comportamiento previo).
@@ -242,34 +253,8 @@ export function EditorialMoment({
     />
   ) : null
 
-  const stepsBlock = (
-    <div className="border-t border-zinc-200/70 dark:border-white/10">
-      {moment.steps.map((step, index) => (
-        <JourneyStep
-          key={step.title}
-          index={index}
-          title={step.title}
-          body={step.body}
-          observe={step.observe}
-          pending={step.pending}
-          defaultOpen={index === 0}
-          progressiveObserve={Boolean(t?.progressiveObserve)}
-          emphasisAccent={emphasisAccent}
-        />
-      ))}
-    </div>
-  )
-
-  const tailBlock = (
+  const closingBlock = (
     <>
-      {moment.interpretation && (
-        <InterpretationNote
-          title={moment.interpretation.title}
-          body={moment.interpretation.body}
-          accent={accent}
-        />
-      )}
-
       {moment.closing && (
         <p className="mt-12 font-serif text-2xl leading-relaxed text-zinc-900 dark:text-zinc-50 sm:text-3xl">
           {moment.closing}
@@ -293,6 +278,37 @@ export function EditorialMoment({
         </p>
       )}
     </>
+  )
+
+  const tailBlock = (
+    <>
+      {moment.interpretation && (
+        <InterpretationNote
+          title={moment.interpretation.title}
+          body={moment.interpretation.body}
+          accent={accent}
+        />
+      )}
+      {closingBlock}
+    </>
+  )
+
+  const stepsBlock = (
+    <div className="border-t border-zinc-200/70 dark:border-white/10">
+      {moment.steps.map((step, index) => (
+        <JourneyStep
+          key={step.title}
+          index={index}
+          title={step.title}
+          body={step.body}
+          observe={step.observe}
+          pending={step.pending}
+          defaultOpen={index === 0}
+          progressiveObserve={Boolean(t?.progressiveObserve)}
+          emphasisAccent={emphasisAccent}
+        />
+      ))}
+    </div>
   )
 
   return (
@@ -350,31 +366,76 @@ export function EditorialMoment({
             >
               {textBlock}
             </motion.div>
-            <motion.div
-              variants={reduced ? undefined : quietEntry}
-              transition={reduced ? { duration: 0 } : transition(0.5, 0.12)}
-            >
-              {stepsBlock}
-            </motion.div>
-            {moment.comparison && (
+            {collapsible ? (
               <motion.div
                 variants={reduced ? undefined : quietEntry}
-                transition={reduced ? { duration: 0 } : transition(0.5, 0.16)}
+                transition={reduced ? { duration: 0 } : transition(0.5, 0.12)}
               >
-                <BeforeAfter
-                  before={moment.comparison.before}
-                  after={moment.comparison.after}
-                  note={moment.comparison.note}
-                  accent={accent}
-                  emphasisAccent={emphasisAccent === 'var(--j2)' ? '#F2A03D' : emphasisAccent}
-                />
+                <Disclosure
+                  open={detail?.isOpen(moment.id)}
+                  onToggle={() => detail?.toggle(moment.id)}
+                  className="group/detail"
+                  summaryClassName="my-5 flex items-center gap-3 text-sm font-semibold text-[var(--j1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  panelClassName="pb-2"
+                  summary={
+                    <>
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--j1-soft)] text-xs">
+                        <span className="detail-icon block transition-transform duration-300 group-open/detail:rotate-45">
+                          +
+                        </span>
+                      </span>
+                      {detail?.isOpen(moment.id) ? 'Ocultar el detalle' : 'Ver el detalle completo'}
+                    </>
+                  }
+                >
+                  {stepsBlock}
+                  {moment.comparison && (
+                    <BeforeAfter
+                      before={moment.comparison.before}
+                      after={moment.comparison.after}
+                      note={moment.comparison.note}
+                      accent={accent}
+                      emphasisAccent={emphasisAccent === 'var(--j2)' ? '#F2A03D' : emphasisAccent}
+                    />
+                  )}
+                  {moment.interpretation && (
+                    <InterpretationNote
+                      title={moment.interpretation.title}
+                      body={moment.interpretation.body}
+                      accent={accent}
+                    />
+                  )}
+                </Disclosure>
               </motion.div>
+            ) : (
+              <>
+                <motion.div
+                  variants={reduced ? undefined : quietEntry}
+                  transition={reduced ? { duration: 0 } : transition(0.5, 0.12)}
+                >
+                  {stepsBlock}
+                </motion.div>
+                {moment.comparison && (
+                  <motion.div
+                    variants={reduced ? undefined : quietEntry}
+                    transition={reduced ? { duration: 0 } : transition(0.5, 0.16)}
+                  >
+                    <BeforeAfter
+                      before={moment.comparison.before}
+                      after={moment.comparison.after}
+                      note={moment.comparison.note}
+                      accent={accent}
+                      emphasisAccent={emphasisAccent === 'var(--j2)' ? '#F2A03D' : emphasisAccent}
+                    />
+                  </motion.div>
+                )}
+              </>
             )}
             <motion.div
               variants={reduced ? undefined : quietEntry}
               transition={reduced ? { duration: 0 } : transition(0.5, 0.2)}
             >
-              {tailBlock}
+              {collapsible ? closingBlock : tailBlock}
             </motion.div>
           </div>
 

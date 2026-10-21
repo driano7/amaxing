@@ -33,6 +33,11 @@ const siteMetadata = {
     // If you want to use an analytics provider you have to add it to the
     // content security policy in the `next.config.js` file.
     // supports plausible, simpleAnalytics, umami or googleAnalytics
+    //
+    // Plausible y GoogleAnalytics estan los dos activos y cuentan los mismos
+    // pageviews: los agregados quedan en dos proveedores. Apaga el que no
+    // quieras vaciando su bandera (no hay que tocar codigo). La analitica
+    // first-party del sitio no se activa desde aqui.
     plausibleDataDomain: 'donovan-amx.vercel.app', // e.g. tailwind-nextjs-starter-blog.vercel.app
     simpleAnalytics: false, // true or false
     umamiWebsiteId: '', // e.g. 123e4567-e89b-12d3-a456-426614174000

@@ -19,6 +19,7 @@ import {
   LayoutGrid,
   ChevronDown,
   Compass,
+  Footprints,
   BookOpen,
   Newspaper,
   Mail,
@@ -41,6 +42,7 @@ const iconComponents = {
   LayoutGrid,
   ChevronDown,
   Compass,
+  Footprints,
   BookOpen,
   Newspaper,
   Mail,
@@ -308,7 +310,7 @@ export function Navbar() {
                               className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-orange-500/10 dark:text-white"
                             >
                               {CategoryIcon && (
-                                <span className="bg-orange-500/15 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-orange-500 transition-transform duration-200 group-hover:scale-110">
+                                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500/15 text-orange-500 transition-transform duration-200 group-hover:scale-110">
                                   <CategoryIcon className="h-4 w-4" />
                                 </span>
                               )}

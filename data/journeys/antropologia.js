@@ -408,8 +408,9 @@ export const ANTROPOLOGIA_JOURNEY = {
   id: 'antropologia',
   slug: 'antropologia',
   experience: 'antropologia',
-  title_es: 'Museo Nacional de Antropología',
-  title_en: 'National Museum of Anthropology',
+  title_es:
+    'Museo Nacional de Antropología — Un viaje por el tiempo y las costumbres mexicanas en la actualidad',
+  title_en: 'National Museum of Anthropology — A journey through time and Mexican customs today',
   subtitle_es:
     'Diez salas, una capa cada vez: lo que se ve de frente, lo que las fuentes cuentan y lo que todavía no está verificado.',
   subtitle_en:
@@ -420,7 +421,10 @@ export const ANTROPOLOGIA_JOURNEY = {
     'The National Museum of Anthropology is walked like a publication is read: in layers. Each block separates what the visitor has in front of them, what the institution documents, and what is still unverified. This route is under construction: the structure, the order and the movement are done; the story is not.',
   eyebrow_es: 'Museo Nacional de Antropología · Chapultepec, Ciudad de México',
   eyebrow_en: 'National Museum of Anthropology · Chapultepec, Mexico City',
-  heroTitleLines: ['Museo Nacional', 'de Antropología'],
+  heroTitleLines: [
+    'Museo Nacional de Antropología',
+    'Un viaje por el tiempo y las costumbres mexicanas en la actualidad',
+  ],
   duration_note_es:
     'Diez momentos. El recorrido de arqueología de planta baja es el base; la planta alta de etnografía queda como extensión opcional.',
   duration_note_en:

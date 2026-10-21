@@ -3,6 +3,7 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import Image from '@/components/Image'
 
 export interface ComparisonSide {
   src: string
@@ -88,17 +89,28 @@ export function BeforeAfter({
         {sides.map(({ key, data }) => {
           const active = side === key
           return (
-            <motion.img
+            <motion.div
               key={key}
-              src={data.src}
-              alt={data.alt}
-              loading="lazy"
+              className="absolute inset-0"
               initial={false}
               animate={{ opacity: active ? 1 : 0 }}
               transition={reduced ? { duration: 0 } : { duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 h-full w-full object-cover"
               style={{ zIndex: active ? 2 : 1 }}
-            />
+            >
+              {/*
+                Las dos caras se cargan con prioridad: la que esta oculta es
+                el destino del boton y tiene que estar lista cuando se pulse.
+                Ademas pasan por next/image, asi que se sirven optimizadas.
+              */}
+              <Image
+                src={data.src}
+                alt={data.alt}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 46vw"
+                className="object-cover"
+              />
+            </motion.div>
           )
         })}
         <span

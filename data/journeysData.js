@@ -66,6 +66,12 @@
 import { CHAPULTEPEC_JOURNEY } from './journeys/chapultepec'
 import { CENTRO_JOURNEY } from './journeys/centro'
 
+/**
+ * Precio de referencia, en pesos mexicanos, de todos los journeys.
+ * Es un valor provisional, mientras el modelo de reserva se define.
+ */
+export const JOURNEY_PRICE_MXN = 100
+
 export const JOURNEYS = [
   {
     id: 'luchas',
@@ -78,6 +84,7 @@ export const JOURNEYS = [
     intro_en: '',
     heroImage: null,
     accents: [],
+    price: JOURNEY_PRICE_MXN,
     moments: [],
   },
   {
@@ -96,6 +103,7 @@ export const JOURNEYS = [
     intro_en: CHAPULTEPEC_JOURNEY.intro_en,
     heroImage: CHAPULTEPEC_JOURNEY.heroImage,
     accents: CHAPULTEPEC_JOURNEY.accents,
+    price: JOURNEY_PRICE_MXN,
     moments: [],
   },
   {
@@ -109,6 +117,7 @@ export const JOURNEYS = [
     intro_en: '',
     heroImage: null,
     accents: [],
+    price: JOURNEY_PRICE_MXN,
     moments: [],
   },
   {
@@ -126,6 +135,7 @@ export const JOURNEYS = [
     intro_en: CENTRO_JOURNEY.intro_en,
     heroImage: CENTRO_JOURNEY.heroImage,
     accents: CENTRO_JOURNEY.accents,
+    price: JOURNEY_PRICE_MXN,
     moments: [],
   },
   {
@@ -139,6 +149,7 @@ export const JOURNEYS = [
     intro_en: '',
     heroImage: null,
     accents: [],
+    price: JOURNEY_PRICE_MXN,
     moments: [],
   },
   {
@@ -155,6 +166,7 @@ export const JOURNEYS = [
     intro_en: '',
     heroImage: null,
     accents: [],
+    price: JOURNEY_PRICE_MXN,
     moments: [],
   },
 ]

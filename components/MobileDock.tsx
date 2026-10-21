@@ -4,16 +4,16 @@ import { useCallback, useEffect, useRef, useState, type ComponentType } from 're
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Compass, BookOpen, Sparkle, Star, Users, MapPinned } from 'lucide-react'
+import { Footprints, BookOpen, Sparkle, Star, Users, MapPinned } from 'lucide-react'
 import Link from '@/components/Link'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 
 const DOCK_ITEMS = [
   {
     href: '/journeys',
-    icon: Compass,
+    icon: Footprints,
     labelKey: 'header.nav.journeys',
-    fallback: 'Caminatas',
+    fallback: 'Journeys',
   },
   { href: '/maps', icon: MapPinned, labelKey: 'header.nav.maps', fallback: 'Maps' },
   { href: '/guides', icon: BookOpen, labelKey: 'header.nav.guides', fallback: 'Guides' },
