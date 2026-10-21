@@ -3,6 +3,7 @@
 // y comprobaciones legibles para que la persona entienda qué falta.
 
 export const PASSWORD_MIN_LENGTH = 8
+export const PASSWORD_SPECIAL = /[!@#$%^&*]/
 
 export const PASSWORD_RULES = [
   {
@@ -24,6 +25,11 @@ export const PASSWORD_RULES = [
     id: 'number',
     label: 'Un número',
     test: (value: string) => /\d/.test(value),
+  },
+  {
+    id: 'special',
+    label: 'Un caracter especial (!@#$%^&*)',
+    test: (value: string) => PASSWORD_SPECIAL.test(value),
   },
 ] as const
 

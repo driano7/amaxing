@@ -59,24 +59,28 @@ export default function Login() {
     }
   }
 
-  // /login?mode=client (el link de AuthNav) debe abrir el formulario de
-  // alta. Antes el parametro se descartaba en silencio. Se espera a
-  // router.isReady para no romper la hidratacion: el HTML del servidor
-  // siempre sale en modo login y el ajuste ocurre ya en el cliente.
+  // Alta completa (paso 2 demográfico + reglas de password) vive en /register.
+  // /login?mode=client|register solo redirige ahí para no tener dos flujos.
   useEffect(() => {
     if (!router.isReady) return
     const q = router.query.mode
     const wanted = Array.isArray(q) ? q[0] : q
     if (wanted === 'client' || wanted === 'register') {
-      setMode('register')
-      setError('')
+      const redirect =
+        typeof router.query.redirect === 'string'
+          ? `?redirect=${encodeURIComponent(router.query.redirect)}`
+          : ''
+      void router.replace(`/register${redirect}`)
     }
-  }, [router.isReady, router.query.mode])
+  }, [router.isReady, router.query.mode, router.query.redirect, router])
 
   const toggleMode = () => {
-    setMode(mode === 'login' ? 'register' : 'login')
+    if (mode === 'login') {
+      void router.push('/register')
+      return
+    }
+    setMode('login')
     setError('')
-    // quitamos ?mode= para que al recargar no vuelva a forzar el alta
     router.replace({ pathname: '/login', query: {} }, undefined, { shallow: true })
   }
 
@@ -208,7 +212,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
                 className={inputClass}
                 placeholder="••••••••"
               />

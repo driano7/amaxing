@@ -23,6 +23,7 @@ export const COUNTRIES = [
   { code: 'MX', es: 'México', en: 'Mexico' },
   { code: 'US', es: 'Estados Unidos', en: 'United States' },
   { code: 'CA', es: 'Canadá', en: 'Canada' },
+  // Top 12 visitantes (Europa / Asia / Latam) — ver TOP_VISITOR_COUNTRIES
   { code: 'ES', es: 'España', en: 'Spain' },
   { code: 'AR', es: 'Argentina', en: 'Argentina' },
   { code: 'CO', es: 'Colombia', en: 'Colombia' },
@@ -33,17 +34,47 @@ export const COUNTRIES = [
   { code: 'DE', es: 'Alemania', en: 'Germany' },
   { code: 'IT', es: 'Italia', en: 'Italy' },
   { code: 'GB', es: 'Reino Unido', en: 'United Kingdom' },
-  { code: 'PT', es: 'Portugal', en: 'Portugal' },
-  { code: 'NL', es: 'Países Bajos', en: 'Netherlands' },
-  { code: 'CH', es: 'Suiza', en: 'Switzerland' },
   { code: 'JP', es: 'Japón', en: 'Japan' },
   { code: 'KR', es: 'Corea del Sur', en: 'South Korea' },
-  { code: 'CN', es: 'China', en: 'China' },
+  // Resto (alfabético vía sortCountries)
   { code: 'AU', es: 'Australia', en: 'Australia' },
-  { code: 'NZ', es: 'Nueva Zelanda', en: 'New Zealand' },
+  { code: 'AT', es: 'Austria', en: 'Austria' },
+  { code: 'BE', es: 'Bélgica', en: 'Belgium' },
+  { code: 'BO', es: 'Bolivia', en: 'Bolivia' },
+  { code: 'CN', es: 'China', en: 'China' },
+  { code: 'CR', es: 'Costa Rica', en: 'Costa Rica' },
+  { code: 'CU', es: 'Cuba', en: 'Cuba' },
+  { code: 'DK', es: 'Dinamarca', en: 'Denmark' },
+  { code: 'EC', es: 'Ecuador', en: 'Ecuador' },
+  { code: 'SV', es: 'El Salvador', en: 'El Salvador' },
+  { code: 'AE', es: 'Emiratos Árabes Unidos', en: 'United Arab Emirates' },
+  { code: 'PH', es: 'Filipinas', en: 'Philippines' },
+  { code: 'FI', es: 'Finlandia', en: 'Finland' },
+  { code: 'GT', es: 'Guatemala', en: 'Guatemala' },
+  { code: 'HN', es: 'Honduras', en: 'Honduras' },
+  { code: 'IN', es: 'India', en: 'India' },
+  { code: 'ID', es: 'Indonesia', en: 'Indonesia' },
   { code: 'IE', es: 'Irlanda', en: 'Ireland' },
-  { code: 'SE', es: 'Suecia', en: 'Sweden' },
+  { code: 'IL', es: 'Israel', en: 'Israel' },
+  { code: 'MY', es: 'Malasia', en: 'Malaysia' },
+  { code: 'NI', es: 'Nicaragua', en: 'Nicaragua' },
   { code: 'NO', es: 'Noruega', en: 'Norway' },
+  { code: 'NZ', es: 'Nueva Zelanda', en: 'New Zealand' },
+  { code: 'NL', es: 'Países Bajos', en: 'Netherlands' },
+  { code: 'PA', es: 'Panamá', en: 'Panama' },
+  { code: 'PY', es: 'Paraguay', en: 'Paraguay' },
+  { code: 'PL', es: 'Polonia', en: 'Poland' },
+  { code: 'PT', es: 'Portugal', en: 'Portugal' },
+  { code: 'PR', es: 'Puerto Rico', en: 'Puerto Rico' },
+  { code: 'DO', es: 'República Dominicana', en: 'Dominican Republic' },
+  { code: 'SG', es: 'Singapur', en: 'Singapore' },
+  { code: 'ZA', es: 'Sudáfrica', en: 'South Africa' },
+  { code: 'SE', es: 'Suecia', en: 'Sweden' },
+  { code: 'CH', es: 'Suiza', en: 'Switzerland' },
+  { code: 'TH', es: 'Tailandia', en: 'Thailand' },
+  { code: 'UY', es: 'Uruguay', en: 'Uruguay' },
+  { code: 'VE', es: 'Venezuela', en: 'Venezuela' },
+  { code: 'VN', es: 'Vietnam', en: 'Vietnam' },
 ] as const
 
 export const GENDER_VALUES = GENDERS.map((g) => g.value)
@@ -60,26 +91,26 @@ export const isValidCountry = (value: unknown): value is string =>
  * Se recorren en el orden de este arreglo, no alfabéticamente.
  */
 export const TOP_VISITOR_COUNTRIES = [
-  'ES',
-  'FR',
+  'ES', // Europa
+  'AR', // Latam
+  'CO',
+  'CL',
+  'PE',
+  'BR',
+  'FR', // Europa
   'DE',
-  'GB',
   'IT',
-  'PT',
-  'NL',
-  'CH', // Europa
-  'JP',
-  'KR', // Asia
-  'AR',
-  'CO', // Latam
-]
+  'GB',
+  'JP', // Asia
+  'KR',
+] as const
 
 export function sortCountries() {
-  const rank = (code) => {
+  const rank = (code: string) => {
     if (code === 'MX') return 0
     if (code === 'US') return 1
     if (code === 'CA') return 2
-    const i = TOP_VISITOR_COUNTRIES.indexOf(code)
+    const i = (TOP_VISITOR_COUNTRIES as readonly string[]).indexOf(code)
     return i === -1 ? 100 : 3 + i
   }
   return [...COUNTRIES].sort((a, b) => {

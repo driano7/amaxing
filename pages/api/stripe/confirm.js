@@ -3,6 +3,22 @@ import { createBookingInTurso, findBookingsByStripeSession } from '@/lib/booking
 import { recordConversion } from '@/lib/referrals'
 import { trySend } from '@/lib/mail/service'
 import { BRAND } from '@/lib/brand'
+import { getSessionUser } from '@/lib/auth'
+import { getSessionOptional } from '@/lib/auth/session'
+
+function bearerToken(req) {
+  const header = req.headers.authorization
+  if (typeof header === 'string' && header.startsWith('Bearer ')) {
+    return header.slice(7).trim() || null
+  }
+  return null
+}
+
+/** WhatsApp: al menos 10 dígitos (MX local o con lada). */
+function normalizePhone(value) {
+  const digits = String(value || '').replace(/\D/g, '')
+  return digits.length >= 10 ? digits : null
+}
 
 /** Avisa al cliente segun como pago. Si falla el correo, la reserva sigue. */
 async function notifyBooking(booking, { paymentMethod, customerPhone, userEmail, userId }) {
@@ -31,8 +47,6 @@ async function notifyBooking(booking, { paymentMethod, customerPhone, userEmail,
     vars
   )
 }
-import { getSessionOptional } from '@/lib/auth/session'
-
 /**
  * Crea las reservas en Turso (fuente de verdad) y devuelve los tickets con QR.
  * Idempotente: si la sesión de Stripe ya generó reservas, las devuelve tal cual.

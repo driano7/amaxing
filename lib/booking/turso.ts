@@ -3,6 +3,7 @@
 // así que el escáner del empleado resuelve contra la misma fila.
 import { randomBytes } from 'crypto'
 import { turso } from '../turso'
+import { COUNTRY_CODES, isValidAgeBand } from '../demographics'
 import { normalizeGender as normalizeGenderValue } from '../demographics-shared'
 
 /** Alfabeto sin caracteres ambiguos: O/0, I/1, S/5. */
@@ -343,32 +344,7 @@ export function normalizeGender(value?: string | null): string | null {
   return normalizeGenderValue(value)
 }
 
-const COUNTRIES = new Set([
-  'MX',
-  'US',
-  'CA',
-  'ES',
-  'AR',
-  'CO',
-  'CL',
-  'PE',
-  'BR',
-  'FR',
-  'DE',
-  'IT',
-  'GB',
-  'PT',
-  'NL',
-  'CH',
-  'JP',
-  'KR',
-  'CN',
-  'AU',
-  'NZ',
-  'IE',
-  'SE',
-  'NO',
-])
+const COUNTRIES = new Set<string>(COUNTRY_CODES)
 
 export function normalizeCountry(value?: string | null): string | null {
   if (!value) return null
@@ -376,18 +352,20 @@ export function normalizeCountry(value?: string | null): string | null {
   return COUNTRIES.has(v) ? v : null
 }
 
-/** Lee la demografía del usuario (gender, country, date_of_birth). */
+/** Lee la demografía del usuario. Preferimos age_band del registro; DOB es fallback. */
 export async function demographicsForUser(userId: string): Promise<Demographics> {
   const result = await turso.execute({
-    sql: 'SELECT gender, country, date_of_birth FROM users WHERE id = ?',
+    sql: 'SELECT gender, country, date_of_birth, age_band FROM users WHERE id = ?',
     args: [userId],
   })
   const row: any = result.rows[0]
   if (!row) return { country: null, ageBand: null, gender: null }
 
+  const fromBand = isValidAgeBand(row.age_band) ? row.age_band : null
+
   return {
     country: normalizeCountry(row.country),
-    ageBand: ageBandFrom(row.date_of_birth),
+    ageBand: fromBand || ageBandFrom(row.date_of_birth),
     gender: normalizeGender(row.gender),
   }
 }

@@ -15,6 +15,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { VirtualTicket } from '@/components/tickets/VirtualTicket'
 import { tours } from '@/data/toursData'
 import { formatBookingDate } from '@/lib/booking/types'
+import { validatePassword } from '@/lib/password'
 import {
   getFavorites,
   getCommented,
@@ -249,8 +250,9 @@ export default function Profile() {
       })
       return
     }
-    if (next.length < 8) {
-      setPwMsg({ type: 'error', message: isEs ? 'Mínimo 8 caracteres' : 'Minimum 8 characters' })
+    const pwError = validatePassword(next)
+    if (pwError) {
+      setPwMsg({ type: 'error', message: pwError })
       return
     }
     if (next !== confirm) {
@@ -622,7 +624,7 @@ export default function Profile() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="dark:bg-orange-950/30 mb-6 rounded-2xl border border-orange-200 bg-orange-50 p-4 dark:border-orange-900/50"
+              className="mb-6 rounded-2xl border border-orange-200 bg-orange-50 p-4 dark:border-orange-900/50 dark:bg-orange-950/30"
             >
               <p className="text-sm font-semibold text-orange-700 dark:text-orange-300">
                 {role === 'admin'

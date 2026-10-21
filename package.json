@@ -13,7 +13,7 @@
     "knowledge:export": "node scripts/export-knowledge.js",
     "knowledge:validate": "node scripts/validate-knowledge.js",
     "validate:jsonld": "node scripts/validate-jsonld.js",
-    "lint": "next lint",
+    "lint": "next lint && eslint tailwind.config.js postcss.config.js",
     "prepare": "husky install"
   },
   "dependencies": {

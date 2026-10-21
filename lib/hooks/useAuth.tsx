@@ -41,7 +41,15 @@ interface AuthProviderProps {
   children: ReactNode
 }
 
-function IdleWarning({ secondsLeft, onStay }: { secondsLeft: number; onStay: () => void }) {
+function IdleWarning({
+  secondsLeft,
+  onStay,
+  onLogout,
+}: {
+  secondsLeft: number
+  onStay: () => void
+  onLogout: () => void
+}) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-zinc-900">
@@ -55,7 +63,7 @@ function IdleWarning({ secondsLeft, onStay }: { secondsLeft: number; onStay: () 
         <div className="mt-5 flex gap-3">
           <button
             type="button"
-            onClick={onStay}
+            onClick={onLogout}
             className="flex-1 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-200"
           >
             Cerrar sesión
@@ -183,15 +191,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     updateUser,
   }
 
-  // Cierre por inactividad: 5 min sin actividad, pestaña oculta o app cerrada.
-  const { warning, stay } = useIdleLogout({
+  // Cierre por inactividad: 5 min sin movimiento, o pantalla bloqueada en móvil.
+  const { warning, stay, logoutNow } = useIdleLogout({
     onLogout: logout,
     enabled: Boolean(token),
   })
 
   return (
     <AuthContext.Provider value={value}>
-      {warning && <IdleWarning secondsLeft={warning.secondsLeft} onStay={stay} />}
+      {warning && (
+        <IdleWarning
+          secondsLeft={warning.secondsLeft}
+          onStay={stay}
+          onLogout={() => void logoutNow()}
+        />
+      )}
       {children}
     </AuthContext.Provider>
   )

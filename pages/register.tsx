@@ -10,13 +10,12 @@ import { useLanguage } from '@/lib/hooks/useLanguage'
 import { AGE_BANDS, GENDERS, MEXICAN_STATES, sortCountries } from '@/lib/demographics'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import { LoginLoadingBar } from '@/components/auth/LoginLoadingBar'
-import { PASSWORD_RULES, validatePassword } from '@/lib/password'
-import { AuthLoader } from '@/components/AuthLoader'
+import { PASSWORD_MIN_LENGTH, PASSWORD_RULES, validatePassword } from '@/lib/password'
 
 export default function Register() {
   const { login } = useAuth()
   const router = useRouter()
-  const { t, currentLanguage, setLanguage } = useLanguage()
+  const { t, currentLanguage } = useLanguage()
   const isEs = currentLanguage === 'es'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,6 +32,14 @@ export default function Register() {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const countryOptions = sortCountries().map((c) => ({
+    value: c.code,
+    label: isEs ? c.es : c.en,
+  }))
+  const stateOptions = MEXICAN_STATES.map((s) => ({ value: s.code, label: s.es }))
+  const ageOptions = AGE_BANDS.map((b) => ({ value: b.value, label: isEs ? b.es : b.en }))
+  const genderOptions = GENDERS.map((g) => ({ value: g.value, label: isEs ? g.es : g.en }))
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -81,21 +88,25 @@ export default function Register() {
         if (!res.ok) {
           const err = await res.json()
           setError(err.message || 'Error creating account')
+          setIsLoading(false)
           return
         }
 
         const json = await res.json()
         localStorage.setItem('authToken', json.token)
         localStorage.setItem('authUser', JSON.stringify(json.user))
+        login(json.token, json.user)
 
         window.dispatchEvent(new Event('authChange'))
-        router.push('/profile')
+        const redirect =
+          typeof router.query.redirect === 'string' ? router.query.redirect : '/profile'
+        router.push(redirect)
       } else {
         setError(t('auth.signup.fillAll') || 'Por favor completa todos los campos')
+        setIsLoading(false)
       }
-    } catch (error) {
+    } catch (err) {
       setError(t('auth.signup.requestError') || 'Error al crear la cuenta')
-    } finally {
       setIsLoading(false)
     }
   }
@@ -103,10 +114,6 @@ export default function Register() {
   const inputClass =
     'w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:placeholder-gray-500'
   const labelClass = 'mb-1 block text-sm font-medium text-zinc-700 dark:text-gray-300'
-
-  if (isLoading) {
-    return <AuthLoader label="Creando tu cuenta..." />
-  }
 
   // Igual que en login: la barra sustituye al formulario mientras espera.
   if (isLoading) {
@@ -153,7 +160,11 @@ export default function Register() {
             {t('auth.signup.title') || 'Crea Tu Cuenta'}
           </h1>
           <p className="text-zinc-500 dark:text-gray-400">
-            {t('auth.signup.subtitle') || 'Únete a la comunidad de viajeros'}
+            {step === 1
+              ? t('auth.signup.subtitle') || 'Únete a la comunidad de viajeros'
+              : isEs
+              ? 'Datos opcionales para conocerte mejor'
+              : 'Optional details so we can know you better'}
           </p>
         </div>
 
@@ -177,74 +188,145 @@ export default function Register() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: dir * -48 }}
                 transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                className="space-y-5"
               >
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="firstName" className={labelClass}>
-                      {t('auth.signup.firstName') || 'Nombre'}
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      required
-                      className={inputClass}
-                      placeholder="Juan"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="lastName" className={labelClass}>
-                      {t('auth.signup.lastName') || 'Apellido'}
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      required
-                      className={inputClass}
-                      placeholder="Pérez"
-                    />
-                  </div>
-                </div>
+                {step === 1 && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="firstName" className={labelClass}>
+                          {t('auth.signup.firstName') || 'Nombre'}
+                        </label>
+                        <input
+                          type="text"
+                          id="firstName"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          required
+                          autoComplete="given-name"
+                          className={inputClass}
+                          placeholder="Juan"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="lastName" className={labelClass}>
+                          {t('auth.signup.lastName') || 'Apellido'}
+                        </label>
+                        <input
+                          type="text"
+                          id="lastName"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          required
+                          autoComplete="family-name"
+                          className={inputClass}
+                          placeholder="Pérez"
+                        />
+                      </div>
+                    </div>
 
-                <div>
-                  <label htmlFor="email" className={labelClass}>
-                    {t('auth.signup.email') || 'Email'}
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className={inputClass}
-                    placeholder="tu@email.com"
-                  />
-                </div>
+                    <div>
+                      <label htmlFor="email" className={labelClass}>
+                        {t('auth.signup.email') || 'Email'}
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        autoComplete="email"
+                        className={inputClass}
+                        placeholder="tu@email.com"
+                      />
+                    </div>
 
-                <div>
-                  <label htmlFor="password" className={labelClass}>
-                    {t('auth.signup.password') || 'Contraseña'}
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    className={inputClass}
-                    placeholder="••••••••"
-                  />
-                </div>
+                    <div>
+                      <label htmlFor="password" className={labelClass}>
+                        {t('auth.signup.password') || 'Contraseña'}
+                      </label>
+                      <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        minLength={PASSWORD_MIN_LENGTH}
+                        autoComplete="new-password"
+                        className={inputClass}
+                        placeholder="••••••••"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="passwordConfirm" className={labelClass}>
+                        {isEs ? 'Confirma tu contraseña' : 'Confirm password'}
+                      </label>
+                      <input
+                        type="password"
+                        id="passwordConfirm"
+                        value={passwordConfirm}
+                        onChange={(e) => setPasswordConfirm(e.target.value)}
+                        required
+                        minLength={PASSWORD_MIN_LENGTH}
+                        autoComplete="new-password"
+                        className={inputClass}
+                        placeholder="••••••••"
+                      />
+                      {passwordConfirm.length > 0 && password !== passwordConfirm && (
+                        <p className="text-xs text-red-600 dark:text-red-400">
+                          {isEs ? 'Las contraseñas no coinciden' : 'Passwords do not match'}
+                        </p>
+                      )}
+                    </div>
+
+                    {password.length > 0 && (
+                      <ul className="space-y-1" aria-live="polite">
+                        {PASSWORD_RULES.map((rule) => {
+                          const ok = rule.test(password)
+                          return (
+                            <li
+                              key={rule.id}
+                              className={`flex items-center gap-2 text-xs ${
+                                ok
+                                  ? 'text-emerald-600 dark:text-emerald-400'
+                                  : 'text-zinc-500 dark:text-zinc-400'
+                              }`}
+                            >
+                              <span
+                                aria-hidden="true"
+                                className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] ${
+                                  ok ? 'bg-emerald-500 text-white' : 'border border-zinc-300'
+                                }`}
+                              >
+                                {ok ? '✓' : ''}
+                              </span>
+                              {rule.label}
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    )}
+
+                    <motion.button
+                      type="submit"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600"
+                    >
+                      {isEs ? 'Continuar' : 'Continue'}
+                    </motion.button>
+                  </>
+                )}
 
                 {step === 2 && (
-                  <div className="space-y-5" data-step="2">
+                  <>
                     <div>
                       <label htmlFor="country" className={labelClass}>
-                        {t('auth.signup.country') || 'País'}
+                        {t('auth.signup.country') || (isEs ? 'País' : 'Country')}
+                        <span className="ml-1 font-normal text-zinc-400">
+                          ({isEs ? 'opcional' : 'optional'})
+                        </span>
                       </label>
                       <SearchableSelect
                         id="country"
@@ -253,7 +335,7 @@ export default function Register() {
                           setCountry(next)
                           if (next !== 'MX') setState('')
                         }}
-                        options={sortCountries().map((c) => ({ value: c.code, label: c.es }))}
+                        options={countryOptions}
                         placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
                         optionalLabel={isEs ? 'Opcional' : 'Optional'}
                       />
@@ -267,12 +349,15 @@ export default function Register() {
                       >
                         <label htmlFor="state" className={labelClass}>
                           {isEs ? 'Estado' : 'State'}
+                          <span className="ml-1 font-normal text-zinc-400">
+                            ({isEs ? 'opcional' : 'optional'})
+                          </span>
                         </label>
                         <SearchableSelect
                           id="state"
                           value={state}
                           onChange={setState}
-                          options={MEXICAN_STATES.map((s) => ({ value: s.code, label: s.es }))}
+                          options={stateOptions}
                           placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
                           optionalLabel={isEs ? 'Opcional' : 'Optional'}
                         />
@@ -282,12 +367,15 @@ export default function Register() {
                     <div>
                       <label htmlFor="ageBand" className={labelClass}>
                         {isEs ? 'Rango de edad' : 'Age range'}
+                        <span className="ml-1 font-normal text-zinc-400">
+                          ({isEs ? 'opcional' : 'optional'})
+                        </span>
                       </label>
                       <SearchableSelect
                         id="ageBand"
                         value={ageBand}
                         onChange={setAgeBand}
-                        options={AGE_BANDS.map((b) => ({ value: b.value, label: b.es }))}
+                        options={ageOptions}
                         placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
                         optionalLabel={isEs ? 'Prefiero no decir' : 'Prefer not to say'}
                       />
@@ -296,12 +384,15 @@ export default function Register() {
                     <div>
                       <label htmlFor="gender" className={labelClass}>
                         {isEs ? 'Género' : 'Gender'}
+                        <span className="ml-1 font-normal text-zinc-400">
+                          ({isEs ? 'opcional' : 'optional'})
+                        </span>
                       </label>
                       <SearchableSelect
                         id="gender"
                         value={gender}
                         onChange={setGender}
-                        options={GENDERS.map((g) => ({ value: g.value, label: g.es }))}
+                        options={genderOptions}
                         placeholder={isEs ? 'Escribe para buscar…' : 'Type to search…'}
                         optionalLabel={isEs ? 'Prefiero no decir' : 'Prefer not to say'}
                       />
@@ -319,6 +410,7 @@ export default function Register() {
                         onClick={() => {
                           setDir(-1)
                           setStep(1)
+                          setError('')
                         }}
                         className="flex-1 rounded-xl border border-zinc-300 px-4 py-3 text-sm font-semibold text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-zinc-800"
                       >
@@ -326,108 +418,21 @@ export default function Register() {
                       </button>
                       <motion.button
                         type="submit"
-                        disabled={isLoading}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="flex-1 rounded-xl bg-orange-500 py-3 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                        className="flex-1 rounded-xl bg-orange-500 py-3 font-semibold text-white transition-colors hover:bg-orange-600"
                       >
-                        {isLoading
-                          ? isEs
-                            ? 'Creando Cuenta…'
-                            : 'Creating…'
-                          : isEs
-                          ? 'Crear Cuenta'
-                          : 'Create Account'}
+                        {isEs ? 'Crear Cuenta' : 'Create Account'}
                       </motion.button>
                     </div>
-                  </div>
-                )}
 
-                {step === 1 && (
-                  <div className="space-y-1.5">
-                    <label htmlFor="passwordConfirm" className={labelClass}>
-                      {isEs ? 'Confirma tu contraseña' : 'Confirm password'}
-                    </label>
-                    <input
-                      type="password"
-                      id="passwordConfirm"
-                      value={passwordConfirm}
-                      onChange={(e) => setPasswordConfirm(e.target.value)}
-                      required
-                      autoComplete="new-password"
-                      className={inputClass}
-                      placeholder="••••••••"
-                    />
-                    {passwordConfirm.length > 0 && password !== passwordConfirm && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
-                        {isEs ? 'Las contraseñas no coinciden' : 'Passwords do not match'}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {step === 1 && password.length > 0 && (
-                  <ul className="space-y-1" aria-live="polite">
-                    {PASSWORD_RULES.map((rule) => {
-                      const ok = rule.test(password)
-                      return (
-                        <li
-                          key={rule.id}
-                          className={`flex items-center gap-2 text-xs ${
-                            ok
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-zinc-500 dark:text-zinc-400'
-                          }`}
-                        >
-                          <span
-                            aria-hidden="true"
-                            className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] ${
-                              ok ? 'bg-emerald-500 text-white' : 'border border-zinc-300'
-                            }`}
-                          >
-                            {ok ? '✓' : ''}
-                          </span>
-                          {rule.label}
-                        </li>
-                      )
-                    })}
-                  </ul>
-                )}
-
-                {step === 1 && (
-                  <motion.button
-                    type="submit"
-                    disabled={isLoading}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
-                  >
-                    {isLoading ? (
-                      <svg
-                        className="-ml-1 mr-2 h-5 w-5 animate-spin"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                    ) : isEs ? (
-                      'Continuar'
-                    ) : (
-                      'Continue'
-                    )}
-                  </motion.button>
+                    <button
+                      type="submit"
+                      className="w-full text-center text-xs text-zinc-500 underline-offset-2 hover:underline dark:text-zinc-400"
+                    >
+                      {isEs ? 'Saltar y crear cuenta' : 'Skip and create account'}
+                    </button>
+                  </>
                 )}
               </motion.div>
             </AnimatePresence>
