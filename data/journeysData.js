@@ -152,3 +152,23 @@ export function getJourneyBySlug(slug) {
 
 /** Lista de slugs, útil para getStaticPaths y para sitemaps. */
 export const JOURNEY_SLUGS = JOURNEYS.map((journey) => journey.slug)
+
+/**
+ * Resuelve un par de traducciones.
+ *
+ * Devuelve el idioma pedido y, si falta, cae al otro. Así el sitio en inglés
+ * no sale en blanco mientras el texto existe solo en español (o al revés).
+ * Para cadenas vacías también cae: '' se trata como "aún no escrito".
+ */
+export function pickLocalized(es, en, isEs) {
+  const spanish = typeof es === 'string' && es.trim() ? es : ''
+  const english = typeof en === 'string' && en.trim() ? en : ''
+  return isEs ? spanish || english : english || spanish
+}
+
+/** Igual que pickLocalized pero para listas (detalles por observar). */
+export function pickLocalizedList(es, en, isEs) {
+  const spanish = Array.isArray(es) && es.length ? es : []
+  const english = Array.isArray(en) && en.length ? en : []
+  return isEs ? (spanish.length ? spanish : english) : english.length ? english : spanish
+}

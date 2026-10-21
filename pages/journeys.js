@@ -3,7 +3,7 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import Link from '@/components/Link'
 import { PageSEO } from '@/components/SEO'
-import { JOURNEYS } from '@/data/journeysData'
+import { JOURNEYS, pickLocalized } from '@/data/journeysData'
 import { journeyVars } from '@/lib/journeyTheme'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { Reveal } from '@/components/journeys/Reveal'
@@ -44,9 +44,10 @@ export default function JourneysIndex() {
       <section className="mx-auto max-w-5xl px-6 pb-28">
         <div className="border-t border-zinc-200/70 dark:border-white/10">
           {JOURNEYS.map((journey, index) => {
-            const subtitle = isEs
-              ? journey.subtitle_es || journey.intro_es
-              : journey.subtitle_en || journey.intro_en
+            const title = pickLocalized(journey.title_es, journey.title_en, isEs)
+            const subtitle =
+              pickLocalized(journey.subtitle_es, journey.subtitle_en, isEs) ||
+              pickLocalized(journey.intro_es, journey.intro_en, isEs)
 
             return (
               <Reveal key={journey.id} delay={0.05} className="w-full">
@@ -64,7 +65,7 @@ export default function JourneysIndex() {
 
                   <span className="min-w-0">
                     <span className="block text-2xl font-bold leading-tight text-zinc-900 transition-transform duration-300 group-hover:translate-x-2 dark:text-zinc-50 sm:text-3xl">
-                      {isEs ? journey.title_es : journey.title_en}
+                      {title}
                     </span>
                     {subtitle ? (
                       <span className="mt-2 block max-w-xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">

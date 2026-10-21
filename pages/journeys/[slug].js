@@ -1,7 +1,12 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import Link from '@/components/Link'
 import { PageSEO } from '@/components/SEO'
-import { JOURNEY_SLUGS, getJourneyBySlug } from '@/data/journeysData'
+import {
+  JOURNEY_SLUGS,
+  getJourneyBySlug,
+  pickLocalized,
+  pickLocalizedList,
+} from '@/data/journeysData'
 import { journeyVars } from '@/lib/journeyTheme'
 import { useLanguage } from '@/lib/hooks/useLanguage'
 import { JourneyHero } from '@/components/journeys/JourneyHero'
@@ -12,9 +17,9 @@ export default function JourneyDetail({ journey }) {
   const { currentLanguage } = useLanguage()
   const isEs = currentLanguage === 'es'
 
-  const title = isEs ? journey.title_es : journey.title_en
-  const subtitle = isEs ? journey.subtitle_es : journey.subtitle_en
-  const intro = isEs ? journey.intro_es : journey.intro_en
+  const title = pickLocalized(journey.title_es, journey.title_en, isEs)
+  const subtitle = pickLocalized(journey.subtitle_es, journey.subtitle_en, isEs)
+  const intro = pickLocalized(journey.intro_es, journey.intro_en, isEs)
   const moments = journey.moments || []
 
   return (
@@ -39,16 +44,16 @@ export default function JourneyDetail({ journey }) {
                 <JourneyMoment
                   key={index}
                   index={index}
-                  title={isEs ? moment.title_es : moment.title_en}
-                  intro={isEs ? moment.intro_es : moment.intro_en}
+                  title={pickLocalized(moment.title_es, moment.title_en, isEs)}
+                  intro={pickLocalized(moment.intro_es, moment.intro_en, isEs)}
                   image={moment.image}
-                  imageAlt={isEs ? moment.title_es : moment.title_en}
+                  imageAlt={pickLocalized(moment.title_es, moment.title_en, isEs)}
                   steps={(moment.steps || []).map((step) => ({
-                    title: isEs ? step.title_es : step.title_en,
-                    body: isEs ? step.body_es : step.body_en,
-                    observe: isEs ? step.observe_es : step.observe_en,
+                    title: pickLocalized(step.title_es, step.title_en, isEs),
+                    body: pickLocalized(step.body_es, step.body_en, isEs),
+                    observe: pickLocalizedList(step.observe_es, step.observe_en, isEs),
                     image: step.image,
-                    imageAlt: isEs ? step.title_es : step.title_en,
+                    imageAlt: pickLocalized(step.title_es, step.title_en, isEs),
                   }))}
                 />
               ))}
