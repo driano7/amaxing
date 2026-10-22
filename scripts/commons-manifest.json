@@ -519,5 +519,65 @@
       }
     ],
     "dest": "public/static/images/journeys/roma"
+  },
+  "jamaica": {
+    "dest": "public/static/images/journeys/jamaica",
+    "items": [
+      {
+        "file": "File:Girasoles en el mercado de Jamaica.jpg",
+        "local": "girasoles.jpg",
+        "place": "Mercado de Jamaica, girasoles"
+      },
+      {
+        "file": "File:Puesto en el Mercado de Jamaica. Ciudad de México.jpg",
+        "local": "puesto.jpg",
+        "place": "Puesto del Mercado de Jamaica"
+      },
+      {
+        "file": "File:009480-028 MERCADO DE JAMAICA LIMPIO AGOSTO 14 1957 (31422313680).jpg",
+        "local": "archivo-1957-a.jpg",
+        "place": "Archivo fotografico, Mercado de Jamaica, 14 de agosto de 1957"
+      },
+      {
+        "file": "File:009480-008 MERCADO DE JAMAICA LIMPIO AGOSTO 14 1957 (30953953454).jpg",
+        "local": "archivo-1957-b.jpg",
+        "place": "Archivo fotografico, Mercado de Jamaica, 14 de agosto de 1957"
+      },
+      {
+        "file": "File:009685-002 ABANDERAMIENTO DE MERCADOS EN JAMAICA FEBRERO 23 1962 (31422312180).jpg",
+        "local": "archivo-1962.jpg",
+        "place": "Archivo fotografico, abanderamiento de mercados en Jamaica, 23 de febrero de 1962"
+      },
+      {
+        "file": "File:Mercado de Jamaica (6311590946).jpg",
+        "local": "mercado-1.jpg",
+        "place": "Mercado de Jamaica"
+      },
+      {
+        "file": "File:Mercado de Jamaica (6311069267).jpg",
+        "local": "mercado-2.jpg",
+        "place": "Mercado de Jamaica"
+      },
+      {
+        "file": "File:Mercado de Jamaica (6311589578).jpg",
+        "local": "mercado-3.jpg",
+        "place": "Mercado de Jamaica"
+      },
+      {
+        "file": "File:Dulcería mexicana en Mercado de Jamaica.jpg",
+        "local": "dulceria-panoramica.jpg",
+        "place": "Dulceria mexicana en el Mercado de Jamaica"
+      },
+      {
+        "file": "File:Dulcería mexicana.jpg",
+        "local": "dulceria.jpg",
+        "place": "Dulceria mexicana"
+      },
+      {
+        "file": "File:Mercados de la Ciudad de México - 2.jpg",
+        "local": "mercados-cdmx.jpg",
+        "place": "Mercados de la Ciudad de Mexico"
+      }
+    ]
   }
 }

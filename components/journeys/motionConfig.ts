@@ -52,6 +52,44 @@ export interface MomentMotion {
  * resto de journeys, asi que un moment sin entrada se comporta como antes.
  */
 export const MOMENT_TREATMENTS: Record<string, MomentMotion> = {
+  // --- Jamaica ----------------------------------------------------------
+  'jamaica-1-mundo': {
+    // Entrada a sangre: el muro de flores se destapa de abajo arriba.
+    layout: 'wide-image',
+    imageTreatment: 'mask-up',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'jamaica-2-oficio': {
+    // El trabajo humano manda: la imagen va delante del texto.
+    layout: 'reverse',
+    imageTreatment: 'mask-right',
+    intensity: 'medium',
+    stagger: true,
+    progressiveObserve: true,
+  },
+  'jamaica-3-memoria': {
+    // El archivo se revela despacio: es el bloque que pide calma.
+    layout: 'standard',
+    imageTreatment: 'slow-zoom',
+    intensity: 'calm',
+    stagger: true,
+  },
+  'jamaica-4-lenguaje': {
+    // La imagen sostiene la idea sin taparla.
+    layout: 'wide-image',
+    imageTreatment: 'scale-in',
+    intensity: 'focus',
+    stagger: true,
+  },
+  'jamaica-5-alrededor': {
+    // La vida alrededor: bloque luminoso, entrada suave.
+    layout: 'standard',
+    imageTreatment: 'mask-left',
+    intensity: 'calm',
+    stagger: true,
+  },
+
   // --- Roma-Condesa -----------------------------------------------------
   'roma-1-romita': {
     // Apertura serena: la plaza a sangre, como si se entrara al barrio.

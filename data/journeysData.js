@@ -68,6 +68,7 @@ import { CENTRO_JOURNEY } from './journeys/centro'
 import { ANTROPOLOGIA_JOURNEY } from './journeys/antropologia'
 import { LUCHAS_JOURNEY } from './journeys/luchas'
 import { ROMA_JOURNEY } from './journeys/roma'
+import { JAMAICA_JOURNEY } from './journeys/jamaica'
 
 /**
  * Precio de referencia, en pesos mexicanos, de todos los journeys.
@@ -115,16 +116,20 @@ export const JOURNEYS = [
     moments: [],
   },
   {
-    id: 'jamaica',
-    slug: 'jamaica',
-    title_es: 'Jamaica',
-    title_en: 'Jamaica',
-    subtitle_es: '',
-    subtitle_en: '',
-    intro_es: '',
-    intro_en: '',
-    heroImage: null,
-    accents: [],
+    // Capitulo ya desarrollado: su experiencia editorial vive en
+    // components/journeys/JamaicaJourney.tsx y su contenido en
+    // data/journeys/jamaica.js. El sexto momento es participativo.
+    id: JAMAICA_JOURNEY.id,
+    slug: JAMAICA_JOURNEY.slug,
+    experience: JAMAICA_JOURNEY.experience,
+    title_es: JAMAICA_JOURNEY.title_es,
+    title_en: JAMAICA_JOURNEY.title_en,
+    subtitle_es: JAMAICA_JOURNEY.subtitle_es,
+    subtitle_en: JAMAICA_JOURNEY.subtitle_en,
+    intro_es: JAMAICA_JOURNEY.intro_es,
+    intro_en: JAMAICA_JOURNEY.intro_en,
+    heroImage: JAMAICA_JOURNEY.heroImage,
+    accents: JAMAICA_JOURNEY.accents,
     price: JOURNEY_PRICE_MXN,
     moments: [],
   },

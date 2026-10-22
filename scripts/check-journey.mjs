@@ -57,6 +57,18 @@ const CONTENT_BY_SLUG = {
     'Arena Mexico',
     'Peru 77',
   ],
+  jamaica: [
+    // Los cinco momentos editoriales y el bloque participativo.
+    'Entering a world of flowers',
+    'Behind every flower there is a craft',
+    'A market with memory',
+    'Flowers speak too',
+    'The life that happens around it',
+    'A bouquet to remember with',
+    'Is there someone important to you',
+    'Pending coordination.',
+    'Guillermo Prieto 45',
+  ],
   roma: [
     // Los cinco momentos del recorrido, por su titulo en ingles.
     'The city that was already here',
