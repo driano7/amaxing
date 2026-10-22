@@ -14,6 +14,7 @@ import { JourneyMoment } from '@/components/journeys/JourneyMoment'
 import { ChapultepecJourney } from '@/components/journeys/ChapultepecJourney'
 import { CentroJourney } from '@/components/journeys/CentroJourney'
 import { AntropologiaJourney } from '@/components/journeys/AntropologiaJourney'
+import { LuchasJourney } from '@/components/journeys/LuchasJourney'
 import { Reveal } from '@/components/journeys/Reveal'
 
 export default function JourneyDetail({ journey }) {
@@ -27,6 +28,15 @@ export default function JourneyDetail({ journey }) {
       <>
         <PageSEO title={journey.title_es} description={journey.subtitle_es} />
         <AntropologiaJourney />
+      </>
+    )
+  }
+
+  if (journey.experience === 'luchas') {
+    return (
+      <>
+        <PageSEO title={journey.title_es} description={journey.subtitle_es} />
+        <LuchasJourney />
       </>
     )
   }

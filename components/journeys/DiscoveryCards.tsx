@@ -14,6 +14,10 @@ export interface DiscoveryEntry {
   kind: string
   title: string
   body: string
+  /** Version en ingles del titulo. Si no existe, se usa el de arriba. */
+  title_en?: string
+  /** Version en ingles del cuerpo. */
+  body_en?: string
   source?: string
 }
 
@@ -23,6 +27,8 @@ interface DiscoveryCardsProps {
   /** Tinta y talavera como color de acento de la interfaz. */
   accent?: string
   title: string
+  /** Idioma: decide si se lee la version en espanol o en ingles. */
+  isEs?: boolean
 }
 
 const TONE_STYLES: Record<string, { chip: string; border: string }> = {
@@ -53,6 +59,7 @@ export function DiscoveryCards({
   labels,
   accent = '#0E8C7A',
   title,
+  isEs = true,
 }: DiscoveryCardsProps) {
   return (
     <div>
@@ -90,7 +97,7 @@ export function DiscoveryCards({
                     </span>
                     <span className="mt-2 flex items-start gap-2">
                       <span className="flex-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
-                        {entry.title}
+                        {(isEs ? entry.title : entry.title_en) || entry.title}
                       </span>
                       <svg
                         viewBox="0 0 24 24"
@@ -107,7 +114,7 @@ export function DiscoveryCards({
                 }
               >
                 <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
-                  {entry.body}
+                  {(isEs ? entry.body : entry.body_en) || entry.body}
                 </p>
               </Disclosure>
             </li>

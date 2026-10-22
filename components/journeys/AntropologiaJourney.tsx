@@ -52,7 +52,7 @@ export function AntropologiaJourney() {
         title: (isEs ? moment.title : moment.title_en) || moment.title,
         number: moment.number,
       })),
-    [journey.moments]
+    [journey.moments, isEs]
   )
 
   // Capitulos: los momentos que abren un grupo llevan un separador antes.

@@ -19,6 +19,7 @@ descarga (ver `scripts/commons-fetch.mjs` y `scripts/commons-manifest.json`).
 | `blue-demon.jpg`              | Blue Demon Jr.                                               | CC BY-SA 2.0 ([texto](https://creativecommons.org/licenses/by-sa/2.0)) | daysofthundr46         | [Commons](https://commons.wikimedia.org/wiki/File%3ABlue_Demon%2C_Jr.jpg)                   |
 | `mascara-luchador.jpg`        | Mascara de luchador                                          | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0)) | Octavio Bonilla        | [Commons](https://commons.wikimedia.org/wiki/File%3AMascara_de_luchador.jpg)                |
 | `arena-mexico-entrada.jpg`    | Entrada de la Arena Mexico                                   | CC BY-SA 3.0 ([texto](https://creativecommons.org/licenses/by-sa/3.0)) | Santix1988             | [Commons](https://commons.wikimedia.org/wiki/File%3AEntrada_de_Mexico_City_Arena_-_Ar3.jpg) |
+| `mercado-san-juan.jpg`        | Mercado de San Juan, Ernesto Pugibet, Centro Historico       | CC BY-SA 4.0 ([texto](https://creativecommons.org/licenses/by-sa/4.0)) | Henryficar             | [Commons](https://commons.wikimedia.org/wiki/File%3AMercado_de_san_Juan_Pugibet.jpg)        |
 
 ## Detalle por imagen
 
@@ -129,3 +130,12 @@ descarga (ver `scripts/commons-fetch.mjs` y `scripts/commons-manifest.json`).
 - Fecha: 2012-01-24
 - Ficha en Commons: https://commons.wikimedia.org/wiki/File%3AEntrada_de_Mexico_City_Arena_-_Ar3.jpg
 - Descripcion en Commons: Arena Ciudad de México 24 de enero 2012
+
+### `mercado-san-juan.jpg`
+
+- Lugar: Mercado de San Juan, Ernesto Pugibet, Centro Historico
+- Licencia: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Autor: Henryficar
+- Fecha: 2018-03-10 11:05:24
+- Ficha en Commons: https://commons.wikimedia.org/wiki/File%3AMercado_de_san_Juan_Pugibet.jpg
+- Descripcion en Commons: Mercado de San Juan Ernesto Pugibet en el Centro histórico de la Ciudad de México

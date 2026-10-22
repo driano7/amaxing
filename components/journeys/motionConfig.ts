@@ -52,6 +52,94 @@ export interface MomentMotion {
  * resto de journeys, asi que un moment sin entrada se comporta como antes.
  */
 export const MOMENT_TREATMENTS: Record<string, MomentMotion> = {
+  // --- Luchas: variante Arena Mexico -----------------------------------
+  'mex-1-umbral': {
+    // Entrada cinematografica: el recinto se revela con un zoom lento.
+    layout: 'wide-image',
+    imageTreatment: 'slow-zoom',
+    intensity: 'calm',
+    stagger: true,
+  },
+  'mex-2-mural': {
+    // El mural se destapa de abajo arriba, como un telon.
+    layout: 'standard',
+    imageTreatment: 'mask-up',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'mex-3-mascara': {
+    // El retrato del luchador manda: la imagen va delante.
+    layout: 'reverse',
+    imageTreatment: 'mask-right',
+    intensity: 'focus',
+    stagger: true,
+    progressiveObserve: true,
+  },
+  'mex-4-cartelera': {
+    // Bloque de lectura: la imagen acompana, no manda.
+    layout: 'standard',
+    imageTreatment: 'mask-up',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'mex-5-dentro': {
+    // A sangre: la imagen grande del recinto y el texto en columna corta.
+    layout: 'wide-image',
+    imageTreatment: 'slow-zoom',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'mex-6-noche': {
+    // Cierre sereno, sin prisa.
+    layout: 'standard',
+    imageTreatment: 'mask-left',
+    intensity: 'calm',
+    stagger: true,
+  },
+  // --- Luchas: variante Arena Coliseo ----------------------------------
+  'col-1-mercado': {
+    // El mercado abre el dia: la imagen entra a sangre.
+    layout: 'wide-image',
+    imageTreatment: 'slow-zoom',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'col-2-mascara': {
+    // La galeria al lado del mercado: lectura pausada.
+    layout: 'reverse',
+    imageTreatment: 'mask-left',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'col-3-pozole': {
+    // Bloque practico, sin foto: se lee rapido.
+    layout: 'standard',
+    imageTreatment: 'still',
+    intensity: 'calm',
+    stagger: true,
+  },
+  'col-4-peru77': {
+    // La calle y el recinto: el angulo se sostiene.
+    layout: 'standard',
+    imageTreatment: 'mask-up',
+    intensity: 'focus',
+    stagger: true,
+  },
+  'col-5-embudo': {
+    // Dentro del recinto, a sangre: la foto grande manda.
+    layout: 'wide-image',
+    imageTreatment: 'slow-zoom',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'col-6-bellas': {
+    // Extension opcional: entrada discreta, sin kep.
+    layout: 'standard',
+    imageTreatment: 'mask-right',
+    intensity: 'calm',
+    stagger: true,
+  },
+
   // --- Chapultepec ---------------------------------------------------
   umbral: {
     // Entrada cinematografica: la foto hace un zoom lento mientras el

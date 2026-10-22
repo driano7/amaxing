@@ -47,6 +47,16 @@ const CONTENT_BY_SLUG = {
     'Imagen pendiente de verificar',
     'Recurso pendiente',
   ],
+  luchas: [
+    // Variante por defecto (Arena Mexico). El journey tiene dos rutas y el
+    // visitante elige; se comprueba la que se muestra al entrar.
+    'The threshold of Doctores',
+    'The mask as archive',
+    'Reading a card',
+    'The ritual',
+    'Arena Mexico',
+    'Peru 77',
+  ],
   centro: [
     // Solo los tres momentos que quedan visibles al entrar (los destacados):
     // el resto esta plegado hasta que se pulsa "ver los momentos".
@@ -210,6 +220,29 @@ check(h1 === 1, 'exactamente un h1', `h1=${h1}`)
 const html = await page.content()
 for (const texto of CONTENT_BY_SLUG[slug] || CONTENT_BY_SLUG.chapultepec) {
   check(html.includes(texto), `contenido en el HTML: "${texto.slice(0, 34)}"`)
+}
+
+// --- 5b. Selector de variante (solo en Luchas) ---
+// El journey de Luchas ofrece dos rutas. Se comprueba que el selector
+// existe, que cambia el contenido y que marca la variante activa.
+if (slug === 'luchas') {
+  const botones = page.locator('[data-variant-switcher] button[aria-pressed]')
+  const total = await botones.count()
+  check(total === 2, 'el selector ofrece las dos variantes', `botones=${total}`)
+  if (total === 2) {
+    const antes = await page.content()
+    await botones.nth(1).click()
+    await page.waitForTimeout(800)
+    const despues = await page.content()
+    check(despues !== antes, 'cambiar de variante cambia el contenido')
+    check(
+      despues.includes('The market that opens the day'),
+      'la variante Coliseo muestra su primer momento'
+    )
+    check(despues.includes('Fifty meters'), 'la variante Coliseo muestra la galeria de Blue Demon')
+    const marcado = await botones.nth(1).getAttribute('aria-pressed')
+    check(marcado === 'true', 'la variante elegida queda marcada', `aria-pressed=${marcado}`)
+  }
 }
 
 // --- 6. Navegacion por teclado: el indice de capitulos ---

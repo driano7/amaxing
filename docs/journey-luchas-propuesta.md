@@ -1,6 +1,8 @@
 # Journey editorial «Luchas» — Propuesta
 
-> **Estado:** propuesta. No se ha implementado nada de este Journey.
+> **Estado:** propuesta **cerrada**. Las decisiones de la sección 8 están
+> tomadas y el Journey ya está implementado en `data/journeys/luchas.js` y
+> `components/journeys/LuchasJourney.tsx`.
 > **Autor de la propuesta:** Amaxing (a partir de observación de campo y fuentes oficiales).
 > **Base del repositorio:** `pages/journeys.js`, `data/journeysData.js`,
 > `data/journeys/chapultepec.js` (referencia de estructura editorial),
@@ -18,7 +20,7 @@ signos. Un visitante que llega sin contexto ve gente con máscara gritando en
 un ring y no entiende por qué el público se pone de pie. Alguien que llega
 con una hora de preparación ve otra cosa: una dramaturgia construida con
 años, un guion conEstructura fija, un público que sabe cuándoBw burlarse y
-cuándo。でも callar, y una mercantilización del mito.
+cuándo. Y callar, y una mercantilización del mito.
 
 El Journey **no vende entradas**: prepara la mirada. El boleto es el
 acontecimiento; el Journey es el marco para entenderlo.
@@ -40,13 +42,13 @@ fundador**: no es especialista en lucha libre y el texto no finge serlo.
 
 ### Qué distingue a la lucha libre mexicana (fraseo cuidado, sinjerarquías)
 
-|                             | Lucha libre mexicana                                                                                | WWE y otros(producto deportivo guionizado)                        |
-| --------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| **Historia**                | Tradition oral y promotoria; desde los circos y las carpas, con la CMLL como casa matriz desde 1933 | ProductoJeremy aflicts de la television, con storyline guionizada |
-| **Presentación**            | Ritos, aperturas, himno, entrada de luchador                                                        | Show запрограмado, con storyline y gyro                           |
-| **Personajes**              | _Rudos_ y _técnicos_ con 沃 masks, apodos, 멘toría de 跟在 legacy                                   | Personajes de marca, con merchandising corporativo                |
-| **Relación con el público** | El público es parte del acto: la máscara es su.activeEll, la 结束后 se la queda                     | El público consume un producto; no el dueño del mito              |
-| **Riesgo**                  | El ** Hairpin** (\"c Pelo\") es real: se pierde el 头发                                             | El riesgo es atlético y guionizado, no identitario                |
+|                             | Lucha libre mexicana                                                                                | WWE y otros (producto deportivo guionizado)          |
+| --------------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Historia**                | Tradición oral y promotoria; desde los circos y las carpas, con la CMLL como casa matriz desde 1933 | Producto de television, con storyline guionizada     |
+| **Presentación**            | Ritos, aperturas, himno, entrada de luchador                                                        | Show programado, con storyline y coreografía         |
+| **Personajes**              | _Rudos_ y _técnicos_ con máscaras, apodos y mentoría de legacy                                      | Personajes de marca, con merchandising corporativo   |
+| **Relación con el público** | El público es parte del acto: la máscara es suya, y a veces se la queda                             | El público consume un producto; no es dueño del mito |
+| **Riesgo**                  | El **Hairpin** ("cPelo") es real: se pierde la máscara                                              | El riesgo es atlético y guionizado, no identitario   |
 
 **Lo que hay que tener cuidado de no decir:** que una es «más verdadera» o
 «más divertida». La diferencia no es de calidad sino de **relación**: en un
@@ -57,17 +59,17 @@ espectáculo. Eso no convierte a una en mejor.
 
 ## 2. Comparación entre las dos variantes
 
-|                             | **Variante A — Arena México**                                                                                                                                                 | **Variante B — Arena Coliseo**                                                                                                |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| **Sede**                    | Dr. Lavista 189, Col. Doctores, CP 06720, Cuauhtémoc                                                                                                                          | Perú 77, Col. Centro Histórico, CP 06010, Cuauhtémoc                                                                          |
-| **Inauguración**            | 27 de abril de 1956                                                                                                                                                           | 2 de abril de 1943                                                                                                            |
-| **Apodo oficial**           | «La Catedral de la Lucha Libre»                                                                                                                                               | «El Embudo de Perú 77»                                                                                                        |
-| **Funciones**               | **Viernes 20:30, domingo 17:00, martes 19:30**                                                                                                                                | **Sábado 19:30, jueves 19:00**                                                                                                |
-| **Carácter**                | Recinto grande, de conquistadora; también fue sede de boxeo y de los Juegos Olímpicos de 1968 («Arena 68»)                                                                    | Recinto pequeño en el corazón del Centro: la cuna de la época de oro                                                          |
-| **Relación con el barrio**  | Doctores: anillo casi cerrado,》） Externas； público en gran mayoría local                                                                                                   | Tepito/Perú: el recinto vive del barrio, el barrio entra a ver                                                                |
-| **Dato que hay que cuidar** | La cartelera «Ciudad de México Arena» (2011-2019) es un recinto **distinto** de Arena México. No confundir con «Arena Ciudad de México» de los 数量的 (NBA Global Games 2017) | El 7 de octubre de 1952: **El Santo contra Black Shadow**, «máscara contra máscara», occurred en la Arena Coliseo             |
-| **Riesgo operativo**        | La función del **viernes 20:30** es la más demandada y la más cara                                                                                                            | La del **sábado 19:30** tiene público muy local; un visitor foreign puede sentirse fuera de lugar: es una ventaja y un riesgo |
-| **Accesibilidad**           | Metro Doctores; estacionamiento propio (Dr. Río de la Loza 238 y Dr. Lucio 23, con costo)                                                                                     | Metro Hidalgo / Isabel la Católica / Reforma; **sin estacionamiento**                                                         |
+|                             | **Variante A — Arena México**                                                                                                                                                  | **Variante B — Arena Coliseo**                                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Sede**                    | Dr. Lavista 189, Col. Doctores, CP 06720, Cuauhtémoc                                                                                                                           | Perú 77, Col. Centro Histórico, CP 06010, Cuauhtémoc                                                                          |
+| **Inauguración**            | 27 de abril de 1956                                                                                                                                                            | 2 de abril de 1943                                                                                                            |
+| **Apodo oficial**           | «La Catedral de la Lucha Libre»                                                                                                                                                | «El Embudo de Perú 77»                                                                                                        |
+| **Funciones**               | **Viernes 20:30, domingo 17:00, martes 19:30**                                                                                                                                 | **Sábado 19:30, jueves 19:00**                                                                                                |
+| **Carácter**                | Recinto grande, de conquistadora; también fue sede de boxeo y de los Juegos Olímpicos de 1968 («Arena 68»)                                                                     | Recinto pequeño en el corazón del Centro: la cuna de la época de oro                                                          |
+| **Relación con el barrio**  | Doctores: anillo casi cerrado; público en gran mayoría local                                                                                                                   | Tepito/Perú: el recinto vive del barrio, el barrio entra a ver                                                                |
+| **Dato que hay que cuidar** | La cartelera «Ciudad de México Arena» (2011-2019) es un recinto **distinto** de Arena México. No confundir con «Arena Ciudad de México» de los Celtics (NBA Global Games 2017) | El 7 de octubre de 1952: **El Santo contra Black Shadow**, «máscara contra máscara», occurrió en la Arena Coliseo             |
+| **Riesgo operativo**        | La función del **viernes 20:30** es la más demandada y la más cara                                                                                                             | La del **sábado 19:30** tiene público muy local; un visitor foreign puede sentirse fuera de lugar: es una ventaja y un riesgo |
+| **Accesibilidad**           | Metro Doctores; estacionamiento propio (Dr. Río de la Loza 238 y Dr. Lucio 23, con costo)                                                                                      | Metro Hidalgo / Isabel la Católica / Reforma; **sin estacionamiento**                                                         |
 
 **Mi lectura (a validar):** Arena México es el **clímax** (el recinto donde el
 mito ya está construido); Arena Coliseo es el **contexto** (el recinto donde
@@ -83,11 +85,11 @@ recomendable depende de lo que se quiera transmitir, no de cuál es «mejor».
 Día de **viernes** (función 20:30) o **domingo** (17:00).
 
 ```
-1. MERCADO / PASEO DE LA DOCTORES        (opcional, 30 min)
-   Compra de，这一点 máscara, playeras, peluches. El barrio de lasTi—
-  产的: aquí se vende la máscara antes de la función.
+1. MERCADO / PASEO DE DOCTORES            (opcional, 30 min)
+   Compra de máscaras, playeras y peluches. El barrio de las tiendas
+   es donde se vende la máscara antes de la función.
    ⚠ Pendiente: qué puestos hay abiertos el día y a qué hora. La calle
-   Dr. Lavista esDf en torno a la Arena y hay un mercado de la Lagunilla
+   Dr. Lavista está en torno a la Arena y hay un mercado en la Lagunilla
    a dos cuadras (foto verificada).
 
 2. ARENA MÉXICO — EXTERIOR Y ACCESOS      (20 min, antes de las 19:00)
@@ -121,13 +123,13 @@ Día de **sábado** (19:30) o **jueves** (19:00).
 
 ```
 1. ALAMEDA CENTRAL                        (20 min)
-   No como tour del Centro: como el lugar donde la ciudad se
-   Hernicia para ver fights — y, de paso, donde se junte de la lucha
-   libre con la Alameda de Tacuba que la precede. La Alameda es
-  ，提高 el lugar público más antigo de la ciudad.
+   No como tour del Centro: como el lugar donde la ciudad se junta
+   para ver fights — y, de paso, donde se juntan la lucha libre con
+   la Alameda de Tacuba que la precede. La Alameda es
+   el lugar público más antigo de la ciudad.
 
-2. BELLAZZAS / ALAMEDA                    (10 min, opcional)
-   Britannica— el precio de la entrada a Bellas Artes varía; verifica
+2. BELAS ARTES / ALAMEDA                    (10 min, opcional)
+   El precio de la entrada a Bellas Artes varía: se verifica
    el día. Sirve para el contraste entre el edificio y la calle.
 
 3. CAMINATA A LA ARENA COLISEO            (15 min)
@@ -137,8 +139,8 @@ Día de **sábado** (19:30) o **jueves** (19:00).
 
 4. LA ARENA COLISEO                       (2 h)
    Recinto chico. El público es del barrio. La lectura del acto es
-   más directa, y también más intensa: aquí se puede}~ighbor)~ingly
-  ighbor con masks.
+   más directa, y también más intensa: aquí se convive con las
+   máscaras.
 
 5. COMIDA O BEBIDA ANTES                   (45 min, 17:30-18:45)
    ▸ La Casa de Toño, Madero: Av. Francisco I. Madero 20 int. 212-216,
@@ -186,16 +188,16 @@ en las carpas y en los barrios, y que las dos arenas son el resultado de eso.
   - **Rudos y técnicos**: quién seضح y quién provocar al público.
   - **Máscara**: identidad estable, no personaje de una noche; el color
     comunica; el que la usa es su dueño mientras la lleva.
-  - **El catch**: el «cPelo» (pelo) — el luchador tira la máscara y queda
+  - **El catch**: el «el apodo» (pelo) — el luchador tira la máscara y queda
     rapado. Es un rito, no una punishment. **Dato a documentar**: el nombre
     viene del inglés _hair_ y de la expresión _pinche pelo_. ⚠ Verificar el
     origen exacto con fuente antes de publicarlo.
   - **La caída**: el luchador que pierde no siempre pierde — el público
     sabe cuándo es teatro y cuándo es real. Esa lectura la tiene el público.
-  - **El nombre**: por qué el apodo se elige en el 結合 y no en la
-    mercenaries.
+  - **El nombre**: por qué el apodo se elige en el ring y no en la
+    mercadotecnia.
   - **Las mascadas**: se mask es un mask por una fecha específica; es un
-    ritual del público, no un espectáculo. En Arena Coliseo es más 人权.
+    ritual del público, no un espectáculo. En Arena Coliseo es más fuerte.
 
 ### M3 — «La mercantilización del mito» · _A y B_
 
@@ -252,22 +254,23 @@ fuente** antes de publicarse. La estructura está; el texto con citas, no.
 
 - **Canales oficiales:** CMLL (cmll.com) → **TicketMaster**. Taquilla:
   55 5588 0508. Programación sujeta a cambios de última hora.
-- **Precio del boleto ≠ precio del Journey.** El boleto lo paga el
-  visitante aparte; el Journey es la guía (y, si en el futuro hay una
-  reserva, sería un producto distinto).
+- **La entrada va incluida en el Journey.** El boleto de cada función se
+  compra en el canal oficial (CMLL → TicketMaster) y se entrega en el punto
+  de encuentro. La web no publica en qué canal se compra: es información
+  interna de operación.
 - **Recomendación inicial de localidad:** asiento **estándar de precio
   medio**, en el sector bajo o medio, con línea de visión del ring **y** del
   público. En Arena México (mucho más grande, ring elevado y gradas
-  separadas) el mejor asiento no es el más caro: los de Ring 的经历 pueden
+  separadas) el mejor asiento no es el más caro: los de Ring (ringside) pueden
   ver la acción; en Arena Coliseo (recinto chico, público al nivel del
   ring) cualquier localidad de primera fila ve prácticamente todo.
   **Pendiente:** la nomenclatura exacta de las localidades y sus precios
   los publica TicketMaster por función; no los invento ni los congelo.
-- **La experiencia debe incluir:** el boleto, la guía editorial y el acceso a
-  las secciones previas.
+- **La experiencia incluye:** la entrada al recinto, la guía editorial y el
+  acceso a las secciones previas.
 - **Gasto opcional del visitante:** compras de máscaras, comida y bebida
-  dentro, merienda previa, transporte, y las extensiones (Blue Demon Jr.,
-  Mercado de San Juan, Donceles, Museo del Estanquillo).
+  dentro, comida previa, transporte, y las extensiones (Blue Demon Jr.,
+  Mercado de San Juan, Palacio de Bellas Artes).
 
 ### Gastronómico
 
@@ -416,7 +419,7 @@ Justificación:
 2. **Puestos de máscaras** abiertos en la Lagunilla y qué días.
 3. **Un bar o restaurante de lucha libre** junto a Arena México con fuente
    verificable.
-4. **Origen del término «cPelo»** y cómo se explica en el guion.
+4. **Origen del término «el apodo»** y cómo se explica en el guion.
 5. **El Apocalypto**: ritual exacto y su origen documentado.
 6. **Nomenclatura de localidades y precios** por función (los publica
    TicketMaster; no los congelo aquí).
@@ -427,29 +430,47 @@ Justificación:
    Casa de Toño.
 10. **Acceso y horarios del Mercado de San Juan** (extensión opcional).
 
-### Decisiones que necesito de ti
+### Decisiones tomadas (cierre de la fase de propuesta)
 
-1. **¿Cuál variante se construye primero?** Mi recomendación: **Arena
-   Coliseo** (variante B), porque el recinto pequeño y el barrio hacen que el
-   contexto sea el mismo recorrido, y porque el journey del Centro ya existe
-   y se puede compartir el contexto del Centro Histórico. La Arena México
-   puede ser la segunda, con su propia ruta en Doctores.
-2. **¿El boleto entra en el producto de Amaxing o lo compra el visitante?**
-   Ahora mismo la web **no tiene** Pidén de reserva para journeys, así que
-   propongo: el Journey se vende como guía (con su precio de referencia) y el
-   boleto se compra aparte en el canal oficial. No quiero afirmar que Amaxing
-   tiene convenios o reservas confirmadas, porque no los hay.
-3. **¿Se incluye la comida en el producto?** Mi recomendación: **no**.
-   Incluirla ata el horario a una cocina concreta y la entrada a la arena
-   («no se puede entrar con alimentos ajenos»). Se documenta dónde comer.
-4. **¿Bellas Artes entra en la ruta B?** Mi recomendación: **no en el
-   recorrido base**; queda como extensión opcional por la mañana.
-5. **La galería de Blue Demon Jr.**: ¿se incluye como parada obligatoria
-   (si se confirma que abrió), o como extensión? Está a medio camino entre
-   Bellas Artes y la Arena Coliseo, así que **encaja mejor en la variante B**.
+1. **Variante primero: Arena México, y después Arena Coliseo.** La
+   implemented queda con las dos rutas y el visitante elige en la página: la
+   primera es la que se muestra al entrar.
+2. **El boleto entra en el producto.** La entrada al recinto va incluida en
+   el Journey; el boleto se compra por el canal oficial de CMLL y se entrega
+   en el punto de encuentro. En la página **no** se publica quién lo
+   compra: es operación interna.
+3. **La comida va antes, si da tiempo.** Depende de dónde y a la hora en que
+   nos reunamos. Si no da tiempo, se come dentro (dentro hay servicio de
+   bebidas, alimentos y barra de bebidas alcohólicas; no se puede entrar con
+   comida ajena).
+4. **Bellas Artes entra en la ruta B como extensión opcional**, si sobra
+   tiempo después de la función. No forma parte del recorrido base.
+5. **La tienda de Blue Demon Jr. en Ernesto Pugibet** (a unas 50 m del
+   mercado de San Juan, entre Luis Moya y Ernesto Pugibet) es la parada de
+   la variante B. La de Emilio Donde 7, en el Centro, es la de la variante A.
+
+### Pendientes que siguen abiertos
+
+- Estado físico de la tienda de Emilio Donde 7 (el sitio oficial de la marca
+  anuncia que está en remodeling).
+- Horarios de la galería de Ernesto Pugibet: abrió hace poco y hay que
+  confirmar si expone de forma permanente o por encargo.
+- Horario de visita y días de cierre del Palacio de Bellas Artes.
+- Oferta de comida abierta a la hora de la función en Doctores (variante A).
+- Puestos de máscaras en la calle, en Lagunilla y en el mercado.
+- Nomenclatura y precios de las localidades por función: los publica
+  TicketMaster y no se congelan en la página.
 
 ### Nota de método
 
-No se ha modificado ningún archivo de `components/journeys/` ni de
-`data/journeys/` para este journey: la propuesta es el entregable de esta
-fase, según lo pedido.
+La propuesta original no modificó `components/journeys/` ni `data/journeys/`.
+Tras el cierre de las decisiones, **sí** se implementó:
+
+- `data/journeys/luchas.js`: contenido bilingüe de las dos variantes, seis
+  momentos por variante, fotografías, discoveries y fuentes.
+- `components/journeys/LuchasJourney.tsx`: selector de variante editorial y
+  recomposición de capítulos, momentos y ruta al cambiar de variante.
+- `components/journeys/motionConfig.ts`: tratamiento de movimiento por id de
+  momento para las dos variantes.
+- `scripts/check-journey.mjs`: comprobación del journey, incluida la del
+  selector de variante.

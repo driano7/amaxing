@@ -66,6 +66,7 @@
 import { CHAPULTEPEC_JOURNEY } from './journeys/chapultepec'
 import { CENTRO_JOURNEY } from './journeys/centro'
 import { ANTROPOLOGIA_JOURNEY } from './journeys/antropologia'
+import { LUCHAS_JOURNEY } from './journeys/luchas'
 
 /**
  * Precio de referencia, en pesos mexicanos, de todos los journeys.
@@ -75,16 +76,21 @@ export const JOURNEY_PRICE_MXN = 100
 
 export const JOURNEYS = [
   {
-    id: 'luchas',
-    slug: 'luchas',
-    title_es: 'Luchas',
-    title_en: 'Luchas',
-    subtitle_es: '',
-    subtitle_en: '',
-    intro_es: '',
-    intro_en: '',
-    heroImage: null,
-    accents: [],
+    // Capitulo ya desarrollado: su experiencia editorial vive en
+    // components/journeys/LuchasJourney.tsx y su contenido en
+    // data/journeys/luchas.js, con dos variantes (Arena Mexico y Arena
+    // Coliseo) que el visitante elige en la pagina.
+    id: LUCHAS_JOURNEY.id,
+    slug: LUCHAS_JOURNEY.slug,
+    experience: LUCHAS_JOURNEY.experience,
+    title_es: LUCHAS_JOURNEY.title_es,
+    title_en: LUCHAS_JOURNEY.title_en,
+    subtitle_es: LUCHAS_JOURNEY.subtitle_es,
+    subtitle_en: LUCHAS_JOURNEY.subtitle_en,
+    intro_es: LUCHAS_JOURNEY.intro_es,
+    intro_en: LUCHAS_JOURNEY.intro_en,
+    heroImage: LUCHAS_JOURNEY.heroImage,
+    accents: LUCHAS_JOURNEY.accents,
     price: JOURNEY_PRICE_MXN,
     moments: [],
   },

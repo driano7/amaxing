@@ -51,6 +51,8 @@ export interface EditorialMomentData {
   timeline?: TimelineEntry[]
   interpretation?: { title: string; body: string }
   operational_note?: string
+  /** Version en ingles de la nota operativa. Si no existe, se usa la de arriba. */
+  operational_note_en?: string
   next_hint?: string
   hero?: boolean
   /**
@@ -239,7 +241,7 @@ export function EditorialMoment({
           <span className="font-semibold text-zinc-800 dark:text-zinc-100">
             {isEs ? 'Nota operativa. ' : 'Operational note. '}
           </span>
-          {moment.operational_note}
+          {(isEs ? moment.operational_note : moment.operational_note_en) || moment.operational_note}
         </p>
       )}
 

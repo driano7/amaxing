@@ -53,7 +53,7 @@ export function CentroJourney() {
         title: (isEs ? moment.title : moment.title_en) || moment.title,
         number: moment.number,
       })),
-    [journey.moments]
+    [journey.moments, isEs]
   )
 
   const detailIds = journey.moments.map((m) => m.id)
