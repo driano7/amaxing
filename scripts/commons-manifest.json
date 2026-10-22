@@ -393,5 +393,131 @@
         "place": "Mercado de San Juan, Ernesto Pugibet, Centro Historico"
       }
     ]
+  },
+  "roma": {
+    "place": "Colonia Roma, Hipodromo Condesa, Ciudad de Mexico",
+    "items": [
+      {
+        "file": "File:Plaza Romita.JPG",
+        "local": "plaza-romita.jpg",
+        "place": "Plaza de la Romita, colonia Roma"
+      },
+      {
+        "file": "File:La Romita 1.jpg",
+        "local": "romita-1.jpg",
+        "place": "Plaza de la Romita"
+      },
+      {
+        "file": "File:SantaMariaAztacalco05.JPG",
+        "local": "templo-romita.jpg",
+        "place": "Ermita de Santa Maria de la Natividad de Aztacalco, La Romita"
+      },
+      {
+        "file": "File:MuralLaRomita.JPG",
+        "local": "mural-romita.jpg",
+        "place": "Mural frente a la Plaza de la Romita"
+      },
+      {
+        "file": "File:Plaza Río de Janeiro.jpg",
+        "local": "plaza-rio-de-janeiro.jpg",
+        "place": "Plaza Rio de Janeiro, colonia Roma"
+      },
+      {
+        "file": "File:Casas alrededor de la Plaza Rio de Janeiro en la Ciudad de México.jpg",
+        "local": "casas-plaza-rio.jpg",
+        "place": "Casas alrededor de la Plaza Rio de Janeiro"
+      },
+      {
+        "file": "File:Réplica del David en Plaza Río de Janeiro, Ciudad de México.jpg",
+        "local": "david-plaza-rio.jpg",
+        "place": "Replica del David en la Plaza Rio de Janeiro"
+      },
+      {
+        "file": "File:Costado del edificio Río de Janeiro 3.jpg",
+        "local": "casa-de-las-brujas.jpg",
+        "place": "Edificio Rio de Janeiro, la Casa de las Brujas"
+      },
+      {
+        "file": "File:Letrero \"Las brujas\" al costado del edificio Río de Janeiro.jpg",
+        "local": "letrero-las-brujas.jpg",
+        "place": "Letrero Las brujas del edificio Rio de Janeiro"
+      },
+      {
+        "file": "File:Contra esquina de La Casa de las Brujas.jpg",
+        "local": "contra-esquina-brujas.jpg",
+        "place": "Contra esquina de la Casa de las Brujas"
+      },
+      {
+        "file": "File:Panorámica de Medellín y Álvaro Obregón, colonia Roma, Ciudad de México.jpg",
+        "local": "alvaro-obregon-panoramica.jpg",
+        "place": "Panoramica de Medellin y Alvaro Obregon"
+      },
+      {
+        "file": "File:Flores en Avenida Álvaro Obregón, Ciudad de México.jpg",
+        "local": "flores-alvaro-obregon.jpg",
+        "place": "Flores en la Avenida Alvaro Obregon"
+      },
+      {
+        "file": "File:Farol en la Avenida Álvaro Obregón en la Condesa Roma México.jpg",
+        "local": "farol-alvaro-obregon.jpg",
+        "place": "Farol en la Avenida Alvaro Obregon"
+      },
+      {
+        "file": "File:Panorámica Álvaro Obregón e Insurgentes, colonia Roma.jpg",
+        "local": "alvaro-obregon-insurgentes.jpg",
+        "place": "Panoramica Alvaro Obregon e Insurgentes"
+      },
+      {
+        "file": "File:Avenida Amsterdam - Colonia Condesa 2.JPG",
+        "local": "amsterdam-1.jpg",
+        "place": "Avenida Amsterdam, Hipodromo Condesa"
+      },
+      {
+        "file": "File:Avenida Amsterdam - Colonia Condesa 1.jpg",
+        "local": "amsterdam-2.jpg",
+        "place": "Avenida Amsterdam, Hipodromo Condesa"
+      },
+      {
+        "file": "File:Camellón de Avenida Amsterdam y Avenida Sonora.jpg",
+        "local": "amsterdam-sonora.jpg",
+        "place": "Camellon de Amsterdam y Sonora"
+      },
+      {
+        "file": "File:Casa Condesa en avenida Amsterdam, Hipódromo, Colonia Condesa.jpg",
+        "local": "casa-amsterdam.jpg",
+        "place": "Casa en avenida Amsterdam"
+      },
+      {
+        "file": "File:Parque España dia Soleado. Colonia Roma. Ciudad de México.jpg",
+        "local": "parque-espana.jpg",
+        "place": "Parque Espana, Hipodromo Condesa"
+      },
+      {
+        "file": "File:Vegetación en el parque España en la Colonia Condesa México.jpg",
+        "local": "parque-espana-vegetacion.jpg",
+        "place": "Vegetacion del Parque Espana"
+      },
+      {
+        "file": "File:Parque México - Foro Lindbergh.jpg",
+        "local": "foro-lindbergh.jpg",
+        "place": "Foro Lindbergh en el Parque Mexico"
+      },
+      {
+        "file": "File:Parque México 2 - Detalle Foro Lindbergh.jpg",
+        "local": "foro-lindbergh-detalle.jpg",
+        "place": "Detalle del Foro Lindbergh"
+      },
+      {
+        "file": "File:Vista del Foro Lindbergh Parque México.jpg",
+        "local": "vista-foro-lindbergh.jpg",
+        "place": "Vista del Foro Lindbergh"
+      },
+      {
+        "file": "File:Vista aérea del Parque México 06.jpg",
+        "local": "parque-mexico-aerea.jpg",
+        "place": "Vista aerea del Parque Mexico"
+      }
+    ],
+    "dest": "public/static/images/journeys/roma"
   }
 }

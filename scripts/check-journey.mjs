@@ -57,6 +57,18 @@ const CONTENT_BY_SLUG = {
     'Arena Mexico',
     'Peru 77',
   ],
+  roma: [
+    // Los cinco momentos del recorrido, por su titulo en ingles.
+    'The city that was already here',
+    'The city that wanted to be modern',
+    'The neighborhood that changes value',
+    'Walking a different geometry',
+    'The city as a shared space',
+    'Three taquerías, one block',
+    'La Romita',
+    'Avenida Ámsterdam',
+    'Parque México',
+  ],
   centro: [
     // Solo los tres momentos que quedan visibles al entrar (los destacados):
     // el resto esta plegado hasta que se pulsa "ver los momentos".

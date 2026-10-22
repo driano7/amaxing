@@ -67,6 +67,7 @@ import { CHAPULTEPEC_JOURNEY } from './journeys/chapultepec'
 import { CENTRO_JOURNEY } from './journeys/centro'
 import { ANTROPOLOGIA_JOURNEY } from './journeys/antropologia'
 import { LUCHAS_JOURNEY } from './journeys/luchas'
+import { ROMA_JOURNEY } from './journeys/roma'
 
 /**
  * Precio de referencia, en pesos mexicanos, de todos los journeys.
@@ -146,16 +147,20 @@ export const JOURNEYS = [
     moments: [],
   },
   {
-    id: 'roma-condesa',
-    slug: 'roma-condesa',
-    title_es: 'Roma-Condesa',
-    title_en: 'Roma-Condesa',
-    subtitle_es: '',
-    subtitle_en: '',
-    intro_es: '',
-    intro_en: '',
-    heroImage: null,
-    accents: [],
+    // Capitulo ya desarrollado: su experiencia editorial vive en
+    // components/journeys/RomaJourney.tsx y su contenido en
+    // data/journeys/roma.js.
+    id: ROMA_JOURNEY.id,
+    slug: ROMA_JOURNEY.slug,
+    experience: ROMA_JOURNEY.experience,
+    title_es: ROMA_JOURNEY.title_es,
+    title_en: ROMA_JOURNEY.title_en,
+    subtitle_es: ROMA_JOURNEY.subtitle_es,
+    subtitle_en: ROMA_JOURNEY.subtitle_en,
+    intro_es: ROMA_JOURNEY.intro_es,
+    intro_en: ROMA_JOURNEY.intro_en,
+    heroImage: ROMA_JOURNEY.heroImage,
+    accents: ROMA_JOURNEY.accents,
     price: JOURNEY_PRICE_MXN,
     moments: [],
   },

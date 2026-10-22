@@ -37,6 +37,8 @@ export interface EditorialMomentData {
   title_en?: string
   location: string
   kicker: string
+  /** Version en ingles del kicker. Si no existe, se usa la de arriba. */
+  kicker_en?: string
   duration_min?: number
   lead: string
   /** Version en ingles del texto de apertura. */
@@ -160,7 +162,7 @@ export function EditorialMoment({
         className="mb-3 text-xs font-semibold uppercase tracking-[0.2em]"
         style={{ color: accent }}
       >
-        {moment.kicker}
+        {(isEs ? moment.kicker : moment.kicker_en) || moment.kicker}
       </p>
 
       <h2

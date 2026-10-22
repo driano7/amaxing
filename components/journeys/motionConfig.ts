@@ -52,6 +52,44 @@ export interface MomentMotion {
  * resto de journeys, asi que un moment sin entrada se comporta como antes.
  */
 export const MOMENT_TREATMENTS: Record<string, MomentMotion> = {
+  // --- Roma-Condesa -----------------------------------------------------
+  'roma-1-romita': {
+    // Apertura serena: la plaza a sangre, como si se entrara al barrio.
+    layout: 'wide-image',
+    imageTreatment: 'slow-zoom',
+    intensity: 'calm',
+    stagger: true,
+  },
+  'roma-2-proyecto': {
+    // La arquitectura manda: revelado lateral sobre las fachadas.
+    layout: 'reverse',
+    imageTreatment: 'mask-right',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'roma-3-obregon': {
+    // Bloque denso, de calle: la imagen acompana al texto largo.
+    layout: 'standard',
+    imageTreatment: 'mask-up',
+    intensity: 'focus',
+    stagger: true,
+    progressiveObserve: true,
+  },
+  'roma-4-hipodromo': {
+    // La geometria se revela de lado, como el propio trazo.
+    layout: 'reverse',
+    imageTreatment: 'mask-left',
+    intensity: 'medium',
+    stagger: true,
+  },
+  'roma-5-parque': {
+    // Cierre pausado: el aire entra sin prisa.
+    layout: 'wide-image',
+    imageTreatment: 'slow-zoom',
+    intensity: 'calm',
+    stagger: true,
+  },
+
   // --- Luchas: variante Arena Mexico -----------------------------------
   'mex-1-umbral': {
     // Entrada cinematografica: el recinto se revela con un zoom lento.
