@@ -244,6 +244,16 @@ export default function Login() {
                   : t('auth.login.signIn') || 'Inicia sesión'}
               </button>
             </p>
+            {mode === 'login' && (
+              <p className="mt-3 text-sm text-zinc-500 dark:text-gray-400">
+                <Link
+                  href="/reset-password"
+                  className="font-medium text-orange-500 hover:text-orange-400"
+                >
+                  {t('auth.login.forgot', '¿Se te olvidó tu contraseña?')}
+                </Link>
+              </p>
+            )}
           </div>
         </div>
       </motion.div>

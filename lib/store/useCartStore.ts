@@ -38,13 +38,40 @@ const listeners = new Set<() => void>()
 
 const STORAGE_KEY = 'calpulli_cart'
 
+/**
+ * El carrito guarda SIEMPRE pesos mexicanos.
+ *
+ * Los tours guardan su precio en dolares (data/toursData.js es la fuente) y
+ * los journeys ya estan en pesos. Si se mezclaran, el mismo formateador
+ * tendria que suponer una moneda para cada linea, y fue justo lo que paso:
+ * un journey de 100 pesos se mostraba como 1,750 al multiplicar por la tasa.
+ * Aqui se normaliza una sola vez, al entrar al carrito.
+ */
+const MXN_PER_USD = 17.5
+
+const toMXN = (price: number, currency: string): number => {
+  const code = String(currency || '').toLowerCase()
+  if (code === 'usd' || code === 'dollars' || code === 'dolares') {
+    return Math.round((Number(price) || 0) * MXN_PER_USD)
+  }
+  return Number(price) || 0
+}
+
+const normalizeItem = (item: CartTourItem): CartTourItem => ({
+  ...item,
+  price: toMXN(item.price, item.currency),
+  currency: 'MXN',
+})
+
 function loadFromStorage(): CartTourItem[] {
   if (typeof window === 'undefined') return []
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
+    if (!Array.isArray(parsed)) return []
+    // Carritos guardados antes de la normalizacion: se corrigen al leer.
+    return parsed.map((item) => normalizeItem(item as CartTourItem))
   } catch {
     return []
   }
@@ -109,13 +136,13 @@ const addItem = (payload: CartPayload) => {
     }
     return [
       ...prev,
-      {
+      normalizeItem({
         ...payload,
         lineId: createLineId(),
         peopleCount: 1,
         date: null,
         time: null,
-      },
+      }),
     ]
   })
 }
@@ -125,7 +152,16 @@ const removeItem = (lineId: string) => {
 }
 
 const updateItem = (lineId: string, updates: Partial<Omit<CartTourItem, 'lineId'>>) => {
-  setState((prev) => prev.map((item) => (item.lineId === lineId ? { ...item, ...updates } : item)))
+  setState((prev) =>
+    prev.map((item) => {
+      if (item.lineId !== lineId) return item
+      const next = { ...item, ...updates }
+      // Si cambian el precio o la moneda, se vuelve a normalizar a pesos.
+      return updates.price !== undefined || updates.currency !== undefined
+        ? normalizeItem(next)
+        : next
+    })
+  )
 }
 
 const clearCart = () => {

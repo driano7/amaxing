@@ -7,7 +7,7 @@ import Image from '@/components/Image'
 import { Trash2, Calendar, Clock, Users, ArrowRight, ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/lib/store/useCartStore'
 import { useLanguage } from '@/lib/hooks/useLanguage'
-import { formatPriceByLocale } from '@/lib/currency'
+import { formatPriceMXN } from '@/lib/currency'
 
 export default function CartPage() {
   const { items, removeItem, updateItem, subtotal, itemCount, totalItemCount } = useCartStore()
@@ -16,7 +16,8 @@ export default function CartPage() {
   const [isCheckingOut, setIsCheckingOut] = useState(false)
   const [payInCash, setPayInCash] = useState(false)
 
-  const formatPrice = (price) => formatPriceByLocale(price, locale)
+  // El carrito guarda SIEMPRE pesos (ver useCartStore): aqui no se convierte nada.
+  const formatPrice = (price) => formatPriceMXN(price, locale)
 
   // Reglas tipo Xococafé: mínimo 3 días de anticipación, hasta 2 meses.
   const minDate = new Date()
@@ -239,7 +240,7 @@ export default function CartPage() {
                 <p className="mt-1 text-right text-xs text-zinc-500 dark:text-gray-500">
                   {locale === 'es'
                     ? t('cart.currencyNote', 'Precios mostrados en MXN')
-                    : t('cart.currencyNote', 'Precios mostrados en USD')}
+                    : t('cart.currencyNote', 'Prices shown in MXN')}
                 </p>
                 {!allItemsReady && (
                   <p className="mt-3 text-xs text-orange-500">

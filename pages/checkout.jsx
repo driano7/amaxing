@@ -22,11 +22,12 @@ import { useLanguage } from '@/lib/hooks/useLanguage'
 import { FlipCard } from '@/components/ui/FlipCard'
 import { VirtualTicket } from '@/components/tickets/VirtualTicket'
 import { CryptoPayment } from '@/components/CryptoPayment'
-import { formatPriceByLocale } from '@/lib/currency'
+import { formatPriceMXN } from '@/lib/currency'
 import { captureAcquisitionChannel, getAcquisitionChannel } from '@/lib/booking/utm'
+import { GuestPeopleField, MAX_GUESTS } from '@/components/checkout/GuestPeopleField'
 
 export default function CheckoutPage() {
-  const { items, subtotal, itemCount, clearCart, addItem } = useCartStore()
+  const { items, subtotal, itemCount, clearCart, addItem, updateItem } = useCartStore()
   const { user, token, isLoading } = useAuth()
   const { t, currentLanguage } = useLanguage()
   const locale = currentLanguage === 'es' ? 'es' : 'en'
@@ -72,6 +73,15 @@ export default function CheckoutPage() {
   // ── Guest + Nombres de participantes ──────────────────────────────
   const [guestEmail, setGuestEmail] = useState('')
   const [guestEmailTouched, setGuestEmailTouched] = useState(false)
+  // Nombre de la persona que se esta agregando.
+  const [guestName, setGuestName] = useState('')
+  // Las personas de la reserva, cada una con su email y su nombre.
+  const [guestPeople, setGuestPeople] = useState([])
+  // El correo ya esta registrado: se ofrece entrar, sin bloquear.
+  const [emailRegistered, setEmailRegistered] = useState(false)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
+  // Modo de Stripe (mock / test / live) para poder avisarlo en la interfaz.
+  const [stripeMode, setStripeMode] = useState(null)
   // lineId -> string[] (longitud = peopleCount)
   const [participantNames, setParticipantNames] = useState({})
 
@@ -150,6 +160,82 @@ export default function CheckoutPage() {
     })
   }, [items, user, authDisplayName])
 
+  /**
+   * Los chips son la fuente de verdad de las personas: al agregar o quitar
+   * una ficha se reescriben los nombres de cada ticket y el numero de
+   * personas, para que el cobro y los QR cuadren con lo que se ve.
+   */
+  useEffect(() => {
+    if (!isGuest || guestPeople.length === 0) return
+    const names = guestPeople.map((person) => person.name)
+    setParticipantNames((prev) => {
+      const next = { ...prev }
+      let changed = false
+      for (const item of items) {
+        const existing = Array.isArray(next[item.lineId]) ? next[item.lineId] : []
+        if (existing.length !== names.length || existing.some((n, i) => n !== names[i])) {
+          next[item.lineId] = names
+          changed = true
+        }
+      }
+      return changed ? next : prev
+    })
+    for (const item of items) {
+      if (Number(item.peopleCount) !== guestPeople.length) {
+        updateItem(item.lineId, { peopleCount: guestPeople.length })
+      }
+    }
+  }, [guestPeople, isGuest, items, updateItem])
+
+  /**
+   * Si el correo del comprador ya esta registrado, se le ofrece entrar.
+   * La consulta no revela nada a un tercero: solo la usa esta pagina.
+   */
+  useEffect(() => {
+    const email = guestEmail.trim().toLowerCase()
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailRegistered(false)
+      return undefined
+    }
+    let cancelled = false
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch('/api/auth/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        })
+        if (!response.ok || cancelled) return
+        const data = await response.json()
+        if (cancelled) return
+        setEmailRegistered(Boolean(data?.exists))
+      } catch (e) {
+        void 0
+      }
+    }, 600)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [guestEmail])
+
+  /**
+   * El modo de Stripe se pide al servidor: el navegador no puede saber si
+   * hay llave de prueba o si se esta simulando el cobro.
+   */
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/stripe/mode')
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!cancelled && data) setStripeMode(data)
+      })
+      .catch(() => void 0)
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   // Si el usuario edita su nombre en perfil y vuelve, no pisar nombres ya escritos manualmente
   const updateParticipantName = (lineId, idx, value) => {
     setParticipantNames((prev) => {
@@ -157,6 +243,51 @@ export default function CheckoutPage() {
       arr[idx] = value
       return { ...prev, [lineId]: arr }
     })
+    // Si la persona venia de una ficha, la ficha se renombra tambien.
+    setGuestPeople((prev) => {
+      if (idx < 0 || idx >= prev.length) return prev
+      if (prev[idx].name === value) return prev
+      return prev.map((person, i) => (i === idx ? { ...person, name: value } : person))
+    })
+  }
+
+  /** Agrega una persona a la reserva y la muestra como chip. */
+  const addGuestPerson = () => {
+    const email = guestEmail.trim()
+    const name = guestName.trim()
+    if (!email || name.length < 2) return
+    if (guestPeople.length >= MAX_GUESTS) return
+    setGuestPeople((prev) => {
+      const existing = prev.findIndex(
+        (person) => person.email.toLowerCase() === email.toLowerCase()
+      )
+      if (existing >= 0) {
+        const next = [...prev]
+        next[existing] = { ...next[existing], name }
+        return next
+      }
+      return [
+        ...prev,
+        {
+          id: `gp_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+          email,
+          name,
+        },
+      ]
+    })
+    setGuestName('')
+  }
+
+  /** Quita una persona de la reserva. */
+  const removeGuestPerson = (id) => {
+    setGuestPeople((prev) => prev.filter((person) => person.id !== id))
+  }
+
+  /** Renombra una persona desde la lista de participantes. */
+  const renameGuestPerson = (id, value) => {
+    setGuestPeople((prev) =>
+      prev.map((person) => (person.id === id ? { ...person, name: value } : person))
+    )
   }
 
   const allNamesValid = items.every((item) => {
@@ -191,7 +322,8 @@ export default function CheckoutPage() {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  const formatPrice = (price) => formatPriceByLocale(price, locale)
+  // El carrito guarda SIEMPRE pesos (ver useCartStore): aqui no se convierte nada.
+  const formatPrice = (price) => formatPriceMXN(price, locale)
 
   // Al volver de Stripe con status=success + session_id, confirmar y crear bookings
   // Funciona tanto para guest como para auth (sin token requerido)
@@ -259,6 +391,13 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: buildItemsPayload(),
           customerEmail: isGuest ? guestEmail.trim() : user?.email,
+          // Los emails de las demas personas viajan en la sesion de Stripe
+          // (para poder mandarles su ticket) pero no se guardan en nuestra
+          // base: el invitado no queda registrado.
+          guestEmails:
+            isGuest && guestPeople.length > 1
+              ? guestPeople.slice(1).map((person) => person.email)
+              : undefined,
           customerName: isGuest
             ? guestNameForStripe
             : user?.firstName
@@ -653,14 +792,78 @@ export default function CheckoutPage() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               {t('checkout.title', 'Checkout')}
             </h1>
-            <span className="rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-semibold text-orange-500">
-              {t('checkout.testMode', 'Stripe test mode')}
+            <span
+              className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                stripeMode && stripeMode.mode === 'live'
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300'
+                  : 'border-orange-500/30 bg-orange-500/10 text-orange-500'
+              }`}
+            >
+              {stripeMode
+                ? stripeMode.mode === 'mock'
+                  ? locale === 'es'
+                    ? 'Stripe — modo DEMO'
+                    : 'Stripe — DEMO mode'
+                  : stripeMode.mode === 'test'
+                  ? locale === 'es'
+                    ? 'Stripe — modo PRUEBA'
+                    : 'Stripe — TEST mode'
+                  : locale === 'es'
+                  ? 'Stripe — pago real'
+                  : 'Stripe — live'
+                : t('checkout.testMode', 'Stripe test mode')}
             </span>
           </div>
 
           {error && (
             <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-600 dark:bg-red-500/20 dark:text-red-300">
               {error}
+            </div>
+          )}
+
+          {/* El correo del comprador ya existe: se ofrece entrar */}
+          {showLoginPrompt && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="jamaica-login-prompt-title"
+              onClick={(event) => {
+                if (event.target === event.currentTarget) setShowLoginPrompt(false)
+              }}
+            >
+              <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900">
+                <h2
+                  id="jamaica-login-prompt-title"
+                  className="font-serif text-xl text-gray-900 dark:text-white"
+                >
+                  {locale === 'es'
+                    ? 'Este correo ya tiene una cuenta en Amaxing'
+                    : 'This email already has an Amaxing account'}
+                </h2>
+                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
+                  {locale === 'es'
+                    ? 'Si entras, tu reserva queda guardada y podras consultarla cuando quieras. Si prefieres continuar como invitado, tambien puedes: solo no se guardara en tu cuenta.'
+                    : 'If you log in, your booking is saved and you can check it whenever you want. You can also continue as a guest: it just will not be saved to your account.'}
+                </p>
+                <div className="mt-6 flex flex-col gap-2 sm:flex-row-reverse">
+                  <Link
+                    href={`/login?redirect=/checkout&email=${encodeURIComponent(
+                      guestEmail.trim()
+                    )}`}
+                    className="flex-1 rounded-xl bg-orange-500 px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
+                  >
+                    {locale === 'es' ? 'Sí, quiero entrar' : 'Yes, I want to log in'}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPrompt(false)}
+                    className="flex-1 rounded-xl border border-zinc-300 px-4 py-3 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 dark:border-white/10 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  >
+                    {locale === 'es' ? 'Continuar como invitado' : 'Continue as guest'}
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -683,27 +886,27 @@ export default function CheckoutPage() {
                     : 'We do not store your email or data. We only use it to send your QR ticket and generate aggregated metrics for the team.'}
                 </p>
                 <div className="mt-3">
-                  <label className="mb-1 flex items-center gap-1 text-xs font-medium text-zinc-600 dark:text-gray-300">
-                    <Mail className="h-3.5 w-3.5" /> Email *
-                  </label>
-                  <input
-                    type="email"
-                    value={guestEmail}
-                    onChange={(e) => setGuestEmail(e.target.value)}
-                    onBlur={() => setGuestEmailTouched(true)}
-                    placeholder={locale === 'es' ? 'tu@email.com' : 'you@email.com'}
-                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none dark:bg-zinc-900 dark:text-white ${
-                      guestEmailTouched && !emailOk
-                        ? 'border-red-500 focus:border-red-500'
-                        : 'border-zinc-300 focus:border-orange-500 dark:border-white/10'
-                    }`}
+                  <GuestPeopleField
+                    locale={locale}
+                    people={guestPeople}
+                    email={guestEmail}
+                    name={guestName}
+                    onEmailChange={(value) => {
+                      setGuestEmail(value)
+                      setGuestEmailTouched(true)
+                    }}
+                    onNameChange={setGuestName}
+                    onAdd={addGuestPerson}
+                    onRemove={removeGuestPerson}
+                    onRename={renameGuestPerson}
+                    emailRegistered={emailRegistered}
                   />
                   {guestEmailTouched && !emailOk && (
                     <p className="mt-1 text-xs text-red-500">
                       {locale === 'es' ? 'Ingresa un email válido' : 'Enter a valid email'}
                     </p>
                   )}
-                  <p className="mt-2 text-xs text-zinc-500 dark:text-gray-500">
+                  <p className="mt-3 text-xs text-zinc-500 dark:text-gray-500">
                     {locale === 'es'
                       ? '¿Prefieres guardar tus reservas?'
                       : 'Want to save your bookings?'}{' '}
@@ -714,6 +917,17 @@ export default function CheckoutPage() {
                       {locale === 'es' ? 'Crea tu cuenta' : 'Create account'}
                     </Link>
                   </p>
+                  {emailRegistered && (
+                    <button
+                      type="button"
+                      onClick={() => setShowLoginPrompt(true)}
+                      className="mt-2 w-full rounded-xl border border-amber-400/50 bg-amber-400/10 px-4 py-2.5 text-left text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-400/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:text-amber-200"
+                    >
+                      {locale === 'es'
+                        ? 'Este correo ya tiene cuenta en Amaxing. ¿Quieres entrar?'
+                        : 'This email already has an Amaxing account. Do you want to log in?'}
+                    </button>
+                  )}
                 </div>
               </div>
             ) : (
@@ -862,7 +1076,7 @@ export default function CheckoutPage() {
                 <p className="mt-2 text-xs text-zinc-500 dark:text-gray-500">
                   {locale === 'es'
                     ? 'Moneda: MXN (Precios mostrados en MXN)'
-                    : 'Currency: USD — prices shown in USD'}
+                    : 'Currency: MXN — prices shown in MXN'}
                 </p>
               </div>
             </div>
@@ -1194,6 +1408,27 @@ export default function CheckoutPage() {
                     )}
                   </p>
 
+                  {stripeMode && (
+                    <p className="mt-3 flex items-start gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-200">
+                      <span aria-hidden className="mt-0.5 font-bold">
+                        ⚠
+                      </span>
+                      <span>
+                        {stripeMode.mode === 'mock'
+                          ? locale === 'es'
+                            ? 'Modo DEMO de Stripe: el pago se simula, no se cobra nada real.'
+                            : 'Stripe DEMO mode: the payment is simulated, nothing real is charged.'
+                          : stripeMode.mode === 'test'
+                          ? locale === 'es'
+                            ? 'Modo PRUEBA de Stripe (tarjetas de prueba): no se cobran amounts reales.'
+                            : 'Stripe TEST mode (test cards): no real amounts are charged.'
+                          : locale === 'es'
+                          ? 'Pago real con Stripe.'
+                          : 'Live payment with Stripe.'}
+                      </span>
+                    </p>
+                  )}
+
                   <div className="mt-4 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-xs text-orange-600 dark:text-orange-300">
                     {isGuest
                       ? locale === 'es'
@@ -1256,10 +1491,9 @@ export default function CheckoutPage() {
                   )}
 
                   <p className="mt-3 text-center text-xs text-zinc-500 dark:text-gray-500">
-                    {t(
-                      'checkout.testMode',
-                      'Stripe test mode — usa la tarjeta 4242 4242 4242 4242'
-                    )}
+                    {locale === 'es'
+                      ? 'Pago con tarjeta en modo DEMO de Stripe: usa la tarjeta de prueba 4242 4242 4242 4242. No se cobra nada real.'
+                      : 'Card payment in Stripe DEMO mode: use test card 4242 4242 4242 4242. Nothing real is charged.'}
                   </p>
                 </>
               ) : (

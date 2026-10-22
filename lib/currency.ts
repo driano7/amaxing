@@ -55,6 +55,28 @@ export function currencyIntl(locale: string): Intl.NumberFormat {
   })
 }
 
+/**
+ * Formatea un monto que YA esta en pesos. No convierte nada.
+ *
+ * OJO: `formatPriceByLocale` supone que el numero viene en dolares y lo
+ * multiplica por la tasa. Un journey (que ya esta en pesos) pasado por ahi
+ * salia 17.5 veces mas caro: 100 pesos se veian como 1,750. Para los montos
+ * que ya estan en pesos se usa esta.
+ */
+export function formatPriceMXN(
+  amountMxn: number,
+  locale: string,
+  opts: Intl.NumberFormatOptions = {}
+): string {
+  return new Intl.NumberFormat(locale === 'es' ? 'es-MX' : 'en-US', {
+    style: 'currency',
+    currency: 'MXN',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+    ...opts,
+  }).format(amountMxn)
+}
+
 /** Convierte y formatea en una sola llamada, para usar en el JSX. */
 export function formatPrice(priceUsd: number, locale: string): string {
   return formatPriceByLocale(priceUsd, locale)

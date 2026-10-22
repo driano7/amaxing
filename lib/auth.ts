@@ -1,6 +1,6 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // Autenticación real sobre Turso: hashing scrypt + sesiones persistidas + roles.
-import { randomBytes, scrypt as _scrypt, timingSafeEqual } from 'crypto'
+import { createHash, randomBytes, scrypt as _scrypt, timingSafeEqual } from 'crypto'
 import { promisify } from 'util'
 import { turso } from './turso'
 import { encryptRowFields, isPepperConfigured } from './gdpr-crypto'
@@ -76,6 +76,92 @@ export async function createSession(
   })
 
   return { token, expiresAt }
+}
+
+// ---------------------------------------------------------------------------
+// Recuperacion de contrasena
+// ---------------------------------------------------------------------------
+
+/** El enlace de reset vive 30 minutos. */
+export const PASSWORD_RESET_TTL_MINUTES = 30
+
+const hashResetToken = (token: string) => createHash('sha256').update(token).digest('hex')
+
+/**
+ * Crea un token de reset. El token crudo se devuelve una sola vez (para
+ * mandarlo por correo); en la base solo queda su hash.
+ */
+export async function createPasswordResetToken(
+  userId: string
+): Promise<{ token: string; expiresAt: string }> {
+  const token = randomBytes(32).toString('hex')
+  const tokenHash = hashResetToken(token)
+  const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MINUTES * 60_000).toISOString()
+
+  // Un token vivo por usuario: el anterior deja de servir.
+  await turso.execute({
+    sql: `UPDATE password_reset_tokens SET is_used = 1
+          WHERE user_id = ? AND is_used = 0`,
+    args: [userId],
+  })
+
+  await turso.execute({
+    sql: `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+          VALUES (?, ?, ?)`,
+    args: [userId, tokenHash, expiresAt],
+  })
+
+  return { token, expiresAt }
+}
+
+/**
+ * Resuelve el token y cambia la contrasena. Devuelve un motivo si no se
+ * pudo: 'invalido' (token desconocido o ya usado), 'expirado' o 'usuario'.
+ */
+export async function resetPasswordWithToken(
+  token: string,
+  newPasswordHash: string
+): Promise<'ok' | 'invalido' | 'expirado' | 'usuario'> {
+  if (!token || !newPasswordHash) return 'invalido'
+  const tokenHash = hashResetToken(token)
+
+  const result = await turso.execute({
+    sql: `SELECT id, user_id, expires_at, is_used
+          FROM password_reset_tokens
+          WHERE token_hash = ?`,
+    args: [tokenHash],
+  })
+
+  const row: any = result.rows[0]
+  if (!row) return 'invalido'
+  if (Number(row.is_used) === 1) return 'invalido'
+  if (new Date(row.expires_at).getTime() < Date.now()) {
+    await turso.execute({
+      sql: 'UPDATE password_reset_tokens SET is_used = 1 WHERE id = ?',
+      args: [row.id],
+    })
+    return 'expirado'
+  }
+
+  const user = await turso.execute({
+    sql: 'SELECT id FROM users WHERE id = ? AND is_active = 1',
+    args: [row.user_id],
+  })
+  if (!user.rows.length) return 'usuario'
+
+  await turso.execute({
+    sql: `UPDATE users SET password = ?, failed_login_attempts = 0 WHERE id = ?`,
+    args: [newPasswordHash, row.user_id],
+  })
+  await turso.execute({
+    sql: 'UPDATE password_reset_tokens SET is_used = 1 WHERE id = ?',
+    args: [row.id],
+  })
+  // Cambiar la contrasena cierra las sesiones abiertas: quien tenga la
+  // sesion vieja, entra de nuevo.
+  await turso.execute({ sql: 'DELETE FROM sessions WHERE "userId" = ?', args: [row.user_id] })
+
+  return 'ok'
 }
 
 export async function destroySession(token: string): Promise<void> {

@@ -52,13 +52,21 @@ const isMockMode = () => {
   return !key || !key.startsWith('sk_test_')
 }
 
-const createMockSession = (items, customerEmail, customerName, locale, baseUrl) => {
+const createMockSession = (
+  items,
+  customerEmail,
+  customerName,
+  locale,
+  baseUrl,
+  guestEmails = []
+) => {
   const sessionId = `mock_cs_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
   const metadata = {
     source: 'calpulli-tours-checkout',
     locale,
     ...(customerEmail ? { customer_email: customerEmail } : {}),
     ...(customerName ? { customer_name: customerName } : {}),
+    ...(guestEmails.length ? { guest_emails: JSON.stringify(guestEmails) } : {}),
     items: JSON.stringify(
       items.map((item) => ({
         experienceId: String(item.experienceId),
@@ -93,6 +101,15 @@ export default async function handler(req, res) {
     const items = Array.isArray(body.items) ? body.items : []
     const customerEmail = typeof body.customerEmail === 'string' ? body.customerEmail.trim() : ''
     const customerName = typeof body.customerName === 'string' ? body.customerName.trim() : ''
+    // Emails de los guests adicionales. Viajan en la sesion (para poder
+    // mandarles su ticket) pero no se guardan en nuestra base.
+    const guestEmails = Array.isArray(body.guestEmails)
+      ? body.guestEmails
+          .filter((value) => typeof value === 'string')
+          .map((value) => value.trim().toLowerCase())
+          .filter((value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          .slice(0, 19)
+      : []
     const locale = body.locale === 'es' ? 'es' : 'en'
 
     if (items.length === 0) {
@@ -116,7 +133,14 @@ export default async function handler(req, res) {
 
     // ─── MOCK MODE: sin clave de Stripe ───
     if (isMockMode()) {
-      const mockSession = createMockSession(items, customerEmail, customerName, locale, baseUrl)
+      const mockSession = createMockSession(
+        items,
+        customerEmail,
+        customerName,
+        locale,
+        baseUrl,
+        guestEmails
+      )
       console.log('[stripe.mock] Checkout session creada (mock):', mockSession.id)
       return res.status(200).json({ url: mockSession.url, sessionId: mockSession.id, mock: true })
     }
@@ -145,6 +169,7 @@ export default async function handler(req, res) {
       locale,
       ...(customerEmail ? { customer_email: customerEmail } : {}),
       ...(customerName ? { customer_name: customerName } : {}),
+      ...(guestEmails.length ? { guest_emails: JSON.stringify(guestEmails) } : {}),
       items: JSON.stringify(
         items.map((item) => ({
           experienceId: String(item.experienceId),

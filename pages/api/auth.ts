@@ -1,14 +1,19 @@
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 // POST /api/auth — login | register | forgot (Turso, sin mocks)
 import {
+  createPasswordResetToken,
   createSession,
   findUserByEmail,
+  hashPassword,
+  PASSWORD_RESET_TTL_MINUTES,
   recordFailedLogin,
   registerUser,
+  resetPasswordWithToken,
   verifyPassword,
 } from '@/lib/auth'
 import { isValidAgeBand, isValidCountry, isValidGender, isValidState } from '@/lib/demographics'
 import { validatePassword } from '@/lib/password'
+import { sendMail } from '@/lib/mail/service'
 
 function readRefCookie(req): string | null {
   const header = req.headers.cookie || ''
@@ -45,7 +50,9 @@ export default async function handler(req, res) {
     ageBand,
   } = req.body ?? {}
 
-  if (!email || typeof email !== 'string' || !email.includes('@')) {
+  // El reset de contraseña se identifica con el token del enlace, no con un
+  // correo: por eso la validación de correo no aplica a ese modo.
+  if (mode !== 'reset' && (!email || typeof email !== 'string' || !email.includes('@'))) {
     return res.status(400).json({ message: 'Email inválido' })
   }
 
@@ -78,8 +85,52 @@ export default async function handler(req, res) {
     }
 
     if (mode === 'forgot') {
-      // No revelamos si el correo existe; el reset se resuelve fuera de este flujo.
-      return res.status(200).json({ message: 'Si el correo existe, recibirás instrucciones' })
+      // No revelamos si el correo existe: la respuesta es la misma siempre.
+      const user = await findUserByEmail(email)
+      if (user) {
+        try {
+          const { token, expiresAt } = await createPasswordResetToken(user.id)
+          const base =
+            (req.headers.origin && String(req.headers.origin)) ||
+            process.env.NEXT_PUBLIC_SITE_URL ||
+            'http://localhost:3000'
+          const resetUrl = `${base}/reset-password?token=${token}`
+          const result = await sendMail('password_reset', {
+            to: user.email,
+            userId: user.id,
+            vars: {
+              firstName: user.first_name || user.firstName || '',
+              resetUrl,
+              expiresMinutes: PASSWORD_RESET_TTL_MINUTES,
+            },
+          })
+          console.log('[auth.forgot] correo de reset:', result.status, result.reason || '')
+        } catch (error) {
+          console.error('[auth.forgot] error generando el reset:', error)
+        }
+      }
+      return res.status(200).json({
+        message: 'Si el correo existe, recibirás instrucciones',
+        sent: true,
+      })
+    }
+
+    if (mode === 'reset') {
+      const token = String(req.body?.token || '')
+      const newPassword = String(password || '')
+      if (!token) {
+        return res.status(400).json({ message: 'Falta el enlace de recuperación' })
+      }
+      const pwError = validatePassword(newPassword)
+      if (pwError) return res.status(400).json({ message: pwError })
+      const result = await resetPasswordWithToken(token, await hashPassword(newPassword))
+      if (result === 'ok') {
+        return res.status(200).json({ message: 'Tu contraseña se actualizó' })
+      }
+      if (result === 'expirado') {
+        return res.status(400).json({ message: 'El enlace expiró. Pide uno nuevo.' })
+      }
+      return res.status(400).json({ message: 'El enlace no es válido' })
     }
 
     if (!password) return res.status(400).json({ message: 'Contraseña requerida' })
