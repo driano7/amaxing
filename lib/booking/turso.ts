@@ -63,6 +63,13 @@ function normalizeWhen(date: string, time?: string | null): { iso: string; time:
   }
 }
 
+export interface BookingTicket {
+  position: number
+  participantName: string
+  ticketCode: string
+  isResponsible: boolean
+}
+
 export interface CreatedBooking {
   id: string
   bookingReference: string
@@ -74,6 +81,16 @@ export interface CreatedBooking {
   totalAmount: number
   currency: string
   demographics: Demographics
+  /** Un ticket por persona, con su codigo y su QR. */
+  tickets: BookingTicket[]
+  /** Datos de la experiencia, para pintar el ticket sin volver a consultarla. */
+  experienceTitle: string
+  experienceTitleEn: string
+  location: string | null
+  imageUrl: string | null
+  /** Fecha y hora de la reserva, en el formato que ve el visitante. */
+  date: string
+  time: string
 }
 
 /**
@@ -89,7 +106,7 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
   const reference = generateBookingReference()
 
   const experience = await turso.execute({
-    sql: 'SELECT id FROM experiences WHERE id = ?',
+    sql: 'SELECT id, title_es, title_en, location_es, location_en, image_url FROM experiences WHERE id = ?',
     args: [String(input.experienceId)],
   })
   if (!experience.rows[0]) {
@@ -173,6 +190,35 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
   const id = (inserted.rows[0] as any)?.id
   if (!id) throw new Error('No se pudo crear la reserva')
 
+  const experienceRow: any = experience.rows[0]
+
+  // Un ticket por persona. El codigo es el de la reserva mas la posicion:
+  // AMX-T-CDMX-XXXXXX-1, -2, ... El primero es el responsable salvo que el
+  // visitante haya elegido otro.
+  const people =
+    Array.isArray(input.participants) && input.participants.length
+      ? input.participants
+      : [{ name: input.customerName || 'Invitado', email: null }]
+  const responsiblePosition = Math.min(
+    Math.max(1, Number(input.responsiblePosition) || 1),
+    people.length
+  )
+
+  const tickets: BookingTicket[] = []
+  for (let index = 0; index < people.length; index += 1) {
+    const position = index + 1
+    const name = (people[index]?.name || '').trim() || `Invitado ${position}`
+    const ticketCode = `${ticketCodeFor(reference)}-${position}`
+    const isResponsible = position === responsiblePosition
+    await turso.execute({
+      sql: `INSERT INTO booking_participants
+              (booking_id, booking_reference, position, participant_name, ticket_code, is_responsible)
+            VALUES (?, ?, ?, ?, ?, ?)`,
+      args: [id, reference, position, name, ticketCode, isResponsible ? 1 : 0],
+    })
+    tickets.push({ position, participantName: name, ticketCode, isResponsible })
+  }
+
   return {
     id,
     bookingReference: reference,
@@ -184,6 +230,59 @@ export async function createBookingInTurso(input: CreateBookingInput): Promise<C
     totalAmount: total,
     currency: input.currency || 'USD',
     demographics,
+    tickets,
+    experienceTitle: experienceRow?.title_es || experienceRow?.title_en || 'Experiencia',
+    experienceTitleEn: experienceRow?.title_en || experienceRow?.title_es || 'Experience',
+    location: experienceRow?.location_es || experienceRow?.location_en || null,
+    imageUrl: experienceRow?.image_url || null,
+    date: iso.slice(0, 10),
+    time: time || '10:00',
+  }
+}
+
+/**
+ * Busca un ticket de persona por su codigo. El codigo es el secreto: como el
+ * de un pase de abordar, quien lo tiene puede ver el ticket.
+ */
+export async function findBookingTicketByCode(code: string) {
+  const normalized = String(code || '')
+    .trim()
+    .toUpperCase()
+  if (!normalized) return null
+  const result = await turso.execute({
+    sql: `SELECT p.id, p.booking_id, p.booking_reference, p.position,
+                 p.participant_name, p.ticket_code, p.is_responsible,
+                 b.start_date, b.start_time, b.guests, b.total_amount,
+                 b.currency, b.status, b.is_guest,
+                 e.title_es, e.title_en, e.location_es, e.location_en, e.image_url
+          FROM booking_participants p
+          JOIN bookings b ON b.id = p.booking_id
+          JOIN experiences e ON e.id = b.experience_id
+          WHERE p.ticket_code = ?`,
+    args: [normalized],
+  })
+  const row: any = result.rows[0]
+  if (!row) return null
+  return {
+    id: row.id,
+    bookingId: row.booking_id,
+    bookingReference: row.booking_reference,
+    position: Number(row.position) || 1,
+    participantName: row.participant_name || '',
+    ticketCode: row.ticket_code,
+    isResponsible: Number(row.is_responsible) === 1,
+    startDate: String(row.start_date || ''),
+    date: String(row.start_date || '').slice(0, 10),
+    time: row.start_time || '10:00',
+    guests: Number(row.guests) || 1,
+    totalAmount: Number(row.total_amount) || 0,
+    currency: row.currency || 'MXN',
+    status: row.status || 'confirmed',
+    isGuest: Number(row.is_guest) === 1,
+    experienceTitle: row.title_es || row.title_en || 'Experiencia',
+    experienceTitleEn: row.title_en || row.title_es || 'Experience',
+    location: row.location_es || row.location_en || null,
+    imageUrl: row.image_url || null,
   }
 }
 

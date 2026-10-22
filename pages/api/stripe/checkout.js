@@ -103,6 +103,7 @@ export default async function handler(req, res) {
     const customerName = typeof body.customerName === 'string' ? body.customerName.trim() : ''
     // Emails de los guests adicionales. Viajan en la sesion (para poder
     // mandarles su ticket) pero no se guardan en nuestra base.
+    const responsiblePosition = Math.max(0, Number(body.responsiblePosition) || 0)
     const guestEmails = Array.isArray(body.guestEmails)
       ? body.guestEmails
           .filter((value) => typeof value === 'string')
@@ -176,8 +177,14 @@ export default async function handler(req, res) {
           date: item.date || '',
           time: item.time || '',
           peopleCount: Math.max(1, Number(item.peopleCount) || 1),
+          // Los nombres de cada persona viajan en la sesion para que al
+          // confirmar se cree un ticket por persona (con su QR).
+          participantNames: Array.isArray(item.participantNames) ? item.participantNames : [],
         }))
       ),
+      ...(Number(body.responsiblePosition) > 0
+        ? { responsible_position: String(Number(body.responsiblePosition)) }
+        : {}),
     }
 
     const session = await stripe.checkout.sessions.create({

@@ -76,6 +76,7 @@ export const TEMPLATE_META: TemplateMeta[] = [
       'currency',
       'meetingPoint',
       'ticketUrl',
+      'ticketsList',
     ],
   },
   {
@@ -144,7 +145,8 @@ export const DEFAULT_TEMPLATES: Record<string, { subject: string; html: string; 
         <tr><td style="padding:4px 0;color:#78716c;font-size:13px">Punto de encuentro</td><td align="right" style="padding:4px 0;font-weight:700">{{meetingPoint}}</td></tr>
         <tr><td style="padding:10px 0 4px;color:#78716c;font-size:13px;border-top:1px solid #e7e5e4;padding-top:12px">Total</td><td align="right" style="padding:10px 0 4px;font-weight:800;border-top:1px solid #e7e5e4;padding-top:12px">{{total}} {{currency}}</td></tr>
       </table>
-      <p style="margin:20px 0 0;color:#57534e;line-height:1.7">Tu ticket con código QR está en tu perfil. Muéstralo al llegar.</p>
+      <p style="margin:20px 0 0;color:#57534e;line-height:1.7">Cada persona tiene su propio ticket con su código QR. Muéstralo al llegar.</p>
+      {{ticketsList}}
       ${btn('{{ticketUrl}}', 'Ver mi ticket')}
     `),
     text: `Reserva confirmada {{bookingReference}}\n{{experienceTitle}}\n{{startDate}} {{startTime}} · {{guests}} personas\n{{meetingPoint}}\nTotal: {{total}} {{currency}}\nTicket: {{ticketUrl}}`,

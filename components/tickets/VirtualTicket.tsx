@@ -26,6 +26,10 @@ interface VirtualTicketProps {
   onClose: () => void
   onDownloadPNG?: () => void
   onDownloadPDF?: () => void
+  /** Esta persona responde por la reserva. */
+  responsible?: boolean
+  /** Texto del total, ya formateado (el ticket no sabe la moneda de la vista). */
+  totalLabel?: string
 }
 
 export function VirtualTicket({
@@ -33,6 +37,8 @@ export function VirtualTicket({
   onClose,
   onDownloadPNG,
   onDownloadPDF,
+  responsible = false,
+  totalLabel,
 }: VirtualTicketProps) {
   const { currentLanguage } = useLanguage()
   const isEs = currentLanguage === 'es'
@@ -292,7 +298,7 @@ export function VirtualTicket({
                 </div>
               </div>
               <span className="text-sm font-semibold text-gray-700 dark:text-zinc-200">
-                {formatPrice(ticket.totalPrice)}
+                {totalLabel || formatPrice(ticket.totalPrice)}
               </span>
             </div>
 
@@ -343,6 +349,12 @@ export function VirtualTicket({
                 )}
               </div>
             </div>
+            {responsible && (
+              <div className="flex items-center gap-1.5 rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-600 dark:text-orange-300">
+                <span aria-hidden>★</span>
+                {isEs ? 'Responsable de la reserva' : 'Responsible for the booking'}
+              </div>
+            )}
             {ticket.customerName && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500 dark:text-zinc-400">

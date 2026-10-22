@@ -30,6 +30,17 @@ export interface CreateBookingInput {
   date: string
   time: string
   peopleCount: number
+  /**
+   * Las personas de la reserva. Cada una recibe su propio ticket con su
+   * propio QR: asi no se comparte un codigo entre varias personas.
+   * Si no se envia, se crea un solo ticket con el nombre del comprador.
+   */
+  participants?: { name: string; email?: string | null }[]
+  /**
+   * Posicion (1 based) de quien responde por la reserva. Por defecto, la
+   * primera. El visitante puede elegir otra desde el checkout.
+   */
+  responsiblePosition?: number
 }
 
 export const BOOKING_STATUSES = {

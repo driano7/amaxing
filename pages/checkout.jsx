@@ -25,6 +25,7 @@ import { CryptoPayment } from '@/components/CryptoPayment'
 import { formatPriceMXN } from '@/lib/currency'
 import { captureAcquisitionChannel, getAcquisitionChannel } from '@/lib/booking/utm'
 import { GuestPeopleField, MAX_GUESTS } from '@/components/checkout/GuestPeopleField'
+import { TicketGallery } from '@/components/checkout/TicketGallery'
 
 export default function CheckoutPage() {
   const { items, subtotal, itemCount, clearCart, addItem, updateItem } = useCartStore()
@@ -42,7 +43,8 @@ export default function CheckoutPage() {
   // WhatsApp: obligatorio para efectivo. Sin esto no hay cómo localizarlo.
   const [customerPhone, setCustomerPhone] = useState('')
   // Método de pago: tarjeta (Stripe), cripto o efectivo
-  const [payMethod, setPayMethod] = useState('card')
+  // Efectivo es la primera opcion: se paga en el punto de encuentro.
+  const [payMethod, setPayMethod] = useState('cash')
   const [showCryptoModal, setShowCryptoModal] = useState(false)
 
   // Capturar canal de adquisición (first-touch UTM) para CAC por canal
@@ -77,6 +79,8 @@ export default function CheckoutPage() {
   const [guestName, setGuestName] = useState('')
   // Las personas de la reserva, cada una con su email y su nombre.
   const [guestPeople, setGuestPeople] = useState([])
+  // Quien responde por la reserva (una de las fichas). Por defecto, la primera.
+  const [responsibleId, setResponsibleId] = useState(null)
   // El correo ya esta registrado: se ofrece entrar, sin bloquear.
   const [emailRegistered, setEmailRegistered] = useState(false)
   const [showLoginPrompt, setShowLoginPrompt] = useState(false)
@@ -266,21 +270,27 @@ export default function CheckoutPage() {
         next[existing] = { ...next[existing], name }
         return next
       }
-      return [
-        ...prev,
-        {
-          id: `gp_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-          email,
-          name,
-        },
-      ]
+      const created = {
+        id: `gp_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        email,
+        name,
+      }
+      setResponsibleId((current) => current || created.id)
+      return [...prev, created]
     })
     setGuestName('')
   }
 
   /** Quita una persona de la reserva. */
   const removeGuestPerson = (id) => {
-    setGuestPeople((prev) => prev.filter((person) => person.id !== id))
+    setGuestPeople((prev) => {
+      const next = prev.filter((person) => person.id !== id)
+      setResponsibleId((current) => {
+        if (current !== id) return current
+        return next[0]?.id || null
+      })
+      return next
+    })
   }
 
   /** Renombra una persona desde la lista de participantes. */
@@ -289,6 +299,13 @@ export default function CheckoutPage() {
       prev.map((person) => (person.id === id ? { ...person, name: value } : person))
     )
   }
+
+  /** Posicion (1 based) de quien responde por la reserva. */
+  const responsiblePosition = (() => {
+    if (guestPeople.length === 0) return 1
+    const index = guestPeople.findIndex((person) => person.id === responsibleId)
+    return index >= 0 ? index + 1 : 1
+  })()
 
   const allNamesValid = items.every((item) => {
     const arr = participantNames[item.lineId] || []
@@ -391,6 +408,8 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: buildItemsPayload(),
           customerEmail: isGuest ? guestEmail.trim() : user?.email,
+          // Quien responde por la reserva: sus datos van en los tickets.
+          responsiblePosition: isGuest ? responsiblePosition : 1,
           // Los emails de las demas personas viajan en la sesion de Stripe
           // (para poder mandarles su ticket) pero no se guardan en nuestra
           // base: el invitado no queda registrado.
@@ -494,6 +513,7 @@ export default function CheckoutPage() {
             sessionId,
             items: itemsWithNames,
             guestEmail: isGuest || !token ? gEmail?.trim() : undefined,
+            responsiblePosition: isGuest ? responsiblePosition : 1,
             guestName: isGuest || !token ? (pNames[items[0]?.lineId]?.[0] || '').trim() : undefined,
             currency,
             participantNamesMap: Object.fromEntries(
@@ -609,40 +629,29 @@ export default function CheckoutPage() {
                   )}
             </p>
 
-            <div className="mt-8 space-y-4">
-              {createdBookings.map((booking) => (
-                <div
-                  key={booking.id}
-                  className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 text-left dark:border-white/10 dark:bg-zinc-900/50"
-                >
-                  <div className="flex items-center gap-3">
-                    <TicketIcon className="h-5 w-5 text-orange-500" />
-                    <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">
-                        {booking.experienceTitle}
-                      </p>
-                      <p className="text-sm text-zinc-500 dark:text-gray-400">
-                        {booking.date} • {booking.time} • {booking.peopleCount}{' '}
-                        {booking.peopleCount === 1
-                          ? t('checkout.person', 'persona')
-                          : t('checkout.persons', 'personas')}
-                        {booking.participantNames?.length
-                          ? ` — ${booking.participantNames.join(', ')}`
-                          : booking.customerName
-                          ? ` — ${booking.customerName}`
-                          : ''}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setSelectedTicket(booking)}
-                    className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
-                  >
-                    Ver Ticket
-                  </button>
-                </div>
-              ))}
-            </div>
+            {/* Un ticket por persona, con su codigo y su QR. */}
+            <TicketGallery
+              bookings={createdBookings}
+              locale={locale}
+              onOpen={({ booking, ticket }) =>
+                setSelectedTicket({
+                  id: `${booking.id}-${ticket.position}`,
+                  ticketCode: ticket.ticketCode,
+                  experienceTitle: booking.experienceTitle,
+                  experienceImage: booking.imageUrl,
+                  date: booking.date,
+                  time: booking.time,
+                  peopleCount: 1,
+                  totalPrice: booking.totalAmount,
+                  status: booking.status,
+                  customerName: ticket.participantName,
+                  customerEmail: booking.customerEmail,
+                  currency: booking.currency,
+                  location: booking.location,
+                  isResponsible: ticket.isResponsible,
+                })
+              }
+            />
 
             <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
               {isGuestSuccess ? (
@@ -899,6 +908,8 @@ export default function CheckoutPage() {
                     onAdd={addGuestPerson}
                     onRemove={removeGuestPerson}
                     onRename={renameGuestPerson}
+                    onSetResponsible={setResponsibleId}
+                    responsibleId={responsibleId}
                     emailRegistered={emailRegistered}
                   />
                   {guestEmailTouched && !emailOk && (
@@ -1092,6 +1103,17 @@ export default function CheckoutPage() {
               <div className="mb-5 grid grid-cols-3 gap-2 sm:gap-3">
                 <button
                   type="button"
+                  onClick={() => setPayMethod('cash')}
+                  className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
+                    payMethod === 'cash'
+                      ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                      : 'border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:border-white/15 dark:text-gray-400'
+                  }`}
+                >
+                  💵 {locale === 'es' ? 'Efectivo' : 'Cash'}
+                </button>
+                <button
+                  type="button"
                   onClick={() => setPayMethod('card')}
                   className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
                     payMethod === 'card'
@@ -1113,17 +1135,6 @@ export default function CheckoutPage() {
                 >
                   <span aria-hidden="true">₿</span>
                   {locale === 'es' ? 'Cripto' : 'Crypto'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPayMethod('cash')}
-                  className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-bold transition-all sm:gap-2 sm:px-4 sm:text-sm ${
-                    payMethod === 'cash'
-                      ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                      : 'border-zinc-300 text-zinc-500 hover:border-zinc-400 dark:border-white/15 dark:text-gray-400'
-                  }`}
-                >
-                  💵 {locale === 'es' ? 'Efectivo' : 'Cash'}
                 </button>
               </div>
 
@@ -1214,63 +1225,47 @@ export default function CheckoutPage() {
                             ? locale === 'es'
                               ? 'Completa los nombres de todos los participantes'
                               : 'Complete all participant names'
+                            : isGuest && !emailOk
+                            ? locale === 'es'
+                              ? 'Ingresa tu email'
+                              : 'Enter your email'
                             : locale === 'es'
-                            ? 'Ingresa tu email'
-                            : 'Enter your email'
+                            ? 'Selecciona fecha y hora para cada tour'
+                            : 'Select date and time for every tour'
                         )
                         return
                       }
                       setIsSubmitting(true)
+                      setError(null)
                       try {
-                        const now = new Date().toISOString()
-                        const cashBookings = items.map((item, idx) => {
-                          const pNames = participantNames[item.lineId] || []
-                          return {
-                            id: `cash-${Date.now()}-${idx}`,
-                            userId:
-                              user?.id ||
-                              `guest_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-                            experienceId: item.experienceId,
-                            experienceTitle: item.title,
-                            experienceImage: item.imageUrl,
-                            date: item.date,
-                            time: item.time,
-                            peopleCount: item.peopleCount,
-                            totalPrice: (item.price || 0) * item.peopleCount,
-                            currency: locale === 'es' ? 'MXN' : 'USD',
-                            status: 'pending',
-                            paymentMethod: 'cash',
-                            paymentStatus: 'pending_cash',
-                            createdAt: now,
-                            updatedAt: now,
-                            ticketCode: `AMX-T-${Math.random()
-                              .toString(36)
-                              .slice(2, 8)
-                              .toUpperCase()}`,
-                            customerName:
-                              pNames[0] ||
-                              (user ? authDisplayName : isGuest ? 'Invitado' : 'Cliente'),
+                        // La reserva en efectivo se guarda de verdad: el
+                        // equipo la ve y cada persona recibe su ticket.
+                        const response = await fetch('/api/bookings/cash', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                          },
+                          body: JSON.stringify({
+                            items: buildItemsPayload(),
+                            customerName: (participantNames[items[0]?.lineId]?.[0] || '').trim(),
                             customerEmail: isGuest ? guestEmail.trim() : user?.email,
-                            participantNames: pNames,
-                            isGuest: !user,
-                            meetingPoint: item.location,
-                            notes:
-                              locale === 'es'
-                                ? 'Pago en efectivo al recoger - Confirmación WhatsApp 2h antes'
-                                : 'Cash on pickup - WhatsApp confirmation 2h before',
-                          }
+                            customerPhone: customerPhone.trim(),
+                            responsiblePosition,
+                            locale,
+                          }),
                         })
-                        // Guardar localmente (mock) y también intentar persistir vía API sin requerir JWT
-                        try {
-                          const existing = localStorage.getItem('amaxing_bookings')
-                          const parsed = existing ? JSON.parse(existing) : []
-                          localStorage.setItem(
-                            'amaxing_bookings',
-                            JSON.stringify([...parsed, ...cashBookings])
+                        const data = await response.json().catch(() => ({}))
+                        if (!response.ok) {
+                          throw new Error(
+                            data?.error ||
+                              (locale === 'es'
+                                ? 'No pudimos guardar la reserva'
+                                : 'We could not save the booking')
                           )
-                        } catch (e) {
-                          void 0
                         }
+                        const cashBookings = data.bookings || []
+
                         // Métrica
                         try {
                           const sid = sessionStorage.getItem('analytics_session_id')
@@ -1287,9 +1282,8 @@ export default function CheckoutPage() {
                               pageCategory: 'checkout',
                               eventData: {
                                 isGuest: !user,
-                                paymentMethod: 'cash',
                                 itemCount,
-                                currency: locale === 'es' ? 'MXN' : 'USD',
+                                currency: 'MXN',
                               },
                             }),
                           })

@@ -20,23 +20,57 @@ function normalizePhone(value) {
   return digits.length >= 10 ? digits : null
 }
 
+/** Escapa lo que va dentro del correo (nombres de personas). */
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 /** Avisa al cliente segun como pago. Si falla el correo, la reserva sigue. */
 async function notifyBooking(booking, { paymentMethod, customerPhone, userEmail, userId }) {
   const origin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '') || ''
   const digits = (customerPhone || '').replace(/\D/g, '')
   const whatsappUrl = digits.length >= 10 ? `https://wa.me/${digits}` : BRAND.social.whatsapp
 
+  // Los tickets de cada persona, cada uno con su enlace. Al invitado (sin
+  // cuenta) el enlace va a la pagina publica del ticket, no a su perfil.
+  const tickets = Array.isArray(booking.tickets) ? booking.tickets : []
+  const ticketUrlFor = (ticket) => `${origin}/t/${encodeURIComponent(ticket.ticketCode)}`
+  const ticketsList = tickets.length
+    ? `<ul style="margin:16px 0 0;padding:0;list-style:none">${tickets
+        .map(
+          (ticket) =>
+            `<li style="padding:6px 0;border-bottom:1px solid #e7e5e4;font-size:14px">
+              <strong>${escapeHtml(ticket.participantName)}</strong>
+              ${
+                ticket.isResponsible
+                  ? '<span style="font-size:12px;color:#c1440e">(responsable)</span>'
+                  : ''
+              }
+              <br><a href="${ticketUrlFor(
+                ticket
+              )}" style="color:#c1440e;font-size:13px">${escapeHtml(ticket.ticketCode)}</a>
+            </li>`
+        )
+        .join('')}</ul>`
+    : ''
+
   const vars = {
     firstName: (booking.customerName || '').split(' ')[0] || 'viajera',
     bookingReference: booking.bookingReference,
-    experienceTitle: 'Tu tour',
+    experienceTitle: booking.experienceTitle || 'Tu tour',
     startDate: String(booking.startDate || '').slice(0, 10),
-    startTime: '10:00',
+    startTime: booking.time || '10:00',
     guests: booking.guests,
     total: booking.totalAmount,
     currency: booking.currency,
     meetingPoint: 'Te lo confirmamos por WhatsApp',
-    ticketUrl: `${origin}/profile`,
+    ticketUrl: tickets.length ? ticketUrlFor(tickets[0]) : `${origin}/profile`,
+    ticketsList,
     whatsappUrl,
   }
 
@@ -60,6 +94,7 @@ async function persistBookings({
   currency,
   paymentMethod,
   stripe,
+  responsiblePosition = 1,
 }) {
   const created = []
   for (const item of items) {
@@ -72,6 +107,15 @@ async function persistBookings({
       totalAmount: Number(item.unitPrice || 0) * Math.max(1, Number(item.peopleCount) || 1),
       currency,
       customerName: item.customerName || customerName,
+      // Un ticket por persona: cada quien con su codigo y su QR.
+      participants: (Array.isArray(item.participantNames) && item.participantNames.length
+        ? item.participantNames
+        : [item.customerName || customerName]
+      )
+        .map((name) => (typeof name === 'string' ? name.trim() : ''))
+        .filter(Boolean)
+        .map((name) => ({ name })),
+      responsiblePosition,
       customerEmail: userId ? customerEmail : null,
       customerPhone: customerPhone || null,
       paymentMethod: paymentMethod || 'card',
@@ -144,6 +188,7 @@ export default async function handler(req, res) {
     paymentMethod,
     customerPhone,
     guestPhone,
+    responsiblePosition,
   } = req.body || {}
 
   if (typeof sessionId !== 'string' || !sessionId) {
@@ -194,6 +239,7 @@ export default async function handler(req, res) {
         paymentMethod: paymentMethod || 'card',
         currency: typeof currency === 'string' ? currency : 'USD',
         stripe: { sessionId },
+        responsiblePosition: Number(responsiblePosition) || 1,
       })
 
       await registerReferralConversions(mockBookings, {
@@ -248,6 +294,7 @@ export default async function handler(req, res) {
     }
 
     await persistBookings({
+      responsiblePosition: Number(checkout.metadata?.responsible_position) || 1,
       items: parsedItems.map((item) => ({
         experienceId: item.experienceId,
         date: item.date,
@@ -255,6 +302,7 @@ export default async function handler(req, res) {
         peopleCount: Math.max(1, Number(item.peopleCount) || 1),
         unitPrice: Number(item.unitPrice) || 0,
         customerName: customerName,
+        participantNames: Array.isArray(item.participantNames) ? item.participantNames : [],
         specialRequests: item.specialRequests,
       })),
       userId: session?.user?.id || null,

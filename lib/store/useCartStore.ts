@@ -140,8 +140,11 @@ const addItem = (payload: CartPayload) => {
         ...payload,
         lineId: createLineId(),
         peopleCount: 1,
-        date: null,
-        time: null,
+        // La fecha y la hora vienen en el payload (un journey trae la del dia
+        // y la hora de inicio). Antes se pisaban con null y la reserva se
+        // quedaba sin fecha: el pago no dejaba avanzar.
+        date: payload.date ?? null,
+        time: payload.time ?? null,
       }),
     ]
   })

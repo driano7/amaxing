@@ -2,7 +2,7 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, Mail, Plus, User, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Mail, Plus, Star, User, X } from 'lucide-react'
 
 export interface GuestPerson {
   id: string
@@ -38,6 +38,8 @@ export function GuestPeopleField({
   onAdd,
   onRemove,
   onRename,
+  onSetResponsible,
+  responsibleId,
   emailRegistered = false,
   maxGuests = MAX_GUESTS,
 }: {
@@ -50,6 +52,10 @@ export function GuestPeopleField({
   onAdd: () => void
   onRemove: (id: string) => void
   onRename: (id: string, value: string) => void
+  /** Marca quien responde por la reserva (una sola persona). */
+  onSetResponsible?: (id: string) => void
+  /** Id de la persona responsable. */
+  responsibleId?: string
   /** El correo ya esta registrado: se avisa, no se bloquea. */
   emailRegistered?: boolean
   maxGuests?: number
@@ -202,20 +208,39 @@ export function GuestPeopleField({
                     <p className="truncate text-[11px] text-zinc-500 dark:text-zinc-400">
                       {person.email}
                     </p>
-                    {index === 0 && (
+                    {person.id === responsibleId && (
                       <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-orange-600 dark:text-orange-300">
-                        {isEs ? 'Compra' : 'Buyer'}
+                        {isEs ? 'Responsable' : 'Responsible'}
                       </p>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => onRemove(person.id)}
-                    aria-label={isEs ? `Quitar a ${person.name}` : `Remove ${person.name}`}
-                    className="rounded-full p-0.5 text-zinc-400 transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
+                  <div className="flex flex-col items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => onSetResponsible?.(person.id)}
+                      aria-pressed={person.id === responsibleId}
+                      title={
+                        isEs
+                          ? 'Quien responde por esta reserva'
+                          : 'The person responsible for this booking'
+                      }
+                      className={`rounded-full p-0.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
+                        person.id === responsibleId
+                          ? 'text-orange-500'
+                          : 'text-zinc-300 hover:text-orange-400 dark:text-zinc-600'
+                      }`}
+                    >
+                      <Star className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onRemove(person.id)}
+                      aria-label={isEs ? `Quitar a ${person.name}` : `Remove ${person.name}`}
+                      className="rounded-full p-0.5 text-zinc-400 transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -233,8 +258,8 @@ export function GuestPeopleField({
 
           <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400">
             {isEs
-              ? 'La primera persona es la que compra: su email recibe los tickets. Los emails de los demás solo se usan para enviar su ticket.'
-              : 'The first person is the buyer: their email receives the tickets. The other emails are only used to send their ticket.'}
+              ? 'Marca con la estrella quien responde por la reserva: es la persona a nombre de la cual se emiten los tickets y a quien llegan los correos. Por defecto es la primera.'
+              : 'Mark with the star who is responsible for the booking: the tickets are issued in their name and the emails go to them. By default it is the first one.'}
           </p>
         </div>
       )}

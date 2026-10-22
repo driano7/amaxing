@@ -13,16 +13,9 @@
 --    set -a; source .env.local; set +a
 --    node scripts/apply-sql.mjs turso-schema.sql
 --
---  Datos que NO son esquema (se siembran aparte, en este orden):
---    1. experiences       -> node scripts/seed-experiences.mjs
---       (12 tours desde data/toursData.js; bookings tiene FK hacia esta tabla)
---    2. Cifrado del PII   -> node scripts/backfill-gdpr.mjs
---       (rellena users.*Encrypted/Iv/Tag/Salt; necesita GDPR_PEPPER)
---    3. Plantillas de mail-> se siembran solas al cargar /api/admin/email-templates
---    4. Matriz de roles   -> ya incluida en este archivo (3 filas sembradas)
---
---  Correo: aunque existan claves SMTP, NO se envia nada hasta poner
---    MAIL_ENABLED=true en el entorno. Todo intento queda en email_log.
+--  Datos que NO son esquema (se siembran aparte):
+--    experiences -> node scripts/seed-experiences.mjs
+--    Cifrado PII -> node scripts/backfill-gdpr.mjs
 -- ============================================================================
 
 
@@ -245,7 +238,7 @@ CREATE TABLE IF NOT EXISTS "bookings" (
   start_date TEXT NOT NULL,
   end_date TEXT NOT NULL,
   start_time TEXT,
-  guests INTEGER NOT NULL CHECK (guests BETWEEN 1 AND 10),
+  guests INTEGER NOT NULL CHECK (guests BETWEEN 1 AND 20),
   status TEXT NOT NULL DEFAULT 'pending'
     CHECK (status IN ('pending','confirmed','paid','in_progress','completed','cancelled','no_show','refunded')),
   payment_status TEXT NOT NULL DEFAULT 'unpaid'
@@ -456,6 +449,17 @@ CREATE TABLE IF NOT EXISTS api_keys (
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS booking_participants (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  booking_id TEXT NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+  booking_reference TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  participant_name TEXT,
+  ticket_code TEXT NOT NULL UNIQUE,
+  is_responsible INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS email_log (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   template_key TEXT NOT NULL,
@@ -482,6 +486,30 @@ CREATE TABLE IF NOT EXISTS email_templates (
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS local_picks (
+  id            TEXT PRIMARY KEY,
+  slug          TEXT NOT NULL,
+  lang          TEXT NOT NULL CHECK (lang IN ('es', 'en')),
+  title         TEXT NOT NULL,
+  festivity     TEXT,
+  pinned        INTEGER NOT NULL DEFAULT 0,
+  pinned_order  INTEGER,
+  date          TEXT,
+  tags          TEXT NOT NULL DEFAULT '[]',
+  draft         INTEGER NOT NULL DEFAULT 0,
+  summary       TEXT,
+  images        TEXT NOT NULL DEFAULT '[]',
+  neighborhood TEXT,
+  budget        TEXT,
+  category      TEXT,
+  month         TEXT,
+  pick_index    INTEGER,
+  total_picks   INTEGER,
+  body          TEXT NOT NULL DEFAULT '',
+  created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+, is_monthly_guide INTEGER NOT NULL DEFAULT 0);
 
 CREATE TABLE IF NOT EXISTS profiles (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -536,12 +564,13 @@ CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON api_keys(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_actor ON access_audit_logs(actor_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_role_created ON access_audit_logs(actor_role, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_target ON access_audit_logs(target_email);
+CREATE INDEX IF NOT EXISTS idx_booking_participants_booking ON booking_participants (booking_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_booking_participants_code ON booking_participants (ticket_code);
 CREATE INDEX IF NOT EXISTS idx_bookings_experience_id ON bookings(experience_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_reference ON bookings(booking_reference);
 CREATE INDEX IF NOT EXISTS idx_bookings_start_date ON bookings(start_date);
 CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
-CREATE INDEX IF NOT EXISTS idx_bookings_upcoming ON bookings(start_date)
-  WHERE status IN ('confirmed','paid','pending');
+CREATE INDEX IF NOT EXISTS idx_bookings_upcoming ON bookings(start_date) WHERE status IN ('confirmed','paid');
 CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON bookings(user_id);
 CREATE INDEX IF NOT EXISTS idx_conversion_events_created_at ON conversion_events("createdAt");
 CREATE INDEX IF NOT EXISTS idx_conversion_events_type ON conversion_events ("eventType");
@@ -551,6 +580,12 @@ CREATE INDEX IF NOT EXISTS idx_email_log_user ON email_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_expires_at ON email_verification_tokens(expires_at);
 CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_is_used ON email_verification_tokens(is_used);
 CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_user_id ON email_verification_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_local_picks_lang_date
+  ON local_picks (lang, date DESC);
+CREATE INDEX IF NOT EXISTS idx_local_picks_pinned
+  ON local_picks (lang, pinned, pinned_order);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_local_picks_slug_lang
+  ON local_picks (slug, lang);
 CREATE INDEX IF NOT EXISTS idx_login_attempts_created_at ON login_attempts(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_login_attempts_user_id ON login_attempts(user_id);
 CREATE INDEX IF NOT EXISTS idx_oauth_auth_codes_client_id ON oauth_authorization_codes(client_id);
@@ -743,7 +778,7 @@ INSERT OR REPLACE INTO role_permissions ("role", "label", "description", "rank",
 
 -- ============================================================================
 --  RESUMEN
---    31 tablas · 71 índices · 21 triggers
+--    33 tablas · 76 índices · 21 triggers
 --
 --  Privacidad (ver lib/gdpr-crypto.ts):
 --    users.*Encrypted/Iv/Tag/Salt  -> AES-256-GCM, llave = PBKDF2(email + GDPR_PEPPER).
