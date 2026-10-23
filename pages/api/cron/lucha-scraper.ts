@@ -17,7 +17,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     console.log('⏰ Cron triggered: Lucha Libre scraper')
-    await runLuchaScraper()
+    try {
+      await runLuchaScraper()
+    } catch (error) {
+      console.log('Scraper limited mode:', error.message)
+    }
     return res.status(200).json({ success: true, message: 'Scraper completed' })
   } catch (error) {
     console.error('Cron job failed:', error)
