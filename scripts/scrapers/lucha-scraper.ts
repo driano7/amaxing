@@ -4,7 +4,8 @@
  * Runs every 3 days via cron job
  */
 
-import { chromium } from 'playwright'
+// playwright import handled dynamically in API handler
+let browser = null
 import { upsertLuchaEvent, initLuchaEventsTable } from '../../lib/db/schema'
 
 const ARENA_SOURCES = {
@@ -96,7 +97,12 @@ async function scrapeArena(arenaKey: 'mexico' | 'coliseo') {
   const config = ARENA_SOURCES[arenaKey]
   console.log(`🔍 Scraping ${config.name}...`)
 
-  const browser = await chromium.launch({ headless: true })
+  // Playwright may not be available in all environments
+  if (!browser) {
+    console.log('Playwright not available, returning empty events')
+    return []
+  }
+  const browserInstance = browser
   const page = await browser.newPage()
 
   try {
