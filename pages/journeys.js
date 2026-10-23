@@ -60,7 +60,7 @@ export default function JourneysIndex() {
 
       {/* Hero editorial del índice */}
       <header className="mx-auto max-w-5xl px-6 pb-12 pt-24 sm:pt-32">
-        <Reveal>
+        <Reveal once={false}>
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#C1440E]">
             Journeys
           </p>
@@ -80,7 +80,7 @@ export default function JourneysIndex() {
           experiencias: misma presencia, texto del mundo de los journeys.
       ---------------------------------------------------------------- */}
       <section className="mx-auto max-w-5xl px-6 pb-16">
-        <Reveal>
+        <Reveal once={false}>
           <div
             className="relative overflow-hidden rounded-3xl px-6 py-7 text-white shadow-xl sm:px-8 sm:py-8"
             style={{
@@ -129,7 +129,7 @@ export default function JourneysIndex() {
             const price = journey.price
 
             return (
-              <Reveal key={journey.id} delay={0.04} className="w-full">
+              <Reveal key={journey.id} delay={0.04} className="w-full" once={false}>
                 <Link
                   href={`/journeys/${journey.slug}`}
                   style={journeyVars(journey.accents)}
@@ -173,7 +173,7 @@ export default function JourneysIndex() {
           })}
         </div>
 
-        <Reveal delay={0.1} className="mt-14">
+        <Reveal delay={0.1} className="mt-14" once={false}>
           <p className="text-sm italic text-zinc-500 dark:text-zinc-400">
             {isEs
               ? 'Cada Journey abre con su propia entrada editorial. El contenido narrativo, las fotografías y la paleta de cada uno se publican progresivamente. El precio es de referencia.'
