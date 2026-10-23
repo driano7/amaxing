@@ -4,6 +4,7 @@ import Link from '@/components/Link'
 import Image from 'next/image'
 import AuthNav from './AuthNav'
 import { CartIcon } from './cart/CartIcon'
+import { ReservationIcon } from './reservation/ReservationIcon'
 import { ThemeToggle } from './theme-toggle'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { motion, AnimatePresence, useTransform, useScroll } from 'framer-motion'
@@ -385,6 +386,11 @@ export function Navbar() {
               </button>
 
               <AuthNav />
+
+              {/* Reservation icon — always visible, independent of login status */}
+              <Link href="/bookings" className="transition-colors hover:text-[var(--j1)]">
+                <ReservationIcon className="h-5 w-5 text-zinc-500 transition-colors hover:text-[var(--j1)] dark:text-zinc-400" />
+              </Link>
 
               {user && !authLoading && <CartIcon />}
 

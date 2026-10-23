@@ -24,7 +24,7 @@ const JourneyDetailContext = createContext<JourneyDetailState | null>(null)
  * unico control en la pagina abre o cierra TODOS los desplegables a la vez, y
  * se puede volver a plegar en cualquier momento.
  */
-export function JourneyDetailProvider({
+export default function JourneyDetailProvider({
   ids,
   children,
 }: {
@@ -58,6 +58,7 @@ export function JourneyDetailProvider({
 }
 
 /** Acceso al estado del detalle. Devuelve null si no hay provider. */
+export { JourneyDetailProvider }
 export function useJourneyDetail(): JourneyDetailState | null {
   return useContext(JourneyDetailContext)
 }

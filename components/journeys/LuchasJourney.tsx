@@ -15,7 +15,7 @@ import {
 } from '@/data/journeys/luchas'
 import { journeyVars } from '@/lib/journeyTheme'
 import { ChapterNav } from './ChapterNav'
-import { JourneyDetailProvider } from './JourneyDetailContext'
+import JourneyDetailProvider from './JourneyDetailContext'
 import { CollapsibleSection } from './CollapsibleSection'
 import { JourneyRouteGallery } from './JourneyRouteGallery'
 import { ChapterDivider } from './ChapterDivider'

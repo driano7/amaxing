@@ -1,8 +1,3 @@
-// Trigger note generation (used by Vercel cron and admin).
-// NOTE: On serverless (Vercel), data/notes is read-only at runtime, so generated
-// notes cannot persist there. Run the manual script locally and commit the files.
-// The generator makes a SINGLE OpenRouter request for up to 3 bilingual (en+es)
-// notes per month (patrón EarningsAI), y persiste en Supabase.
 import { generateNotes } from '@/lib/news-generators/autoNewsGenerator'
 
 const CRON_SECRET = process.env.CRON_SECRET || process.env.JWT_SECRET || ''
@@ -21,13 +16,123 @@ export default async function handler(req, res) {
 
   try {
     const result = await generateNotes('en', count)
-    return res.status(200).json({ ok: true, ...result })
+
+    // Also fetch lucha event news for Arena Mexico and Arena Coliseo
+    const fetchLuchaEvents = async () => {
+      const NEWS_API_KEY = process.env.NEWS_API_KEY || ''
+      if (!NEWS_API_KEY) {
+        console.log('No NEWS_API_KEY configured, skipping lucha events fetch')
+        return []
+      }
+
+      const baseUrl = 'https://newsapi.org/v2/everything'
+      // 3 days back for more recent events
+      const threeDaysAgo = new Date()
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+
+      const queries = [
+        'Arena Mexico lucha libre',
+        'Arena Coliseo lucha libre',
+        'CMLL Arena Mexico',
+        'CMLL Arena Coliseo',
+      ]
+
+      const allArticles = []
+
+      for (const query of queries) {
+        const params = new URLSearchParams({
+          apiKey: NEWS_API_KEY,
+          q: query,
+          from: threeDaysAgo.toISOString().split('T')[0],
+          language: 'es',
+          sortBy: 'publishedAt',
+          pageSize: 10,
+        })
+
+        try {
+          const fetchUrl = `${baseUrl}?${params.toString()}`
+          const fetchRes = await fetch(fetchUrl)
+          if (!fetchRes.ok) {
+            console.log(`NewsAPI error for "${query}": ${fetchRes.status}`)
+            continue
+          }
+          const data = await fetchRes.json()
+          if (data.articles && data.articles.length > 0) {
+            allArticles.push(
+              ...data.articles.map((a) => ({
+                title: a.title,
+                description: a.description,
+                url: a.url,
+                publishedAt: a.publishedAt,
+                source: a.source.name,
+              }))
+            )
+          }
+        } catch (err) {
+          console.log(`Error fetching "${query}":`, err.message)
+        }
+      }
+
+      return allArticles
+    }
+
+    const luchaEvents = await fetchLuchaEvents()
+
+    // Also fetch FRED macro data for context
+    const fetchFredData = async () => {
+      const FRED_KEY = process.env.FRED || process.env.FRED_API_KEY || ''
+      if (!FRED_KEY) {
+        console.log('No FRED API key configured, skipping FRED data')
+        return []
+      }
+
+      const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations'
+      const seriesIds = [
+        'DEXMXUS', // USD/MXN exchange rate
+        'MEXCPIALLMINMEI', // Inflación México
+      ]
+
+      const results = await Promise.allSettled(
+        seriesIds.map(async (seriesId) => {
+          try {
+            const url = `${FRED_BASE}?series_id=${seriesId}&api_key=${FRED_KEY}&file_type=json&sort_order=desc&limit=1`
+            const fetchRes = await fetch(url, { next: { revalidate: 86400 } })
+            if (!fetchRes.ok) return null
+            const data = await fetchRes.json()
+            const observations = data.observations || []
+            if (observations.length > 0) {
+              const latest = observations[0]
+              return {
+                seriesId,
+                value: latest.value,
+                date: latest.date,
+              }
+            }
+            return null
+          } catch (err) {
+            console.log(`FRED error for ${seriesId}:`, err.message)
+            return null
+          }
+        })
+      )
+
+      return results.filter((r) => r.status === 'fulfilled' && r.value !== null)
+    }
+
+    const fredData = await fetchFredData()
+
+    const response = {
+      ...result,
+      luchaEventsFound: luchaEvents.length,
+      luchaEvents: luchaEvents,
+      fredData: fredData,
+      timestamp: new Date().toISOString(),
+      status: 'success',
+    }
+
+    res.status(200).json(response)
   } catch (error) {
-    console.error('News sync failed:', error)
-    return res.status(500).json({
-      ok: false,
-      error: error.message,
-      hint: 'On serverless the filesystem is read-only. Run `npm run news:generate` locally and commit the generated data/notes files.',
-    })
+    console.error('News sync error:', error)
+    res.status(500).json({ error: 'Failed to sync news', details: error.message })
   }
 }
