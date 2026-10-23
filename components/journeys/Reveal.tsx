@@ -33,6 +33,16 @@ export function Reveal({
   const inView = useInView(ref, { once, margin: '-60px' })
   const reduced = useReducedMotion()
   const variants = withReduced(cardAppear, Boolean(reduced))
+
+  // Add scroll-triggered animations with once={false} for replay
+  const scrollVariants = withReduced(
+    {
+      hidden: { opacity: 0, y: 30 },
+      visible: { opacity: 1, y: 0 },
+      exit: { opacity: 0, y: -30 },
+    },
+    Boolean(reduced)
+  )
   const Tag = motion[as]
 
   return (
@@ -43,6 +53,8 @@ export function Reveal({
       animate={inView ? 'visible' : 'hidden'}
       variants={variants}
       transition={reduced ? { duration: 0 } : transition(0.6, delay)}
+      whileInView={{ y: [0, -10, 0] }}
+      viewport={{ once: false, margin: '-100px' }}
     >
       {children}
     </Tag>

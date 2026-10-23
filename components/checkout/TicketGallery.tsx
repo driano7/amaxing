@@ -2,6 +2,7 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useEffect, useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Star, Ticket as TicketIcon } from 'lucide-react'
 
 interface ParticipantTicket {
@@ -100,7 +101,12 @@ export function TicketGallery({
           <ChevronLeft className="h-5 w-5" />
         </button>
 
-        <div className="flex-1 rounded-2xl border border-zinc-200 bg-white p-4 text-left dark:border-white/10 dark:bg-zinc-900/50">
+        <motion.div
+          className="flex-1 rounded-2xl border border-zinc-200 bg-white p-4 text-left dark:border-white/10 dark:bg-zinc-900/50"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        >
           <div className="flex items-center gap-3">
             <TicketIcon className="h-5 w-5 shrink-0 text-orange-500" />
             <div className="min-w-0 flex-1">
@@ -131,7 +137,7 @@ export function TicketGallery({
           >
             {isEs ? 'Ver ticket y descargarlo' : 'View and download ticket'}
           </button>
-        </div>
+        </motion.div>
 
         <button
           type="button"

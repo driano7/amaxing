@@ -297,16 +297,31 @@ export function Navbar() {
                       initial={{ opacity: 0, y: 8, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                      transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+                      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                       className="absolute left-1/2 top-full z-50 mt-2 w-64 -translate-x-1/2"
                     >
-                      <div className="overflow-hidden rounded-2xl border border-zinc-200/60 bg-white/95 p-2 shadow-2xl backdrop-blur-xl dark:border-orange-500/20 dark:bg-zinc-950/95">
+                      <motion.div
+                        className="overflow-hidden rounded-2xl border border-zinc-200/60 bg-white/95 p-2 shadow-2xl backdrop-blur-xl dark:border-orange-500/20 dark:bg-zinc-950/95"
+                        variants={{
+                          open: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } },
+                        }}
+                        initial="closed"
+                        animate="open"
+                      >
                         {tourCategories.map((category) => {
                           const CategoryIcon = category.icon
                           return (
-                            <Link
+                            <motion.link
                               key={category.href}
                               href={category.href}
+                              variants={{
+                                closed: { opacity: 0, x: -10 },
+                                open: {
+                                  opacity: 1,
+                                  x: 0,
+                                  transition: { type: 'spring', stiffness: 300, damping: 30 },
+                                },
+                              }}
                               className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-orange-500/10 dark:text-white"
                             >
                               {CategoryIcon && (
@@ -315,10 +330,10 @@ export function Navbar() {
                                 </span>
                               )}
                               <span className="group-hover:text-orange-400">{category.label}</span>
-                            </Link>
+                            </motion.link>
                           )
                         })}
-                      </div>
+                      </motion.div>
                     </motion.div>
                   )}
                 </AnimatePresence>

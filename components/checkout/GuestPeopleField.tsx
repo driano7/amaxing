@@ -2,6 +2,7 @@
 
 // MIT License - Copyright (c) 2024-2026 Donovan Riaño / Calpulli CDMX - See LICENSE
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Mail, Plus, Star, User, X } from 'lucide-react'
 
 export interface GuestPerson {
@@ -196,10 +197,14 @@ export function GuestPeopleField({
               style={{ scrollbarWidth: 'none' }}
             >
               {people.map((person, index) => (
-                <div
+                <motion.div
                   key={person.id}
                   data-chip
                   className="flex w-52 flex-shrink-0 snap-start items-start gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 dark:border-white/10 dark:bg-zinc-900"
+                  initial={{ opacity: 0, x: -20, scale: 0.9 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30, delay: index * 0.05 }}
+                  layout
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
@@ -241,7 +246,7 @@ export function GuestPeopleField({
                       <X className="h-3.5 w-3.5" />
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 

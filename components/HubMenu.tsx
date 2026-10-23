@@ -215,11 +215,16 @@ export function HubMenu({ showTrigger = true }) {
                 </div>
 
                 {/* Nav Items */}
-                <nav className="flex-1 space-y-1 overflow-y-auto px-6 py-4">
+                <motion.nav
+                  className="flex-1 space-y-1 overflow-y-auto px-6 py-4"
+                  variants={{ open: { transition: { staggerChildren: 0.03, delayChildren: 0.1 } } }}
+                  initial="closed"
+                  animate="open"
+                >
                   {drawerItemsConfig.map((item) => {
                     const ItemIcon = iconComponents[item.icon]
                     return (
-                      <Link
+                      <motion.link
                         key={item.href}
                         href={item.href}
                         onClick={closeMenu}
@@ -228,9 +233,17 @@ export function HubMenu({ showTrigger = true }) {
                           'text-zinc-900 dark:text-white',
                           'hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'
                         )}
+                        variants={{
+                          closed: { opacity: 0, x: -20 },
+                          open: {
+                            opacity: 1,
+                            x: 0,
+                            transition: { type: 'spring', stiffness: 300, damping: 30 },
+                          },
+                        }}
                       >
                         {ItemIcon && (
-                          <span className="bg-orange-500/15 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-orange-500 transition-transform duration-200 group-hover:scale-110">
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500/15 text-orange-500 transition-transform duration-200 group-hover:scale-110">
                             <ItemIcon className="h-4 w-4" />
                           </span>
                         )}
@@ -238,46 +251,71 @@ export function HubMenu({ showTrigger = true }) {
                           {getLabel(item, t)}
                         </span>
                         <span className="absolute bottom-0 left-4 right-4 h-px origin-left scale-x-0 bg-orange-500 transition-transform duration-300 group-hover:scale-x-100" />
-                      </Link>
+                      </motion.link>
                     )
                   })}
-                </nav>
+                </motion.nav>
 
                 {/* Categories section */}
-                <div className="border-t border-zinc-200/50 px-6 py-4 dark:border-zinc-800/50">
+                <motion.div
+                  className="border-t border-zinc-200/50 px-6 py-4 dark:border-zinc-800/50"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                >
                   <p className="px-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     {(() => {
                       const label = t('header.categories')
                       return label === 'header.categories' ? 'Categories' : label
                     })()}
                   </p>
-                  <div className="mt-2 space-y-1">
+                  <motion.div
+                    className="mt-2 space-y-1"
+                    variants={{
+                      open: { transition: { staggerChildren: 0.04, delayChildren: 0.1 } },
+                    }}
+                    initial="closed"
+                    animate="open"
+                  >
                     {tourCategoriesConfig.map((category) => {
                       const CategoryIcon = iconComponents[category.icon]
                       const categoryLabel = getLabel(category, t)
                       return (
-                        <Link
+                        <motion.link
                           key={category.href}
                           href={category.href}
                           onClick={closeMenu}
+                          variants={{
+                            closed: { opacity: 0, x: -20 },
+                            open: {
+                              opacity: 1,
+                              x: 0,
+                              transition: { type: 'spring', stiffness: 300, damping: 30 },
+                            },
+                          }}
                           className="flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-semibold text-zinc-900 transition-colors hover:bg-orange-500/10 dark:text-white"
                         >
                           {CategoryIcon && (
-                            <span className="bg-orange-500/15 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-orange-500">
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500/15 text-orange-500">
                               <CategoryIcon className="h-4 w-4" />
                             </span>
                           )}
                           <span className="hover:text-orange-600 dark:hover:text-orange-400">
                             {categoryLabel}
                           </span>
-                        </Link>
+                        </motion.link>
                       )
                     })}
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
 
                 {/* Book Now CTA */}
-                <div className="border-t border-zinc-200/50 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] dark:border-zinc-800/50">
+                <motion.div
+                  className="border-t border-zinc-200/50 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] dark:border-zinc-800/50"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                >
                   <Link
                     href="https://wa.me/525512291607"
                     onClick={closeMenu}
@@ -285,7 +323,7 @@ export function HubMenu({ showTrigger = true }) {
                   >
                     {t('header.bookNow')}
                   </Link>
-                </div>
+                </motion.div>
               </motion.div>
             </motion.div>
           </>

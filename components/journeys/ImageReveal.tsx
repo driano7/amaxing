@@ -98,6 +98,10 @@ export function ImageReveal({
               ? { duration: 0 }
               : { duration, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }
           }
+          style={{
+            // Subtle parallax effect on scroll
+            transform: inView ? 'translateY(0) scale(1)' : 'translateY(20px) scale(1.05)',
+          }}
         >
           {/*
             Se usa next/image directamente (y no el envoltorio components/Image)
