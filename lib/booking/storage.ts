@@ -15,15 +15,16 @@ function saveBookings(bookings: Booking[]) {
   localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings))
 }
 
+export function isGuestId(userId: string): boolean {
+  return typeof userId === 'string' && userId.startsWith('guest_')
+}
+
 export function getBookingsByUser(userId: string): Booking[] {
   const bookings = getStoredBookings()
   return bookings
     .filter((b) => b.userId === userId)
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }
-
-// Guest helper: id prefix for anonymous checkouts (no cuenta, no persistencia PII)
-export function isGuestId(userId: string): boolean {
   return typeof userId === 'string' && userId.startsWith('guest_')
 }
 

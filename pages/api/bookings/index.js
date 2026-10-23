@@ -8,10 +8,16 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'No autorizado' })
   }
 
+  // GET allows viewing bookings - authenticated users get their bookings,
+  // unauthenticated/guest users see empty (guest bookings managed client-side)
   if (req.method === 'GET') {
     try {
-      const bookings = await getBookingsByUser(session.user.id)
-      return res.status(200).json({ bookings })
+      if (session?.user?.id && !session.user.id.startsWith('guest_')) {
+        const bookings = await getBookingsByUser(session.user.id)
+        return res.status(200).json({ bookings })
+      }
+      // For guests or no user, return empty - client will handle localStorage
+      return res.status(200).json({ bookings: [] })
     } catch (error) {
       console.error('Error fetching bookings:', error)
       return res.status(500).json({ error: 'Error al obtener reservaciones' })
@@ -52,6 +58,7 @@ export default async function handler(req, res) {
           customerEmail,
           currency,
           acquisitionChannel: items[0].acquisitionChannel || acquisitionChannel,
+          participantNames: items[0].participantNames,
         })
         return res.status(201).json({ booking })
       }
@@ -67,6 +74,7 @@ export default async function handler(req, res) {
           customerEmail,
           currency,
           acquisitionChannel: item.acquisitionChannel || acquisitionChannel,
+          participantNames: item.participantNames,
         }))
       )
       return res.status(201).json({ bookings })

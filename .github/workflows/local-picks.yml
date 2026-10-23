@@ -36,5 +36,5 @@ jobs:
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: local picks for $(date +%Y-%m)"
-          file_pattern: "data/local-picks/*.mdx public/static/images/local-picks/*.jpg data/local-picks-sync-state.json"
+          commit_message: 'chore: local picks for $(date +%Y-%m)'
+          file_pattern: 'data/local-picks/*.mdx public/static/images/local-picks/*.jpg data/local-picks-sync-state.json'

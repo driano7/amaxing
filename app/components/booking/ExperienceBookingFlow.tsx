@@ -94,6 +94,10 @@ export function ExperienceBookingFlow() {
   const handleGuestsChange = (count: number) => {
     setSelectedGuests(count)
     setGuestsCount(count)
+    // Collect participant names if provided
+    const participantInputs = document.querySelectorAll('.participant-name-input')
+    const names = Array.from(participantInputs).map(input => input.value.trim()).filter(name => name.length > 0)
+    setParticipantName(names[0] || '') // Set first name, or empty
     setTotalPrice(selectedExperience?.price || 0)
   }
   

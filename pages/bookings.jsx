@@ -18,10 +18,25 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState([])
   const [isLoadingBookings, setIsLoadingBookings] = useState(true)
   const [error, setError] = useState(null)
+  const [showGuestBookings, setShowGuestBookings] = useState(false)
 
   useEffect(() => {
     if (user) {
       fetchBookings()
+    } else {
+      // Check for guest bookings in localStorage when no user is logged in
+      const storedBookings =
+        typeof window !== 'undefined' ? localStorage.getItem('calpulli_bookings') : null
+      if (storedBookings) {
+        const parsed = JSON.parse(storedBookings || '[]')
+        // Filter for guest bookings (userId starts with 'guest_')
+        const guestBookings = parsed.filter((b) => b.userId && b.userId.startsWith('guest_'))
+        if (guestBookings.length > 0) {
+          setBookings(guestBookings)
+          setShowGuestBookings(true)
+        }
+      }
+      setIsLoadingBookings(false)
     }
   }, [user])
 
@@ -71,6 +86,44 @@ export default function BookingsPage() {
   }
 
   if (!user) {
+    // If we have guest bookings stored, display them
+    if (showGuestBookings && bookings.length > 0) {
+      return (
+        <div className="min-h-screen bg-white dark:bg-zinc-950">
+          <div className="container mx-auto px-4 py-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mx-auto max-w-4xl"
+            >
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {t('bookings.title') || 'Mis Reservaciones'}
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {bookings.map((booking) => (
+                  <AnimatedSection
+                    key={booking.id}
+                    experienceTitle={booking.experienceTitle}
+                    experienceImage={booking.experienceImage}
+                    date={booking.date}
+                    time={booking.time}
+                    totalPrice={booking.totalPrice}
+                    formatPrice={formatPrice}
+                    formatBookingDate={formatBookingDate}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      )
+    }
+
+    // Otherwise show login prompt for guest reservations
     return (
       <div className="flex min-h-screen items-center justify-center bg-white px-4 dark:bg-zinc-950">
         <div className="max-w-md text-center">
