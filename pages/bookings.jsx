@@ -114,6 +114,7 @@ export default function BookingsPage() {
                     totalPrice={booking.totalPrice}
                     formatPrice={formatPrice}
                     formatBookingDate={formatBookingDate}
+                    participantNames={booking.participantNames}
                   />
                 ))}
               </div>

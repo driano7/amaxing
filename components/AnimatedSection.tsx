@@ -21,6 +21,7 @@ export function AnimatedSection({
   delay = 0,
   direction = 'up',
   appleStyle = true,
+  participantNames,
 }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: false, margin: '-80px' })
@@ -32,6 +33,17 @@ export function AnimatedSection({
     right: { x: -60, y: 0 },
     none: { x: 0, y: 0 },
   }
+
+  const participantNameDisplay = participantNames?.length ? (
+    <div className="mt-2 text-sm text-zinc-500 dark:text-gray-400">
+      {participantNames.map((name, i) => (
+        <span key={i}>
+          {i > 0 ? ': ' : ''}
+          {name}
+        </span>
+      ))}
+    </div>
+  ) : null
 
   const offset = directionMap[direction]
 
@@ -54,6 +66,7 @@ export function AnimatedSection({
         }}
       >
         {children}
+        {participantNameDisplay}
       </motion.div>
     )
   }
